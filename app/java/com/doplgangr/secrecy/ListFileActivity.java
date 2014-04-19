@@ -39,7 +39,6 @@ import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.ipaulpro.afilechooser.FileChooserActivity;
-import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -50,6 +49,7 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.DrawableRes;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -144,6 +144,11 @@ public class ListFileActivity extends FileViewer {
     @Override
     void onCreate() {
         secret = new Vault(vault, password);
+        String size = FileUtils.byteCountToDisplaySize(
+                FileUtils.sizeOfDirectory(
+                        new File(storage.getRoot().getAbsolutePath() + "/" +secret.name)));
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setSubtitle("Size on SDcard: "+size);
         if (secret.wrongPass) {
             Util.alert(
                     this,
@@ -234,7 +239,7 @@ public class ListFileActivity extends FileViewer {
     @OptionsItem(R.id.action_add)
     void myMethod() {
         // Use the GET_CONTENT intent from the utility class
-        Intent target = FileUtils.createGetContentIntent();
+        Intent target = com.ipaulpro.afilechooser.utils.FileUtils.createGetContentIntent();
         // Create the chooser Intent
         Intent intent = Intent.createChooser(
                 target, getString(R.string.chooser_title));

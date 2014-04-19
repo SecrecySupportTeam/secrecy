@@ -141,8 +141,6 @@ public class SettingsFragment extends PreferenceFragment
                         try {
                             // Get the file path from the URI
                             final String path = FileUtils.getPath(getActivity(), uri);
-                            Toast.makeText(getActivity(),
-                                    String.format(getString(R.string.folder_selected), path), Toast.LENGTH_LONG).show();
                             storage.setRoot(path);
                         } catch (Exception e) {
                             Log.e("FileSelectorTestActivity", "File select error", e);
@@ -175,15 +173,27 @@ public class SettingsFragment extends PreferenceFragment
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
                                             String[] children = new File(path).list();
-                                            if (children.length==0)
-                                            try {
-                                                moveDirectory(storage.getRoot(), new File(path));
-                                                storage.setRoot(path);
-                                                Toast.makeText(getActivity(),
-                                                        String.format(getString(R.string.moved), path), Toast.LENGTH_LONG).show();
-                                                update();
-                                            }catch (Exception E){
-
+                                            if (children.length==0) {
+                                                File oldRoot = storage.getRoot();
+                                                try {
+                                                    org.apache.commons.io.FileUtils.copyDirectory(oldRoot, new File(path));
+                                                    storage.setRoot(path);
+                                                    Toast.makeText(getActivity(),
+                                                            String.format(getString(R.string.moved), path), Toast.LENGTH_LONG).show();
+                                                    update();
+                                                } catch (Exception E) {
+                                                    Util.alert(getActivity(),
+                                                            "Error moving vaults",
+                                                            "We encountered an error. Please try again later.",
+                                                            Util.emptyClickListener,
+                                                            null);
+                                                    return;
+                                                }
+                                                try{
+                                                    org.apache.commons.io.FileUtils.deleteDirectory(oldRoot);
+                                                } catch (IOException e) {
+                                                    //ignore
+                                                }
                                             }
                                             else
                                                 Util.alert(getActivity(),
@@ -205,22 +215,5 @@ public class SettingsFragment extends PreferenceFragment
 
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    public static void moveDirectory(File sourceLocation, File targetLocation)
-            throws IOException {
-        if (sourceLocation.isDirectory()) {
-            if (!targetLocation.exists())
-                targetLocation.mkdir();
-
-            String[] children = sourceLocation.list();
-            for (int i = 0; i < sourceLocation.listFiles().length; i++) {
-                moveDirectory(new File(sourceLocation, children[i]),
-                        new File(targetLocation, children[i]));
-            }
-        } else {
-            sourceLocation.renameTo(targetLocation);
-        }
-
     }
 }

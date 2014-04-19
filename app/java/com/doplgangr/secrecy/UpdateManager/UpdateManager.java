@@ -23,6 +23,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -37,6 +38,9 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
+import org.apache.commons.io.FileUtils;
+
+import java.io.IOException;
 
 @EActivity(R.layout.activity_update_manager)
 public class UpdateManager extends Activity {
@@ -68,6 +72,9 @@ public class UpdateManager extends Activity {
         appendlog(String.format(getString(R.string.previous_version), version.no().get(), version.name().get()));
         appendlog(String.format(getString(R.string.upgrade_to), (int) versionnow, versionnow_name));
         switch (version.no().get()) {
+            case 6:
+                version6to7();
+                break;
             case 5:
                 version5to6();
                 break;
@@ -84,9 +91,40 @@ public class UpdateManager extends Activity {
         appendlog(getString(R.string.updating));
     }
     @Background
+    void version6to7(){
+        //Nothing to upgrade
+        if (!storage.getRoot().getName().equals("SECRECYFILES")){
+            log.append("\nUser have used v6 and moved vaults elsewhere");
+            Util.alert(this,
+                    "Upgrading from alpha 0.6 to 0.7",
+                    "We detect that you have moved your vaults using version 0.6." +
+                            " We discovered some bugs and we will try to fix, if any, problems associated" +
+                            " with it...",
+                    Util.emptyClickListener,
+                    null
+            );
+            log.append("\nTrying to move again...");
+                try {
+                    org.apache.commons.io.FileUtils.copyDirectory(getRoot(), storage.getRoot());
+                    appendlog("\nFinish re-moving vaults");
+                    FileUtils.deleteDirectory(getRoot());
+                }catch (IOException E){
+                       E.printStackTrace();
+                        Util.alert(this,
+                                "Error moving vaults",
+                                "We encountered an error. Please contact developer for help (mkcyyin(at)gmail.com). Updating aborted.",
+                                Util.emptyClickListener,
+                                null);
+                        return;
+                }
+
+        }
+        onFinishAllUpgrade();
+    }
+    @Background
     void version5to6(){
         //Nothing to upgrade
-        onFinishAllUpgrade();
+        version6to7();
     }
     @Background
     void version3to5(){
@@ -153,5 +191,13 @@ public class UpdateManager extends Activity {
                     null);
         else
             finish();
+    }
+
+
+    public static java.io.File getRoot() {
+        java.io.File sdCard = Environment.getExternalStorageDirectory();
+        java.io.File tempDir = new java.io.File(sdCard.getAbsolutePath() + "/" + "SECRECYFILES");
+        tempDir.mkdirs();
+        return tempDir;
     }
 }

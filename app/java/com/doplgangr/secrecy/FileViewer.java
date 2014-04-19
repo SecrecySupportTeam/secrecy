@@ -50,6 +50,8 @@ public class FileViewer extends ActionBarActivity {
 
     @AfterInject
     void onCreate() {
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setSubtitle(storage.getRoot().getAbsolutePath());
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         new AlertDialog.Builder(this)

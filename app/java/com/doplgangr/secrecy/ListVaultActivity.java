@@ -105,6 +105,8 @@ public class ListVaultActivity extends ActionBarActivity {
 
     @AfterViews
     void oncreate() {
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setSubtitle(storage.getRoot().getAbsolutePath());
         ArrayList<String> vaultList = new ArrayList<String>();
         java.io.File root = storage.getRoot();
         java.io.File[] files = root.listFiles();
