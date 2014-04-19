@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/vault_management_title"
+        android:key="vault">
+
+        <Preference
+            android:key="vault_root"
+            android:title="@string/vault_location_title" />
+        <Preference
+            android:key="vault_move"
+            android:title="@string/move_all_vaults_title"
+            android:summary="@string/move_all_vaults_message"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/about_title"
+        android:key="about">
+
+        <Preference
+            android:key="version"
+            android:title="@string/version_title" />
+        <Preference
+            android:key="legal"
+            android:title="@string/legal_title"
+            android:summary="@string/legal" />
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

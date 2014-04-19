@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.doplgangr.secrecy" >
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.android.vending.BILLING" />
+
+    <application
+        android:name="com.doplgangr.secrecy.CustomApp_"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/CustomActionBarTheme" >
+        <activity
+            android:name="com.doplgangr.secrecy.ListFileActivity_"
+            android:label="@string/app_name" />
+
+        <service
+            android:name="com.doplgangr.secrecy.FileObserver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <provider
+            android:name="com.doplgangr.secrecy.OurFileProvider"
+            android:authorities="com.doplgangr.secrecy.DecryptFileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path" />
+        </provider>
+
+        <activity
+            android:name="com.doplgangr.secrecy.ListVaultActivity_"
+            android:label="@string/app_name" />
+        <activity
+            android:name="com.doplgangr.secrecy.FileViewer_"
+            android:label="@string/title_activity_file_viewer" >
+
+            <!--
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data
+                    android:mimeType="*/*"
+                    android:host="*"
+                    android:pathPattern="*"
+                />
+            </intent-filter>
+            -->
+        </activity>
+        <!-- aFileChooser -->
+        <activity
+            android:name="com.ipaulpro.afilechooser.FileChooserActivity"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/chooser_title" >
+        </activity>
+        <activity
+            android:name="com.doplgangr.secrecy.UpdateManager.UpdateManager_"
+            android:label="@string/title_activity_update_manager" />
+        <activity
+            android:name="com.doplgangr.secrecy.MainActicity_"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.doplgangr.secrecy.FileImporter_"
+            android:label="@string/import_files" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="*/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.doplgangr.secrecy.DonationsActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.doplgangr.secrecy.ChooseFolder"
+            android:label="@string/title_activity_choose_folder" >
+        </activity>
+        <activity
+            android:name="com.doplgangr.secrecy.SettingsActivity_"
+            android:label="@string/title_activity_settings" >
+        </activity>
+    </application>
+
+</manifest>

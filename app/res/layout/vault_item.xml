@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/frame"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:foreground="@color/transparent">
+
+    <RelativeLayout
+        android:layout_width="@dimen/grid_size"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_card">
+
+        <TextView
+            android:id="@+id/icon"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:background="@color/card_sudopic"
+            android:ellipsize="end"
+            android:lines="3"
+            android:padding="8dp"
+            android:textColor="@color/card_sudopictitle"
+            android:textSize="18sp"
+            android:textStyle="italic" />
+
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/dataLayout"
+            android:layout_width="@dimen/grid_size"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/icon"
+            android:layout_below="@+id/icon"
+            android:gravity="center_horizontal"
+            android:padding="8dp">
+
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="text"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/App_color"
+                android:textSize="18sp" />
+
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/dataLayout"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/collection" />
+
+    </RelativeLayout>
+</FrameLayout>

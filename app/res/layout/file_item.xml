@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/frame"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:foreground="@color/transparent">
+
+    <RelativeLayout
+        android:layout_width="@dimen/grid_size"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_card">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:background="@color/card_sudopic"
+            android:ellipsize="end"
+            android:lines="3"
+            android:padding="8dp"
+            android:text="textxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+            android:textColor="@color/card_sudopictitle"
+            android:textSize="18sp"
+            android:textStyle="italic" />
+
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/dataLayout"
+            android:layout_width="@dimen/grid_size"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/name"
+            android:layout_below="@+id/name"
+            android:padding="8dp">
+
+
+            <TextView
+                android:id="@+id/type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="text"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/App_color"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/type"
+                android:gravity="center_vertical"
+                android:text="text"
+                android:textColor="@color/App_color"
+                android:textSize="12sp" />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/DecryptLayout"
+            android:layout_width="@dimen/grid_size"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/name"
+            android:layout_below="@+id/name"
+            android:padding="8dp"
+            android:visibility="gone">
+
+
+            <TextView
+                android:id="@+id/decrypting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Decrypting..."
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/App_color"
+                android:textSize="12sp" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/decrypting"
+                android:layout_centerHorizontal="true"
+                android:indeterminate="false" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/thumbNail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/name"
+            android:layout_alignLeft="@+id/name"
+            android:layout_alignRight="@+id/name"
+            android:layout_alignTop="@+id/name"
+            android:scaleType="centerCrop" />
+
+    </RelativeLayout>
+</FrameLayout>

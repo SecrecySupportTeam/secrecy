@@ -1,0 +1,17 @@
+<paths>
+    <cache-path
+        name="cfiles"
+        path="" />
+    <files-path
+        name="files"
+        path="" />
+    <external-path
+        name="eacfiles"
+        path="Android/data/com.doplgangr.secrecy/cache" />
+    <external-path
+        name="eafiles"
+        path="Android/data/com.doplgangr.secrecy/" />
+    <external-path
+        name="efiles"
+        path="" />
+</paths>

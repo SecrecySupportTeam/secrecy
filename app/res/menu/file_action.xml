@@ -1,0 +1,24 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.doplgangr.secrecy.ListFileActivity">
+
+
+    <!--<item android:id="@+id/action_send_secure"
+        android:title="Decrypt + Send"
+        android:icon="@drawable/ic_action_send_secure"
+        android:orderInCategory="1"
+        app:showAsAction="ifRoom" />-->
+    <item
+        android:id="@+id/action_decrypt"
+        android:icon="@drawable/ic_action_not_secure"
+        android:orderInCategory="1"
+        android:title="Decrypt"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_delete"
+        android:icon="@drawable/ic_action_discard"
+        android:orderInCategory="2"
+        android:title="Delete"
+        app:showAsAction="ifRoom" />
+</menu>

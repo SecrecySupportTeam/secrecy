@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="on_changed_alert">Settings will take place after you restart this app</string>
+
+    <string name="legal">Libraries used for Secrecy</string>
+    
+    <string name="legal_long">
+        AndroidAnnotations (Apache 2.0),
+        \n
+        android-support-v4-preferencefragment (Apache 2.0),
+        \n
+        aFileChooser (Apache 2.0),
+        \n
+        android-simple-storage (Apache 2.0),
+        \n
+        android-donations-lib (Apache 2.0)
+    </string>
+    <string name="folder_selected">Folder Selected: %s</string>
+    <string name="cannot_move">Cannot move vaults</string>
+    <string name="cannot_move_message">Cannot move into subdirectories, would result in errors.</string>
+    <string name="move">Move Vaults</string><string name="move_message">Are you sure to move
+    \n\n From: %1$s
+    \n To: %2$s ?</string>
+    <string name="moved">Moved to: %s</string>
+    <string name="error_have_things">Please use empty folder</string>
+    <string name="have_things_message">To ensure integrity of your files, please choose an empty folder to put your vaults in.</string>
+    <string name="legal_title">Legal info</string>
+    <string name="version_title">Version name</string>
+    <string name="about_title">About</string>
+    <string name="vault_management_title">Vault Management</string>
+    <string name="vault_location_title">Vault location</string>
+    <string name="move_all_vaults_title">Move all vaults</string>
+    <string name="move_all_vaults_message">Click here to move all your vaults to another location, e.g. External SD</string>
+</resources>
