@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy;
+package com.doplgangr.secrecy.Views;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -26,6 +26,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.doplgangr.secrecy.FileSystem.File;
+import com.doplgangr.secrecy.R;
 
 import java.util.ArrayList;
 
@@ -114,19 +117,19 @@ public class FileAdapter extends BaseAdapter {
         // cast to the correct type
         TextView tv = (TextView) viewElement;
         // set the value
-        tv.setText(file.name);
+        tv.setText(file.getName());
 
         viewElement = view.findViewById(R.id.type);
         tv = (TextView) viewElement;
-        tv.setText(file.FileType);
+        tv.setText(file.getType());
 
         viewElement = view.findViewById(R.id.size);
         tv = (TextView) viewElement;
-        tv.setText(file.size);
+        tv.setText(file.getSize());
 
         viewElement = view.findViewById(R.id.thumbNail);
         ImageView iv = (ImageView) viewElement;
-        iv.setImageBitmap(file.thumb);
+        iv.setImageBitmap(file.getThumb());
 
         // return the final view object
         return view;

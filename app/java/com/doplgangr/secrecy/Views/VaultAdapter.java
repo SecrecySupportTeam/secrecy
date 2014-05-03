@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy;
+package com.doplgangr.secrecy.Views;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -25,6 +25,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.doplgangr.secrecy.R;
 
 import java.util.ArrayList;
 

@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy;
+package com.doplgangr.secrecy.Views;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -32,6 +32,11 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.doplgangr.secrecy.FileSystem.Vault;
+import com.doplgangr.secrecy.FileSystem.storage;
+import com.doplgangr.secrecy.R;
+import com.doplgangr.secrecy.Util;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;

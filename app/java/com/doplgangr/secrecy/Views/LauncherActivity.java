@@ -17,17 +17,20 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy;
+package com.doplgangr.secrecy.Views;
 
-/**
- * Created by Matthew on 3/29/2014.
- */
-public interface CryptStateListener {
-    void updateProgress(int progress);
+import android.content.Intent;
+import android.support.v7.app.ActionBarActivity;
 
-    void setMax(int max);
+import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.EActivity;
 
-    void onFailed(int statCode);
-
-    void Finished();
+@EActivity
+public class LauncherActivity extends ActionBarActivity {
+    @AfterInject
+    void launch() {
+        Intent launcher = new Intent(this, MainActivity_.class);
+        startActivity(launcher);
+    }
 }
+

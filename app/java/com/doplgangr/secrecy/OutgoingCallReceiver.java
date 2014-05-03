@@ -27,6 +27,8 @@ import android.content.pm.PackageManager;
 import android.support.v4.content.IntentCompat;
 
 import com.doplgangr.secrecy.Settings.Prefs_;
+import com.doplgangr.secrecy.Views.LauncherActivity_;
+import com.doplgangr.secrecy.Views.MainActivity_;
 
 import org.androidannotations.annotations.EReceiver;
 import org.androidannotations.annotations.sharedpreferences.Pref;

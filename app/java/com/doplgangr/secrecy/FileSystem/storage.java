@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy;
+package com.doplgangr.secrecy.FileSystem;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -29,6 +29,8 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 
+import com.doplgangr.secrecy.Config;
+import com.doplgangr.secrecy.CustomApp;
 import com.sromku.simple.storage.SimpleStorage;
 import com.sromku.simple.storage.Storage;
 
@@ -64,7 +66,7 @@ public class storage {
         return getTempFolder().getAbsolutePath() + "/";
     }
 
-    static String ROOT(){
+    static String ROOT() {
         SharedPreferences settings = CustomApp.context.getSharedPreferences(Config.settingsStore, 0);
         return settings.getString(Config.root, Environment.getExternalStorageDirectory()
                 .getAbsoluteFile()
@@ -77,7 +79,7 @@ public class storage {
         return tempDir;
     }
 
-    public static Boolean setRoot(String root){
+    public static Boolean setRoot(String root) {
         SharedPreferences settings = CustomApp.context.getSharedPreferences(Config.settingsStore, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(Config.root, root);

@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy;
+package com.doplgangr.secrecy.FileSystem;
 
 /**
  * THis is a placeHolder for fileProvider

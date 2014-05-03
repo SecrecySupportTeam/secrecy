@@ -28,9 +28,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.doplgangr.secrecy.FileSystem.storage;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
-import com.doplgangr.secrecy.storage;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;

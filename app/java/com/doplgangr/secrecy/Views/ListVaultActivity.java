@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy;
+package com.doplgangr.secrecy.Views;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -37,8 +37,13 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 
+import com.doplgangr.secrecy.Config;
+import com.doplgangr.secrecy.FileSystem.Vault;
+import com.doplgangr.secrecy.FileSystem.storage;
 import com.doplgangr.secrecy.Premium.PremiumActivity_;
+import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.SettingsActivity_;
+import com.doplgangr.secrecy.Util;
 import com.flurry.android.FlurryAgent;
 
 import org.androidannotations.annotations.AfterViews;

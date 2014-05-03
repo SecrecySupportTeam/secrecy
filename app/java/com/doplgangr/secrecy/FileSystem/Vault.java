@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy;
+package com.doplgangr.secrecy.FileSystem;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -25,6 +25,8 @@ import android.net.Uri;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import com.doplgangr.secrecy.Config;
+import com.doplgangr.secrecy.CustomApp;
 import com.facebook.crypto.Crypto;
 import com.facebook.crypto.keychain.SharedPrefsBackedKeyChain;
 import com.facebook.crypto.util.SystemNativeCryptoLibrary;
@@ -46,23 +48,27 @@ import javax.crypto.CipherOutputStream;
  * Created by Matthew on 3/22/2014.
  */
 public class Vault {
+    public ArrayList<File> files = new ArrayList<File>();
+    public Boolean wrongPass = true;
     String name;
     String path;
-    ArrayList<File> files = new ArrayList<File>();
-    Boolean wrongPass = true;
     private String key = "0123784";
 
     public Vault(String name, String secret) {
         this.key = secret;
         this.name = name;
-        path = storage.ROOT() + "/" + name;
+        path = storage.getRoot().getAbsolutePath() + "/" + name;
         initialize();
     }
 
     public Vault(String name, String secret, Boolean temp) {
         this.key = secret;
         this.name = name;
-        path = storage.ROOT() + "/" + name;
+        path = storage.getRoot().getAbsolutePath() + "/" + name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void initialize() {
@@ -123,7 +129,7 @@ public class Vault {
             is = new BufferedInputStream(stream);
             byte buffer[] = new byte[Config.bufferSize];
             int count;
-            AESEnc enc = new AESEnc(key);
+            AES_Encryptor enc = new AES_Encryptor(key);
             Crypto crypto = new Crypto(
                     new SharedPrefsBackedKeyChain(CustomApp.context),
                     new SystemNativeCryptoLibrary());

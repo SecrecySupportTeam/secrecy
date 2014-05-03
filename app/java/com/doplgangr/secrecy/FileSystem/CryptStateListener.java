@@ -17,20 +17,17 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy;
+package com.doplgangr.secrecy.FileSystem;
 
-import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
+/**
+ * Created by Matthew on 3/29/2014.
+ */
+public interface CryptStateListener {
+    void updateProgress(int progress);
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.EActivity;
+    void setMax(int max);
 
-@EActivity
-public class LauncherActivity extends ActionBarActivity {
-    @AfterInject
-    void launch() {
-        Intent launcher = new Intent(this, MainActivity_.class);
-        startActivity(launcher);
-    }
+    void onFailed(int statCode);
+
+    void Finished();
 }
-

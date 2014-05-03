@@ -37,11 +37,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.doplgangr.secrecy.CustomApp_;
+import com.doplgangr.secrecy.FileSystem.storage;
 import com.doplgangr.secrecy.Premium.PremiumActivity_;
 import com.doplgangr.secrecy.Premium.PremiumStateHelper;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
-import com.doplgangr.secrecy.storage;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
@@ -67,6 +67,7 @@ public class SettingsFragment extends PreferenceFragment
     private static final int REQUEST_CODE = 6384; // onActivityResult request code
     private static final int REQUEST_CODE_2 = 2058; // onActivityResult request code
     private static final ArrayList<String> INCLUDE_EXTENSIONS_LIST = new ArrayList<String>();
+
     static {
         INCLUDE_EXTENSIONS_LIST.add(".");
     }
@@ -84,6 +85,7 @@ public class SettingsFragment extends PreferenceFragment
         addPreferencesFromResource(R.xml.preferences);
         update();
     }
+
     @UiThread
     void update() {
         Preference pref = findPreference("version");
@@ -259,21 +261,21 @@ public class SettingsFragment extends PreferenceFragment
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
                                             String[] children = new File(path).list();
-                                            if (children.length==0) {
+                                            if (children.length == 0) {
                                                 final ProgressDialog progDailog = ProgressDialog.show(getActivity(), null,
                                                         "Moving. Please wait....", true);
                                                 move(path, progDailog);
-                                            }
-                                            else
+                                            } else
                                                 Util.alert(getActivity(),
                                                         getString(R.string.error_have_things),
                                                         getString(R.string.have_things_message),
                                                         Util.emptyClickListener,
                                                         null
-                                                        );
+                                                );
                                         }
                                     },
-                                    Util.emptyClickListener);
+                                    Util.emptyClickListener
+                            );
                         } catch (Exception e) {
                             Log.e("FileSelectorTestActivity", "File select error", e);
                         }

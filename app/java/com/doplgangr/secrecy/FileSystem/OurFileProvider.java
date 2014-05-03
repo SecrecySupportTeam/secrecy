@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy;
+package com.doplgangr.secrecy.FileSystem;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;

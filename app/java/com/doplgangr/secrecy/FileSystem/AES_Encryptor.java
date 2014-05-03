@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy;
+package com.doplgangr.secrecy.FileSystem;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -27,14 +27,14 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-public class AESEnc {
+public class AES_Encryptor {
 
     private final String KEY_ALGORITHM = "AES";
     private String mode = "AES/ECB/PKCS5Padding";
     private SecretKeySpec aesKey;
     private byte[] key;
 
-    public AESEnc(String text) {
+    public AES_Encryptor(String text) {
         try {
             byte[] bytes = text.getBytes("UTF-8");
             byte[] legitkey = new byte[32];

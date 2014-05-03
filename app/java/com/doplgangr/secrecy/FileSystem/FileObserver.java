@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy;
+package com.doplgangr.secrecy.FileSystem;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -27,6 +27,10 @@ import android.content.Intent;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
+import com.doplgangr.secrecy.Config;
+import com.doplgangr.secrecy.R;
+import com.doplgangr.secrecy.Util;
 
 import java.io.File;
 import java.util.ArrayList;

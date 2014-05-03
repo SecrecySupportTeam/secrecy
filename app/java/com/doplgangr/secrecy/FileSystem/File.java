@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy;
+package com.doplgangr.secrecy.FileSystem;
 
 /**
  * This is an alias of a FILE in the secrecy system.
@@ -28,6 +28,8 @@ package com.doplgangr.secrecy;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.doplgangr.secrecy.Config;
+import com.doplgangr.secrecy.CustomApp;
 import com.facebook.crypto.Crypto;
 import com.facebook.crypto.keychain.SharedPrefsBackedKeyChain;
 import com.facebook.crypto.util.SystemNativeCryptoLibrary;
@@ -52,7 +54,7 @@ public class File {
     public static final String TYPE = "FILETYPE";
     public static final String FILETIMESTAMP = "FILETIMESTAMP";
     public static final String FILESIZE = "FILESIZE";
-    Boolean decrypting = false;
+    public Boolean decrypting = false;
     String name;
     String size;
     Date Timestamp;
@@ -111,6 +113,26 @@ public class File {
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public Bitmap getThumb() {
+        return thumb;
+    }
+
+    public String getType() {
+        return FileType;
+    }
+
+    public java.io.File getFile() {
+        return file;
+    }
+
     public String getTimestamp() {
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
         return df.format(Timestamp);
@@ -126,7 +148,7 @@ public class File {
                     new SharedPrefsBackedKeyChain(CustomApp.context),
                     new SystemNativeCryptoLibrary());
             outputFile = java.io.File.createTempFile("tmp" + name, "." + FileType, storage.getTempFolder());
-            AESEnc enc = new AESEnc(key);
+            AES_Encryptor enc = new AES_Encryptor(key);
             is = new CipherInputStream(new FileInputStream(file), enc.decryptstream());
             listener.setMax((int) file.length());
             byte buffer[] = new byte[Config.bufferSize];

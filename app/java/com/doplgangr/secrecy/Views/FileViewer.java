@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy;
+package com.doplgangr.secrecy.Views;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -32,6 +32,17 @@ import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.doplgangr.secrecy.Config;
+import com.doplgangr.secrecy.EmptyListener;
+import com.doplgangr.secrecy.FileSystem.CryptStateListener;
+import com.doplgangr.secrecy.FileSystem.DecryptFileProvider;
+import com.doplgangr.secrecy.FileSystem.File;
+import com.doplgangr.secrecy.FileSystem.FileObserver;
+import com.doplgangr.secrecy.FileSystem.OurFileProvider;
+import com.doplgangr.secrecy.FileSystem.storage;
+import com.doplgangr.secrecy.R;
+import com.doplgangr.secrecy.Util;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
@@ -72,7 +83,7 @@ public class FileViewer extends ActionBarActivity {
     }
 
     @Background
-    void decrypt(com.doplgangr.secrecy.File file, final ProgressBar pBar, final EmptyListener onFinish) {
+    void decrypt(File file, final ProgressBar pBar, final EmptyListener onFinish) {
         java.io.File tempFile = getFile(file, pBar, onFinish);
         if (tempFile != null) {
             if (tempFile.getParentFile().equals(storage.getTempFolder())) {
@@ -82,7 +93,7 @@ public class FileViewer extends ActionBarActivity {
             Uri uri = OurFileProvider.getUriForFile(context, DecryptFileProvider.class.getName(), tempFile);
             MimeTypeMap myMime = MimeTypeMap.getSingleton();
             Intent newIntent = new Intent(android.content.Intent.ACTION_VIEW);
-            String mimeType = myMime.getMimeTypeFromExtension(file.FileType);
+            String mimeType = myMime.getMimeTypeFromExtension(file.getType());
             newIntent.setDataAndType(uri, mimeType);
             newIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             //altIntent: resort to using file provider when content provider does not work.
@@ -111,7 +122,7 @@ public class FileViewer extends ActionBarActivity {
 
     }
 
-    public java.io.File getFile(final com.doplgangr.secrecy.File file, final ProgressBar pBar, final EmptyListener onfinish) {
+    public java.io.File getFile(final File file, final ProgressBar pBar, final EmptyListener onfinish) {
         CryptStateListener listener = new CryptStateListener() {
             @Override
             public void updateProgress(int progress) {

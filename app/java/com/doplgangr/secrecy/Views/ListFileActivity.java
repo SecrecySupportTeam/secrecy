@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy;
+package com.doplgangr.secrecy.Views;
 
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
@@ -37,8 +37,14 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.doplgangr.secrecy.Config;
+import com.doplgangr.secrecy.EmptyListener;
+import com.doplgangr.secrecy.FileSystem.Vault;
+import com.doplgangr.secrecy.FileSystem.storage;
 import com.doplgangr.secrecy.Premium.PremiumActivity_;
+import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.SettingsActivity_;
+import com.doplgangr.secrecy.Util;
 import com.flurry.android.FlurryAgent;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 
@@ -116,7 +122,7 @@ public class ListFileActivity extends FileViewer {
             Intent newIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
             ArrayList<Uri> Uris = new ArrayList<Uri>();
             for (Integer position : adapter.getSelected())
-                Uris.add(Uri.fromFile(adapter.getItem(position).file));
+                Uris.add(Uri.fromFile(adapter.getItem(position).getFile()));
             newIntent.setType("text/plain");
             newIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, Uris);
 
@@ -149,7 +155,7 @@ public class ListFileActivity extends FileViewer {
         secret = new Vault(vault, password);
         String size = FileUtils.byteCountToDisplaySize(
                 FileUtils.sizeOfDirectory(
-                        new File(storage.getRoot().getAbsolutePath() + "/" + secret.name))
+                        new File(storage.getRoot().getAbsolutePath() + "/" + secret.getName()))
         );
         if (getSupportActionBar() != null)
             getSupportActionBar().setSubtitle("Size on SDcard: " + size);
@@ -177,7 +183,7 @@ public class ListFileActivity extends FileViewer {
             nothing.setVisibility(View.GONE);
         }
         addFilepBar.setVisibility(View.GONE);
-        getSupportActionBar().setTitle(secret.name);
+        getSupportActionBar().setTitle(secret.getName());
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, final View mView, int i, long l) {
@@ -185,7 +191,7 @@ public class ListFileActivity extends FileViewer {
                     select(i, mView);
                     return;
                 }
-                com.doplgangr.secrecy.File file = adapter.getItem(i);
+                com.doplgangr.secrecy.FileSystem.File file = adapter.getItem(i);
 
                 if (!file.decrypting) {
                     ProgressBar pBar = (ProgressBar) mView.findViewById(R.id.progressBar);
@@ -219,15 +225,15 @@ public class ListFileActivity extends FileViewer {
 
     @Background
     @Override
-    void decrypt(com.doplgangr.secrecy.File file, final ProgressBar pBar, EmptyListener onFinish) {
+    void decrypt(com.doplgangr.secrecy.FileSystem.File file, final ProgressBar pBar, EmptyListener onFinish) {
         super.decrypt(file, pBar, onFinish);
         onCreate();
     }
 
     @Background
-    void decrypt_and_save(com.doplgangr.secrecy.File file, final ProgressBar pBar, final EmptyListener onFinish) {
+    void decrypt_and_save(com.doplgangr.secrecy.FileSystem.File file, final ProgressBar pBar, final EmptyListener onFinish) {
         File tempFile = super.getFile(file, pBar, onFinish);
-        File storedFile = new File(Environment.getExternalStorageDirectory(), file.name + "." + file.FileType);
+        File storedFile = new File(Environment.getExternalStorageDirectory(), file.getName() + "." + file.getType());
         tempFile.renameTo(storedFile);
     }
 
@@ -301,7 +307,7 @@ public class ListFileActivity extends FileViewer {
     void decryptCurrentItem() {
         final ArrayList<Integer> adapterSelected = new ArrayList<Integer>(adapter.getSelected());
         for (Integer position : adapterSelected) {
-            com.doplgangr.secrecy.File file = adapter.getItem(position);
+            com.doplgangr.secrecy.FileSystem.File file = adapter.getItem(position);
             final View mView = gridView.getChildAt(position);
             if (!file.decrypting) {
                 ProgressBar pBar = (ProgressBar) mView.findViewById(R.id.progressBar);
@@ -338,7 +344,7 @@ public class ListFileActivity extends FileViewer {
         };
         String FilesToDelete = "\n";
         for (Integer position : adapter.getSelected())
-            FilesToDelete += "- " + adapter.getItem(position).name + "\n";
+            FilesToDelete += "- " + adapter.getItem(position).getName() + "\n";
         DialogInterface.OnClickListener negative = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
