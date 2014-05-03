@@ -20,28 +20,44 @@
 package com.doplgangr.secrecy;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Bundle;
+import android.support.v4.content.IntentCompat;
+import android.view.View;
+import android.widget.TextView;
 
+import com.doplgangr.secrecy.Settings.Prefs_;
 import com.doplgangr.secrecy.UpdateManager.AppVersion_;
 import com.doplgangr.secrecy.UpdateManager.UpdateManager_;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
 @EActivity
-public class MainActicity extends Activity {
+public class MainActivity extends Activity {
     @Pref
     AppVersion_ version;
     Integer versionnow;
     String versionnow_name;
+    @Pref
+    Prefs_ Prefs;
+    Context context = this;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        startActivity(new Intent(this, ListVaultActivity_.class));
+    @AfterInject
+    public void onCreate() {
+        if (Prefs.stealthMode().get() == -1) {
+            //if this is the first time, display a dialog to inform successful trial
+            onFirstLaunch();
+            return;
+        }
+        Intent mainIntent = new Intent(this, ListVaultActivity_.class);
+        mainIntent.addFlags(IntentCompat.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mainIntent);
         PackageInfo pInfo = null;
         try {
             pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -58,5 +74,27 @@ public class MainActicity extends Activity {
             }
         }
         finish();
+    }
+
+    void onFirstLaunch() {
+        final View dialogView = View.inflate(context, R.layout.dialog_finish_stealth, null);
+        String password = Prefs.OpenPIN().get();
+        ((TextView) dialogView
+                .findViewById(R.id.password))
+                .append(password);
+        new AlertDialog.Builder(context)
+                .setInverseBackgroundForced(true)
+                .setMessage("You're all set and ready to go! We will now hide the app icon. It will be gone after you reboot. Again, remember your secret code:")
+                .setView(dialogView)
+                .setPositiveButton(getString(R.string.OK),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Prefs.stealthMode().put(1);
+                                onCreate();
+                            }
+                        }
+                )
+                .show();
     }
 }

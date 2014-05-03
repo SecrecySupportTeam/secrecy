@@ -4,19 +4,19 @@
     tools:context="com.doplgangr.secrecy.ListFileActivity">
 
     <item
-        android:id="@+id/action_add"
+        android:id="@+id/action_add_file"
         android:icon="@drawable/ic_action_new"
         android:orderInCategory="1"
-        android:title="Add file"
+        android:title="@string/action_add_file"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="99"
-        android:title="Settings"
+        android:title="@string/action_settings"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_donate"
         android:orderInCategory="100"
-        android:title="Donate"
+        android:title="@string/action_donate"
         app:showAsAction="never" />
 </menu>

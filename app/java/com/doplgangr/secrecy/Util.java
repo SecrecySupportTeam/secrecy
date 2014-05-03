@@ -19,12 +19,22 @@
 
 package com.doplgangr.secrecy;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.TreeMap;
 
 /**
  * Created by Matthew on 4/4/2014.
@@ -61,8 +71,109 @@ public class Util {
         });
     }
 
+    public static void toast(final Activity context, final String msg, final Integer duration) {
+        context.runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(context, msg, duration).show();
+            }
+        });
+    }
+
     public static void log(Object object) {
-        Log.d("Secrecy", object.toString()
+        Log.d("Secrecy", object + ""
         );
+    }
+
+    public static Map<String, java.io.File> getAllStorageLocations() {
+        Map<String, java.io.File> map = new TreeMap<String, File>();
+
+        List<String> mMounts = new ArrayList<String>(99);
+        List<String> mVold = new ArrayList<String>(99);
+        mMounts.add(Environment.getExternalStorageDirectory().getAbsolutePath());
+        try {
+            java.io.File mountFile = new java.io.File("/proc/mounts");
+            if (mountFile.exists()) {
+                Scanner scanner = new Scanner(mountFile);
+                while (scanner.hasNext()) {
+                    String line = scanner.nextLine();
+                    //if (line.startsWith("/dev/block/vold/")) {
+                    String[] lineElements = line.split(" ");
+                    String element = lineElements[1];
+                    mMounts.add(element);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            java.io.File voldFile = new java.io.File("/system/etc/vold.fstab");
+            if (voldFile.exists()) {
+                Scanner scanner = new Scanner(voldFile);
+                while (scanner.hasNext()) {
+                    String line = scanner.nextLine();
+                    //if (line.startsWith("dev_mount")) {
+                    String[] lineElements = line.split(" ");
+                    String element = lineElements[2];
+
+                    if (element.contains(":"))
+                        element = element.substring(0, element.indexOf(":"));
+                    mVold.add(element);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        /*
+        for (int i = 0; i < mMounts.size(); i++) {
+            String mount = mMounts.get(i);
+            if (!mVold.contains(mount))
+                mMounts.remove(i--);
+        }
+        mVold.clear();
+        */
+
+        List<String> mountHash = new ArrayList<String>(99);
+
+        for (String mount : mMounts) {
+            java.io.File root = new java.io.File(mount);
+            Log.d(mount, "is checked");
+            Log.d(mount, root.exists() + " " + root.isDirectory() + " " + canWrite(root));
+            if (canWrite(root)) {
+                Log.d(mount, "is writable");
+                java.io.File[] list = root.listFiles();
+                String hash = "[";
+                if (list != null)
+                    for (java.io.File f : list)
+                        hash += f.getName().hashCode() + ":" + f.length() + ", ";
+                hash += "]";
+                if (!mountHash.contains(hash)) {
+                    String key = root.getAbsolutePath() + " (" + org.apache.commons.io
+                            .FileUtils.byteCountToDisplaySize(
+                                    root.getUsableSpace()
+                            ) + " free space)";
+                    mountHash.add(hash);
+                    map.put(key, root);
+                }
+            }
+        }
+
+        mMounts.clear();
+        return map;
+    }
+
+    static Boolean canWrite(java.io.File root) {
+        if (!root.exists())
+            return false;
+        if (!root.isDirectory())
+            return false;
+        try {
+            java.io.File file = File.createTempFile("TEMP", null, root);
+            return file.delete();
+        } catch (Exception e) {
+            //Failed to create files
+            return false;
+        }
+
     }
 }

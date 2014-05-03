@@ -13,12 +13,12 @@
         android:id="@+id/action_decrypt"
         android:icon="@drawable/ic_action_not_secure"
         android:orderInCategory="1"
-        android:title="Decrypt"
+        android:title="@string/action_decrypt"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_delete"
         android:icon="@drawable/ic_action_discard"
         android:orderInCategory="2"
-        android:title="Delete"
+        android:title="@string/action_delete"
         app:showAsAction="ifRoom" />
 </menu>

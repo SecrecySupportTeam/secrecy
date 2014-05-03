@@ -19,8 +19,8 @@
 
 package com.doplgangr.secrecy;
 
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -45,7 +45,7 @@ import java.util.List;
 public class FileViewer extends ActionBarActivity {
 
 
-    Context context = this;
+    Activity context = this;
 
 
     @AfterInject
@@ -73,7 +73,7 @@ public class FileViewer extends ActionBarActivity {
 
     @Background
     void decrypt(com.doplgangr.secrecy.File file, final ProgressBar pBar, final EmptyListener onFinish) {
-        java.io.File tempFile = getFile(file,pBar,onFinish);
+        java.io.File tempFile = getFile(file, pBar, onFinish);
         if (tempFile != null) {
             if (tempFile.getParentFile().equals(storage.getTempFolder())) {
                 java.io.File newFile = new java.io.File(storage.getTempFolder(), tempFile.getName());
@@ -92,26 +92,26 @@ public class FileViewer extends ActionBarActivity {
             List<Intent> targetedShareIntents = new ArrayList<Intent>();
             List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(newIntent, PackageManager.MATCH_DEFAULT_ONLY);
             //for (ResolveInfo info : resInfoList) {
-                //Intent share = new Intent(android.content.Intent.ACTION_VIEW);
-                //share.setDataAndType(uri, mimeType);
-                //if (!info.activityInfo.packageName.equalsIgnoreCase("com.doplgangr.secrecy")) {
-                   // String packageName = info.activityInfo.packageName;
-                    //context.grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    //share.setPackage(packageName);
-                    //targetedShareIntents.add(share);
-                //}
+            //Intent share = new Intent(android.content.Intent.ACTION_VIEW);
+            //share.setDataAndType(uri, mimeType);
+            //if (!info.activityInfo.packageName.equalsIgnoreCase("com.doplgangr.secrecy")) {
+            // String packageName = info.activityInfo.packageName;
+            //context.grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            //share.setPackage(packageName);
+            //targetedShareIntents.add(share);
+            //}
             //}
             //Intent chooserIntent = Intent.createChooser(newIntent,
-                   // getString(R.string.view_file_dialog));
+            // getString(R.string.view_file_dialog));
             afterDecrypt(newIntent, altIntent);
             Intent i = new Intent(context, FileObserver.class);
             i.putExtra(Config.file_extra, tempFile.getAbsolutePath());
             context.startService(i);
         }
-        
+
     }
 
-    public java.io.File getFile(final com.doplgangr.secrecy.File file, final ProgressBar pBar, final EmptyListener onfinish){
+    public java.io.File getFile(final com.doplgangr.secrecy.File file, final ProgressBar pBar, final EmptyListener onfinish) {
         CryptStateListener listener = new CryptStateListener() {
             @Override
             public void updateProgress(int progress) {
@@ -154,11 +154,11 @@ public class FileViewer extends ActionBarActivity {
             startActivity(newIntent);
             paused();
         } catch (android.content.ActivityNotFoundException e) {
-            try{
+            try {
                 startActivity(altIntent);
                 paused();
             } catch (android.content.ActivityNotFoundException e2) {
-                Toast.makeText(this, getString(R.string.error_no_activity_view), Toast.LENGTH_LONG).show();
+                Util.toast(this, getString(R.string.error_no_activity_view), Toast.LENGTH_LONG);
             }
         }
     }

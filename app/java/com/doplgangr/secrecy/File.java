@@ -21,12 +21,16 @@ package com.doplgangr.secrecy;
 
 /**
  * This is an alias of a FILE in the secrecy system.
- * 
+ *
  */
 
 
 import android.graphics.Bitmap;
 import android.util.Log;
+
+import com.facebook.crypto.Crypto;
+import com.facebook.crypto.keychain.SharedPrefsBackedKeyChain;
+import com.facebook.crypto.util.SystemNativeCryptoLibrary;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -118,6 +122,9 @@ public class File {
         OutputStream out = null;
         java.io.File outputFile = null;
         try {
+            Crypto crypto = new Crypto(
+                    new SharedPrefsBackedKeyChain(CustomApp.context),
+                    new SystemNativeCryptoLibrary());
             outputFile = java.io.File.createTempFile("tmp" + name, "." + FileType, storage.getTempFolder());
             AESEnc enc = new AESEnc(key);
             is = new CipherInputStream(new FileInputStream(file), enc.decryptstream());

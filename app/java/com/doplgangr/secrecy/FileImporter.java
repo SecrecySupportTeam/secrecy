@@ -55,7 +55,7 @@ public class FileImporter extends ActionBarActivity {
     Vault secret;
 
     @AfterViews
-     void onCreate() {
+    void onCreate() {
         setTitle("Select Vault to place files in");
         ArrayList<String> vaultList = new ArrayList<String>();
         java.io.File root = storage.getRoot();
@@ -110,6 +110,7 @@ public class FileImporter extends ActionBarActivity {
             }
         });
     }
+
     @Background
     void handleSend(Intent intent) {
         Uri uri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
@@ -117,6 +118,7 @@ public class FileImporter extends ActionBarActivity {
             handleData(uri);
         finish();
     }
+
     @Background
     void handleSendMultiple(Intent intent) {
         ArrayList<Uri> uris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
@@ -125,30 +127,31 @@ public class FileImporter extends ActionBarActivity {
                 handleData(uri);
         finish();
     }
+
     @Background
-    void handleData(final Uri data){
-        String filename = secret.addFile(this,data);
+    void handleData(final Uri data) {
+        String filename = secret.addFile(this, data);
         Uri thumbnail = storage.saveThumbnail(this, data, filename);
         if (thumbnail != null) {
             secret.addFile(this, thumbnail);
             new java.io.File(thumbnail.getPath()).delete();
         }
-        try{
+        try {
             getContentResolver().delete(data, null, null); //Try to delete under content resolver
-        }catch (Exception E){
-        }finally{
+        } catch (Exception E) {
+        } finally {
             new File(data.getPath()).delete(); //Try to delete original file.
         }
     }
 
     @Override
     @UiThread
-    public void finish(){
+    public void finish() {
         //Intent intent = new Intent(context, ListFileActivity_.class);
         //intent.putExtra(Config.vault_extra, secret.name);
         //intent.putExtra(Config.password_extra, password);
         //startActivity(intent);
-        Toast.makeText(this,getString(R.string.import_finish),Toast.LENGTH_SHORT).show();
+        Util.toast(this, getString(R.string.import_finish), Toast.LENGTH_SHORT);
         super.finish();
     }
 

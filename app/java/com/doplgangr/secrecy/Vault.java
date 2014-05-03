@@ -25,6 +25,10 @@ import android.net.Uri;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import com.facebook.crypto.Crypto;
+import com.facebook.crypto.keychain.SharedPrefsBackedKeyChain;
+import com.facebook.crypto.util.SystemNativeCryptoLibrary;
+
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.BufferedInputStream;
@@ -46,7 +50,7 @@ public class Vault {
     String path;
     ArrayList<File> files = new ArrayList<File>();
     Boolean wrongPass = true;
-    private String key;
+    private String key = "0123784";
 
     public Vault(String name, String secret) {
         this.key = secret;
@@ -120,6 +124,9 @@ public class Vault {
             byte buffer[] = new byte[Config.bufferSize];
             int count;
             AESEnc enc = new AESEnc(key);
+            Crypto crypto = new Crypto(
+                    new SharedPrefsBackedKeyChain(CustomApp.context),
+                    new SystemNativeCryptoLibrary());
             out = new CipherOutputStream(new FileOutputStream(storage.get().
                     getFile(path, filename)),
                     enc.encryptstream()

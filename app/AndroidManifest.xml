@@ -1,44 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.doplgangr.secrecy" >
+    package="com.doplgangr.secrecy">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.android.vending.BILLING" />
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
 
     <application
-        android:name="com.doplgangr.secrecy.CustomApp_"
+        android:name=".CustomApp_"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/CustomActionBarTheme" >
+        android:theme="@style/CustomActionBarTheme">
         <activity
-            android:name="com.doplgangr.secrecy.ListFileActivity_"
+            android:name=".ListFileActivity_"
             android:label="@string/app_name" />
 
         <service
-            android:name="com.doplgangr.secrecy.FileObserver"
-            android:enabled="true"
-            android:exported="true" />
+            android:name=".FileObserver"
+            android:enabled="true" />
 
         <provider
-            android:name="com.doplgangr.secrecy.OurFileProvider"
+            android:name=".OurFileProvider"
             android:authorities="com.doplgangr.secrecy.DecryptFileProvider"
             android:exported="false"
-            android:grantUriPermissions="true" >
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_path" />
         </provider>
 
         <activity
-            android:name="com.doplgangr.secrecy.ListVaultActivity_"
+            android:name=".ListVaultActivity_"
             android:label="@string/app_name" />
         <activity
-            android:name="com.doplgangr.secrecy.FileViewer_"
-            android:label="@string/title_activity_file_viewer" >
+            android:name=".FileViewer_"
+            android:label="@string/title_activity_file_viewer">
 
             <!--
             <intent-filter>
@@ -56,23 +56,16 @@
         <activity
             android:name="com.ipaulpro.afilechooser.FileChooserActivity"
             android:icon="@drawable/ic_launcher"
-            android:label="@string/chooser_title" >
-        </activity>
+            android:label="@string/chooser_title"></activity>
         <activity
-            android:name="com.doplgangr.secrecy.UpdateManager.UpdateManager_"
+            android:name=".UpdateManager.UpdateManager_"
             android:label="@string/title_activity_update_manager" />
         <activity
-            android:name="com.doplgangr.secrecy.MainActicity_"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:name=".MainActivity_"
+            android:label="@string/app_name"></activity>
         <activity
-            android:name="com.doplgangr.secrecy.FileImporter_"
-            android:label="@string/import_files" >
+            android:name=".FileImporter_"
+            android:label="@string/import_files">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
 
@@ -89,17 +82,31 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.doplgangr.secrecy.DonationsActivity"
-            android:label="@string/app_name" >
+            android:name=".ChooseFolder"
+            android:label="@string/title_activity_choose_folder"></activity>
+        <activity
+            android:name=".Settings.SettingsActivity_"
+            android:label="@string/title_activity_settings"></activity>
+
+        <receiver android:name="com.doplgangr.secrecy.OutgoingCallReceiver_">
+            <intent-filter android:priority="9999">
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+            </intent-filter>
+        </receiver>
+
+
+        <activity
+            android:name="com.doplgangr.secrecy.LauncherActivity_"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
-            android:name="com.doplgangr.secrecy.ChooseFolder"
-            android:label="@string/title_activity_choose_folder" >
-        </activity>
-        <activity
-            android:name="com.doplgangr.secrecy.SettingsActivity_"
-            android:label="@string/title_activity_settings" >
-        </activity>
+            android:name="com.doplgangr.secrecy.Premium.PremiumActivity_"
+            android:label="@string/app_name" />
     </application>
 
 </manifest>

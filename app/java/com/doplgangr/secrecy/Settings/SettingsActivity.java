@@ -17,14 +17,14 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy;
+package com.doplgangr.secrecy.Settings;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 
-import com.doplgangr.secrecy.Settings.SettingsFragment_;
+import com.doplgangr.secrecy.R;
 
 import org.androidannotations.annotations.EActivity;
 
@@ -36,7 +36,7 @@ public class SettingsActivity extends ActionBarActivity {
 
         // Display the fragment as the main content.
         Fragment mfragment = getSupportFragmentManager().findFragmentByTag("settingsfragment");
-        if ((savedInstanceState==null)&&(mfragment==null))
+        if ((savedInstanceState == null) && (mfragment == null))
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new SettingsFragment_(), "settingsfragment")
                     .commit();
@@ -44,6 +44,7 @@ public class SettingsActivity extends ActionBarActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

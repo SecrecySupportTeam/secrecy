@@ -37,6 +37,8 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 
+import com.doplgangr.secrecy.Premium.PremiumActivity_;
+import com.doplgangr.secrecy.Settings.SettingsActivity_;
 import com.flurry.android.FlurryAgent;
 
 import org.androidannotations.annotations.AfterViews;
@@ -143,18 +145,19 @@ public class ListVaultActivity extends ActionBarActivity {
         });
 
     }
+
     @OptionsItem(R.id.action_settings)
     void settings() {
-        startActivity(new Intent(this,SettingsActivity_.class));
+        startActivity(new Intent(this, SettingsActivity_.class));
     }
 
     @OptionsItem(R.id.action_donate)
-    void donate(){
-        startActivity(new Intent(this,DonationsActivity.class));
+    void donate() {
+        startActivity(new Intent(this, PremiumActivity_.class));
     }
 
 
-    @OptionsItem(R.id.action_add)
+    @OptionsItem(R.id.action_add_vault)
     void add() {
         final View dialogView = View.inflate(this, R.layout.new_credentials, null);
         final EditText password = new EditText(this);

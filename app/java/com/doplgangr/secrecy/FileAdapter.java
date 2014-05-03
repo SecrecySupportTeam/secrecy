@@ -101,9 +101,10 @@ public class FileAdapter extends BaseAdapter {
      */
     public View bindData(View view, int position) {
         // make sure it's worth drawing the view
-        if (this.data.get(position) == null) {
+        if (position > this.data.size())  // To prevent out of bound exception
             return view;
-        }
+        if (this.data.get(position) == null)
+            return view;
 
         // pull out the object
         File file = this.data.get(position);

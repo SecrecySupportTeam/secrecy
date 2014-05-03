@@ -37,6 +37,8 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.doplgangr.secrecy.Premium.PremiumActivity_;
+import com.doplgangr.secrecy.Settings.SettingsActivity_;
 import com.flurry.android.FlurryAgent;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 
@@ -143,12 +145,14 @@ public class ListFileActivity extends FileViewer {
     @UiThread
     @Override
     void onCreate() {
+        overridePendingTransition(R.anim.slide_in_right, R.anim.fadeout);
         secret = new Vault(vault, password);
         String size = FileUtils.byteCountToDisplaySize(
                 FileUtils.sizeOfDirectory(
-                        new File(storage.getRoot().getAbsolutePath() + "/" +secret.name)));
+                        new File(storage.getRoot().getAbsolutePath() + "/" + secret.name))
+        );
         if (getSupportActionBar() != null)
-            getSupportActionBar().setSubtitle("Size on SDcard: "+size);
+            getSupportActionBar().setSubtitle("Size on SDcard: " + size);
         if (secret.wrongPass) {
             Util.alert(
                     this,
@@ -197,7 +201,7 @@ public class ListFileActivity extends FileViewer {
                     };
                     decrypt(file, pBar, onFinish);
                 } else
-                    Toast.makeText(context, getString(R.string.error_already_decrypting), Toast.LENGTH_SHORT).show();
+                    Util.toast(context, getString(R.string.error_already_decrypting), Toast.LENGTH_SHORT);
             }
         });
         gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -219,24 +223,25 @@ public class ListFileActivity extends FileViewer {
         super.decrypt(file, pBar, onFinish);
         onCreate();
     }
+
     @Background
-    void decrypt_and_save(com.doplgangr.secrecy.File file, final ProgressBar pBar, final EmptyListener onFinish){
+    void decrypt_and_save(com.doplgangr.secrecy.File file, final ProgressBar pBar, final EmptyListener onFinish) {
         File tempFile = super.getFile(file, pBar, onFinish);
-        File storedFile = new File(Environment.getExternalStorageDirectory(),file.name+"."+file.FileType);
+        File storedFile = new File(Environment.getExternalStorageDirectory(), file.name + "." + file.FileType);
         tempFile.renameTo(storedFile);
     }
 
     @OptionsItem(R.id.action_settings)
     void settings() {
-        startActivity(new Intent(this,SettingsActivity_.class));
+        startActivity(new Intent(this, SettingsActivity_.class));
     }
 
     @OptionsItem(R.id.action_donate)
-    void donate(){
-        startActivity(new Intent(this,DonationsActivity.class));
+    void donate() {
+        startActivity(new Intent(this, PremiumActivity_.class));
     }
 
-    @OptionsItem(R.id.action_add)
+    @OptionsItem(R.id.action_add_file)
     void myMethod() {
         // Use the GET_CONTENT intent from the utility class
         Intent target = com.ipaulpro.afilechooser.utils.FileUtils.createGetContentIntent();
@@ -262,7 +267,7 @@ public class ListFileActivity extends FileViewer {
             addFile(data);
             super.onActivityResult(requestCode, resultCode, data);
         } else {
-            Toast.makeText(this, getString(R.string.error_no_file_selected), 4000).show();
+            Util.toast(this, getString(R.string.error_no_file_selected), 4000);
         }
     }
 
@@ -280,10 +285,10 @@ public class ListFileActivity extends FileViewer {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        try{
+                        try {
                             getContentResolver().delete(data.getData(), null, null); //Try to delete under content resolver
-                        }catch (Exception E){
-                        }finally{
+                        } catch (Exception E) {
+                        } finally {
                             new File(data.getData().getPath()).delete(); //Try to delete original file.
                         }
                     }
@@ -292,6 +297,7 @@ public class ListFileActivity extends FileViewer {
         );
         onCreate();
     }
+
     void decryptCurrentItem() {
         final ArrayList<Integer> adapterSelected = new ArrayList<Integer>(adapter.getSelected());
         for (Integer position : adapterSelected) {
@@ -307,12 +313,12 @@ public class ListFileActivity extends FileViewer {
                     @Override
                     public void run() {
                         restoreCryptViews(mView);
-                        Toast.makeText(context,getString(R.string.save_to_SD),Toast.LENGTH_SHORT).show();
+                        Util.toast(context, getString(R.string.save_to_SD), Toast.LENGTH_SHORT);
                     }
                 };
                 decrypt_and_save(file, pBar, onFinish);
             } else
-                Toast.makeText(context, getString(R.string.error_already_decrypting), Toast.LENGTH_SHORT).show();
+                Util.toast(context, getString(R.string.error_already_decrypting), Toast.LENGTH_SHORT);
         }
     }
 
@@ -325,7 +331,7 @@ public class ListFileActivity extends FileViewer {
                     if (!adapter.getItem(position).decrypting)
                         adapter.getItem(position).delete();
                     else
-                        Toast.makeText(context, getString(R.string.error_delete_decrypting), Toast.LENGTH_SHORT).show();
+                        Util.toast(context, getString(R.string.error_delete_decrypting), Toast.LENGTH_SHORT);
                 secret.initialize();
                 adapter.notifyDataSetChanged();
             }
@@ -360,6 +366,7 @@ public class ListFileActivity extends FileViewer {
     void paused() {
         //Do not end activity
     }
+
     @Override
     protected void onResume() {
         onCreate();
@@ -377,8 +384,9 @@ public class ListFileActivity extends FileViewer {
         super.onStop();
         FlurryAgent.onEndSession(this);
     }
+
     @UiThread
-     void restoreCryptViews(View mView){
+    void restoreCryptViews(View mView) {
         View view = mView.findViewById(R.id.DecryptLayout);
         view.setVisibility(View.GONE);
         view = mView.findViewById(R.id.dataLayout);

@@ -32,4 +32,7 @@
     <string name="vault_location_title">Vault location</string>
     <string name="move_all_vaults_title">Move all vaults</string>
     <string name="move_all_vaults_message">Click here to move all your vaults to another location, e.g. External SD</string>
+    <string name="security">Security</string>
+    <string name="stealth_mode_title">Stealth Mode</string>
+    <string name="stealth_mode_message">Hide this app completely from app launcher. </string>
 </resources>
