@@ -66,18 +66,18 @@ public class storage {
 
     static String ROOT(){
         SharedPreferences settings = CustomApp.context.getSharedPreferences(Config.settingsStore, 0);
-        return settings.getString(Config.root, "SECRECYFILES");
+        return settings.getString(Config.root, Environment.getExternalStorageDirectory()
+                .getAbsoluteFile()
+                + "/SECRECYFILES");
     }
 
     public static java.io.File getRoot() {
-        java.io.File sdCard = Environment.getExternalStorageDirectory();
-        java.io.File tempDir = new java.io.File(sdCard.getAbsolutePath() + "/" + ROOT());
+        java.io.File tempDir = new java.io.File(ROOT());
         tempDir.mkdirs();
         return tempDir;
     }
 
     public static Boolean setRoot(String root){
-        root = root.replace(Environment.getExternalStorageDirectory().getAbsolutePath() + "/","");
         SharedPreferences settings = CustomApp.context.getSharedPreferences(Config.settingsStore, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(Config.root, root);
