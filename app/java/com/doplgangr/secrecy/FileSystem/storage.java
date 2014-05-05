@@ -31,8 +31,6 @@ import android.provider.MediaStore;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
-import com.sromku.simple.storage.SimpleStorage;
-import com.sromku.simple.storage.Storage;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -42,10 +40,6 @@ import java.io.InputStream;
  * Created by Matthew on 3/27/2014.
  */
 public class storage {
-
-    public static Storage get() {
-        return SimpleStorage.getExternalStorage();
-    }
 
     public static void DeleteRecursive(java.io.File fileOrDirectory) {
         if (fileOrDirectory.isDirectory())

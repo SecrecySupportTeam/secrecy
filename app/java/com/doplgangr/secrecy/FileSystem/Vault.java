@@ -26,21 +26,22 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.doplgangr.secrecy.Config;
-import com.doplgangr.secrecy.CustomApp;
-import com.facebook.crypto.Crypto;
-import com.facebook.crypto.keychain.SharedPrefsBackedKeyChain;
-import com.facebook.crypto.util.SystemNativeCryptoLibrary;
+import com.doplgangr.secrecy.Util;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.BufferedInputStream;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.crypto.CipherOutputStream;
 
@@ -72,9 +73,21 @@ public class Vault {
     }
 
     public void initialize() {
-        storage.get().createDirectory(path);
+        java.io.File folder = new java.io.File(path);
         String regex = "^((?!_thumb|.nomedia).)*$";
-        List<java.io.File> absFiles = storage.get().getFiles(path, regex);
+        final Pattern p = Pattern.compile(regex);
+        List<java.io.File> absFiles = Arrays.asList(
+                folder.listFiles(
+                        new FileFilter() {
+                            @Override
+                            public boolean accept(java.io.File file) {
+                                p.matcher(file.getName()).matches();
+                                Util.log(p.matcher(file.getName()).matches());
+                                return p.matcher(file.getName()).matches();
+                            }
+                        }
+                )
+        );
         java.io.File nomedia = new java.io.File(storage.getRoot().getAbsolutePath() + "/" +
                 name + "/.nomedia");
         if (!nomedia.exists())
@@ -122,19 +135,14 @@ public class Vault {
         OutputStream out = null;
         try {
             InputStream stream = context.getContentResolver().openInputStream(uri);
-            storage.get().deleteFile(path, filename);
-            storage.get().
-                    getFile(path, filename)
-                    .createNewFile();
+            java.io.File addedFile = new java.io.File(path + "/" + filename);
+            addedFile.delete();
+            addedFile.createNewFile();
             is = new BufferedInputStream(stream);
             byte buffer[] = new byte[Config.bufferSize];
             int count;
             AES_Encryptor enc = new AES_Encryptor(key);
-            Crypto crypto = new Crypto(
-                    new SharedPrefsBackedKeyChain(CustomApp.context),
-                    new SystemNativeCryptoLibrary());
-            out = new CipherOutputStream(new FileOutputStream(storage.get().
-                    getFile(path, filename)),
+            out = new CipherOutputStream(new FileOutputStream(addedFile),
                     enc.encryptstream()
             );
             while ((count = is.read(buffer)) != -1)
@@ -163,7 +171,11 @@ public class Vault {
 
     public Boolean delete() {
         if (!wrongPass)
-            storage.get().deleteDirectory(path);
+            try {
+                FileUtils.deleteDirectory(new java.io.File(path));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         return !wrongPass;
     }
 
