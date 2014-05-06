@@ -56,7 +56,7 @@ import java.util.List;
 public class FileViewer extends ActionBarActivity {
 
 
-    Activity context = this;
+    final Activity context = this;
 
 
     @AfterInject
@@ -85,6 +85,7 @@ public class FileViewer extends ActionBarActivity {
     @Background
     void decrypt(File file, final ProgressBar pBar, final EmptyListener onFinish) {
         java.io.File tempFile = getFile(file, pBar, onFinish);
+        //File specified is not invalid
         if (tempFile != null) {
             if (tempFile.getParentFile().equals(storage.getTempFolder())) {
                 java.io.File newFile = new java.io.File(storage.getTempFolder(), tempFile.getName());
@@ -122,7 +123,7 @@ public class FileViewer extends ActionBarActivity {
 
     }
 
-    public java.io.File getFile(final File file, final ProgressBar pBar, final EmptyListener onfinish) {
+    java.io.File getFile(final File file, final ProgressBar pBar, final EmptyListener onfinish) {
         CryptStateListener listener = new CryptStateListener() {
             @Override
             public void updateProgress(int progress) {

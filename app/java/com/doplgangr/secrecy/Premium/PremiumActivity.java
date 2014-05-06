@@ -45,23 +45,23 @@ import org.androidannotations.annotations.ViewById;
 @EActivity(R.layout.activity_premium)
 public class PremiumActivity extends Activity {
     // Debug tag, for logging
-    static final String TAG = "PremiumActivity";
-    static final String SKU_PREMIUM = "donation.package.2";
+    private static final String TAG = "PremiumActivity";
+    private static final String SKU_PREMIUM = "donation.package.2";
     // (arbitrary) request code for the purchase flow
-    static final int RC_REQUEST = 19283;
+    private static final int RC_REQUEST = 19283;
+    private final Context context = this;
     @ViewById(R.id.Premium__upgrade_button)
     Button mUpgradeButton;
-
     // SKUs for our products: the premium upgrade (non-consumable) and gas (consumable)
     @ViewById(R.id.Premium__progress_bar)
     ProgressBar mProgressBar;
     //static final String SKU_PREMIUM = "android.test.purchased";
     // Does the user have the premium upgrade?
-    boolean mIsPremium = false;
+    private boolean mIsPremium = false;
     // The helper object
-    IabHelper mHelper;
+    private IabHelper mHelper;
     // Callback for when a purchase is finished
-    OnIabPurchaseFinishedListener mPurchaseFinishedListener = new OnIabPurchaseFinishedListener() {
+    private final OnIabPurchaseFinishedListener mPurchaseFinishedListener = new OnIabPurchaseFinishedListener() {
         public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
             Log.d(TAG, "Purchase finished: " + result + ", purchase: " + purchase);
 
@@ -91,9 +91,8 @@ public class PremiumActivity extends Activity {
             }
         }
     };
-    Context context = this;
     // Listener that's called when we finish querying the items and subscriptions we own
-    QueryInventoryFinishedListener mGotInventoryListener = new QueryInventoryFinishedListener() {
+    private final QueryInventoryFinishedListener mGotInventoryListener = new QueryInventoryFinishedListener() {
         public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
             Log.d(TAG, "Query inventory finished.");
 
@@ -260,7 +259,7 @@ public class PremiumActivity extends Activity {
     }
 
     // updates UI to reflect model
-    public void updateUi() {
+    void updateUi() {
         if (!mIsPremium) {
             mUpgradeButton.setEnabled(true);
         }

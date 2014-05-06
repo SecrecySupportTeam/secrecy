@@ -49,15 +49,15 @@ import java.util.ArrayList;
 
 @EActivity(R.layout.activity_list_vault)
 public class FileImporter extends ActionBarActivity {
+    private final Context context = this;
     @ViewById(android.R.id.list)
     GridView gridView = null;
     @ViewById(R.id.nothing)
     View nothing;
     @ViewById(R.id.progressBar)
     ProgressBar addFilepBar;
-    VaultAdapter adapter;
-    Context context = this;
-    Vault secret;
+    private VaultAdapter adapter;
+    private Vault secret;
 
     @AfterViews
     void onCreate() {
@@ -68,7 +68,7 @@ public class FileImporter extends ActionBarActivity {
         for (java.io.File inFile : files)
             if (inFile.isDirectory() && !inFile.equals(storage.getTempFolder()))
                 vaultList.add(inFile.getName());
-        adapter = new VaultAdapter(this, R.layout.vault_item, vaultList);
+        adapter = new VaultAdapter(this, vaultList);
         gridView.setAdapter(adapter);
         if (gridView.getCount() == 0)
             nothing.setVisibility(View.VISIBLE);
@@ -118,7 +118,7 @@ public class FileImporter extends ActionBarActivity {
 
     @Background
     void handleSend(Intent intent) {
-        Uri uri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
         if (uri != null)
             handleData(uri);
         finish();

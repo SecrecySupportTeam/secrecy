@@ -40,7 +40,7 @@ import java.util.TreeMap;
  * Created by Matthew on 4/4/2014.
  */
 public class Util {
-    public static DialogInterface.OnClickListener emptyClickListener = new DialogInterface.OnClickListener() {
+    public static final DialogInterface.OnClickListener emptyClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
         }
@@ -88,7 +88,7 @@ public class Util {
         Map<String, java.io.File> map = new TreeMap<String, File>();
 
         List<String> mMounts = new ArrayList<String>(99);
-        List<String> mVold = new ArrayList<String>(99);
+        //List<String> mVold = new ArrayList<String>(99);
         mMounts.add(Environment.getExternalStorageDirectory().getAbsolutePath());
         try {
             java.io.File mountFile = new java.io.File("/proc/mounts");
@@ -105,24 +105,26 @@ public class Util {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        try {
-            java.io.File voldFile = new java.io.File("/system/etc/vold.fstab");
-            if (voldFile.exists()) {
-                Scanner scanner = new Scanner(voldFile);
-                while (scanner.hasNext()) {
-                    String line = scanner.nextLine();
-                    //if (line.startsWith("dev_mount")) {
-                    String[] lineElements = line.split(" ");
-                    String element = lineElements[2];
+        /**
+         try {
+         java.io.File voldFile = new java.io.File("/system/etc/vold.fstab");
+         if (voldFile.exists()) {
+         Scanner scanner = new Scanner(voldFile);
+         while (scanner.hasNext()) {
+         String line = scanner.nextLine();
+         //if (line.startsWith("dev_mount")) {
+         String[] lineElements = line.split(" ");
+         String element = lineElements[2];
 
-                    if (element.contains(":"))
-                        element = element.substring(0, element.indexOf(":"));
-                    mVold.add(element);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+         if (element.contains(":"))
+         element = element.substring(0, element.indexOf(":"));
+         mVold.add(element);
+         }
+         }
+         } catch (Exception e) {
+         e.printStackTrace();
+         }
+         **/
 
         /*
         for (int i = 0; i < mMounts.size(); i++) {
@@ -162,7 +164,7 @@ public class Util {
         return map;
     }
 
-    static Boolean canWrite(java.io.File root) {
+    private static Boolean canWrite(java.io.File root) {
         if (!root.exists())
             return false;
         if (!root.isDirectory())

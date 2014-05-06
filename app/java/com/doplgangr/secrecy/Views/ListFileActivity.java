@@ -68,8 +68,6 @@ import java.util.ArrayList;
 public class ListFileActivity extends FileViewer {
     private static final int REQUEST_CODE = 6384; // onActivityResult request code
     private static final ArrayList<String> INCLUDE_EXTENSIONS_LIST = new ArrayList<String>();
-    Vault secret;
-    FileAdapter adapter;
     @ViewById(android.R.id.list)
     GridView gridView = null;
     @ViewById(R.id.nothing)
@@ -78,8 +76,14 @@ public class ListFileActivity extends FileViewer {
     ProgressBar addFilepBar;
     @DrawableRes(R.drawable.file_selector)
     Drawable selector;
-    ActionMode mActionMode;
-    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+    @Extra(Config.vault_extra)
+    String vault;
+    @Extra(Config.password_extra)
+    String password;
+    private Vault secret;
+    private FileAdapter adapter;
+    private ActionMode mActionMode;
+    private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
 
         // Called when the action mode is created; startActionMode() was called
         @Override
@@ -142,10 +146,6 @@ public class ListFileActivity extends FileViewer {
             adapter.clearSelected();
         }
     };
-    @Extra(Config.vault_extra)
-    String vault;
-    @Extra(Config.password_extra)
-    String password;
 
     @AfterViews
     @UiThread
@@ -175,7 +175,7 @@ public class ListFileActivity extends FileViewer {
             return;
         }
         adapter = new FileAdapter(
-                this, R.layout.file_item, secret.files);
+                this, secret.files);
         gridView.setAdapter(adapter);
         if (gridView.getCount() == 0) {
             nothing.setVisibility(View.VISIBLE);

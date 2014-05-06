@@ -64,10 +64,10 @@ public class UpdateManager extends Activity {
     AppVersion_ version;
 
     //Current version
-    Integer versionnow;
-    String versionnow_name;
+    private Integer versionnow;
+    private String versionnow_name;
 
-    public static java.io.File getRoot() {
+    private static java.io.File getRoot() {
         // Function for determining temp folder location in version1, only used in upgrading from v1 to v2
         java.io.File sdCard = Environment.getExternalStorageDirectory();
         java.io.File tempDir = new java.io.File(sdCard.getAbsolutePath() + "/" + "SECRECYFILES");
@@ -88,7 +88,7 @@ public class UpdateManager extends Activity {
 
         // Writes the previous/current version into the log view
         appendlog(String.format(getString(R.string.previous_version), version.no().get(), version.name().get()));
-        appendlog(String.format(getString(R.string.upgrade_to), (int) versionnow, versionnow_name));
+        appendlog(String.format(getString(R.string.upgrade_to), versionnow, versionnow_name));
 
         // Switches between different upgrades, based on last app version.
         switch (version.no().get()) {
@@ -242,7 +242,7 @@ public class UpdateManager extends Activity {
 
     void getVersionInfo() {
         // get version info from the package manager
-        PackageInfo pInfo = null;
+        PackageInfo pInfo;
         try {
             pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e) {

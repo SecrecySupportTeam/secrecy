@@ -15,6 +15,8 @@ import com.github.jberkel.pay.me.model.Purchase;
  * Created by Matthew on 4/29/2014.
  */
 public class PremiumStateHelper {
+    // (arbitrary) request code for the purchase flow
+    static final int RC_REQUEST = 19283;
     /* Copyright (c) 2012 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,20 +32,18 @@ public class PremiumStateHelper {
  * limitations under the License.
  */
     // Debug tag, for logging
-    static final String TAG = "PremiumActivity";
-    static final String SKU_PREMIUM = "donation.package.2";
-    // (arbitrary) request code for the purchase flow
-    static final int RC_REQUEST = 19283;
-
+    private static final String TAG = "PremiumActivity";
+    private static final String SKU_PREMIUM = "donation.package.2";
+    //static final String SKU_PREMIUM = "android.test.purchased";
+    private final PremiumListener mPremiumListener;
+    private final Activity context;
     // SKUs for our products: the premium upgrade (non-consumable) and gas (consumable)
     // Does the user have the premium upgrade?
-    boolean mIsPremium = false;
-    //static final String SKU_PREMIUM = "android.test.purchased";
-    PremiumListener mPremiumListener;
+    private boolean mIsPremium = false;
     // The helper object
-    IabHelper mHelper;
+    private IabHelper mHelper;
     // Listener that's called when we finish querying the items and subscriptions we own
-    QueryInventoryFinishedListener mGotInventoryListener = new QueryInventoryFinishedListener() {
+    private final QueryInventoryFinishedListener mGotInventoryListener = new QueryInventoryFinishedListener() {
         public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
             Log.d(TAG, "Query inventory finished.");
 
@@ -81,7 +81,6 @@ public class PremiumStateHelper {
             Log.d(TAG, "Initial inventory query finished; enabling main UI.");
         }
     };
-    Activity context;
 
     public PremiumStateHelper(Activity context, final PremiumListener mPremiumListener) {
         this.mPremiumListener = mPremiumListener;
@@ -155,7 +154,7 @@ public class PremiumStateHelper {
     }
 
     // We're being destroyed. It's important to dispose of the helper here!
-    public void destroy() {
+    void destroy() {
         // very important:
         Log.d(TAG, "Destroying helper.");
         if (mHelper != null) {

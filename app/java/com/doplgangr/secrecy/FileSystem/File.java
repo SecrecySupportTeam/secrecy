@@ -29,10 +29,6 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.doplgangr.secrecy.Config;
-import com.doplgangr.secrecy.CustomApp;
-import com.facebook.crypto.Crypto;
-import com.facebook.crypto.keychain.SharedPrefsBackedKeyChain;
-import com.facebook.crypto.util.SystemNativeCryptoLibrary;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -55,14 +51,14 @@ public class File {
     public static final String FILETIMESTAMP = "FILETIMESTAMP";
     public static final String FILESIZE = "FILESIZE";
     public Boolean decrypting = false;
-    String name;
-    String size;
-    Date Timestamp;
-    String FileType;
-    java.io.File file;
-    File thumbnailFile;
-    Bitmap thumb;
-    Boolean invalidFile = false;
+    private String name;
+    private String size;
+    private Date Timestamp;
+    private String FileType;
+    private java.io.File file;
+    private File thumbnailFile;
+    private Bitmap thumb;
+    private Boolean invalidFile = false;
     private String key;
 
     public File(java.io.File file, String secret) {
@@ -105,7 +101,7 @@ public class File {
         }
     }
 
-    public static String humanReadableByteCount(long bytes) {
+    private static String humanReadableByteCount(long bytes) {
         int unit = 1024;
         if (bytes < unit) return bytes + " B";
         int exp = (int) (Math.log(bytes) / Math.log(unit));
@@ -144,9 +140,6 @@ public class File {
         OutputStream out = null;
         java.io.File outputFile = null;
         try {
-            Crypto crypto = new Crypto(
-                    new SharedPrefsBackedKeyChain(CustomApp.context),
-                    new SystemNativeCryptoLibrary());
             outputFile = java.io.File.createTempFile("tmp" + name, "." + FileType, storage.getTempFolder());
             AES_Encryptor enc = new AES_Encryptor(key);
             is = new CipherInputStream(new FileInputStream(file), enc.decryptstream());

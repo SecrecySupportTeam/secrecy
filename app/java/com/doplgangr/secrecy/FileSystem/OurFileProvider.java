@@ -63,7 +63,7 @@ public class OurFileProvider extends ContentProvider {
     private static final File DEVICE_ROOT = new File("/");
 
     // @GuardedBy("sCache")
-    private static HashMap<String, PathStrategy> sCache = new HashMap<String, PathStrategy>();
+    private static final HashMap<String, PathStrategy> sCache = new HashMap<String, PathStrategy>();
 
     private PathStrategy mStrategy;
 

@@ -37,9 +37,9 @@ import java.util.ArrayList;
 
 public class FileObserver extends IntentService {
     public static final int NOTIFICATION_ID = 1;
-    public static final int NOTIFICATION_FOREGROUND = 0;
-    ArrayList<MyFileObserver> fileObs = new ArrayList<MyFileObserver>();
-    NotificationManager mNotificationManager;
+    private static final int NOTIFICATION_FOREGROUND = 0;
+    private final ArrayList<MyFileObserver> fileObs = new ArrayList<MyFileObserver>();
+    private NotificationManager mNotificationManager;
 
     public FileObserver() {
         super("File Handler");
@@ -96,7 +96,7 @@ public class FileObserver extends IntentService {
     }
 
     class MyFileObserver extends android.os.FileObserver {
-        public String absolutePath;
+        public final String absolutePath;
         public java.io.File file;
         long timestamp;
 

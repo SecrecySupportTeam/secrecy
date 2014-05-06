@@ -33,7 +33,7 @@ import org.androidannotations.annotations.EApplication;
 public class CustomApp extends Application {
     public static Context context;
     public static String VERSIONNAME = "";
-    public static int VERSIONCODE = 0;
+    private static int VERSIONCODE = 0;
 
     @Override
     public void onCreate() {

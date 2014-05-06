@@ -61,13 +61,16 @@ import java.util.ArrayList;
 @EActivity(R.layout.activity_list_vault)
 @OptionsMenu(R.menu.list_vault)
 public class ListVaultActivity extends ActionBarActivity {
+    private final Context context = this;
     @ViewById(android.R.id.list)
     GridView gridView = null;
     @ViewById(R.id.nothing)
     View nothing;
-    VaultAdapter adapter;
-    ActionMode mActionMode;
-    private android.support.v7.view.ActionMode.Callback mActionModeCallback = new android.support.v7.view.ActionMode.Callback() {
+    @DrawableRes(R.drawable.file_selector)
+    Drawable selector;
+    private VaultAdapter adapter;
+    private ActionMode mActionMode;
+    private final android.support.v7.view.ActionMode.Callback mActionModeCallback = new android.support.v7.view.ActionMode.Callback() {
 
         @Override
         public boolean onCreateActionMode(android.support.v7.view.ActionMode mode, Menu menu) {
@@ -106,9 +109,6 @@ public class ListVaultActivity extends ActionBarActivity {
             adapter.clearSelected();
         }
     };
-    @DrawableRes(R.drawable.file_selector)
-    Drawable selector;
-    Context context = this;
 
     @AfterViews
     void oncreate() {
@@ -120,7 +120,7 @@ public class ListVaultActivity extends ActionBarActivity {
         for (java.io.File inFile : files)
             if (inFile.isDirectory() && !inFile.equals(storage.getTempFolder()))
                 vaultList.add(inFile.getName());
-        adapter = new VaultAdapter(this, R.layout.vault_item, vaultList);
+        adapter = new VaultAdapter(this, vaultList);
         gridView.setAdapter(adapter);
         if (gridView.getCount() == 0)
             nothing.setVisibility(View.VISIBLE);
@@ -206,7 +206,7 @@ public class ListVaultActivity extends ActionBarActivity {
         }).show();
     }
 
-    public void passwordWrong() {
+    void passwordWrong() {
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.error_wrong_password_confirmation))
                 .setMessage(getString(R.string.error_wrong_password_confirmation_message))

@@ -56,11 +56,11 @@ public class storage {
         return tempDir;
     }
 
-    public static String getAbsTempFolder() {
+    private static String getAbsTempFolder() {
         return getTempFolder().getAbsolutePath() + "/";
     }
 
-    static String ROOT() {
+    private static String ROOT() {
         SharedPreferences settings = CustomApp.context.getSharedPreferences(Config.settingsStore, 0);
         return settings.getString(Config.root, Environment.getExternalStorageDirectory()
                 .getAbsoluteFile()
@@ -132,7 +132,7 @@ public class storage {
         return null;
     }
 
-    public static String getRealPathFromURI(Context context, final Uri contentURI) {
+    private static String getRealPathFromURI(Context context, final Uri contentURI) {
         Cursor cursor = context.getContentResolver().query(contentURI, null, null, null, null);
         if (cursor == null) { // Source is Dropbox or other similar local file path
             return contentURI.getPath();

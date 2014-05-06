@@ -49,10 +49,10 @@ import javax.crypto.CipherOutputStream;
  * Created by Matthew on 3/22/2014.
  */
 public class Vault {
-    public ArrayList<File> files = new ArrayList<File>();
+    public final ArrayList<File> files = new ArrayList<File>();
+    private final String name;
+    private final String path;
     public Boolean wrongPass = true;
-    String name;
-    String path;
     private String key = "0123784";
 
     public Vault(String name, String secret) {

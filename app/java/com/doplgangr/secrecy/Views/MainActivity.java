@@ -42,13 +42,13 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 
 @EActivity
 public class MainActivity extends Activity {
+    private final Context context = this;
     @Pref
     AppVersion_ version;
-    Integer versionnow;
-    String versionnow_name;
     @Pref
     Prefs_ Prefs;
-    Context context = this;
+    private Integer versionnow;
+    private String versionnow_name;
 
     @AfterInject
     public void onCreate() {
@@ -60,7 +60,7 @@ public class MainActivity extends Activity {
         Intent mainIntent = new Intent(this, ListVaultActivity_.class);
         mainIntent.addFlags(IntentCompat.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mainIntent);
-        PackageInfo pInfo = null;
+        PackageInfo pInfo;
         try {
             pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e) {

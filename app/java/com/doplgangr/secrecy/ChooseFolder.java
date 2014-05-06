@@ -33,6 +33,7 @@ import java.util.ArrayList;
 public class ChooseFolder extends ActionBarActivity {
     private static final int REQUEST_CODE = 6384; // onActivityResult request code
     private static final ArrayList<String> INCLUDE_EXTENSIONS_LIST = new ArrayList<String>();
+
     static {
         INCLUDE_EXTENSIONS_LIST.add(".");
     }
@@ -53,7 +54,7 @@ public class ChooseFolder extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.choose_folder, menu);
         return true;
@@ -65,10 +66,7 @@ public class ChooseFolder extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
 }

@@ -321,9 +321,8 @@ public class SettingsFragment extends PreferenceFragment
                 getActivity(),
                 R.layout.select_dialog_singlechoice);
         final Map<String, File> storages = Util.getAllStorageLocations();
-        arrayAdapter.addAll(
-                storages.keySet()
-        );
+        for (String key : storages.keySet())
+            arrayAdapter.add(key);
         builderSingle.setNegativeButton("Cancel",
                 new DialogInterface.OnClickListener() {
 

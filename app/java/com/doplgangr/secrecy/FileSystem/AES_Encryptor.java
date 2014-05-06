@@ -27,10 +27,10 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-public class AES_Encryptor {
+class AES_Encryptor {
 
     private final String KEY_ALGORITHM = "AES";
-    private String mode = "AES/ECB/PKCS5Padding";
+    private final String mode = "AES/ECB/PKCS5Padding";
     private SecretKeySpec aesKey;
     private byte[] key;
 

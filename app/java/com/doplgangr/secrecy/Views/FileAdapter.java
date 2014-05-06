@@ -32,26 +32,24 @@ import com.doplgangr.secrecy.R;
 
 import java.util.ArrayList;
 
-public class FileAdapter extends BaseAdapter {
+class FileAdapter extends BaseAdapter {
     // store the context (as an inflated layout)
-    private LayoutInflater inflater;
+    private final LayoutInflater inflater;
     // store the resource (typically file_item.xml)
-    private int resource;
+    private final int resource;
+    private final ArrayList<Integer> checked = new ArrayList<Integer>();
     // store (a reference to) the data
     private ArrayList<File> data;
-    private ArrayList<Integer> checked = new ArrayList<Integer>();
 
     /**
      * Default constructor. Creates the new Adaptor object to
      * provide a ListView with data.
-     *
-     * @param context
-     * @param resource
+     *  @param context
      * @param data
      */
-    public FileAdapter(Context context, int resource, ArrayList<File> data) {
+    public FileAdapter(Context context, ArrayList<File> data) {
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.resource = resource;
+        this.resource = R.layout.file_item;
         this.data = data;
     }
 
@@ -102,9 +100,9 @@ public class FileAdapter extends BaseAdapter {
      * Bind the provided data to the view.
      * This is the only method not required by base adapter.
      */
-    public View bindData(View view, int position) {
+    View bindData(View view, int position) {
         // make sure it's worth drawing the view
-        if (position > this.data.size())  // To prevent out of bound exception
+        if (position >= this.data.size())  // To prevent out of bound exception
             return view;
         if (this.data.get(position) == null)
             return view;
