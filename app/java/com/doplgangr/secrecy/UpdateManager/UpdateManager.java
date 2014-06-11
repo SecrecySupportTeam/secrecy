@@ -92,6 +92,9 @@ public class UpdateManager extends Activity {
 
         // Switches between different upgrades, based on last app version.
         switch (version.no().get()) {
+            case 8:
+                version8to9();
+                break;
             case 7:
                 version7to8();
                 break;
@@ -117,9 +120,25 @@ public class UpdateManager extends Activity {
     }
 
     @Background
+    void version8to9() {
+        // Changes filebase path to new format.
+        if (Util.canWrite(storage.getRoot())) {
+            //escape if path is indeed valid
+        } else {
+            //Append with sdcard link
+            log.append("\nOld sdCard format. Changing to new format.");
+            String newRoot = Environment.getExternalStorageDirectory()
+                    .getAbsoluteFile()
+                    + "/" + storage.getRoot().getAbsolutePath();
+            storage.setRoot(newRoot);
+        }
+        onFinishAllUpgrade();
+    }
+
+    @Background
     void version7to8() {
         //Nothing to upgrade
-        onFinishAllUpgrade();
+        version8to9();
     }
 
     @Background

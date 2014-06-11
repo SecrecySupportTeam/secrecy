@@ -164,7 +164,7 @@ public class Util {
         return map;
     }
 
-    private static Boolean canWrite(java.io.File root) {
+    public static Boolean canWrite(java.io.File root) {
         if (!root.exists())
             return false;
         if (!root.isDirectory())
