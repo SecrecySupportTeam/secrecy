@@ -50,7 +50,6 @@ import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 
-import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
@@ -151,16 +150,6 @@ public class FilesGalleryFragment extends FileViewer {
     };
     private VaultsListFragment.OnFragmentFinishListener mFinishListener;
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mFinishListener = (VaultsListFragment.OnFragmentFinishListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement Listener");
-        }
-    }
-
     @UiThread
     void switchView(View parentView, int showView) {
         parentView.findViewById(R.id.DecryptLayout).setVisibility(View.GONE);
@@ -171,8 +160,18 @@ public class FilesGalleryFragment extends FileViewer {
         shownView.setAnimation(slide);
     }
 
-    @AfterViews
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mFinishListener = (VaultsListFragment.OnFragmentFinishListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement Listener");
+        }
+    }
+
     @Background
+    @Override
     void onCreate() {
         context = (ActionBarActivity) getActivity();
         secret = new Vault(vault, password);
@@ -196,8 +195,7 @@ public class FilesGalleryFragment extends FileViewer {
                     getString(R.string.open_failed_message),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            Util.log("onClick called");
-                            finish();
+                            finish(); //Done for now -_-'
                         }
                     },
                     null
@@ -225,18 +223,6 @@ public class FilesGalleryFragment extends FileViewer {
                 intent.putExtra(Config.password_extra, password);
                 intent.putExtra(Config.gallery_item_extra, i);
                 startActivity(intent);
-                /**
-                 if (!file.decrypting) {
-                 ProgressBar pBar = (ProgressBar) mView.findViewById(R.id.progressBar);
-                 switchView(mView,R.id.DecryptLayout);
-                 EmptyListener onFinish = new EmptyListener() {
-                @Override public void run() {
-                switchView(mView,R.id.dataLayout);
-                }
-                };
-                 decrypt(file, pBar, onFinish);
-                 } else
-                 Util.toast(context, getString(R.string.error_already_decrypting), Toast.LENGTH_SHORT);**/
             }
         });
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -267,7 +253,6 @@ public class FilesGalleryFragment extends FileViewer {
         File storedFile = new File(Environment.getExternalStorageDirectory(), file.getName() + "." + file.getType());
         tempFile.renameTo(storedFile);
     }
-
 
     @OptionsItem(R.id.action_switch_interface)
     void switchInterface() {
@@ -302,39 +287,11 @@ public class FilesGalleryFragment extends FileViewer {
         if (resultCode == context.RESULT_OK && requestCode == REQUEST_CODE) {
             Log.d("intent received", data.getData().toString() + " " + data.getData().getLastPathSegment());
             addFilepBar.setVisibility(View.VISIBLE);
-            addFile(data);
+            addFile(secret, data);
             super.onActivityResult(requestCode, resultCode, data);
         } else {
             Util.toast(context, getString(R.string.error_no_file_selected), 4000);
         }
-    }
-
-    @Background
-    void addFile(final Intent data) {
-        String filename = secret.addFile(context, data.getData());
-        Uri thumbnail = storage.saveThumbnail(context, data.getData(), filename);
-        if (thumbnail != null) {
-            secret.addFile(context, thumbnail);
-            new File(thumbnail.getPath()).delete();
-        }
-        Util.alert(context,
-                getString(R.string.add_successful),
-                getString(R.string.add_successful_message),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        try {
-                            context.getContentResolver().delete(data.getData(), null, null); //Try to delete under content resolver
-                        } catch (Exception ignored) {
-                            //ignore cannot delete original file
-                        } finally {
-                            new File(data.getData().getPath()).delete(); //Try to delete original file.
-                        }
-                    }
-                },
-                Util.emptyClickListener
-        );
-        onCreate();
     }
 
     void decryptCurrentItem() {
@@ -407,5 +364,4 @@ public class FilesGalleryFragment extends FileViewer {
         getActivity().finish();
         //mFinishListener.onFinish(this);
     }
-
 }

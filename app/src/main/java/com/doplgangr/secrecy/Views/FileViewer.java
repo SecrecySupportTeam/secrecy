@@ -40,6 +40,7 @@ import com.doplgangr.secrecy.FileSystem.DecryptFileProvider;
 import com.doplgangr.secrecy.FileSystem.File;
 import com.doplgangr.secrecy.FileSystem.FileObserver;
 import com.doplgangr.secrecy.FileSystem.OurFileProvider;
+import com.doplgangr.secrecy.FileSystem.Vault;
 import com.doplgangr.secrecy.FileSystem.storage;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
@@ -81,6 +82,35 @@ public class FileViewer extends Fragment {
                 paused();
             }
         }).show();
+    }
+
+
+    @Background
+    void addFile(Vault secret, final Intent data) {
+        String filename = secret.addFile(context, data.getData());
+        Uri thumbnail = storage.saveThumbnail(context, data.getData(), filename);
+        if (thumbnail != null) {
+            secret.addFile(context, thumbnail);
+            new java.io.File(thumbnail.getPath()).delete();
+        }
+        Util.alert(context,
+                getString(R.string.add_successful),
+                getString(R.string.add_successful_message),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        try {
+                            context.getContentResolver().delete(data.getData(), null, null); //Try to delete under content resolver
+                        } catch (Exception ignored) {
+                            //ignore cannot delete original file
+                        } finally {
+                            new java.io.File(data.getData().getPath()).delete(); //Try to delete original file.
+                        }
+                    }
+                },
+                Util.emptyClickListener
+        );
+        onCreate();
     }
 
 

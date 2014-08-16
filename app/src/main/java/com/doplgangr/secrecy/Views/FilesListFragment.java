@@ -46,7 +46,6 @@ import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.EmptyListener;
 import com.doplgangr.secrecy.FileSystem.Vault;
 import com.doplgangr.secrecy.FileSystem.storage;
-import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 import com.ipaulpro.afilechooser.FileChooserActivity;
@@ -82,6 +81,7 @@ public class FilesListFragment extends FileViewer {
     String vault;
     @FragmentArg(Config.password_extra)
     String password;
+
     private Vault secret;
     private FilesListAdapter adapter;
     private ActionMode mActionMode;
@@ -149,7 +149,6 @@ public class FilesListFragment extends FileViewer {
         }
     };
     private VaultsListFragment.OnFragmentFinishListener mFinishListener;
-    private Listeners.switchInterface mSwitchInterface;
 
     @UiThread
     void switchView(View parentView, int showView) {
@@ -296,39 +295,11 @@ public class FilesListFragment extends FileViewer {
         if (resultCode == context.RESULT_OK && requestCode == REQUEST_CODE) {
             Log.d("intent received", data.getData().toString() + " " + data.getData().getLastPathSegment());
             addFilepBar.setVisibility(View.VISIBLE);
-            addFile(data);
+            addFile(secret, data);
             super.onActivityResult(requestCode, resultCode, data);
         } else {
             Util.toast(context, getString(R.string.error_no_file_selected), 4000);
         }
-    }
-
-    @Background
-    void addFile(final Intent data) {
-        String filename = secret.addFile(context, data.getData());
-        Uri thumbnail = storage.saveThumbnail(context, data.getData(), filename);
-        if (thumbnail != null) {
-            secret.addFile(context, thumbnail);
-            new File(thumbnail.getPath()).delete();
-        }
-        Util.alert(context,
-                getString(R.string.add_successful),
-                getString(R.string.add_successful_message),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        try {
-                            context.getContentResolver().delete(data.getData(), null, null); //Try to delete under content resolver
-                        } catch (Exception ignored) {
-                            //ignore cannot delete original file
-                        } finally {
-                            new File(data.getData().getPath()).delete(); //Try to delete original file.
-                        }
-                    }
-                },
-                Util.emptyClickListener
-        );
-        onCreate();
     }
 
     void decryptCurrentItem() {
@@ -396,7 +367,6 @@ public class FilesListFragment extends FileViewer {
     void paused() {
         //Do not end activity
     }
-
 
     void finish() {
         getActivity().finish();
