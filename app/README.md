@@ -10,6 +10,10 @@ I am starting this project since I have tried a number of Apps for secure file s
 I am aiming to produce an all-rounded one that maximizes security but still ensuring ease of use and quick encryption time.
 
 
+Getting started
+=============
+Please look at the README under each folder, starting with /src
+
 Support Forum
 =============
 http://forum.xda-developers.com/showthread.php?t=2704486
