@@ -17,13 +17,14 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy;
+package com.doplgangr.secrecy.Views;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 
+import com.doplgangr.secrecy.R;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 
 import java.util.ArrayList;

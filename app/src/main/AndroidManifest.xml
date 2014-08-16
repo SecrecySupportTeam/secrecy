@@ -56,7 +56,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ChooseFolder"
+            android:name=".Views.ChooseFolder"
             android:label="@string/title_activity_choose_folder" />
         <activity
             android:name=".Settings.SettingsActivity_"
