@@ -1,10 +1,10 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with context work for additional information
+ * regarding copyright ownership.  The ASF licenses context file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use context file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -20,21 +20,24 @@
 package com.doplgangr.secrecy.UpdateManager;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Environment;
-import android.view.View;
+import android.support.v4.app.Fragment;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.doplgangr.secrecy.FileSystem.storage;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.Views.VaultsListFragment;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
@@ -44,13 +47,13 @@ import java.io.IOException;
 
 /*
 Called whenever user installs/upgrades.
-This class is for handling the differences in vault versions.
+context class is for handling the differences in vault versions.
 The changes are hardcoded in the respective "transition actions"
 e.g. from version 4 to version 5
 The manager shows what it is doing and allows user to proceed when update is finished.
  */
-@EActivity(R.layout.activity_update_manager)
-public class UpdateManager extends Activity {
+@EFragment(R.layout.activity_update_manager)
+public class UpdateManager extends Fragment {
     //Console-like log view
     @ViewById(R.id.log)
     TextView log;
@@ -62,10 +65,11 @@ public class UpdateManager extends Activity {
     //Preference that stores last app version
     @Pref
     AppVersion_ version;
-
+    VaultsListFragment.OnFragmentFinishListener mFinishListener;
     //Current version
     private Integer versionnow;
     private String versionnow_name;
+    private Context context;
 
     private static java.io.File getRoot() {
         // Function for determining temp folder location in version1, only used in upgrading from v1 to v2
@@ -75,8 +79,19 @@ public class UpdateManager extends Activity {
         return tempDir;
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mFinishListener = (VaultsListFragment.OnFragmentFinishListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement Listener");
+        }
+    }
+
     @AfterViews
     void onCreate() {
+        context = getActivity();
         // Fills variables with appropriate version data
         getVersionInfo();
 
@@ -92,6 +107,9 @@ public class UpdateManager extends Activity {
 
         // Switches between different upgrades, based on last app version.
         switch (version.no().get()) {
+            case 9:
+                version9to10();
+                break;
             case 8:
                 version8to9();
                 break;
@@ -120,6 +138,12 @@ public class UpdateManager extends Activity {
     }
 
     @Background
+    void version9to10() {
+        //Nothing to upgrade
+        onFinishAllUpgrade();
+    }
+
+    @Background
     void version8to9() {
         // Changes filebase path to new format.
         if (Util.canWrite(storage.getRoot())) {
@@ -132,7 +156,7 @@ public class UpdateManager extends Activity {
                     + "/" + storage.getRoot().getAbsolutePath();
             storage.setRoot(newRoot);
         }
-        onFinishAllUpgrade();
+        version9to10();
     }
 
     @Background
@@ -147,7 +171,7 @@ public class UpdateManager extends Activity {
 
         if (!storage.getRoot().getName().equals("SECRECYFILES")) {
             log.append("\nUser have used v6 and moved vaults elsewhere");
-            Util.alert(this,
+            Util.alert(context,
                     "Upgrading from alpha 0.6 to 0.7",
                     "We detect that you have moved your vaults using version 0.6." +
                             " We discovered some bugs and we will try to fix, if any, problems associated" +
@@ -162,7 +186,7 @@ public class UpdateManager extends Activity {
                 FileUtils.deleteDirectory(getRoot());
             } catch (IOException E) {
                 E.printStackTrace();
-                Util.alert(this,
+                Util.alert(context,
                         "Error moving vaults",
                         "We encountered an error. Please contact developer for help (mkcyyin(at)gmail.com). Updating aborted.",
                         Util.emptyClickListener,
@@ -226,12 +250,13 @@ public class UpdateManager extends Activity {
         log.append(message);
     }
 
-    public void Continue(View view) {
+    @Click(R.id.continueButton)
+    public void Continue() {
         // When user presses the continue button, alert if app is still in beta.
 
         //Define 100 as initial beta code
         if (versionnow < 100)
-            Util.alert(this,
+            Util.alert(context,
                     getString(R.string.alpha_header),
                     getString(R.string.alpha_message),
                     new DialogInterface.OnClickListener() {
@@ -244,7 +269,7 @@ public class UpdateManager extends Activity {
             );
             //Define 200 as initial official release code
         else if (versionnow < 200)
-            Util.alert(this,
+            Util.alert(context,
                     getString(R.string.beta_title),
                     getString(R.string.beta_message),
                     new DialogInterface.OnClickListener() {
@@ -263,7 +288,8 @@ public class UpdateManager extends Activity {
         // get version info from the package manager
         PackageInfo pInfo;
         try {
-            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            pInfo = context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e) {
             Util.log("Cannot get package info, abort.");
             finish();
@@ -272,4 +298,9 @@ public class UpdateManager extends Activity {
         versionnow = pInfo.versionCode;
         versionnow_name = pInfo.versionName;
     }
+
+    void finish() {
+        mFinishListener.onFinish(this);
+    }
+
 }

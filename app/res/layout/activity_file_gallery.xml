@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/card_bg">
+
+    <TextView
+        android:id="@+id/tag"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/divider_height"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/margin_from_edge"
+        android:paddingRight="@dimen/margin_from_edge"
+        android:text="Gallery"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/text_secondary" />
+
+    <GridView
+        android:id="@+id/gridView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tag"
+        android:animateLayoutChanges="true"
+        android:choiceMode="multipleChoice"
+        android:columnWidth="120dp"
+        android:divider="@android:color/transparent"
+        android:drawSelectorOnTop="true"
+        android:horizontalSpacing="0dp"
+        android:layoutMode="clipBounds"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="0dp" />
+
+    <LinearLayout
+        android:id="@+id/nothing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/empty_list"
+            android:textColor="@color/primary"
+            android:textSize="24sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textView"
+            android:text="@string/hint_add_files"
+            android:textColor="@color/accent_light"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:indeterminate="true"
+        android:visibility="gone" />
+</RelativeLayout>

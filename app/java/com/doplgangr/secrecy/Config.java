@@ -27,11 +27,13 @@ public class Config {
     public static final String file_extra = "FILE";
     public static final String vault_extra = "VAULT";
     public static final String password_extra = "PASS";
+    public static final String gallery_item_extra = "GALLERYITEMIS";
     public static final String FIRST_TIME_EXTRA = "FIRSTTIME";
     public static final String tag = "Secrecy";
     public static final int wrong_password = 1;
     public static final int file_not_found = 2;
     public static final String settingsStore = "__SETTINGS__";
     public static final String root = "__ROOT__";
+    public static final String flurryKey = "HYKWRVV3NS99JXT968K7";
 
 }

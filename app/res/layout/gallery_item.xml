@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/frame"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:foreground="@color/transparent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/bg_card">
+
+        <RelativeLayout
+            android:id="@+id/dataLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.doplgangr.secrecy.Views.DummyViews.SquareImageView
+                android:id="@+id/thumbNail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="@color/transparent" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/DecryptLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:visibility="gone">
+
+
+            <TextView
+                android:id="@+id/decrypting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/decrypting"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/primary"
+                android:textSize="12sp" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/decrypting"
+                android:layout_centerHorizontal="true"
+                android:indeterminate="false" />
+
+        </RelativeLayout>
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/file_actions_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <TextView
+                    android:id="@+id/size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/file_discard"
+                android:layout_width="@dimen/list_item_single_line_height"
+                android:layout_height="@dimen/list_item_single_line_height"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_discard" />
+
+            <ImageView
+                android:id="@+id/file_save"
+                android:layout_width="@dimen/list_item_single_line_height"
+                android:layout_height="@dimen/list_item_single_line_height"
+                android:layout_alignBottom="@+id/file_discard"
+                android:layout_toLeftOf="@+id/file_discard"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_not_secure" />
+
+            <ImageView
+                android:id="@+id/file_share"
+                android:layout_width="@dimen/list_item_single_line_height"
+                android:layout_height="@dimen/list_item_single_line_height"
+                android:layout_alignBottom="@+id/file_save"
+                android:layout_toLeftOf="@+id/file_save"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_share" />
+
+            <ImageView
+                android:id="@+id/file_rename"
+                android:layout_width="@dimen/list_item_single_line_height"
+                android:layout_height="@dimen/list_item_single_line_height"
+                android:layout_alignTop="@+id/file_share"
+                android:layout_toLeftOf="@+id/file_share"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_edit" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</FrameLayout>

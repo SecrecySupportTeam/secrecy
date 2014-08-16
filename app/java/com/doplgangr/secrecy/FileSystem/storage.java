@@ -26,6 +26,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 
@@ -81,7 +82,12 @@ public class storage {
     }
 
     public static void deleteTemp() {
-        DeleteRecursive(getTempFolder());
+        DeleteRecursive(getTempFolder());                           //Delete temp files generated
+        DeleteRecursive(CustomApp.context.getCacheDir());           //Delete App cache
+        DeleteRecursive(CustomApp.context.getExternalCacheDir());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+            for (java.io.File externalCacheDir : CustomApp.context.getExternalCacheDirs())
+                DeleteRecursive(externalCacheDir);                      //Just to be sure
     }
 
     public static Uri saveThumbnail(Context context, Uri uri, String filename) {

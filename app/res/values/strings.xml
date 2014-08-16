@@ -4,6 +4,7 @@
     <string name="app_name">Secrecy</string>
     <string name="title_activity_settings">Settings</string>
     <string name="action_settings">Settings</string>
+    <string name="action_switch_interface">Switch Interface</string>
     <string name="title_activity_file_viewer">Open with Secrecy</string>
 
     <string-array name="donation_google_catalog_values">
@@ -17,28 +18,23 @@
     <string name="title_activity_choose_folder">Choose a Folder</string>
     <string name="chooser_title">Pick a File…</string>
     <string name="dismiss">DISMISS</string>
-    <string name="donate_description">
-<![CDATA[<h3>
-			Buy me a coffee!</h3>
-		<p>
-			By donating, you are:</p>
-			&#8226; Acknowledging my hardwork<br>
-			&#8226; Investing in the future of this software<br>
-			&#8226; Buying me coffee for college exam :)<br>
-			&#8226; Helping me buy expensive Medical reference books<br>
-		<p>
-			More importantly</p>
-	    <p>
-		<strong>By donating, you can enjoy many more advanced functions.</strong>
-		</p>
-]]>
-    </string>
+    <string name="donate_title">Buy me a coffee!</string>
+    <string name="donate_description">			By donating, you are:\n
+            \n
+			• Acknowledging my hardwork\n
+			• Investing in the future of this software\n
+			• Buying me coffee for college exam :)\n
+			• Helping me buy expensive Medical reference books\n
+            \n
+			More importantly…\n
+            \n
+		    By donating, you can enjoy many more advanced functions.</string>
     <string name="OK">OK</string>
     <string name="cancel">Cancel</string>
     <string name="import_files">Import Files to Secrecy</string>
     <string name="empty_list">There\'s nothing here!</string>
     <string name="hint_add_vault">Try creating a new vault</string>
-    <string name="next">continue</string>
+    <string name="next">CONTINUE</string>
     <string name="hint_add_files">Try adding files here</string>
     <string name="hint_vault_name">Vault Name</string>
     <string name="hint_password">Password</string>
@@ -48,5 +44,7 @@
     <string name="title_activity_launcher">LauncherActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_premium">PremiumActivity</string>
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="title_activity_files">FilesActivity</string>
 
 </resources>

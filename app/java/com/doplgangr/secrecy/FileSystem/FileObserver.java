@@ -123,7 +123,7 @@ public class FileObserver extends IntentService {
             if ((android.os.FileObserver.ACCESS & event) != 0) {
                 Util.log(absolutePath + "/" + path + " is accessed/read");
                 stopWatching();
-                kill();
+                kill(file, 0); //instant Kill
             }
             //data was written to a file
             //if ((FileObserver.MODIFY & event)!=0) {
@@ -170,25 +170,26 @@ public class FileObserver extends IntentService {
             //}
         }
 
-        void kill() {
-            for (int i = 0; i < 10; i++) {
-                Util.log(
-                        "Working... " + (i + 1) + "/5 @ "
-                                + SystemClock.elapsedRealtime()
-                );
+        void kill(final File file, final int seconds) {
+            for (int i = 0; i < seconds; i++) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
+                    //ignored
                 }
             }
             Util.log("Delete File @ " + SystemClock.elapsedRealtime());
             file.delete();
             fileObs.remove(this);
-            if (fileObs.size() == 0)
-                sendNotif(getString(R.string.all_temp_deleted), false);
-            else
-                sendNotif(String.format(getString(R.string.files_decrypted_notif), fileObs.size()), true);
+            if (fileObs != null)
+                if (fileObs.size() == 0)
+                    sendNotif(getString(R.string.all_temp_deleted), false);
+                else
+                    sendNotif(String.format(getString(R.string.files_decrypted_notif), fileObs.size()), true);
+
         }
 
     }
+
+
 }

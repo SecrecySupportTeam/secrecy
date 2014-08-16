@@ -26,61 +26,70 @@
     android:foreground="@color/transparent">
 
     <RelativeLayout
-        android:layout_width="@dimen/grid_size"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_card">
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_two_line_height"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/margin_from_edge"
+        android:paddingRight="@dimen/margin_from_edge">
 
-        <TextView
-            android:id="@+id/name"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:background="@color/card_sudopic"
-            android:ellipsize="end"
-            android:lines="3"
-            android:padding="8dp"
-            android:textColor="@color/card_sudopictitle"
-            android:textSize="18sp"
-            android:textStyle="italic" />
-
-
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <RelativeLayout
             android:id="@+id/dataLayout"
-            android:layout_width="@dimen/grid_size"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/name"
-            android:layout_below="@+id/name"
-            android:padding="8dp">
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
 
 
-            <TextView
-                android:id="@+id/type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/App_color"
-                android:textSize="12sp" />
-
-            <TextView
-                android:id="@+id/size"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <RelativeLayout
+                android:layout_width="@dimen/list_item_avatar_size"
+                android:layout_height="@dimen/list_item_avatar_size"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@id/type"
-                android:gravity="center_vertical"
-                android:textColor="@color/App_color"
-                android:textSize="12sp" />
+                android:layout_centerInParent="true"
+                android:background="@drawable/circle"
+                android:gravity="center">
 
+                <com.doplgangr.secrecy.Views.DummyViews.CircularImageView
+                    android:id="@+id/thumbNail"
+                    android:layout_width="@dimen/list_item_avatar_size"
+                    android:layout_height="@dimen/list_item_avatar_size"
+                    android:layout_centerInParent="true" />
+
+            </RelativeLayout>
+
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/list_item_text_from_margin"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="middle"
+                    android:singleLine="true"
+                    android:text="Introduction into Secrecy"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="pdf"
+                    android:textAllCaps="true"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textSize="14sp" />
+            </LinearLayout>
 
         </RelativeLayout>
 
+
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/DecryptLayout"
-            android:layout_width="@dimen/grid_size"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/name"
-            android:layout_below="@+id/name"
             android:padding="8dp"
             android:visibility="gone">
 
@@ -91,7 +100,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/decrypting"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/App_color"
+                android:textColor="@color/primary"
                 android:textSize="12sp" />
 
             <ProgressBar
@@ -105,15 +114,69 @@
 
         </RelativeLayout>
 
-        <ImageView
-            android:id="@+id/thumbNail"
-            android:layout_width="wrap_content"
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/file_actions_layout"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/name"
-            android:layout_alignLeft="@+id/name"
-            android:layout_alignRight="@+id/name"
-            android:layout_alignTop="@+id/name"
-            android:scaleType="centerCrop" />
+            android:padding="8dp"
+            android:visibility="gone">
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <TextView
+                    android:id="@+id/size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/file_discard"
+                android:layout_width="@dimen/list_item_single_line_height"
+                android:layout_height="@dimen/list_item_single_line_height"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_discard" />
+
+            <ImageView
+                android:id="@+id/file_save"
+                android:layout_width="@dimen/list_item_single_line_height"
+                android:layout_height="@dimen/list_item_single_line_height"
+                android:layout_alignBottom="@+id/file_discard"
+                android:layout_toLeftOf="@+id/file_discard"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_not_secure" />
+
+            <ImageView
+                android:id="@+id/file_share"
+                android:layout_width="@dimen/list_item_single_line_height"
+                android:layout_height="@dimen/list_item_single_line_height"
+                android:layout_alignBottom="@+id/file_save"
+                android:layout_toLeftOf="@+id/file_save"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_share" />
+
+            <ImageView
+                android:id="@+id/file_rename"
+                android:layout_width="@dimen/list_item_single_line_height"
+                android:layout_height="@dimen/list_item_single_line_height"
+                android:layout_alignTop="@+id/file_share"
+                android:layout_toLeftOf="@+id/file_share"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_edit" />
+        </RelativeLayout>
     </RelativeLayout>
+
 </FrameLayout>

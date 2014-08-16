@@ -24,6 +24,8 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
+import com.doplgangr.secrecy.FileSystem.storage;
+
 import org.androidannotations.annotations.EApplication;
 
 /**
@@ -46,6 +48,7 @@ public class CustomApp extends Application {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+        storage.deleteTemp(); //Start clean every time!!
     }
 
 }

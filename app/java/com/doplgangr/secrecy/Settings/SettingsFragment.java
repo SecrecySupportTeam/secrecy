@@ -26,6 +26,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.preference.PreferenceFragment;
@@ -121,6 +122,18 @@ public class SettingsFragment extends PreferenceFragment
                         startActivityForResult(intent, REQUEST_CODE);
                     }
                 });
+                return true;
+            }
+        });
+        CheckBoxPreference analytics = (CheckBoxPreference) findPreference("analytics");
+        analytics.setChecked(Prefs.analytics().get());
+        analytics.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                Prefs.edit()
+                        .analytics()
+                        .put((Boolean) o)
+                        .apply();
                 return true;
             }
         });

@@ -26,7 +26,6 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.doplgangr.secrecy.Config;
-import com.doplgangr.secrecy.Util;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -62,10 +61,11 @@ public class Vault {
         initialize();
     }
 
-    public Vault(String name, String secret, Boolean temp) {
+    public Vault(String name, String secret, Boolean istemp) {
         this.key = secret;
         this.name = name;
         path = storage.getRoot().getAbsolutePath() + "/" + name;
+        //do not initialize now coz this is temp
     }
 
     public String getName() {
@@ -74,7 +74,7 @@ public class Vault {
 
     public void initialize() {
         java.io.File folder = new java.io.File(path);
-        String regex = "^((?!_thumb|.nomedia).)*$";
+        String regex = "^((?!_thumb|.nomedia).)*$";            //Filter out .nomedia and thumbnails
         final Pattern p = Pattern.compile(regex);
         List<java.io.File> absFiles = Arrays.asList(
                 folder.listFiles(
@@ -82,7 +82,6 @@ public class Vault {
                             @Override
                             public boolean accept(java.io.File file) {
                                 p.matcher(file.getName()).matches();
-                                Util.log(p.matcher(file.getName()).matches());
                                 return p.matcher(file.getName()).matches();
                             }
                         }

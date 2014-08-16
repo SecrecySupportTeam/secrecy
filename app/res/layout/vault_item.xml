@@ -25,59 +25,150 @@
     android:layout_height="wrap_content"
     android:foreground="@color/transparent">
 
-    <RelativeLayout
-        android:layout_width="@dimen/grid_size"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_card">
-
-        <TextView
-            android:id="@+id/icon"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:background="@color/card_sudopic"
-            android:ellipsize="end"
-            android:lines="3"
-            android:padding="8dp"
-            android:textColor="@color/card_sudopictitle"
-            android:textSize="18sp"
-            android:textStyle="italic" />
+    <ViewAnimator
+        android:id="@+id/viewAnimator"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_single_line_height"
+        android:background="@drawable/list_selector"
+        android:paddingLeft="@dimen/margin_from_edge"
+        android:paddingRight="@dimen/margin_from_edge">
 
 
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/dataLayout"
-            android:layout_width="@dimen/grid_size"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/icon"
-            android:layout_below="@+id/icon"
-            android:gravity="center_horizontal"
-            android:padding="8dp">
+        <RelativeLayout
+            android:id="@+id/vault_name_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal">
 
+            <RelativeLayout
+                android:layout_width="@dimen/list_item_avatar_size"
+                android:layout_height="@dimen/list_item_avatar_size"
+                android:layout_alignParentLeft="true"
+                android:layout_centerInParent="true"
+                android:background="@drawable/circle"
+                android:gravity="center">
 
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="wrap_content"
+                <ImageView
+                    android:id="@+id/thumbNail"
+                    android:layout_width="@dimen/icon_size"
+                    android:layout_height="@dimen/icon_size"
+                    android:layout_centerInParent="true"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_vault"
+                    android:tint="@color/white" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/App_color"
-                android:textSize="18sp" />
+                android:layout_alignParentTop="false"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/list_item_text_from_margin"
+                android:orientation="vertical">
 
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="middle"
+                    android:singleLine="true"
+                    android:text="Introduction into Secrecy"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/vault_decrypt_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal">
+
+            <EditText
+                android:id="@+id/open_password"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="8dp"
+                android:layout_toLeftOf="@+id/open_ok"
+                android:hint="Password"
+                android:inputType="textPassword" />
+
+            <ImageButton
+                android:id="@+id/open_ok"
+                android:layout_width="@dimen/list_item_single_line_height"
+                android:layout_height="@dimen/list_item_single_line_height"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/open_cancel"
+                android:background="@drawable/list_selector"
+                android:clickable="true"
+                android:longClickable="true"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_accept"
+                android:tint="@color/accent_dark" />
+
+            <ImageButton
+                android:id="@+id/open_cancel"
+                android:layout_width="@dimen/list_item_single_line_height"
+                android:layout_height="@dimen/list_item_single_line_height"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/list_selector"
+                android:clickable="true"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_cancel" />
 
         </RelativeLayout>
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/dataLayout"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:scaleType="fitCenter"
-            android:src="@drawable/collection" />
+        <RelativeLayout
+            android:id="@+id/vault_delete_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal">
 
-    </RelativeLayout>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:gravity="center_vertical"
+                android:padding="8dp"
+                android:text="Confirm delete?"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/accent" />
+
+            <ImageButton
+                android:id="@+id/delete_ok"
+                android:layout_width="@dimen/list_item_single_line_height"
+                android:layout_height="@dimen/list_item_single_line_height"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/delete_cancel"
+                android:background="@drawable/list_selector"
+                android:clickable="true"
+                android:longClickable="true"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_accept"
+                android:tint="@color/accent_dark" />
+
+            <ImageButton
+                android:id="@+id/delete_cancel"
+                android:layout_width="@dimen/list_item_single_line_height"
+                android:layout_height="@dimen/list_item_single_line_height"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/list_selector"
+                android:clickable="true"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_cancel" />
+
+        </RelativeLayout>
+
+    </ViewAnimator>
+
+
 </FrameLayout>

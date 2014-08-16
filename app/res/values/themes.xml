@@ -3,16 +3,24 @@
     <!-- the theme applied to the application or activity -->
     <style name="CustomActionBarTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
         <item name="android:actionBarStyle">@style/MyActionBar</item>
-        <item name="App_color">@color/App_color</item>
+        <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
+        <item name="App_color">@color/primary</item>
         <!-- Support library compatibility -->
         <item name="actionBarStyle">@style/MyActionBar</item>
+        <item name="actionOverflowButtonStyle">@style/OverFlow</item>
     </style>
 
     <!-- ActionBar styles -->
     <style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@color/App_color</item>
+        <item name="android:background">@color/primary</item>
 
         <!-- Support library compatibility -->
-        <item name="background">@color/App_color</item>
+        <item name="background">@color/primary</item>
+        <item name="android:icon">@android:color/transparent</item>
+        <!-- This does the magic! -->
+    </style>
+
+    <style name="OverFlow" parent="@style/Widget.AppCompat.Base.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_overflow</item>
     </style>
 </resources>

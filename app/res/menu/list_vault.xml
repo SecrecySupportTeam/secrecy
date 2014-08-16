@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.doplgangr.secrecy.Views.ListVaultActivity">
+    tools:context="com.doplgangr.secrecy.Views.VaultsListFragment">
 
     <item
         android:id="@+id/action_add_vault"
@@ -9,14 +9,4 @@
         android:orderInCategory="1"
         android:title="@string/action_add_vault"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="99"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_donate"
-        android:orderInCategory="100"
-        android:title="@string/action_donate"
-        app:showAsAction="never" />
 </menu>

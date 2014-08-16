@@ -19,47 +19,61 @@
 
 package com.doplgangr.secrecy.Views;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.support.v4.content.IntentCompat;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.TextView;
 
+import com.doplgangr.secrecy.Config;
+import com.doplgangr.secrecy.FileSystem.storage;
+import com.doplgangr.secrecy.Premium.PremiumActivity_;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.Prefs_;
+import com.doplgangr.secrecy.Settings.SettingsActivity_;
 import com.doplgangr.secrecy.UpdateManager.AppVersion_;
 import com.doplgangr.secrecy.UpdateManager.UpdateManager_;
 import com.doplgangr.secrecy.Util;
+import com.flurry.android.FlurryAgent;
 
-import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
-@EActivity
-public class MainActivity extends Activity {
+@EActivity(R.layout.activity_main)
+@OptionsMenu(R.menu.main)
+public class MainActivity
+        extends ActionBarActivity
+        implements
+        VaultsListFragment.OnVaultSelectedListener,
+        VaultsListFragment.OnFragmentFinishListener {
     private final Context context = this;
     @Pref
     AppVersion_ version;
     @Pref
     Prefs_ Prefs;
+    FragmentManager fragmentManager;
     private Integer versionnow;
     private String versionnow_name;
 
-    @AfterInject
+    @AfterViews
     public void onCreate() {
+        fragmentManager = getSupportFragmentManager();
         if (Prefs.stealthMode().get() == -1) {
             //if this is the first time, display a dialog to inform successful trial
             onFirstLaunch();
             return;
         }
-        Intent mainIntent = new Intent(this, ListVaultActivity_.class);
-        mainIntent.addFlags(IntentCompat.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(mainIntent);
         PackageInfo pInfo;
         try {
             pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -71,11 +85,9 @@ public class MainActivity extends Activity {
             versionnow = pInfo.versionCode;
             versionnow_name = pInfo.versionName;
             if (versionnow != version.no().get()) {
-                Intent intent = new Intent(this, UpdateManager_.class);
-                startActivity(intent);
+                addFragment(new UpdateManager_(), R.anim.slide_in_right, R.anim.fadeout);
             }
         }
-        finish();
     }
 
     void onFirstLaunch() {
@@ -98,5 +110,66 @@ public class MainActivity extends Activity {
                         }
                 )
                 .show();
+    }
+
+    @Override
+    public void onVaultSelected(String vault, String password) {
+        Intent intent = new Intent(this, FilesActivity_.class);
+        intent.putExtra(Config.vault_extra, vault);
+        intent.putExtra(Config.password_extra, password);
+        startActivity(intent);
+    }
+
+    void addFragment(final Fragment fragment, int transition1, int transition2) {
+        String tag = fragment.getClass().getName();
+        fragmentManager.beginTransaction()
+                .setCustomAnimations(transition1, transition2)
+                .replace(android.R.id.content, fragment, tag)
+                .addToBackStack(tag)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .commit();
+    }
+
+    @OptionsItem(R.id.action_settings)
+    void settings() {
+        startActivity(new Intent(context, SettingsActivity_.class));
+    }
+
+    @OptionsItem(R.id.action_donate)
+    void donate() {
+        startActivity(new Intent(context, PremiumActivity_.class));
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (Prefs.analytics().get())
+            FlurryAgent.onStartSession(context, Config.flurryKey);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (Prefs.analytics().get())
+            FlurryAgent.onEndSession(context);
+    }
+
+    @Override
+    public void onFinish(Fragment fragment) {
+        fragmentManager.beginTransaction()
+                .remove(fragment)
+                .commit();
+    }
+
+    @Override
+    public void onNew(Bundle bundle, Fragment fragment) {
+        fragment.setArguments(bundle);
+        addFragment(fragment, R.anim.slide_in_right, R.anim.fadeout);
+    }
+
+    @Override
+    public void onDestroy() {
+        storage.deleteTemp(); //Cleanup every time
+        super.onDestroy();
     }
 }

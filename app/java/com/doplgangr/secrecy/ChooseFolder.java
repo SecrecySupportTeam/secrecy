@@ -22,7 +22,6 @@ package com.doplgangr.secrecy;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import com.ipaulpro.afilechooser.FileChooserActivity;
@@ -49,15 +48,6 @@ public class ChooseFolder extends ActionBarActivity {
                 INCLUDE_EXTENSIONS_LIST);
         intent.putExtra(FileChooserActivity.EXTRA_SELECT_FOLDER, true);
         startActivityForResult(intent, REQUEST_CODE);
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.choose_folder, menu);
-        return true;
     }
 
     @Override

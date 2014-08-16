@@ -1,10 +1,10 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with context work for additional information
+ * regarding copyright ownership.  The ASF licenses context file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use context file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -19,13 +19,13 @@
 
 package com.doplgangr.secrecy.Views;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.text.InputType;
 import android.webkit.MimeTypeMap;
@@ -44,35 +44,36 @@ import com.doplgangr.secrecy.FileSystem.storage;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 
-import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@EActivity(R.layout.activity_file_viewer)
-public class FileViewer extends ActionBarActivity {
+@EFragment(R.layout.activity_file_viewer)
+public class FileViewer extends Fragment {
 
 
-    final Activity context = this;
+    ActionBarActivity context;
 
 
-    @AfterInject
+    @AfterViews
     void onCreate() {
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setSubtitle(storage.getRoot().getAbsolutePath());
-        final EditText input = new EditText(this);
+        context = (ActionBarActivity) getActivity();
+        if (context.getSupportActionBar() != null)
+            context.getSupportActionBar().setSubtitle(storage.getRoot().getAbsolutePath());
+        final EditText input = new EditText(context);
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(context)
                 .setTitle(getString(R.string.open_file))
                 .setMessage(getString(R.string.open_file_message))
                 .setView(input)
                 .setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String password = input.getText().toString();
-                        Uri file = getIntent().getData();
+                        Uri file = context.getIntent().getData();
                         decrypt(new File(new java.io.File(file.getPath()), password), null, null);
                     }
                 }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -81,6 +82,7 @@ public class FileViewer extends ActionBarActivity {
             }
         }).show();
     }
+
 
     @Background
     void decrypt(File file, final ProgressBar pBar, final EmptyListener onFinish) {
@@ -116,9 +118,11 @@ public class FileViewer extends ActionBarActivity {
             //Intent chooserIntent = Intent.createChooser(newIntent,
             // getString(R.string.view_file_dialog));
             afterDecrypt(newIntent, altIntent);
-            Intent i = new Intent(context, FileObserver.class);
-            i.putExtra(Config.file_extra, tempFile.getAbsolutePath());
-            context.startService(i);
+            //startFileOb
+
+            Intent mServiceIntent = new Intent(context, FileObserver.class);
+            mServiceIntent.putExtra(Config.file_extra, tempFile.getAbsolutePath());
+            context.startService(mServiceIntent);
         }
 
     }
@@ -161,7 +165,6 @@ public class FileViewer extends ActionBarActivity {
 
     @UiThread
     void afterDecrypt(Intent newIntent, Intent altIntent) {
-        //startFileOb
         try {
             startActivity(newIntent);
             paused();
@@ -170,7 +173,7 @@ public class FileViewer extends ActionBarActivity {
                 startActivity(altIntent);
                 paused();
             } catch (android.content.ActivityNotFoundException e2) {
-                Util.toast(this, getString(R.string.error_no_activity_view), Toast.LENGTH_LONG);
+                Util.toast(context, getString(R.string.error_no_activity_view), Toast.LENGTH_LONG);
             }
         }
     }
@@ -182,7 +185,7 @@ public class FileViewer extends ActionBarActivity {
                 paused();
             }
         };
-        Util.alert(this, getString(R.string.error_decrypt_dialog), message, click, null);
+        Util.alert(context, getString(R.string.error_decrypt_dialog), message, click, null);
     }
 
     @UiThread
@@ -202,8 +205,8 @@ public class FileViewer extends ActionBarActivity {
 
     @Override
     public void onDestroy() {
-        Intent i = new Intent(context, FileObserver.class);
-        context.stopService(i);
+        Intent intent = new Intent(context, FileObserver.class);
+        context.stopService(intent);
         super.onDestroy();
     }
 }

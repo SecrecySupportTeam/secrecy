@@ -56,8 +56,8 @@ public class File {
     private Date Timestamp;
     private String FileType;
     private java.io.File file;
-    private File thumbnailFile;
-    private Bitmap thumb;
+    private java.io.File thumbnailRealFile;
+    private Bitmap thumb = null;
     private Boolean invalidFile = false;
     private String key;
 
@@ -69,32 +69,7 @@ public class File {
             this.key = secret;
             String path = file.getParent();
             this.size = humanReadableByteCount(file.length());
-            thumbnailFile = new File(new java.io.File(path + "/_thumb" + file.getName()),
-                    secret);
-            if (!thumbnailFile.invalidFile) {
-                java.io.File tempThumb = thumbnailFile.readFile(new CryptStateListener() {
-                    @Override
-                    public void updateProgress(int progress) {
-                    }
-
-                    @Override
-                    public void setMax(int max) {
-                    }
-
-                    @Override
-                    public void onFailed(int statCode) {
-
-                    }
-
-                    @Override
-                    public void Finished() {
-
-                    }
-                });
-                this.thumb = storage.getThumbnail(tempThumb);
-                if (tempThumb != null)
-                    tempThumb.delete();
-            }
+            thumbnailRealFile = new java.io.File(path + "/_thumb" + file.getName());
             Timestamp = new Date(file.lastModified());
         } else {
             invalidFile = true;
@@ -118,7 +93,37 @@ public class File {
     }
 
     public Bitmap getThumb() {
+        File thumbnailFile = new File(thumbnailRealFile, key);
+        if ((!thumbnailFile.invalidFile) && (thumb == null)) {
+            java.io.File tempThumb = thumbnailFile.readFile(new CryptStateListener() {
+                @Override
+                public void updateProgress(int progress) {
+                }
+
+                @Override
+                public void setMax(int max) {
+                }
+
+                @Override
+                public void onFailed(int statCode) {
+
+                }
+
+                @Override
+                public void Finished() {
+
+                }
+            });
+            this.thumb = storage.getThumbnail(tempThumb);
+            if (tempThumb != null)
+                tempThumb.delete();
+        }
         return thumb;
+    }
+
+    public boolean hasThumbnail() {
+        File thumbnailFile = new File(thumbnailRealFile, key);
+        return (!thumbnailFile.invalidFile);
     }
 
     public String getType() {
@@ -184,6 +189,7 @@ public class File {
 
     public void delete() {
         file.delete();
+        File thumbnailFile = new File(thumbnailRealFile, key);
         if (!thumbnailFile.invalidFile)
             thumbnailFile.delete();
     }

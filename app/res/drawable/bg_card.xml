@@ -5,9 +5,7 @@
             android:dither="true"
             android:shape="rectangle">
 
-            <corners android:radius="2dp" />
-
-            <solid android:color="#ccc" />
+            <solid android:color="@color/card_edge" />
 
         </shape>
     </item>
@@ -17,9 +15,7 @@
             android:dither="true"
             android:shape="rectangle">
 
-            <corners android:radius="2dp" />
-
-            <solid android:color="@android:color/white" />
+            <solid android:color="@color/card_bg" />
         </shape>
     </item>
 </layer-list>

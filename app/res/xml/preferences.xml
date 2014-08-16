@@ -23,6 +23,15 @@
             android:title="@string/move_all_vaults_title" />
 
     </PreferenceCategory>
+    <PreferenceCategory
+        android:key="misc"
+        android:title="@string/misc_title">
+
+        <CheckBoxPreference
+            android:key="analytics"
+            android:summary="@string/misc_analytics_message"
+            android:title="@string/misc_analytics_title" />
+    </PreferenceCategory>
 
     <PreferenceCategory
         android:key="about"

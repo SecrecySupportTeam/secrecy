@@ -19,6 +19,7 @@
 
 package com.doplgangr.secrecy.Settings;
 
+import org.androidannotations.annotations.sharedpreferences.DefaultBoolean;
 import org.androidannotations.annotations.sharedpreferences.SharedPref;
 
 /**
@@ -29,5 +30,11 @@ public interface Prefs {
     String OpenPIN();
 
     int stealthMode();
+
+    @DefaultBoolean(true)
+    boolean analytics();
+
+    @DefaultBoolean(true)
+    boolean showVaultSwipeDeleteTutorial();
 
 }
