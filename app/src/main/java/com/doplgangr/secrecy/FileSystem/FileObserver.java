@@ -70,7 +70,7 @@ public class FileObserver extends IntentService {
         intent.putExtra(Config.file_extra, msg);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
-                this).setSmallIcon(R.drawable.ic_launcher)
+                this).setSmallIcon(R.drawable.ic_stat_alert)
                 .setContentTitle(getString(R.string.app_name))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
                 .setOngoing(ongoing)
