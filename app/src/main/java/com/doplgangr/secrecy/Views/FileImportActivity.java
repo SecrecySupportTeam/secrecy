@@ -101,7 +101,8 @@ public class FileImportActivity extends ActionBarActivity
         }
         try {
             this.getContentResolver().delete(data, null, null); //Try to delete under content resolver
-        } catch (Exception E) {
+        } catch (Exception ignored) {
+            //Ignore fail to delete original file
         } finally {
             new File(data.getPath()).delete(); //Try to delete original file.
         }

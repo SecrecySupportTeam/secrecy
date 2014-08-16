@@ -67,25 +67,16 @@ class AES_Encryptor {
 
     public Cipher encryptstream() throws Exception {
 
-        try {
-            Cipher c = Cipher.getInstance(mode);
-            c.init(Cipher.ENCRYPT_MODE, aesKey);
-            return c;
-        } catch (Exception ex) {
-            throw ex;
-        }
+        Cipher c = Cipher.getInstance(mode);
+        c.init(Cipher.ENCRYPT_MODE, aesKey);
+        return c;
     }
 
     public Cipher decryptstream() throws Exception {
 
-        try {
-            Cipher c = Cipher.getInstance(mode);
-            c.init(Cipher.DECRYPT_MODE, aesKey);
-
-            return c;
-        } catch (Exception ex) {
-            throw ex;
-        }
+        Cipher c = Cipher.getInstance(mode);
+        c.init(Cipher.DECRYPT_MODE, aesKey);
+        return c;
     }
 
 

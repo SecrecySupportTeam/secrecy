@@ -325,7 +325,8 @@ public class FilesGalleryFragment extends FileViewer {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         try {
                             context.getContentResolver().delete(data.getData(), null, null); //Try to delete under content resolver
-                        } catch (Exception E) {
+                        } catch (Exception ignored) {
+                            //ignore cannot delete original file
                         } finally {
                             new File(data.getData().getPath()).delete(); //Try to delete original file.
                         }
