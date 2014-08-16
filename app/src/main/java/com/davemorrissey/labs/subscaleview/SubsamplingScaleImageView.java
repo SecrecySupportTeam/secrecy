@@ -1726,7 +1726,8 @@ public class SubsamplingScaleImageView extends View {
         private PointF vFocusEnd; // Where the view focal point should be moved to during the anim
         private long duration = 500; // How long the anim takes
         private boolean interruptible = true; // Whether the anim can be interrupted by a touch
-        private long time = System.currentTimeMillis(); // Start time        private int easing = EASE_IN_OUT_QUAD; // Easing style
+        private long time = System.currentTimeMillis(); // Start time
+        private int easing = EASE_IN_OUT_QUAD; // Easing style
 
 
     }

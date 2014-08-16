@@ -39,5 +39,6 @@ dependencies {
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.github.machinarius:preferencefragment:0.1.2'
     compile project(':aFileChooser')
+    compile project(':android-support-v4-preferencefragment')
     compile project(':payme')
 }
