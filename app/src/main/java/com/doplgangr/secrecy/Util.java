@@ -36,9 +36,6 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 
-/**
- * Created by Matthew on 4/4/2014.
- */
 public class Util {
     public static final DialogInterface.OnClickListener emptyClickListener = new DialogInterface.OnClickListener() {
         @Override

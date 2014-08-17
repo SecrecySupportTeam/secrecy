@@ -19,9 +19,6 @@
 
 package com.doplgangr.secrecy;
 
-/**
- * Created by Matthew on 3/29/2014.
- */
 public class Config {
     public static final int bufferSize = 2097152;
     public static final String file_extra = "FILE";

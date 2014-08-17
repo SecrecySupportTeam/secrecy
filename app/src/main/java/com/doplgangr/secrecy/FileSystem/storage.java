@@ -37,9 +37,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * Created by Matthew on 3/27/2014.
- */
 public class storage {
 
     public static void DeleteRecursive(java.io.File fileOrDirectory) {

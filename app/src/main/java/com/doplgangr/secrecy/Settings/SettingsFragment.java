@@ -58,9 +58,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
-/**
- * Created by Matthew on 2/23/14.
- */
 @EFragment
 public class SettingsFragment extends PreferenceFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {

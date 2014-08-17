@@ -23,9 +23,6 @@ import org.androidannotations.annotations.UiThread;
 import java.io.File;
 import java.util.ArrayList;
 
-/**
- * Created by matthew on 8/9/14.
- */
 @EActivity(R.layout.activity_main)
 public class FileImportActivity extends ActionBarActivity
         implements

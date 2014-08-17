@@ -22,9 +22,6 @@ package com.doplgangr.secrecy.Settings;
 import org.androidannotations.annotations.sharedpreferences.DefaultBoolean;
 import org.androidannotations.annotations.sharedpreferences.SharedPref;
 
-/**
- * Created by Matthew on 4/23/2014.
- */
 @SharedPref(value = SharedPref.Scope.UNIQUE)
 public interface Prefs {
     String OpenPIN();

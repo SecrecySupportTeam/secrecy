@@ -28,9 +28,6 @@ import com.doplgangr.secrecy.FileSystem.storage;
 
 import org.androidannotations.annotations.EApplication;
 
-/**
- * Created by Matthew on 4/5/2014.
- */
 @EApplication
 public class CustomApp extends Application {
     public static Context context;

@@ -13,11 +13,6 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-/**
- * Created by matthew on 7/22/14.
- */
-
-
 public class CircularImageView extends ImageView {
 
     public CircularImageView(Context context) {

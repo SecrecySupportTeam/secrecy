@@ -143,7 +143,7 @@ public class SubsamplingScaleImageView extends View {
     private static final List<Integer> VALID_SCALE_TYPES = Arrays.asList(SCALE_TYPE_CENTER_CROP, SCALE_TYPE_CENTER_INSIDE);
     private static final String TAG = SubsamplingScaleImageView.class.getSimpleName();
     private static final int MESSAGE_LONG_CLICK = 1;
-    private static onFileFinishCalled mListener;
+    private onFileFinishCalled mListener;
     private final Object decoderLock = new Object();
     // Overlay tile boundaries and other info
     private boolean debug = false;

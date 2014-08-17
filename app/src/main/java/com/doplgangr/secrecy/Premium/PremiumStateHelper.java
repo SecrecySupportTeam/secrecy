@@ -11,9 +11,6 @@ import com.github.jberkel.pay.me.listener.QueryInventoryFinishedListener;
 import com.github.jberkel.pay.me.model.Inventory;
 import com.github.jberkel.pay.me.model.Purchase;
 
-/**
- * Created by Matthew on 4/29/2014.
- */
 public class PremiumStateHelper {
     // (arbitrary) request code for the purchase flow
     static final int RC_REQUEST = 19283;

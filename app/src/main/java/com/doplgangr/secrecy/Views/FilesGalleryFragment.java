@@ -276,7 +276,7 @@ public class FilesGalleryFragment extends FileViewer {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == context.RESULT_OK && requestCode == REQUEST_CODE) {
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
             Log.d("intent received", data.getData().toString() + " " + data.getData().getLastPathSegment());
             addFilepBar.setVisibility(View.VISIBLE);
             addFile(secret, data);

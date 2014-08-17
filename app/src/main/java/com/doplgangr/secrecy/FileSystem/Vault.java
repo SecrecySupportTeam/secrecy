@@ -44,9 +44,6 @@ import java.util.regex.Pattern;
 
 import javax.crypto.CipherOutputStream;
 
-/**
- * Created by Matthew on 3/22/2014.
- */
 public class Vault {
     public final ArrayList<File> files = new ArrayList<File>();
     private final String name;

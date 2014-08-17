@@ -19,9 +19,6 @@
 
 package com.doplgangr.secrecy.FileSystem;
 
-/**
- * Created by Matthew on 3/29/2014.
- */
 public interface CryptStateListener {
     void updateProgress(int progress);
 
