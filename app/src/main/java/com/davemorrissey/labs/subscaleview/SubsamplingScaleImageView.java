@@ -143,7 +143,7 @@ public class SubsamplingScaleImageView extends View {
     private static final List<Integer> VALID_SCALE_TYPES = Arrays.asList(SCALE_TYPE_CENTER_CROP, SCALE_TYPE_CENTER_INSIDE);
     private static final String TAG = SubsamplingScaleImageView.class.getSimpleName();
     private static final int MESSAGE_LONG_CLICK = 1;
-    private onFileFinishCalled mListener;
+    private static onFileFinishCalled mListener;
     private final Object decoderLock = new Object();
     // Overlay tile boundaries and other info
     private boolean debug = false;
@@ -235,7 +235,7 @@ public class SubsamplingScaleImageView extends View {
 
     public SubsamplingScaleImageView(Context context, AttributeSet attr, onFileFinishCalled mListener) {
         this(context, null);
-        this.mListener = mListener;
+        SubsamplingScaleImageView.mListener = mListener;
     }
 
     /**

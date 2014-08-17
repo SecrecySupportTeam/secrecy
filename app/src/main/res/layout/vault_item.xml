@@ -44,6 +44,7 @@
                 android:layout_width="@dimen/list_item_avatar_size"
                 android:layout_height="@dimen/list_item_avatar_size"
                 android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
                 android:background="@drawable/circle"
                 android:gravity="center">
@@ -65,6 +66,7 @@
                 android:layout_alignParentTop="false"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/list_item_text_from_margin"
+                android:layout_marginStart="@dimen/list_item_text_from_margin"
                 android:orientation="vertical">
 
                 <TextView
@@ -73,7 +75,6 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="middle"
                     android:singleLine="true"
-                    android:text="Introduction into Secrecy"
                     android:textSize="16sp" />
 
             </LinearLayout>
@@ -90,10 +91,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_margin="8dp"
                 android:layout_toLeftOf="@+id/open_ok"
-                android:hint="Password"
+                android:layout_toStartOf="@+id/open_ok"
+                android:hint="@string/Decrypt__password"
                 android:inputType="textPassword" />
 
             <ImageButton
@@ -102,6 +105,7 @@
                 android:layout_height="@dimen/list_item_single_line_height"
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/open_cancel"
+                android:layout_toStartOf="@+id/open_cancel"
                 android:background="@drawable/list_selector"
                 android:clickable="true"
                 android:longClickable="true"
@@ -137,7 +141,7 @@
                 android:layout_alignParentTop="true"
                 android:gravity="center_vertical"
                 android:padding="8dp"
-                android:text="Confirm delete?"
+                android:text="@string/Decrypt__confirm_delete"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/accent" />
 
@@ -147,6 +151,7 @@
                 android:layout_height="@dimen/list_item_single_line_height"
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/delete_cancel"
+                android:layout_toStartOf="@+id/delete_cancel"
                 android:background="@drawable/list_selector"
                 android:clickable="true"
                 android:longClickable="true"

@@ -46,5 +46,12 @@
     <string name="title_activity_premium">PremiumActivity</string>
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="title_activity_files">FilesActivity</string>
+    <string name="page_header_gallery">Gallery</string>
+    <string name="page_header_files">Files</string>
+    <string name="page_header_vaults">Vaults</string>
+    <string name="Updater__log_firstline">Update Manager is Starting...\n</string>
+    <string name="Tutorial__swipe_to_delete">Swipe to delete any vault. Try me!</string>
+    <string name="Decrypt__password">Password</string>
+    <string name="Decrypt__confirm_delete">Confirm delete?</string>
 
 </resources>

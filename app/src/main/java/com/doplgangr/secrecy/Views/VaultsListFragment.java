@@ -174,7 +174,7 @@ public class VaultsListFragment extends Fragment {
                 .setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String name = ((EditText) dialogView.findViewById(R.id.newName)).getText().toString();
-                        String password = ((EditText) dialogView.findViewById(R.id.password)).getText().toString();
+                        String password = ((EditText) dialogView.findViewById(R.id.stealth_keycode)).getText().toString();
                         String Confirmpassword = ((EditText) dialogView.findViewById(R.id.confirmPassword)).getText().toString();
                         File directory = new File(storage.getRoot().getAbsolutePath() + "/" + name);
                         if (!password.equals(Confirmpassword) || "".equals(password))

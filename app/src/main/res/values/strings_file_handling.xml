@@ -5,18 +5,18 @@
     <string name="open_failed">Vault Failed</string>
     <string name="open_failed_message">The Password is Incorrect, or the vault has been corrupted.</string>
     <string name="import_finish">Finish adding files to secrecy.</string>
-    <string name="files_decrypted_notif">%d file(s) temporarily decrypted for viewing...</string>
+    <string name="files_decrypted_notif">%d file(s) temporarily decrypted for viewing…</string>
     <string name="all_temp_deleted">All temporary files removed.</string>
     <string name="open_file">Open File</string><string name="open_file_message">Is this file encrypted?
 If yes, enter password below.
 If no or you don\'t understand, press cancel to quit.</string>
-    <string name="view_file_dialog">Open file...</string>
+    <string name="view_file_dialog">Open file…</string>
     <string name="error_wrong_password">The password is incorrect! Please check.</string>
     <string name="error_file_not_found">The file is not found! Please check.</string>
     <string name="error_unknown">It failed. That\'s all we know :(.</string>
     <string name="error_no_activity_view">No App handles this type of file.</string>
     <string name="error_decrypt_dialog">Decrypt Failed</string>
-    <string name="send_file_dialog">Send encrypted files to...</string>
+    <string name="send_file_dialog">Send encrypted files to…</string>
     <string name="error_already_decrypting">File is already decrypting</string>
     <string name="error_no_file_selected">No file is selected.</string>
     <string name="add_successful">File successfully added</string>

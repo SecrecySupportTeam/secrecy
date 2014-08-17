@@ -32,6 +32,7 @@
         android:layout_width="@dimen/list_item_avatar_size"
         android:layout_height="@dimen/list_item_avatar_size"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_centerInParent="true"
         android:gravity="center">
 
@@ -52,6 +53,7 @@
         android:layout_alignParentTop="false"
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/list_item_text_from_margin"
+        android:layout_marginStart="@dimen/list_item_text_from_margin"
         android:orientation="vertical">
 
         <TextView
@@ -60,7 +62,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="middle"
             android:singleLine="true"
-            android:text="Swipe to delete any vault. Try me!"
+            android:text="@string/Tutorial__swipe_to_delete"
             android:textColor="@color/accent_light"
             android:textSize="16sp" />
 

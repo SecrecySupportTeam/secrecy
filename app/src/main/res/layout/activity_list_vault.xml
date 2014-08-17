@@ -37,7 +37,7 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="@dimen/margin_from_edge"
                 android:paddingRight="@dimen/margin_from_edge"
-                android:text="Vaults"
+                android:text="@string/page_header_vaults"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/text_secondary" />
 

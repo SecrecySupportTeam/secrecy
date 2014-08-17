@@ -169,7 +169,7 @@ public class SettingsFragment extends PreferenceFragment
                                 .setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         String password = ((EditText) dialogView.
-                                                findViewById(R.id.password))
+                                                findViewById(R.id.stealth_keycode))
                                                 .getText().toString();
                                         Prefs.OpenPIN().put(password);
                                         confirm_stealth(password);
@@ -201,7 +201,7 @@ public class SettingsFragment extends PreferenceFragment
     void confirm_stealth(String password) {
         final View dialogView = View.inflate(getActivity(), R.layout.dialog_confirm_stealth, null);
         ((TextView) dialogView
-                .findViewById(R.id.password))
+                .findViewById(R.id.stealth_keycode))
                 .append(password);
         new AlertDialog.Builder(getActivity())
                 .setInverseBackgroundForced(true)

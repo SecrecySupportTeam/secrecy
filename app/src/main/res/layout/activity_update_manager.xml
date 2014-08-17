@@ -50,8 +50,8 @@
         <TextView
             android:id="@+id/log"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:text="Update Manager is Starting...\n"
+            android:layout_height="wrap_content"
+            android:text="@string/Updater__log_firstline"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/primary"
             android:textSize="@dimen/text_multiline_size" />

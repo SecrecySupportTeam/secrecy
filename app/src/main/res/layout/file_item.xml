@@ -42,6 +42,7 @@
                 android:layout_width="@dimen/list_item_avatar_size"
                 android:layout_height="@dimen/list_item_avatar_size"
                 android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
                 android:background="@drawable/circle"
                 android:gravity="center">
@@ -60,6 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/list_item_text_from_margin"
+                android:layout_marginStart="@dimen/list_item_text_from_margin"
                 android:orientation="vertical">
 
                 <TextView
@@ -68,7 +70,6 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="middle"
                     android:singleLine="true"
-                    android:text="Introduction into Secrecy"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textSize="16sp" />
 
@@ -77,7 +78,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
-                    android:text="pdf"
                     android:textAllCaps="true"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textSize="14sp" />
@@ -156,6 +156,7 @@
                 android:layout_height="@dimen/list_item_single_line_height"
                 android:layout_alignBottom="@+id/file_discard"
                 android:layout_toLeftOf="@+id/file_discard"
+                android:layout_toStartOf="@+id/file_discard"
                 android:scaleType="center"
                 android:src="@drawable/ic_action_not_secure" />
 
@@ -165,6 +166,7 @@
                 android:layout_height="@dimen/list_item_single_line_height"
                 android:layout_alignBottom="@+id/file_save"
                 android:layout_toLeftOf="@+id/file_save"
+                android:layout_toStartOf="@+id/file_save"
                 android:scaleType="center"
                 android:src="@drawable/ic_action_share" />
 
@@ -174,6 +176,7 @@
                 android:layout_height="@dimen/list_item_single_line_height"
                 android:layout_alignTop="@+id/file_share"
                 android:layout_toLeftOf="@+id/file_share"
+                android:layout_toStartOf="@+id/file_share"
                 android:scaleType="center"
                 android:src="@drawable/ic_action_edit" />
         </RelativeLayout>

@@ -89,7 +89,7 @@ public class MainActivity
         final View dialogView = View.inflate(context, R.layout.dialog_finish_stealth, null);
         String password = Prefs.OpenPIN().get();
         ((TextView) dialogView
-                .findViewById(R.id.password))
+                .findViewById(R.id.stealth_keycode))
                 .append(password);
         new AlertDialog.Builder(context)
                 .setInverseBackgroundForced(true)

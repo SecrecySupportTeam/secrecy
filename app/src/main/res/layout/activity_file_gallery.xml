@@ -13,7 +13,7 @@
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/margin_from_edge"
         android:paddingRight="@dimen/margin_from_edge"
-        android:text="Gallery"
+        android:text="@string/page_header_gallery"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/text_secondary" />
 
@@ -52,9 +52,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/textView"
             android:text="@string/hint_add_files"
             android:textColor="@color/accent_light"
             android:textSize="18sp" />
