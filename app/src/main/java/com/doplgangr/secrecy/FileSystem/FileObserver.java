@@ -123,7 +123,7 @@ public class FileObserver extends IntentService {
             if ((android.os.FileObserver.ACCESS & event) != 0) {
                 Util.log(absolutePath + "/" + path + " is accessed/read");
                 stopWatching();
-                kill(file, 0); //instant Kill
+                kill(file, 10); //delayed Kill
             }
             //data was written to a file
             //if ((FileObserver.MODIFY & event)!=0) {
