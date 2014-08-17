@@ -12,9 +12,11 @@
         \n
         aFileChooser (Apache 2.0),
         \n
-        android-simple-storage (Apache 2.0),
+        pay-me (Apache 2.0),
         \n
-        android-donations-lib (Apache 2.0)
+        photoView (Apache 2.0),
+        \n
+        NineoldAndroids (Apache 2.0)
     </string>
     <string name="folder_selected">Folder Selected: %s</string>
     <string name="cannot_move">Cannot move vaults</string>
