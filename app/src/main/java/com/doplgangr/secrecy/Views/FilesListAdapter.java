@@ -42,8 +42,6 @@ class FilesListAdapter extends BaseAdapter {
     private final ArrayList<Integer> checked = new ArrayList<Integer>();
     // store (a reference to) the data
     private ArrayList<File> data;
-    // store the instance calling this adapter
-    private Context context;
 
     /**
      * Default constructor. Creates the new Adaptor object to
@@ -53,7 +51,6 @@ class FilesListAdapter extends BaseAdapter {
      * @param data
      */
     public FilesListAdapter(Context context, ArrayList<File> data) {
-        this.context = context;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.resource = R.layout.file_item;
         this.data = data;

@@ -32,7 +32,6 @@ import org.androidannotations.annotations.EApplication;
 public class CustomApp extends Application {
     public static Context context;
     public static String VERSIONNAME = "";
-    private static int VERSIONCODE = 0;
 
     @Override
     public void onCreate() {
@@ -41,7 +40,6 @@ public class CustomApp extends Application {
         try {
             PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
             VERSIONNAME = pInfo.versionName;
-            VERSIONCODE = pInfo.versionCode;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }

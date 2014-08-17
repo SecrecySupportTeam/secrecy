@@ -63,8 +63,6 @@ public class MainActivity
     @Pref
     Prefs_ Prefs;
     FragmentManager fragmentManager;
-    private Integer versionnow;
-    private String versionnow_name;
 
     @AfterViews
     public void onCreate() {
@@ -82,11 +80,8 @@ public class MainActivity
             return;
         }
         if (pInfo != null) {
-            versionnow = pInfo.versionCode;
-            versionnow_name = pInfo.versionName;
-            if (versionnow != version.no().get()) {
+            if (pInfo.versionCode != version.no().get())
                 addFragment(new UpdateManager_(), R.anim.slide_in_right, R.anim.fadeout);
-            }
         }
     }
 

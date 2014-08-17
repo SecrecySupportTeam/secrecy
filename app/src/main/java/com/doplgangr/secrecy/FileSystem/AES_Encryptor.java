@@ -26,7 +26,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 class AES_Encryptor {
 
-    private final String KEY_ALGORITHM = "AES";
     private final String mode = "AES/ECB/PKCS5Padding";
     private SecretKeySpec aesKey;
     private byte[] key;
@@ -40,6 +39,7 @@ class AES_Encryptor {
                 legitkey[i] = bytes[i];
                 i++;
             }
+            String KEY_ALGORITHM = "AES";
             aesKey = new SecretKeySpec(legitkey, KEY_ALGORITHM);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

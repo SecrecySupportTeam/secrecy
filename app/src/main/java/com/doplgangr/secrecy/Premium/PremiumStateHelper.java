@@ -33,10 +33,6 @@ public class PremiumStateHelper {
     private static final String SKU_PREMIUM = "donation.package.2";
     //static final String SKU_PREMIUM = "android.test.purchased";
     private final PremiumListener mPremiumListener;
-    private final Activity context;
-    // SKUs for our products: the premium upgrade (non-consumable) and gas (consumable)
-    // Does the user have the premium upgrade?
-    private boolean mIsPremium = false;
     // The helper object
     private IabHelper mHelper;
     // Listener that's called when we finish querying the items and subscriptions we own
@@ -67,7 +63,7 @@ public class PremiumStateHelper {
 
             // Do we have the premium upgrade?
             Purchase premiumPurchase = inventory.getPurchase(SKU_PREMIUM);
-            mIsPremium = (premiumPurchase != null && verifyDeveloperPayload(premiumPurchase));
+            boolean mIsPremium = (premiumPurchase != null && verifyDeveloperPayload(premiumPurchase));
             Log.d(TAG, "User is " + (mIsPremium ? "PREMIUM" : "NOT PREMIUM"));
 
             if (mIsPremium)
@@ -81,7 +77,6 @@ public class PremiumStateHelper {
 
     public PremiumStateHelper(Activity context, final PremiumListener mPremiumListener) {
         this.mPremiumListener = mPremiumListener;
-        this.context = context;
         final String KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgbAMG82/KN7DaFV3lIVtQDepcEnI+N7MZJemXnus3kkSQ0vr+veE54l7w0Meq32alRaGBabgZuPZdjA7tsQJRa47IVF/ibHLzlBqAsefVNf+ulGEqvoeeU8oHJviIXZEdRRw3KfXrxepzKU75WLFXyMl1+ssQPWbhQaY6mLQebJz5cBivY67yd09zPjxz3SN844AFssj0+dh5D4YRIV1Qr5A0VgpNxWdbiGnDFk8WjLkfjbn3sdcJ2sCrB7pOUcjWbNRXp0jtFj0UQlmNisnbRPw9bPtrbXiWW7o745NmQfjMgg/35bJqRBlKOamU57LmJfbbpQwslpQVAQiv6dZWQIDAQAB";
 
         // Create the helper, passing it our context and the public key to verify signatures with
