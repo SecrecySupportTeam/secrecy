@@ -40,7 +40,7 @@ import java.util.ArrayList;
 public class FileObserver extends IntentService {
     public static final int NOTIFICATION_ID = 1;
     private static final int NOTIFICATION_FOREGROUND = 0;
-    private final ArrayList<MyFileObserver> fileObs = new ArrayList<MyFileObserver>();
+    private static final ArrayList<MyFileObserver> fileObs = new ArrayList<MyFileObserver>();
     private NotificationManager mNotificationManager;
 
     public FileObserver() {
@@ -186,11 +186,11 @@ public class FileObserver extends IntentService {
             Util.log("Delete File @ " + SystemClock.elapsedRealtime());
             file.delete();
             fileObs.remove(this);
-            if (fileObs != null)
-                if (fileObs.size() == 0)
-                    sendNotif(getString(R.string.all_temp_deleted), false);
-                else
-                    sendNotif(String.format(getString(R.string.files_decrypted_notif), fileObs.size()), true);
+
+            if (fileObs.size() == 0)
+                sendNotif(getString(R.string.all_temp_deleted), false);
+            else
+                sendNotif(String.format(getString(R.string.files_decrypted_notif), fileObs.size()), true);
 
         }
 

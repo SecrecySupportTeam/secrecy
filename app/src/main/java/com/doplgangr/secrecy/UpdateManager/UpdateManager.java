@@ -156,9 +156,7 @@ public class UpdateManager extends Fragment {
     @Background
     void version8to9() {
         // Changes filebase path to new format.
-        if (Util.canWrite(storage.getRoot())) {
-            //escape if path is indeed valid
-        } else {
+        if (!Util.canWrite(storage.getRoot())) {
             //Append with sdcard link
             log.append("\nOld sdCard format. Changing to new format.");
             String newRoot = Environment.getExternalStorageDirectory()

@@ -45,7 +45,6 @@ import android.widget.Toast;
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.EmptyListener;
 import com.doplgangr.secrecy.FileSystem.Vault;
-import com.doplgangr.secrecy.FileSystem.storage;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 import com.ipaulpro.afilechooser.FileChooserActivity;
@@ -58,7 +57,6 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.DrawableRes;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -182,12 +180,6 @@ public class FilesListFragment extends FileViewer {
 
     @UiThread
     void setupViews() {
-        String size = FileUtils.byteCountToDisplaySize(
-                FileUtils.sizeOfDirectory(
-                        new File(storage.getRoot().getAbsolutePath() + "/" + secret.getName()))
-        );
-        //if (context.getSupportActionBar() != null)
-        //  context.getSupportActionBar().setSubtitle("Size on SDcard: " + size);
         if (secret.wrongPass) {
             Util.alert(
                     context,

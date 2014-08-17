@@ -35,7 +35,6 @@ class VaultsAdapter extends BaseAdapter {
     private final LayoutInflater inflater;
     // store the resource (typically file_item.xml)
     private final int resource;
-    private final ArrayList<Integer> checked = new ArrayList<Integer>();
     // store (a reference to) the data
     private ArrayList<String> data = new ArrayList<String>();
 
@@ -77,7 +76,6 @@ class VaultsAdapter extends BaseAdapter {
      */
     public void update(ArrayList<String> data) {
         this.data = data;
-        checked.clear();
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {

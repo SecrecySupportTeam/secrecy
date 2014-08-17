@@ -20,11 +20,8 @@
 package com.doplgangr.secrecy.FileSystem;
 
 import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 class AES_Encryptor {
@@ -47,22 +44,6 @@ class AES_Encryptor {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-    }
-
-    private byte[] generateAesKey() {
-
-
-        KeyGenerator kgen = null;
-        try {
-            kgen = KeyGenerator.getInstance(KEY_ALGORITHM);
-        } catch (NoSuchAlgorithmException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        kgen.init(256);
-        SecretKey secretKey = kgen.generateKey();
-
-        return secretKey.getEncoded();
     }
 
     public Cipher encryptstream() throws Exception {
