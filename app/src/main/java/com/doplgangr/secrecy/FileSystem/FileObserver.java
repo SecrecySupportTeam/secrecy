@@ -21,6 +21,7 @@ package com.doplgangr.secrecy.FileSystem;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +32,7 @@ import android.util.Log;
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.Views.MainActivity_;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -66,14 +68,17 @@ public class FileObserver extends IntentService {
     }
 
     private void sendNotif(String msg, Boolean ongoing) {
-        Intent intent = new Intent(this, FileObserver.class);
-        intent.putExtra(Config.file_extra, msg);
+        Intent intent = new Intent(this, MainActivity_.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this,
+                NOTIFICATION_ID, intent,
+                PendingIntent.FLAG_CANCEL_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
                 this).setSmallIcon(R.drawable.ic_stat_alert)
                 .setContentTitle(getString(R.string.app_name))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
                 .setOngoing(ongoing)
+                .setContentIntent(contentIntent)
                 .setContentText(msg);
         mNotificationManager.cancelAll();
         mNotificationManager.notify(NOTIFICATION_FOREGROUND, mBuilder.build());
