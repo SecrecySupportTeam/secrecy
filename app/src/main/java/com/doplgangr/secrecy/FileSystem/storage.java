@@ -39,6 +39,10 @@ import org.apache.commons.io.FileUtils;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.util.Random;
 
 public class storage {
 
@@ -47,6 +51,33 @@ public class storage {
             FileUtils.cleanDirectory(directory);
         } catch (IOException e) {
             Util.log(e);
+        }
+    }
+
+    public static void purgeFile(java.io.File file){
+        FileChannel rwChannel = null;
+        try {
+            rwChannel = new RandomAccessFile(file, "rw").getChannel();
+            int numBytes = (int) rwChannel.size();
+            ByteBuffer buffer = rwChannel.map(FileChannel.MapMode.READ_WRITE, 0, numBytes);
+            buffer.clear();
+            byte[] randomBytes = new byte[numBytes];
+            new Random().nextBytes(randomBytes);
+            buffer.put(randomBytes);
+            rwChannel.write(buffer);
+        }catch (Exception ignored){
+        }finally {
+            if (rwChannel!=null)
+                try {
+                    rwChannel.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            try {
+                FileUtils.forceDelete(file);
+            } catch (IOException e1) {
+                Util.log(e1);
+            }
         }
     }
 
