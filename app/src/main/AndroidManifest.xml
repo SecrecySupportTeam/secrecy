@@ -18,6 +18,10 @@
         <service
             android:name=".FileSystem.FileObserver"
             android:enabled="true" />
+        <service
+            android:name=".FileSystem.FileOptionsService_"
+            android:enabled="true" />
+
 
         <provider
             android:name=".FileSystem.OurFileProvider"

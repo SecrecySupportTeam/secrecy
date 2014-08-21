@@ -190,7 +190,7 @@ public class VaultsListFragment extends Fragment {
                                 Uri nomediaURI = Uri.fromFile(file);
                                 Vault newVault = new Vault(name, password, true);
                                 newVault.addFile(context, nomediaURI);
-                                file.delete();
+                                storage.purgeFile(file);
                                 oncreate();
                             } catch (IOException e) {
                                 e.printStackTrace();

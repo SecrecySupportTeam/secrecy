@@ -14,6 +14,7 @@ import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.File;
 import com.doplgangr.secrecy.FileSystem.Vault;
+import com.doplgangr.secrecy.FileSystem.storage;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Views.DummyViews.HackyViewPager;
 
@@ -105,7 +106,7 @@ public class FilePhotoFragment extends Activity {
                     new SubsamplingScaleImageView.onFileFinishCalled() {
                         @Override
                         public void onFinish(String file) {
-                            new java.io.File(file).delete();
+                            storage.purgeFile(new java.io.File(file));
                         }
                     });
 
@@ -161,7 +162,7 @@ public class FilePhotoFragment extends Activity {
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             java.io.File file = (java.io.File) ((View) object).getTag();
-            file.delete();  //Just to be sure. Like when view is deleted before it finishes loading.
+            storage.purgeFile(file);  //Just to be sure. Like when view is deleted before it finishes loading.
             container.removeView((View) object);
         }
 

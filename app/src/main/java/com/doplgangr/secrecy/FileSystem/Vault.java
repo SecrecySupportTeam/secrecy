@@ -109,7 +109,7 @@ public class Vault {
         });
         if (tempnomedia != null) {
             wrongPass = false;
-            tempnomedia.delete();
+            storage.purgeFile(tempnomedia);
         }
         Log.d("Password is Wrong=", wrongPass + "");
 
@@ -132,8 +132,7 @@ public class Vault {
         try {
             InputStream stream = context.getContentResolver().openInputStream(uri);
             java.io.File addedFile = new java.io.File(path + "/" + filename);
-            addedFile.delete();
-            addedFile.createNewFile();
+            storage.purgeFile(addedFile);
             is = new BufferedInputStream(stream);
             byte buffer[] = new byte[Config.bufferSize];
             int count;

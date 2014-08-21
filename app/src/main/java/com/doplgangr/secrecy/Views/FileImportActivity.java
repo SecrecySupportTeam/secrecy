@@ -94,14 +94,13 @@ public class FileImportActivity extends ActionBarActivity
         Uri thumbnail = storage.saveThumbnail(this, data, filename);
         if (thumbnail != null) {
             secret.addFile(this, thumbnail);
-            new java.io.File(thumbnail.getPath()).delete();
+            storage.purgeFile(new java.io.File(thumbnail.getPath()));
         }
+        storage.purgeFile(new File(data.getPath())); //Try to delete original file.
         try {
             this.getContentResolver().delete(data, null, null); //Try to delete under content resolver
         } catch (Exception ignored) {
             //Ignore fail to delete original file
-        } finally {
-            new File(data.getPath()).delete(); //Try to delete original file.
         }
     }
 

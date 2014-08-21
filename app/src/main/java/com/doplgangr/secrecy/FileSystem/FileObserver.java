@@ -93,7 +93,7 @@ public class FileObserver extends IntentService {
     public void onDestroy() {
         Log.d("FileOb", "IntentService Ondestroy.");
         for (MyFileObserver fileOb : fileObs) {
-            fileOb.file.delete();
+            storage.shredFile(fileOb.file);
             fileOb.stopWatching();
         }
         mNotificationManager.cancelAll();
@@ -184,7 +184,7 @@ public class FileObserver extends IntentService {
                 }
             }
             Util.log("Delete File @ " + SystemClock.elapsedRealtime());
-            file.delete();
+            storage.shredFile(file);
             fileObs.remove(this);
 
             if (fileObs.size() == 0)

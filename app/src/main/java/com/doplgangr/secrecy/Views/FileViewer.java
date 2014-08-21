@@ -91,7 +91,7 @@ public class FileViewer extends Fragment {
         Uri thumbnail = storage.saveThumbnail(context, data.getData(), filename);
         if (thumbnail != null) {
             secret.addFile(context, thumbnail);
-            new java.io.File(thumbnail.getPath()).delete();
+            storage.purgeFile(new java.io.File(thumbnail.getPath()));
         }
         Util.alert(context,
                 getString(R.string.add_successful),
@@ -99,12 +99,11 @@ public class FileViewer extends Fragment {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        storage.purgeFile(new java.io.File(data.getData().getPath())); //Try to delete original file.
                         try {
                             context.getContentResolver().delete(data.getData(), null, null); //Try to delete under content resolver
                         } catch (Exception ignored) {
                             //ignore cannot delete original file
-                        } finally {
-                            new java.io.File(data.getData().getPath()).delete(); //Try to delete original file.
                         }
                     }
                 },

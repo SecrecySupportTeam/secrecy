@@ -116,7 +116,7 @@ public class File {
             });
             this.thumb = storage.getThumbnail(tempThumb);
             if (tempThumb != null)
-                tempThumb.delete();
+                storage.purgeFile(tempThumb);
         }
         return thumb;
     }
@@ -183,12 +183,12 @@ public class File {
         }
         // An error occured. Too Bad
         if (outputFile != null)
-            outputFile.delete();
+            storage.purgeFile(outputFile);
         return null;
     }
 
     public void delete() {
-        file.delete();
+        storage.purgeFile(file);
         File thumbnailFile = new File(thumbnailRealFile, key);
         if (!thumbnailFile.invalidFile)
             thumbnailFile.delete();

@@ -36,43 +36,59 @@ import com.doplgangr.secrecy.Util;
 
 import org.apache.commons.io.FileUtils;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.util.Random;
+import java.io.OutputStream;
+import java.util.Collection;
 
 public class storage {
 
     public static void DeleteRecursive(java.io.File directory) {
         try {
-            FileUtils.cleanDirectory(directory);
-        } catch (IOException e) {
+            Collection files = FileUtils.listFiles(directory, null, true);
+            for(Object file: files)
+                purgeFile((File) file);
+        } catch (Exception e) {
             Util.log(e);
+        } finally {
+            try {
+                FileUtils.cleanDirectory(directory);
+            } catch (IOException ignored) {
+            }
         }
     }
 
-    public static void purgeFile(java.io.File file){
-        FileChannel rwChannel = null;
+    public static void purgeFile(java.io.File file){        //Starts a service to do the real
+        FileOptionsService_.intent(CustomApp.context)       // deletion in background
+                .delete(file)
+                .start();
+    }
+
+    public static void shredFile(File file){
         try {
-            rwChannel = new RandomAccessFile(file, "rw").getChannel();
-            int numBytes = (int) rwChannel.size();
-            ByteBuffer buffer = rwChannel.map(FileChannel.MapMode.READ_WRITE, 0, numBytes);
-            buffer.clear();
-            byte[] randomBytes = new byte[numBytes];
-            new Random().nextBytes(randomBytes);
-            buffer.put(randomBytes);
-            rwChannel.write(buffer);
-        }catch (Exception ignored){
-        }finally {
-            if (rwChannel!=null)
+            // Double check
+            if (!file.exists() || !file.canWrite())
+                throw new Exception("Unable to write to file: " + file);
+            long bytes = file.length();
+            OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+            try
+            {
+                for (int i = 0; i < bytes; i++)
+                    os.write(0);
+            }
+            finally
+            {
                 try {
-                    rwChannel.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    os.close();
+                } catch (Throwable ignored) {
+
                 }
+            }
+        } catch (Exception ignored) {
+        } finally {
             try {
                 FileUtils.forceDelete(file);
             } catch (IOException e1) {
@@ -136,7 +152,7 @@ public class storage {
             stream = context.getContentResolver().openInputStream(uri);
             java.io.File thumbpath = new java.io.File(getAbsTempFolder() + "/" + "_thumb" + filename);
             if (thumbpath.exists())
-                thumbpath.delete();
+                storage.purgeFile(thumbpath);
             thumbpath.createNewFile();
             FileOutputStream out = new FileOutputStream(thumbpath);
             BitmapFactory.Options options = new BitmapFactory.Options();
@@ -151,7 +167,7 @@ public class storage {
             }
             if (bitmap == null) {
                 out.close();
-                thumbpath.delete();
+                storage.purgeFile(thumbpath);
                 return null;
             }
             bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
