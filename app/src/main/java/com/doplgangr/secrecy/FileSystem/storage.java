@@ -32,6 +32,9 @@ import android.provider.MediaStore;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
+import com.doplgangr.secrecy.Util;
+
+import org.apache.commons.io.FileUtils;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,18 +42,23 @@ import java.io.InputStream;
 
 public class storage {
 
-    public static void DeleteRecursive(java.io.File fileOrDirectory) {
-        if (fileOrDirectory.isDirectory())
-            for (java.io.File child : fileOrDirectory.listFiles())
-                DeleteRecursive(child);
-        fileOrDirectory.delete();
+    public static void DeleteRecursive(java.io.File directory) {
+        try {
+            FileUtils.cleanDirectory(directory);
+        } catch (IOException e) {
+            Util.log(e);
+        }
     }
 
     public static java.io.File getTempFolder() {
         java.io.File tempDir = CustomApp.context.getExternalCacheDir();
-        if (tempDir == null)
+        if (tempDir == null)                                                // when all else fails
             tempDir = CustomApp.context.getFilesDir();
-        tempDir.mkdirs();
+        try {
+            FileUtils.forceMkdir(tempDir);
+        } catch (IOException e) {
+            Util.log(e);
+        }
         return tempDir;
     }
 
@@ -67,7 +75,11 @@ public class storage {
 
     public static java.io.File getRoot() {
         java.io.File tempDir = new java.io.File(ROOT());
-        tempDir.mkdirs();
+        try {
+            FileUtils.forceMkdir(tempDir);
+        } catch (IOException e) {
+            Util.log(e);
+        }
         return tempDir;
     }
 
