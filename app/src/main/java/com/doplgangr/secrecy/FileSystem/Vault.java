@@ -132,7 +132,8 @@ public class Vault {
         try {
             InputStream stream = context.getContentResolver().openInputStream(uri);
             java.io.File addedFile = new java.io.File(path + "/" + filename);
-            storage.purgeFile(addedFile);
+            addedFile.delete();
+            addedFile.createNewFile();
             is = new BufferedInputStream(stream);
             byte buffer[] = new byte[Config.bufferSize];
             int count;

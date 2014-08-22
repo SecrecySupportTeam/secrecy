@@ -181,7 +181,7 @@ public class VaultsListFragment extends Fragment {
                             passwordWrong();
                         else if (directory.mkdirs()) {
                             try {
-                                File file = new File(context.getFilesDir(), ".nomedia");
+                                File file = new File(storage.getTempFolder(), ".nomedia");
                                 file.delete();
                                 file.createNewFile();
                                 FileOutputStream outputStream = new FileOutputStream(file);
@@ -190,7 +190,7 @@ public class VaultsListFragment extends Fragment {
                                 Uri nomediaURI = Uri.fromFile(file);
                                 Vault newVault = new Vault(name, password, true);
                                 newVault.addFile(context, nomediaURI);
-                                storage.purgeFile(file);
+                                file.delete();
                                 oncreate();
                             } catch (IOException e) {
                                 e.printStackTrace();
