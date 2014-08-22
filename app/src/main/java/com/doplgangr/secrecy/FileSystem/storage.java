@@ -158,10 +158,10 @@ public class storage {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
             Bitmap bitmap = BitmapFactory.decodeStream(stream);
-            if (options.outWidth != -1 && options.outHeight != -1) {
-                bitmap = ThumbnailUtils.extractThumbnail(bitmap
-                        , 150, 150);
-            } else {
+            bitmap = ThumbnailUtils.extractThumbnail(bitmap
+                    , 150, 150);
+            if (bitmap == null) {   //If photo fails, try bitmap
+                Util.log(getRealPathFromURI(context, uri));
                 bitmap = ThumbnailUtils.createVideoThumbnail(
                         getRealPathFromURI(context, uri), MediaStore.Video.Thumbnails.MICRO_KIND);
             }
