@@ -15,9 +15,12 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
-
 -dontwarn org.androidannotations.**
 -optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*
 -optimizationpasses 5
 -allowaccessmodification
 -dontpreverify
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+
+-keepattributes SourceFile,LineNumberTable
