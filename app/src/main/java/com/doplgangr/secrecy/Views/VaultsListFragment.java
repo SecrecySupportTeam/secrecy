@@ -39,7 +39,6 @@ import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.Prefs_;
 import com.doplgangr.secrecy.Util;
 import com.doplgangr.secrecy.Views.DummyViews.SwipeDismissTouchListener;
-import com.flurry.android.FlurryAgent;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
@@ -230,7 +229,6 @@ public class VaultsListFragment extends Fragment {
         // vault name
         // View of lisitem
         // position of listitem in list
-        FlurryAgent.logEvent("Vault_open");
         switchView(mView, R.id.vault_decrypt_layout);
         mView.findViewById(R.id.open_ok)
                 .setOnClickListener(new View.OnClickListener() {

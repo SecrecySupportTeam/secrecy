@@ -1,6 +1,11 @@
 apply plugin: 'com.android.application'
+apply plugin: 'crashlytics'
 apply plugin: 'android-apt'
 
+repositories {
+    mavenCentral()
+    maven { url 'http://download.crashlytics.com/maven' }
+}
 apt {
     arguments {
         androidManifestFile variant.processResources.manifestFile
@@ -41,4 +46,5 @@ dependencies {
     compile project(':aFileChooser')
     compile project(':android-support-v4-preferencefragment')
     compile project(':payme')
+    compile 'com.crashlytics.android:crashlytics:1.+'
 }

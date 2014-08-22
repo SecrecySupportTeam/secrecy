@@ -33,6 +33,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.FileSystem.FileObserver;
 import com.doplgangr.secrecy.FileSystem.storage;
@@ -43,7 +44,6 @@ import com.doplgangr.secrecy.Settings.SettingsActivity_;
 import com.doplgangr.secrecy.UpdateManager.AppVersion_;
 import com.doplgangr.secrecy.UpdateManager.UpdateManager_;
 import com.doplgangr.secrecy.Util;
-import com.flurry.android.FlurryAgent;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -67,6 +67,7 @@ public class MainActivity
 
     @AfterViews
     public void onCreate() {
+        Crashlytics.start(this);
         storage.deleteTemp();                                           //Start clean
         Intent intent = new Intent(this, FileObserver.class);
         stopService(intent);                                            //disable fileObserver now
@@ -137,20 +138,6 @@ public class MainActivity
     @OptionsItem(R.id.action_donate)
     void donate() {
         startActivity(new Intent(context, PremiumActivity_.class));
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (Prefs.analytics().get())
-            FlurryAgent.onStartSession(context, Config.flurryKey);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (Prefs.analytics().get())
-            FlurryAgent.onEndSession(context);
     }
 
     @Override
