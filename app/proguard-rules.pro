@@ -25,3 +25,11 @@
 -dontskipnonpubliclibraryclasses
 
 -keepattributes SourceFile,LineNumberTable
+
+-dontwarn org.apache.http.**
+-dontwarn android.net.http.**
+-keepnames class org.apache.** {*;}
+-keep public class org.apache.** {*;}
+-keep public class android.net.http.** {*;}
+-keep class android.net.http.** {*;}
+-keep class org.apache.** { *; }

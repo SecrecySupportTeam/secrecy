@@ -44,6 +44,7 @@ import com.doplgangr.secrecy.Settings.SettingsActivity_;
 import com.doplgangr.secrecy.UpdateManager.AppVersion_;
 import com.doplgangr.secrecy.UpdateManager.UpdateManager_;
 import com.doplgangr.secrecy.Util;
+import com.uservoice.uservoicesdk.UserVoice;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -138,6 +139,11 @@ public class MainActivity
     @OptionsItem(R.id.action_donate)
     void donate() {
         startActivity(new Intent(context, PremiumActivity_.class));
+    }
+
+    @OptionsItem(R.id.action_support)
+    void support() {
+        UserVoice.launchUserVoice(this);    //launch uservoice portal
     }
 
     @Override

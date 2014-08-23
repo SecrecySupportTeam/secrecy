@@ -25,6 +25,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
 import com.doplgangr.secrecy.FileSystem.storage;
+import com.uservoice.uservoicesdk.UserVoice;
 
 import org.androidannotations.annotations.EApplication;
 
@@ -44,6 +45,7 @@ public class CustomApp extends Application {
             e.printStackTrace();
         }
         storage.deleteTemp(); //Start clean every time!!
+        UserVoice.init(Config.uservoice, this);  //Uservoice init
     }
 
 }
