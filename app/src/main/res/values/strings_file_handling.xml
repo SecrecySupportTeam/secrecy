@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
-    <string name="open_vault">Open vault \"%s\"</string>
-    <string name="type_password">Please type the password below</string>
     <string name="open_failed">Vault Failed</string>
     <string name="open_failed_message">The Password is Incorrect, or the vault has been corrupted.</string>
     <string name="import_finish">Finish adding files to secrecy.</string>
@@ -10,7 +8,6 @@
     <string name="open_file">Open File</string><string name="open_file_message">Is this file encrypted?
 If yes, enter password below.
 If no or you don\'t understand, press cancel to quit.</string>
-    <string name="view_file_dialog">Open file…</string>
     <string name="error_wrong_password">The password is incorrect! Please check.</string>
     <string name="error_file_not_found">The file is not found! Please check.</string>
     <string name="error_unknown">It failed. That\'s all we know :(.</string>
@@ -21,9 +18,6 @@ If no or you don\'t understand, press cancel to quit.</string>
     <string name="error_no_file_selected">No file is selected.</string>
     <string name="add_successful">File successfully added</string>
     <string name="add_successful_message">Would you like to delete the original file?</string>
-    <string name="file_deleted">File Deleted</string>
-    <string name="error_file_delete_failed">File Deletion Unuccessful</string>
-    <string name="file_delete_failed">Please manually delete the file.</string>
     <string name="error_delete_decrypting">Cannot delete decrypting files</string>
     <string name="delete_files">Delete Files</string>
     <string name="delete_files_message">Are you sure to delete the following file(s)? %s</string>
@@ -35,11 +29,8 @@ If no or you don\'t understand, press cancel to quit.</string>
     <string name="error_wrong_password_confirmation_message">The password combination is incorrect. Please check.</string>
     <string name="error_cannot_create_vault">Failed to create new vault</string>
     <string name="error_cannot_create_vault_message">Either the vault already exists, or SDCard is unavailable now.</string>
-    <string name="action_mode_no_vaults_selected">%d vault(s) selected</string>
-    <string name="delete_vault">Delete \"%s\"</string>
     <string name="error_delete_password_incorrect">Password incorrect.</string>
     <string name="error_delete_password_incorrect_message">Deletion is aborted.</string>
-    <string name="delete_vault_confirmation">Are you sure to delete the following vault(s)?%s</string>
     <string name="decrypting">Decrypting…</string>
     <string name="action_decrypt">Decrypt</string>
     <string name="action_delete">Delete</string>

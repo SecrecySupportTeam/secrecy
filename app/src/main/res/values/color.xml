@@ -1,24 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
-    <color name="orange">#ff5500</color>
     <color name="white">#ffffff</color>
     <color name="transparent">#00000000</color>
-    <color name="date_color">#999999</color>
     <color name="black">#000000</color>
     <color name="gray">#999999</color>
-    <color name="blue">#0066cc</color>
-    <color name="gold">#e6b121</color>
-    <color name="blueback">#99FFFF</color>
-    <color name="articlecolor">#3399FF</color>
-    <color name="article_title">#3399FF</color>
-    <color name="cachecolor">#8ad0e8</color>
     <color name="card_bg">#fafafa</color>
     <color name="card_edge">#dcdcdc</color>
-    <color name="card_sudopic">#ffcbcbcb</color>
-    <color name="card_sudopictitle">#ff727272</color>
     <color name="activity_bg">#eaeaea</color>
-    <color name="holo_blue_light">#ff33b5e5</color>
-    <color name="holo_blue_dark">#ff0099cc</color>
     <color name="quantum_blue_100">#d0d9ff</color>
     <color name="quantum_blue_500">#5677fc</color>
     <color name="quantum_blue_700">#455ede</color>
@@ -33,8 +21,5 @@
     <color name="accent_light">@color/quantum_deeporange_A100</color>
     <color name="accent_dark">@color/quantum_deeporange_A400</color>
 
-    <color name="text_divider">#dadada</color>
-    <color name="text_hint">#b8b8b8</color>
     <color name="text_secondary">#727272</color>
-    <color name="text_primary">#212121</color>
 </resources>

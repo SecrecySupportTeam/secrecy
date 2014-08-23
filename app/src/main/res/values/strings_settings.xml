@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
 
     <string name="on_changed_alert">Settings will take place after you restart this app</string>
@@ -18,7 +18,6 @@
         \n
         NineoldAndroids (Apache 2.0)
     </string>
-    <string name="folder_selected">Folder Selected: %s</string>
     <string name="cannot_move">Cannot move vaults</string>
     <string name="cannot_move_message">Cannot move into subdirectories, would result in errors.</string>
     <string name="move">Move Vaults</string><string name="move_message">Are you sure to move

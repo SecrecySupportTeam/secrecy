@@ -27,7 +27,7 @@ android {
         release {
             runProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            proguardFile '/media/matthew/DATA/Projects/Secrecy/app/proguard-rules.pro'
+            proguardFile 'proguard-rules.pro'
         }
     }
 }

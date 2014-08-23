@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
 
     <!-- Default screen margins, per the Android Design guidelines. -->
@@ -5,11 +6,6 @@
     <!--determined by paper now-->
     <dimen name="activity_vertical_margin">0dp</dimen>
     <!--determined by paper now-->
-    <dimen name="Title">32dp</dimen>
-    <dimen name="description">24dp</dimen>
-    <dimen name="grid_size">150dp</dimen>
-    <dimen name="margins">4dp</dimen>
-
     <dimen name="divider_height">48dp</dimen>
     <dimen name="list_item_single_line_height">56dp</dimen>
     <dimen name="list_item_two_line_height">72dp</dimen>

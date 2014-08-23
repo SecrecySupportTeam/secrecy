@@ -1,12 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
 
     <string name="app_name">Secrecy</string>
     <string name="title_activity_settings">Settings</string>
     <string name="action_settings">Settings</string>
     <string name="action_switch_interface">Switch Interface</string>
-    <string name="title_activity_file_viewer">Open with Secrecy</string>
-
     <string-array name="donation_google_catalog_values">
         <item>2 USD</item>
         <item>5 USD</item>
@@ -17,7 +15,6 @@
 
     <string name="title_activity_choose_folder">Choose a Folder</string>
     <string name="chooser_title">Pick a File…</string>
-    <string name="dismiss">DISMISS</string>
     <string name="donate_title">Buy me a coffee!</string>
     <string name="donate_description">			By donating, you are:\n
             \n
@@ -41,11 +38,7 @@
     <string name="hint_confirm_password">Confirm Password</string>
     <string name="action_donate">Donate</string>
     <string name="action_add_vault">Add vault</string>
-    <string name="title_activity_launcher">LauncherActivity</string>
     <string name="hello_world">Hello world!</string>
-    <string name="title_activity_premium">PremiumActivity</string>
-    <string name="title_activity_fullscreen">FullscreenActivity</string>
-    <string name="title_activity_files">FilesActivity</string>
     <string name="page_header_gallery">Gallery</string>
     <string name="page_header_files">Files</string>
     <string name="page_header_vaults">Vaults</string>
