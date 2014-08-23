@@ -45,7 +45,8 @@ public class CustomApp extends Application {
             e.printStackTrace();
         }
         storage.deleteTemp(); //Start clean every time!!
-        UserVoice.init(Config.uservoice, this);  //Uservoice init
+        // Set this up once when your application launches
+        UserVoice.init(Config.uservoice(this), this);  //Uservoice init
     }
 
 }

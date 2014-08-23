@@ -34,4 +34,6 @@ public interface Prefs {
     @DefaultBoolean(true)
     boolean showVaultSwipeDeleteTutorial();
 
+    @DefaultBoolean(true)
+    boolean showHelpDeskTutorial();
 }

@@ -46,6 +46,6 @@
     <string name="Tutorial__swipe_to_delete">Swipe to delete any vault. Try me!</string>
     <string name="Decrypt__password">Password</string>
     <string name="Decrypt__confirm_delete">Confirm delete?</string>
-    <string name="action_support">Help</string>
+    <string name="action_support">Help Desk</string>
 
 </resources>

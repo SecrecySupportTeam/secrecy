@@ -89,6 +89,33 @@ public class MainActivity
             if (pInfo.versionCode != version.no().get())
                 addFragment(new UpdateManager_(), R.anim.slide_in_right, R.anim.fadeout);
         }
+
+        showHelpDeskTutorial();
+    }
+
+    private void showHelpDeskTutorial() {
+        if (Prefs.showHelpDeskTutorial().get())
+            Util.alert(this,
+                    "Don't panic, just ask!",
+                    "Do you know we have a help centre? Come if you have questions, suggestions, or if you just want to have a chit-chat.",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            support();
+                            Prefs.showHelpDeskTutorial()
+                                    .put(false);
+                        }
+                    },
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //do nothing
+                            Prefs.showHelpDeskTutorial()
+                                    .put(false);
+                        }
+                    }
+            );
+
     }
 
     void onFirstLaunch() {
