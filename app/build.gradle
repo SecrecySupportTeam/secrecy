@@ -20,8 +20,8 @@ android {
         applicationId "com.doplgangr.secrecy"
         minSdkVersion 10
         targetSdkVersion 19
-        versionCode 13
-        versionName "alpha-1.2"
+        versionCode 14
+        versionName "alpha-1.3"
     }
     buildTypes {
         release {
@@ -43,7 +43,6 @@ dependencies {
     compile 'com.android.support:support-v4:19.0.0'
     compile 'com.github.chrisbanes.photoview:library:1.2.3'
     compile 'com.nineoldandroids:library:2.4.0'
-    compile 'com.github.machinarius:preferencefragment:0.1.2'
     compile project(':aFileChooser')
     compile project(':android-support-v4-preferencefragment')
     compile project(':payme')
