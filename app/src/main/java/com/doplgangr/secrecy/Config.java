@@ -29,6 +29,7 @@ public class Config {
     public static final String gallery_item_extra = "GALLERYITEMIS";
     public static final String FIRST_TIME_EXTRA = "FIRSTTIME";
     public static final String tag = "Secrecy";
+    public static final String cancellable_task = "CANCELLABLETASK";
     public static final int wrong_password = 1;
     public static final int file_not_found = 2;
     public static final String settingsStore = "__SETTINGS__";

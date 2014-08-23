@@ -44,11 +44,16 @@ public class FilePhotoFragment extends Activity {
 
     @AfterViews
     void onCreate() {
-        mViewPager.setAdapter(
-                new SamplePagerAdapter(
-                        new Vault(vault, password)
-                )
-        );
+        final SamplePagerAdapter adapter = new SamplePagerAdapter();
+        mViewPager.setAdapter(adapter);
+        Vault secret = new Vault(vault, password);
+        Vault.onFileFoundListener mListener = new Vault.onFileFoundListener() {
+            @Override
+            public void dothis(File file) {
+                adapter.add(file);
+            }
+        };
+        secret.iterateAllFiles(mListener);
         if ((itemNo != null) && (itemNo < (mViewPager.getAdapter().getCount()))) //check if requested item is in bound
             mViewPager.setCurrentItem(itemNo);
     }
@@ -57,10 +62,7 @@ public class FilePhotoFragment extends Activity {
 
         private static ArrayList<File> sDrawables = new ArrayList<File>();
 
-        public SamplePagerAdapter(Vault vault) {
-            for (File file : vault.files)
-                if (file.hasThumbnail())
-                    sDrawables.add(file);
+        public SamplePagerAdapter() {
         }
 
         //Load a bitmap from a resource with a target size
@@ -92,6 +94,11 @@ public class FilePhotoFragment extends Activity {
                 }
             }
             return inSampleSize;
+        }
+
+        public void add(File file) {
+            if (file.hasThumbnail())
+                sDrawables.add(file);
         }
 
         @Override

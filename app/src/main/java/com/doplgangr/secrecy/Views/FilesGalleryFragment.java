@@ -1,10 +1,10 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with context work for additional information
- * regarding copyright ownership.  The ASF licenses context file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use context file except in compliance
+ * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -57,6 +57,7 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.DrawableRes;
+import org.androidannotations.api.BackgroundExecutor;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -168,14 +169,25 @@ public class FilesGalleryFragment extends FileViewer {
         }
     }
 
-    @Background
+    @Background(id = Config.cancellable_task)
     @Override
     void onCreate() {
         context = (ActionBarActivity) getActivity();
         secret = new Vault(vault, password);
-        adapter = new FilesGalleryAdapter(
-                context, secret.files);
+        adapter = new FilesGalleryAdapter(context);
         setupViews();
+        addFiles();
+    }
+
+    @Background(id = Config.cancellable_task)
+    void addFiles() {
+        secret.iterateAllFiles(
+                new Vault.onFileFoundListener() {
+                    @Override
+                    public void dothis(com.doplgangr.secrecy.FileSystem.File file) {
+                        addToList(file);
+                    }
+                });
     }
 
     @UiThread
@@ -195,12 +207,6 @@ public class FilesGalleryFragment extends FileViewer {
             return;
         }
         mListView.setAdapter(adapter);
-        if (mListView.getCount() == 0) {
-            nothing.setVisibility(View.VISIBLE);
-        } else {
-            nothing.setVisibility(View.GONE);
-        }
-        addFilepBar.setVisibility(View.GONE);
         context.getSupportActionBar().setTitle(secret.getName());
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -230,13 +236,23 @@ public class FilesGalleryFragment extends FileViewer {
             }
         });
 
+        if (secret.getCount() == 0) {
+            nothing.setVisibility(View.VISIBLE);
+        } else {
+            nothing.setVisibility(View.GONE);
+        }
+        addFilepBar.setVisibility(View.GONE);
+    }
+
+    @UiThread
+    void addToList(com.doplgangr.secrecy.FileSystem.File file) {
+        adapter.add(file);
     }
 
     @Background
     @Override
     void decrypt(com.doplgangr.secrecy.FileSystem.File file, final ProgressBar pBar, EmptyListener onFinish) {
         super.decrypt(file, pBar, onFinish);
-        onCreate();
     }
 
     @Background
@@ -354,6 +370,7 @@ public class FilesGalleryFragment extends FileViewer {
 
     void finish() {
         getActivity().finish();
+        BackgroundExecutor.cancelAll(Config.cancellable_task, true);
         //mFinishListener.onFinish(this);
     }
 }

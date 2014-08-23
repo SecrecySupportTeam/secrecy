@@ -41,19 +41,19 @@ class FilesListAdapter extends BaseAdapter {
     private final int resource;
     private final ArrayList<Integer> checked = new ArrayList<Integer>();
     // store (a reference to) the data
-    private ArrayList<File> data;
+    private ArrayList<File> data = new ArrayList<File>();
 
-    /**
-     * Default constructor. Creates the new Adaptor object to
-     * provide a ListView with data.
-     *
-     * @param context
-     * @param data
-     */
-    public FilesListAdapter(Context context, ArrayList<File> data) {
+    public FilesListAdapter(Context context) {
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.resource = R.layout.file_item;
-        this.data = data;
+    }
+
+    /**
+     * Add data to data set.
+     */
+    public void add(File file) {
+        data.add(file);
+        notifyDataSetChanged();
     }
 
     /**

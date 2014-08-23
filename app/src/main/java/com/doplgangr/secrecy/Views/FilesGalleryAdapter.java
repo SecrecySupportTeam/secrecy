@@ -40,22 +40,17 @@ class FilesGalleryAdapter extends BaseAdapter {
     private final int resource;
     private final ArrayList<Integer> checked = new ArrayList<Integer>();
     // store (a reference to) the data
-    private ArrayList<File> data;
+    private ArrayList<File> data = new ArrayList<File>();
 
-    /**
-     * Default constructor. Creates the new Adaptor object to
-     * provide a ListView with data.
-     *
-     * @param context
-     * @param data
-     */
-    public FilesGalleryAdapter(Context context, ArrayList<File> data) {
+    public FilesGalleryAdapter(Context context) {
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.resource = R.layout.gallery_item;
-        this.data = new ArrayList<File>();
-        for (File file : data)
-            if (file.hasThumbnail())
-                this.data.add(file);
+    }
+
+    public void add(File file) {
+        if (file.hasThumbnail())
+            data.add(file);
+        notifyDataSetChanged();
     }
 
     /**

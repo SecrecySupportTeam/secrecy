@@ -37,7 +37,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -45,7 +44,6 @@ import java.util.regex.Pattern;
 import javax.crypto.CipherOutputStream;
 
 public class Vault {
-    public final ArrayList<File> files = new ArrayList<File>();
     private final String name;
     private final String path;
     public Boolean wrongPass = true;
@@ -70,20 +68,6 @@ public class Vault {
     }
 
     public void initialize() {
-        java.io.File folder = new java.io.File(path);
-        String regex = "^((?!_thumb|.nomedia).)*$";            //Filter out .nomedia and thumbnails
-        final Pattern p = Pattern.compile(regex);
-        List<java.io.File> absFiles = Arrays.asList(
-                folder.listFiles(
-                        new FileFilter() {
-                            @Override
-                            public boolean accept(java.io.File file) {
-                                p.matcher(file.getName()).matches();
-                                return p.matcher(file.getName()).matches();
-                            }
-                        }
-                )
-        );
         java.io.File nomedia = new java.io.File(storage.getRoot().getAbsolutePath() + "/" +
                 name + "/.nomedia");
         if (!nomedia.exists())
@@ -112,10 +96,15 @@ public class Vault {
             storage.purgeFile(tempnomedia);
         }
         Log.d("Password is Wrong=", wrongPass + "");
+    }
 
-        files.clear();
-        for (java.io.File absfile : absFiles)
-            files.add(new File(absfile, key));
+    public void iterateAllFiles(onFileFoundListener listener) {
+        for (java.io.File absfile : getFileList())
+            listener.dothis(new File(absfile, key));
+    }
+
+    public int getCount() {
+        return getFileList().size();
     }
 
     public String addFile(final Context context, final Uri uri) {
@@ -161,7 +150,6 @@ public class Vault {
                 e.printStackTrace();
             }
         }
-        initialize();
         return filename;
     }
 
@@ -173,6 +161,29 @@ public class Vault {
                 e.printStackTrace();
             }
         return !wrongPass;
+    }
+
+    private List<java.io.File> getFileList() {
+        String regex = "^((?!_thumb|.nomedia).)*$";            //Filter out .nomedia and thumbnails
+        final Pattern p = Pattern.compile(regex);
+        java.io.File folder = new java.io.File(path);
+        List<java.io.File> absFiles = Arrays.asList(
+                folder.listFiles(
+                        new FileFilter() {
+                            @Override
+                            public boolean accept(java.io.File file) {
+                                p.matcher(file.getName()).matches();
+                                return p.matcher(file.getName()).matches();
+                            }
+                        }
+                )
+        );
+        return absFiles;
+    }
+
+
+    public interface onFileFoundListener {
+        void dothis(File file);
     }
 
 }

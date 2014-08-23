@@ -45,7 +45,7 @@ import com.doplgangr.secrecy.FileSystem.storage;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 
-import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
@@ -60,7 +60,7 @@ public class FileViewer extends Fragment {
     ActionBarActivity context;
 
 
-    @AfterViews
+    @AfterInject
     void onCreate() {
         context = (ActionBarActivity) getActivity();
         if (context.getSupportActionBar() != null)
