@@ -39,7 +39,6 @@ import org.apache.commons.io.FileUtils;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
@@ -56,7 +55,7 @@ public class storage {
         } finally {
             try {
                 FileUtils.cleanDirectory(directory);
-            } catch (IOException ignored) {
+            } catch (Exception ignored) {
             }
         }
     }
@@ -91,7 +90,7 @@ public class storage {
         } finally {
             try {
                 FileUtils.forceDelete(file);
-            } catch (IOException e1) {
+            } catch (Exception e1) {
                 Util.log(e1);
             }
         }
@@ -103,7 +102,7 @@ public class storage {
             tempDir = CustomApp.context.getFilesDir();
         try {
             FileUtils.forceMkdir(tempDir);
-        } catch (IOException e) {
+        } catch (Exception e) {
             Util.log(e);
         }
         return tempDir;
@@ -124,7 +123,7 @@ public class storage {
         java.io.File tempDir = new java.io.File(ROOT());
         try {
             FileUtils.forceMkdir(tempDir);
-        } catch (IOException e) {
+        } catch (Exception e) {
             Util.log(e);
         }
         return tempDir;
@@ -179,7 +178,7 @@ public class storage {
             if (stream != null)
                 try {
                     stream.close();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
         }
