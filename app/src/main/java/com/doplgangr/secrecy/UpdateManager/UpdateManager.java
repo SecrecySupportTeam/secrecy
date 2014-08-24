@@ -107,6 +107,9 @@ public class UpdateManager extends Fragment {
 
         // Switches between different upgrades, based on last app version.
         switch (version.no().get()) {
+            case 14:
+                version14to15();
+                break;
             case 13:
                 version13to14();
                 break;
@@ -149,9 +152,15 @@ public class UpdateManager extends Fragment {
         appendlog(getString(R.string.updating));
     }
     @Background
-    void version13to14() {
+    void version14to15() {
         //Still nothing...
         onFinishAllUpgrade();
+    }
+
+    @Background
+    void version13to14() {
+        //Still nothing...
+        version14to15();
     }
 
     @Background
