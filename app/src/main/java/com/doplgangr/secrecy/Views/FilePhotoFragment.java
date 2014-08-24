@@ -99,6 +99,7 @@ public class FilePhotoFragment extends Activity {
         public void add(File file) {
             if (file.hasThumbnail())
                 sDrawables.add(file);
+            notifyDataSetChanged();
         }
 
         @Override

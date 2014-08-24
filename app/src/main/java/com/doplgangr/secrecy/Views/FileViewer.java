@@ -36,7 +36,6 @@ import android.widget.Toast;
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.EmptyListener;
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
-import com.doplgangr.secrecy.FileSystem.DecryptFileProvider;
 import com.doplgangr.secrecy.FileSystem.File;
 import com.doplgangr.secrecy.FileSystem.FileObserver;
 import com.doplgangr.secrecy.FileSystem.OurFileProvider;
@@ -122,7 +121,7 @@ public class FileViewer extends Fragment {
                 java.io.File newFile = new java.io.File(storage.getTempFolder(), tempFile.getName());
                 tempFile = newFile;
             }
-            Uri uri = OurFileProvider.getUriForFile(context, DecryptFileProvider.class.getName(), tempFile);
+            Uri uri = OurFileProvider.getUriForFile(context, OurFileProvider.FILE_PROVIDER_AUTHORITY, tempFile);
             MimeTypeMap myMime = MimeTypeMap.getSingleton();
             Intent newIntent = new Intent(android.content.Intent.ACTION_VIEW);
             String mimeType = myMime.getMimeTypeFromExtension(file.getType());

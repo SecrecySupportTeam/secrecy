@@ -329,12 +329,12 @@ public class FilesGalleryFragment extends FileViewer {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 for (Integer position : adapterSelected)
-                    if (!adapter.getItem(position).decrypting)
+                    if (!adapter.getItem(position).decrypting) {
                         adapter.getItem(position).delete();
+                        adapter.remove(position);
+                    }
                     else
                         Util.toast(context, getString(R.string.error_delete_decrypting), Toast.LENGTH_SHORT);
-                secret.initialize();
-                adapter.notifyDataSetChanged();
             }
         };
         String FilesToDelete = "\n";

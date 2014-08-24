@@ -57,6 +57,14 @@ class FilesListAdapter extends BaseAdapter {
     }
 
     /**
+     * Add data to data set.
+     */
+    public void remove(int position) {
+        data.remove(position);
+        notifyDataSetChanged();
+    }
+
+    /**
      * Return the size of the data set.
      */
     public int getCount() {

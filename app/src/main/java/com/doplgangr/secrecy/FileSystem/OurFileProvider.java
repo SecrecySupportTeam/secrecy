@@ -46,6 +46,9 @@ import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
 import static org.xmlpull.v1.XmlPullParser.START_TAG;
 
 public class OurFileProvider extends ContentProvider {
+    public static final String
+            FILE_PROVIDER_AUTHORITY = "com.doplgangr.secrecy.FileSystem.DecryptFileProvider";
+
     private static final String[] COLUMNS = {
             OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE};
 

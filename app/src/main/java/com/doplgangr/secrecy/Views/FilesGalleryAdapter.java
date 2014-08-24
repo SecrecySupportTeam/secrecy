@@ -53,6 +53,11 @@ class FilesGalleryAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void remove(int position) {
+        data.remove(position);
+        notifyDataSetChanged();
+    }
+
     /**
      * Return the size of the data set.
      */
