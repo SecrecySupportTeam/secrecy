@@ -60,7 +60,7 @@ public class PremiumActivity extends Activity {
     // Callback for when a purchase is finished
     private final OnIabPurchaseFinishedListener mPurchaseFinishedListener = new OnIabPurchaseFinishedListener() {
         public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
-            Log.d(TAG, "Purchase finished: " + result + ", purchase: " + purchase);
+            Util.log("Purchase finished: " + result + ", purchase: " + purchase);
 
             // if we were disposed of in the meantime, quit.
             if (mHelper == null) return;
@@ -77,11 +77,11 @@ public class PremiumActivity extends Activity {
                 return;
             }
 
-            Log.d(TAG, "Purchase successful.");
+            Util.log("Purchase successful.");
 
             if (purchase.getSku().equals(SKU_PREMIUM)) {
                 // bought the premium upgrade!
-                Log.d(TAG, "Purchase is premium upgrade. Congratulating user.");
+                Util.log("Purchase is premium upgrade. Congratulating user.");
                 mIsPremium = true;
                 updateUi();
                 setWaitScreen(false);
@@ -91,7 +91,7 @@ public class PremiumActivity extends Activity {
     // Listener that's called when we finish querying the items and subscriptions we own
     private final QueryInventoryFinishedListener mGotInventoryListener = new QueryInventoryFinishedListener() {
         public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
-            Log.d(TAG, "Query inventory finished.");
+            Util.log("Query inventory finished.");
 
             // Have we been disposed of in the meantime? If so, quit.
             if (mHelper == null) return;
@@ -103,7 +103,7 @@ public class PremiumActivity extends Activity {
                 return;
             }
 
-            Log.d(TAG, "Query inventory was successful.");
+            Util.log("Query inventory was successful.");
 
             /*
              * Check for items we own. Notice that for each purchase, we check
@@ -114,7 +114,7 @@ public class PremiumActivity extends Activity {
             // Do we have the premium upgrade?
             Purchase premiumPurchase = inventory.getPurchase(SKU_PREMIUM);
             mIsPremium = (premiumPurchase != null && verifyDeveloperPayload(premiumPurchase));
-            Log.d(TAG, "User is " + (mIsPremium ? "PREMIUM" : "NOT PREMIUM"));
+            Util.log("User is " + (mIsPremium ? "PREMIUM" : "NOT PREMIUM"));
             updateUi();
             if (mIsPremium) {
                 Util.alert(context,
@@ -124,7 +124,7 @@ public class PremiumActivity extends Activity {
                         null);
             }
             setWaitScreen(false);
-            Log.d(TAG, "Initial inventory query finished; enabling main UI.");
+            Util.log("Initial inventory query finished; enabling main UI.");
         }
     };
 
@@ -146,7 +146,7 @@ public class PremiumActivity extends Activity {
         final String KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgbAMG82/KN7DaFV3lIVtQDepcEnI+N7MZJemXnus3kkSQ0vr+veE54l7w0Meq32alRaGBabgZuPZdjA7tsQJRa47IVF/ibHLzlBqAsefVNf+ulGEqvoeeU8oHJviIXZEdRRw3KfXrxepzKU75WLFXyMl1+ssQPWbhQaY6mLQebJz5cBivY67yd09zPjxz3SN844AFssj0+dh5D4YRIV1Qr5A0VgpNxWdbiGnDFk8WjLkfjbn3sdcJ2sCrB7pOUcjWbNRXp0jtFj0UQlmNisnbRPw9bPtrbXiWW7o745NmQfjMgg/35bJqRBlKOamU57LmJfbbpQwslpQVAQiv6dZWQIDAQAB";
 
         // Create the helper, passing it our context and the public key to verify signatures with
-        Log.d(TAG, "Creating IAB helper.");
+        Util.log("Creating IAB helper.");
         mHelper = new IabHelper(context, KEY);
 
         // enable debug logging (for a production application, you should set this to false).
@@ -154,10 +154,10 @@ public class PremiumActivity extends Activity {
 
         // Start setup. This is asynchronous and the specified listener
         // will be called once setup completes.
-        Log.d(TAG, "Starting setup.");
+        Util.log("Starting setup.");
         mHelper.startSetup(new OnIabSetupFinishedListener() {
             public void onIabSetupFinished(IabResult result) {
-                Log.d(TAG, "Setup finished.");
+                Util.log("Setup finished.");
 
                 if (!result.isSuccess()) {
                     // Oh noes, there was a problem.
@@ -170,7 +170,7 @@ public class PremiumActivity extends Activity {
                 if (mHelper == null) return;
 
                 // IAB is fully set up. Now, let's get an inventory of stuff we own.
-                Log.d(TAG, "Setup successful. Querying inventory.");
+                Util.log("Setup successful. Querying inventory.");
                 mHelper.queryInventoryAsync(mGotInventoryListener);
             }
         });
@@ -178,7 +178,7 @@ public class PremiumActivity extends Activity {
 
     // User clicked the "Upgrade to Premium" button.
     public void onUpgradeAppButtonClicked(View v) {
-        Log.d(TAG, "Upgrade button clicked; launching purchase flow for upgrade.");
+        Util.log("Upgrade button clicked; launching purchase flow for upgrade.");
         setWaitScreen(true);
 
         /* TODO: for security, generate your payload here for verification. See the comments on
@@ -192,7 +192,7 @@ public class PremiumActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult(" + requestCode + "," + resultCode + "," + data);
+        Util.log("onActivityResult(" + requestCode + "," + resultCode + "," + data);
         if (mHelper == null) return;
 
         // Pass on the activity result to the helper for handling
@@ -202,7 +202,7 @@ public class PremiumActivity extends Activity {
             // billing...
             super.onActivityResult(requestCode, resultCode, data);
         } else {
-            Log.d(TAG, "onActivityResult handled by IABUtil.");
+            Util.log("onActivityResult handled by IABUtil.");
         }
     }
 
@@ -244,7 +244,7 @@ public class PremiumActivity extends Activity {
         super.onDestroy();
 
         // very important:
-        Log.d(TAG, "Destroying helper.");
+        Util.log("Destroying helper.");
         if (mHelper != null) {
             mHelper.dispose();
             mHelper = null;
@@ -271,7 +271,7 @@ public class PremiumActivity extends Activity {
         AlertDialog.Builder bld = new AlertDialog.Builder(this);
         bld.setMessage(message);
         bld.setNeutralButton("OK", null);
-        Log.d(TAG, "Showing alert dialog: " + message);
+        Util.log("Showing alert dialog: " + message);
         bld.create().show();
     }
 

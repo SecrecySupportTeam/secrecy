@@ -26,9 +26,9 @@ package com.doplgangr.secrecy.FileSystem;
 
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import com.doplgangr.secrecy.Config;
+import com.doplgangr.secrecy.Util;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -160,7 +160,7 @@ public class File {
         } catch (FileNotFoundException e) {
             listener.onFailed(2);
         } catch (IOException e) {
-            Log.d("IO", "Exception");
+            Util.log("IO Exception while decrypting", e.getMessage());
             if (e.getMessage().contains("pad block corrupted"))
                 listener.onFailed(1);
             else

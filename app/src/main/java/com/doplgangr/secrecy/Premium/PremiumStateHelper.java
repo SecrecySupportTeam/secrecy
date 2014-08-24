@@ -1,7 +1,6 @@
 package com.doplgangr.secrecy.Premium;
 
 import android.app.Activity;
-import android.util.Log;
 
 import com.doplgangr.secrecy.Util;
 import com.github.jberkel.pay.me.IabHelper;
@@ -38,7 +37,7 @@ public class PremiumStateHelper {
     // Listener that's called when we finish querying the items and subscriptions we own
     private final QueryInventoryFinishedListener mGotInventoryListener = new QueryInventoryFinishedListener() {
         public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
-            Log.d(TAG, "Query inventory finished.");
+            Util.log("Query inventory finished.");
 
             // Have we been disposed of in the meantime? If so, quit.
             if (mHelper == null) {
@@ -53,7 +52,7 @@ public class PremiumStateHelper {
                 return;
             }
 
-            Log.d(TAG, "Query inventory was successful.");
+            Util.log("Query inventory was successful.");
 
             /*
              * Check for items we own. Notice that for each purchase, we check
@@ -64,14 +63,14 @@ public class PremiumStateHelper {
             // Do we have the premium upgrade?
             Purchase premiumPurchase = inventory.getPurchase(SKU_PREMIUM);
             boolean mIsPremium = (premiumPurchase != null && verifyDeveloperPayload(premiumPurchase));
-            Log.d(TAG, "User is " + (mIsPremium ? "PREMIUM" : "NOT PREMIUM"));
+            Util.log("User is " + (mIsPremium ? "PREMIUM" : "NOT PREMIUM"));
 
             if (mIsPremium)
                 mPremiumListener.isPremium();
             else
                 mPremiumListener.notPremium();
             destroy();
-            Log.d(TAG, "Initial inventory query finished; enabling main UI.");
+            Util.log("Initial inventory query finished; enabling main UI.");
         }
     };
 
@@ -80,7 +79,7 @@ public class PremiumStateHelper {
         final String KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgbAMG82/KN7DaFV3lIVtQDepcEnI+N7MZJemXnus3kkSQ0vr+veE54l7w0Meq32alRaGBabgZuPZdjA7tsQJRa47IVF/ibHLzlBqAsefVNf+ulGEqvoeeU8oHJviIXZEdRRw3KfXrxepzKU75WLFXyMl1+ssQPWbhQaY6mLQebJz5cBivY67yd09zPjxz3SN844AFssj0+dh5D4YRIV1Qr5A0VgpNxWdbiGnDFk8WjLkfjbn3sdcJ2sCrB7pOUcjWbNRXp0jtFj0UQlmNisnbRPw9bPtrbXiWW7o745NmQfjMgg/35bJqRBlKOamU57LmJfbbpQwslpQVAQiv6dZWQIDAQAB";
 
         // Create the helper, passing it our context and the public key to verify signatures with
-        Log.d(TAG, "Creating IAB helper.");
+        Util.log("Creating IAB helper.");
         mHelper = new IabHelper(context, KEY);
 
         // enable debug logging (for a production application, you should set this to false).
@@ -88,10 +87,10 @@ public class PremiumStateHelper {
 
         // Start setup. This is asynchronous and the specified listener
         // will be called once setup completes.
-        Log.d(TAG, "Starting setup.");
+        Util.log("Starting setup.");
         mHelper.startSetup(new OnIabSetupFinishedListener() {
             public void onIabSetupFinished(IabResult result) {
-                Log.d(TAG, "Setup finished.");
+                Util.log("Setup finished.");
 
                 if (!result.isSuccess()) {
                     // Oh noes, there was a problem.
@@ -107,7 +106,7 @@ public class PremiumStateHelper {
                 }
 
                 // IAB is fully set up. Now, let's get an inventory of stuff we own.
-                Log.d(TAG, "Setup successful. Querying inventory.");
+                Util.log("Setup successful. Querying inventory.");
                 mHelper.queryInventoryAsync(mGotInventoryListener);
             }
         });
@@ -148,7 +147,7 @@ public class PremiumStateHelper {
     // We're being destroyed. It's important to dispose of the helper here!
     void destroy() {
         // very important:
-        Log.d(TAG, "Destroying helper.");
+        Util.log("Destroying helper.");
         if (mHelper != null) {
             mHelper.dispose();
             mHelper = null;

@@ -299,6 +299,7 @@ public class FilesListFragment extends FileViewer {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Util.log("intent received=", data.getData().toString(), data.getData().getLastPathSegment());
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE && data.getData() != null) {
             addFilepBar.setVisibility(View.VISIBLE);
             addFile(secret, data);

@@ -29,6 +29,8 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,9 +78,12 @@ public class Util {
         });
     }
 
-    public static void log(Object object) {
-        Log.d("Secrecy", object + ""
-        );
+    public static void log(Object... objects) {
+        String log = "";
+        for (Object object : objects)
+            log += " " + object;
+        Log.d("SecrecyLogs", log);
+        Crashlytics.log(log);
     }
 
     public static Map<String, java.io.File> getAllStorageLocations() {
@@ -136,10 +141,10 @@ public class Util {
 
         for (String mount : mMounts) {
             java.io.File root = new java.io.File(mount);
-            Log.d(mount, "is checked");
-            Log.d(mount, root.exists() + " " + root.isDirectory() + " " + canWrite(root));
+            Util.log(mount, "is checked");
+            Util.log(mount, root.exists(), root.isDirectory(), canWrite(root));
             if (canWrite(root)) {
-                Log.d(mount, "is writable");
+                Util.log(mount, "is writable");
                 java.io.File[] list = root.listFiles();
                 String hash = "[";
                 if (list != null)

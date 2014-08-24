@@ -6,9 +6,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import com.doplgangr.secrecy.R;
+import com.doplgangr.secrecy.Util;
 import com.doplgangr.secrecy.Views.MainActivity_;
 
 import org.androidannotations.annotations.EIntentService;
@@ -64,7 +64,7 @@ public class FileOptionsService extends IntentService {
             startForeground(NOTIFICATION_FOREGROUND, mBuilder.build());
         else
             stopForeground(true);
-        Log.d("FileOb", "Notification sent successfully.");
+        Util.log("FileOb", "Notification sent successfully.");
     }
 
 }

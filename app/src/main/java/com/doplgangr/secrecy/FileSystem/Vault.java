@@ -22,10 +22,10 @@ package com.doplgangr.secrecy.FileSystem;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.doplgangr.secrecy.Config;
+import com.doplgangr.secrecy.Util;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -95,7 +95,7 @@ public class Vault {
             wrongPass = false;
             storage.purgeFile(tempnomedia);
         }
-        Log.d("Password is Wrong=", wrongPass + "");
+        Util.log("Password is Wrong=", wrongPass);
     }
 
     public void iterateAllFiles(onFileFoundListener listener) {

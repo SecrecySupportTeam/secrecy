@@ -27,7 +27,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.R;
@@ -49,7 +48,7 @@ public class FileObserver extends IntentService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("FileOb", "onStart " + intent.getStringExtra(Config.file_extra));
+        Util.log("FileOb", "onStart " + intent.getStringExtra(Config.file_extra));
         mNotificationManager = (NotificationManager) this
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         File file = new java.io.File(intent.getStringExtra(Config.file_extra));
@@ -63,7 +62,7 @@ public class FileObserver extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d("FileOb", "onHandleIntent");
+        Util.log("FileOb", "onHandleIntent");
 
     }
 
@@ -86,12 +85,12 @@ public class FileObserver extends IntentService {
             startForeground(NOTIFICATION_FOREGROUND, mBuilder.build());
         else
             stopForeground(true);
-        Log.d("FileOb", "Notification sent successfully.");
+        Util.log("FileOb", "Notification sent successfully.");
     }
 
     @Override
     public void onDestroy() {
-        Log.d("FileOb", "IntentService Ondestroy.");
+        Util.log("FileOb", "IntentService Ondestroy.");
         for (MyFileObserver fileOb : fileObs) {
             storage.shredFile(fileOb.file);
             fileOb.stopWatching();
