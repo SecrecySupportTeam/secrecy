@@ -29,7 +29,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -300,8 +299,7 @@ public class FilesListFragment extends FileViewer {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
-            Log.d("intent received", data.getData().toString() + " " + data.getData().getLastPathSegment());
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE && data.getData() != null) {
             addFilepBar.setVisibility(View.VISIBLE);
             addFile(secret, data);
             super.onActivityResult(requestCode, resultCode, data);
