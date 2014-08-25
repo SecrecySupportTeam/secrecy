@@ -173,24 +173,7 @@ public class FilesListFragment extends FileViewer {
     void onCreate() {
         context = (ActionBarActivity) getActivity();
         secret = new Vault(vault, password);
-        adapter = new FilesListAdapter(context);
-        setupViews();
-        addFiles();
-    }
-
-    @Background(id = Config.cancellable_task)
-    void addFiles() {
-        secret.iterateAllFiles(
-                new Vault.onFileFoundListener() {
-                    @Override
-                    public void dothis(com.doplgangr.secrecy.FileSystem.File file) {
-                        addToList(file);
-                    }
-                });
-    }
-
-    @UiThread
-    void setupViews() {
+        adapter = new FilesListAdapter(context, R.layout.file_item);
         if (secret.wrongPass) {
             Util.alert(
                     context,
@@ -205,24 +188,43 @@ public class FilesListFragment extends FileViewer {
             );
             return;
         }
+        addFiles();
+    }
+
+    @Background(id = Config.cancellable_task)
+    void addFiles() {
+        setupViews();
+        secret.iterateAllFiles(
+                new Vault.onFileFoundListener() {
+                    @Override
+                    public void dothis(com.doplgangr.secrecy.FileSystem.File file) {
+                        addToList(file);
+                    }
+                });
+    }
+
+    @UiThread
+    void setupViews() {
         mListView.setAdapter(adapter);
         context.getSupportActionBar().setTitle(secret.getName());
+        mListView.setEmptyView(nothing);
+
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, final View mView, int i, long l) {
+            public void onItemClick(AdapterView<?> adapterView, final View view, int i, long l) {
                 if (mActionMode != null) {
-                    select(i, mView);
+                    select(i, view);
                     return;
                 }
                 com.doplgangr.secrecy.FileSystem.File file = adapter.getItem(i);
 
                 if (!file.decrypting) {
-                    ProgressBar pBar = (ProgressBar) mView.findViewById(R.id.progressBar);
-                    switchView(mView, R.id.DecryptLayout);
+                    ProgressBar pBar = (ProgressBar) view.findViewById(R.id.progressBar);
+                    switchView(view, R.id.DecryptLayout);
                     EmptyListener onFinish = new EmptyListener() {
                         @Override
                         public void run() {
-                            switchView(mView, R.id.dataLayout);
+                            switchView(view, R.id.dataLayout);
                         }
                     };
                     decrypt(file, pBar, onFinish);
@@ -242,13 +244,6 @@ public class FilesListFragment extends FileViewer {
                 return true;
             }
         });
-
-        if (secret.getCount() == 0) {
-            nothing.setVisibility(View.VISIBLE);
-        } else {
-            nothing.setVisibility(View.GONE);
-        }
-        addFilepBar.setVisibility(View.GONE);
     }
 
     @UiThread
@@ -299,8 +294,8 @@ public class FilesListFragment extends FileViewer {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Util.log("intent received=", data.getData().toString(), data.getData().getLastPathSegment());
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE && data.getData() != null) {
+            Util.log("intent received=", data.getData().toString(), data.getData().getLastPathSegment());
             addFilepBar.setVisibility(View.VISIBLE);
             addFile(secret, data);
             super.onActivityResult(requestCode, resultCode, data);
@@ -361,12 +356,12 @@ public class FilesListFragment extends FileViewer {
     }
 
     void select(int position, View mView) {
-        if (adapter.select(position))
-            ((FrameLayout) mView.findViewById(R.id.frame))
-                    .setForeground(selector);
-        else
-            ((FrameLayout) mView.findViewById(R.id.frame))
-                    .setForeground(null);
+        FilesListAdapter.ViewHolder viewHolder = (FilesListAdapter.ViewHolder) mView.getTag();
+        viewHolder.selected = adapter.select(position);
+        ((FrameLayout) mView.findViewById(R.id.frame))
+                .setForeground(viewHolder.selected ?
+                        selector :
+                        null);
         mActionMode.setTitle(String.format(getString(R.string.action_mode_title_no_selection), adapter.getSelected().size()));
     }
 

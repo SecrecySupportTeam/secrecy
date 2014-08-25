@@ -25,7 +25,8 @@ import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,7 +35,7 @@ import com.doplgangr.secrecy.R;
 
 import java.util.ArrayList;
 
-class FilesListAdapter extends BaseAdapter {
+class FilesListAdapter extends ArrayAdapter<File> {
     // store the context (as an inflated layout)
     private final LayoutInflater inflater;
     // store the resource (typically file_item.xml)
@@ -43,9 +44,10 @@ class FilesListAdapter extends BaseAdapter {
     // store (a reference to) the data
     private ArrayList<File> data = new ArrayList<File>();
 
-    public FilesListAdapter(Context context) {
+    public FilesListAdapter(Context context, int layout) {
+        super(context, layout, new ArrayList<File>());
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.resource = R.layout.file_item;
+        this.resource = layout;
     }
 
     /**
@@ -93,14 +95,30 @@ class FilesListAdapter extends BaseAdapter {
         checked.clear();
     }
 
+    public View getView(File file, View convertView, ViewGroup parent) {
+        int position = data.indexOf(file);
+        return getView(position, convertView, parent);
+    }
+
     public View getView(int position, View convertView, ViewGroup parent) {
         // reuse a given view, or inflate a new one from the xml
         View view;
 
         if (convertView == null) {
             view = this.inflater.inflate(resource, parent, false);
+            ViewHolder viewHolder = new ViewHolder();
+            viewHolder.name = (TextView) view.findViewById(R.id.name);
+            viewHolder.type = (TextView) view.findViewById(R.id.type);
+            viewHolder.size = (TextView) view.findViewById(R.id.size);
+            viewHolder.date = (TextView) view.findViewById(R.id.date);
+            viewHolder.thumbnail = (ImageView) view.findViewById(R.id.thumbNail);
+            viewHolder.frame = (FrameLayout) view.findViewById(R.id.frame);
+            viewHolder.selected = false;
+            view.setTag(viewHolder);
         } else {
             view = convertView;
+            ViewHolder viewHolder = (ViewHolder) view.getTag();
+            viewHolder.selected = checked.contains(position);
         }
 
         // bind the data to the view object
@@ -112,6 +130,7 @@ class FilesListAdapter extends BaseAdapter {
      * This is the only method not required by base adapter.
      */
     View bindData(final View view, int position) {
+        final ViewHolder viewHolder = (ViewHolder) view.getTag();
         // make sure it's worth drawing the view
         if (position >= this.data.size())  // To prevent out of bound exception
             return view;
@@ -119,26 +138,28 @@ class FilesListAdapter extends BaseAdapter {
             return view;
 
         // pull out the object
-        File file = this.data.get(position);
+        final File file = this.data.get(position);
+        if (viewHolder.name != null)
+            viewHolder.name.setText(file.getName());
 
-        // extract the view object
-        View viewElement = view.findViewById(R.id.name);
-        // cast to the correct type
-        TextView tv = (TextView) viewElement;
-        // set the value
-        tv.setText(file.getName());
+        if (viewHolder.type != null)
+            viewHolder.type.setText(file.getType());
 
-        viewElement = view.findViewById(R.id.type);
-        tv = (TextView) viewElement;
-        tv.setText(file.getType());
+        if (viewHolder.size != null)
+            viewHolder.size.setText(file.getSize());
 
-        viewElement = view.findViewById(R.id.size);
-        tv = (TextView) viewElement;
-        tv.setText(file.getSize());
+        if (viewHolder.date != null)
+            viewHolder.date.setText(file.getTimestamp());
 
-        viewElement = view.findViewById(R.id.date);
-        tv = (TextView) viewElement;
-        tv.setText(file.getTimestamp());
+        if (viewHolder.thumbnail != null) {
+            viewHolder.thumbnail.setVisibility(View.GONE);
+            viewHolder.thumbnail.setTag(file.getName());
+        }
+
+        viewHolder.frame.setForeground(
+                viewHolder.selected ?
+                        getContext().getResources().getDrawable(R.drawable.file_selector) :
+                        null);
 
         // This class is for binding thumbnail to UI
         class BindImageTask extends AsyncTask<File, Void, Bitmap> {
@@ -147,10 +168,11 @@ class FilesListAdapter extends BaseAdapter {
             }
 
             protected void onPostExecute(Bitmap thumbnail) {
-                View viewElement = view.findViewById(R.id.thumbNail);
-                ImageView iv = (ImageView) viewElement;
-                if (thumbnail != null)
-                    iv.setImageBitmap(thumbnail);   // bind thumbnail in UI thread
+                String name = (String) viewHolder.thumbnail.getTag();
+                if (name.equals(file.getName()) && (thumbnail != null)) {
+                    viewHolder.thumbnail.setImageBitmap(thumbnail);   // bind thumbnail in UI thread
+                    viewHolder.thumbnail.setVisibility(View.VISIBLE);
+                }
             }
         }
         new BindImageTask().execute(file);
@@ -177,6 +199,16 @@ class FilesListAdapter extends BaseAdapter {
 
     public void clear() {
         data.clear();
+    }
+
+    static class ViewHolder {
+        public TextView name;
+        public TextView type;
+        public TextView size;
+        public TextView date;
+        public ImageView thumbnail;
+        public FrameLayout frame;
+        public Boolean selected;
     }
 
 
