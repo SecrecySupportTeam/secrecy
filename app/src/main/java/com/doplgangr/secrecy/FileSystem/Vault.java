@@ -37,6 +37,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -45,7 +46,7 @@ import javax.crypto.CipherOutputStream;
 
 import static com.ipaulpro.afilechooser.utils.FileUtils.getPath;
 
-public class Vault {
+public class Vault implements Serializable {
     private final String name;
     private final String path;
     public Boolean wrongPass = true;

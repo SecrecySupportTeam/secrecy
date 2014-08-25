@@ -38,6 +38,7 @@ import com.doplgangr.secrecy.EmptyListener;
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.File;
 import com.doplgangr.secrecy.FileSystem.FileObserver;
+import com.doplgangr.secrecy.FileSystem.FileOptionsService_;
 import com.doplgangr.secrecy.FileSystem.OurFileProvider;
 import com.doplgangr.secrecy.FileSystem.Vault;
 import com.doplgangr.secrecy.FileSystem.storage;
@@ -48,6 +49,7 @@ import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
+import org.androidannotations.api.BackgroundExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,28 +88,9 @@ public class FileViewer extends Fragment {
 
     @Background
     void addFile(Vault secret, final Intent data) {
-        String filename = secret.addFile(context, data.getData());
-        Uri thumbnail = storage.saveThumbnail(context, data.getData(), filename);
-        if (thumbnail != null) {
-            secret.addFile(context, thumbnail);
-            storage.purgeFile(new java.io.File(thumbnail.getPath()));
-        }
-        Util.alert(context,
-                getString(R.string.add_successful),
-                getString(R.string.add_successful_message),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        storage.purgeFile(new java.io.File(data.getData().getPath())); //Try to delete original file.
-                        try {
-                            context.getContentResolver().delete(data.getData(), null, null); //Try to delete under content resolver
-                        } catch (Exception ignored) {
-                            //ignore cannot delete original file
-                        }
-                    }
-                },
-                Util.emptyClickListener
-        );
+        FileOptionsService_.intent(this)
+                .addFile(secret, data)
+                .start();
         onCreate();
     }
 
@@ -203,6 +186,8 @@ public class FileViewer extends Fragment {
             } catch (android.content.ActivityNotFoundException e2) {
                 Util.toast(context, getString(R.string.error_no_activity_view), Toast.LENGTH_LONG);
             }
+        } catch (IllegalStateException e) {
+            //duh why you leave so early
         }
     }
 
@@ -235,6 +220,7 @@ public class FileViewer extends Fragment {
     public void onDestroy() {
         Intent intent = new Intent(context, FileObserver.class);
         context.stopService(intent);
+        BackgroundExecutor.cancelAll(Config.cancellable_task, true);
         super.onDestroy();
     }
 }

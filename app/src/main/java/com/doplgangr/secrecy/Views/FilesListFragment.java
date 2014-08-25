@@ -168,7 +168,7 @@ public class FilesListFragment extends FileViewer {
         }
     }
 
-    @Background(id = Config.cancellable_task)
+    @Background
     @Override
     void onCreate() {
         context = (ActionBarActivity) getActivity();
@@ -251,13 +251,13 @@ public class FilesListFragment extends FileViewer {
         adapter.add(file);
     }
 
-    @Background
+    @Background(id = Config.cancellable_task)
     @Override
     void decrypt(com.doplgangr.secrecy.FileSystem.File file, final ProgressBar pBar, EmptyListener onFinish) {
         super.decrypt(file, pBar, onFinish);
     }
 
-    @Background
+    @Background(id = Config.cancellable_task)
     void decrypt_and_save(com.doplgangr.secrecy.FileSystem.File file, final ProgressBar pBar, final EmptyListener onFinish) {
         File tempFile = super.getFile(file, pBar, onFinish);
         File storedFile = new File(Environment.getExternalStorageDirectory(), file.getName() + "." + file.getType());
@@ -296,7 +296,6 @@ public class FilesListFragment extends FileViewer {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE && data.getData() != null) {
             Util.log("intent received=", data.getData().toString(), data.getData().getLastPathSegment());
-            addFilepBar.setVisibility(View.VISIBLE);
             addFile(secret, data);
             super.onActivityResult(requestCode, resultCode, data);
         } else {

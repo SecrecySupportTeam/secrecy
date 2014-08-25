@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
 import com.doplgangr.secrecy.R;
@@ -23,6 +24,7 @@ public class FileOptionsService extends IntentService {
     private static final int NOTIFICATION_FOREGROUND = 0;
     private NotificationManager mNotificationManager;
     private int count = 0;
+    private int countAddFiles = 0;
 
     public FileOptionsService() {
         super(FileOptionsService.class.getName());
@@ -36,6 +38,23 @@ public class FileOptionsService extends IntentService {
         count--;
         if (count == 0)
             sendNotif("Done.", false);
+    }
+
+    @ServiceAction
+    void addFile(Vault secret, final Intent data) {
+        final Context context = getApplicationContext();
+        String filename = secret.addFile(context, data.getData());
+        Uri thumbnail = storage.saveThumbnail(context, data.getData(), filename);
+        if (thumbnail != null) {
+            secret.addFile(context, thumbnail);
+            delete(new java.io.File(thumbnail.getPath()));
+        }
+        delete(new java.io.File(data.getData().getPath())); //Try to delete original file.
+        try {
+            context.getContentResolver().delete(data.getData(), null, null); //Try to delete under content resolver
+        } catch (Exception ignored) {
+            //ignore cannot delete original file
+        }
     }
 
     @Override
