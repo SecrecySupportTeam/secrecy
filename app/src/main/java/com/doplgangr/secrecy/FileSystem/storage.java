@@ -21,7 +21,6 @@ package com.doplgangr.secrecy.FileSystem;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
@@ -42,6 +41,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
+
+import static com.ipaulpro.afilechooser.utils.FileUtils.getPath;
 
 public class storage {
 
@@ -154,15 +155,11 @@ public class storage {
                 storage.purgeFile(thumbpath);
             thumbpath.createNewFile();
             FileOutputStream out = new FileOutputStream(thumbpath);
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            Bitmap bitmap = BitmapFactory.decodeStream(stream);
-            bitmap = ThumbnailUtils.extractThumbnail(bitmap
-                    , 150, 150);
-            if (bitmap == null) {   //If photo fails, try bitmap
-                Util.log(getRealPathFromURI(context, uri));
+            Bitmap bitmap = decodeSampledBitmapFromPath(getPath(context, uri), 150, 150);
+            if (bitmap == null) {   //If photo fails, try Video
+                Util.log(getPath(context, uri));
                 bitmap = ThumbnailUtils.createVideoThumbnail(
-                        getRealPathFromURI(context, uri), MediaStore.Video.Thumbnails.MICRO_KIND);
+                        getPath(context, uri), MediaStore.Video.Thumbnails.MICRO_KIND);
             }
             if (bitmap == null) {
                 out.close();
@@ -185,7 +182,7 @@ public class storage {
         return null;
     }
 
-    public static Bitmap getThumbnail(java.io.File file) {
+    public static Bitmap getThumbnailfromFile(java.io.File file) {
         if (file != null)
             if (file.exists())
                 if (file.length() > 0)
@@ -193,19 +190,36 @@ public class storage {
         return null;
     }
 
-    private static String getRealPathFromURI(Context context, final Uri contentURI) {
-        Cursor cursor = context.getContentResolver().query(contentURI, null, null, null, null);
-        if (cursor == null) { // Source is Dropbox or other similar local file path
-            return contentURI.getPath();
-        } else {
-            cursor.moveToFirst();
-            int idx = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
-            if (idx == -1) {
-                return contentURI.getPath();
+    public static Bitmap decodeSampledBitmapFromPath(String path, int reqWidth,
+                                                     int reqHeight) {
+
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
+
+        options.inSampleSize = calculateInSampleSize(options, reqWidth,
+                reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        Bitmap bmp = BitmapFactory.decodeFile(path, options);
+        return bmp;
+    }
+
+    public static int calculateInSampleSize(BitmapFactory.Options options,
+                                            int reqWidth, int reqHeight) {
+
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            if (width > height) {
+                inSampleSize = Math.round((float) height / (float) reqHeight);
+            } else {
+                inSampleSize = Math.round((float) width / (float) reqWidth);
             }
-            String rvalue = cursor.getString(idx);
-            cursor.close();
-            return rvalue;
         }
+        return inSampleSize;
     }
 }

@@ -43,6 +43,8 @@ import java.util.regex.Pattern;
 
 import javax.crypto.CipherOutputStream;
 
+import static com.ipaulpro.afilechooser.utils.FileUtils.getPath;
+
 public class Vault {
     private final String name;
     private final String path;
@@ -99,8 +101,9 @@ public class Vault {
     }
 
     public void iterateAllFiles(onFileFoundListener listener) {
-        for (java.io.File absfile : getFileList())
-            listener.dothis(new File(absfile, key));
+        List<java.io.File> files = getFileList();
+        for (java.io.File file : files)
+            listener.dothis(new File(file, key));
     }
 
     public int getCount() {
@@ -109,6 +112,14 @@ public class Vault {
 
     public String addFile(final Context context, final Uri uri) {
         String filename = uri.getLastPathSegment();
+        try {
+            String realPath = getPath(context, uri);
+            Util.log(realPath, filename);
+            filename = new java.io.File(realPath).getName();
+            // If we can use real path, better use one.
+        } catch (Exception ignored) {
+            // Leave it.
+        }
         if (!filename.contains("_thumb")) {
             ContentResolver cR = context.getContentResolver();
             MimeTypeMap mime = MimeTypeMap.getSingleton();

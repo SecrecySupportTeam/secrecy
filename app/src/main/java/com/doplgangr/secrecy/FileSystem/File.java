@@ -114,7 +114,7 @@ public class File {
 
                 }
             });
-            this.thumb = storage.getThumbnail(tempThumb);
+            this.thumb = storage.getThumbnailfromFile(tempThumb);
             if (tempThumb != null)
                 storage.purgeFile(tempThumb);
         }
