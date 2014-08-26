@@ -22,7 +22,7 @@ If no or you don\'t understand, press cancel to quit.</string>
     <string name="delete_files">Delete Files</string>
     <string name="delete_files_message">Are you sure to delete the following file(s)? %s</string>
     <string name="action_mode_title_no_selection">%d file(s) selected</string>
-    <string name="save_to_SD">File decrypted successfully and stored to SDCard.</string>
+    <string name="save_to_SD">All files decrypted successfully and stored to SDCard.</string>
     <string name="new_vault">New vault</string>
     <string name="prompt_credentials">Please input the credentials</string>
     <string name="error_wrong_password_confirmation">Failed to create new vault</string>

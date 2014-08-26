@@ -29,6 +29,7 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.FileSystem.File;
 import com.doplgangr.secrecy.R;
@@ -40,7 +41,7 @@ class FilesListAdapter extends ArrayAdapter<File> {
     private final LayoutInflater inflater;
     // store the resource (typically file_item.xml)
     private final int resource;
-    private final ArrayList<Integer> checked = new ArrayList<Integer>();
+    private final ArrayList<ViewNIndex> checked = new ArrayList<ViewNIndex>();
     // store (a reference to) the data
     private ArrayList<File> data = new ArrayList<File>();
 
@@ -113,7 +114,9 @@ class FilesListAdapter extends ArrayAdapter<File> {
             viewHolder.date = (TextView) view.findViewById(R.id.date);
             viewHolder.thumbnail = (ImageView) view.findViewById(R.id.thumbNail);
             viewHolder.frame = (FrameLayout) view.findViewById(R.id.frame);
+            viewHolder.animator = (ViewAnimator) view.findViewById(R.id.viewAnimator);
             viewHolder.selected = false;
+            viewHolder.page = 0;
             view.setTag(viewHolder);
         } else {
             view = convertView;
@@ -160,6 +163,7 @@ class FilesListAdapter extends ArrayAdapter<File> {
                 viewHolder.selected ?
                         getContext().getResources().getDrawable(R.drawable.file_selector) :
                         null);
+        viewHolder.animator.setDisplayedChild(viewHolder.page);
 
         // This class is for binding thumbnail to UI
         class BindImageTask extends AsyncTask<File, Void, Bitmap> {
@@ -181,15 +185,18 @@ class FilesListAdapter extends ArrayAdapter<File> {
         return view;
     }
 
-    public Boolean select(int position) {
-        if (checked.contains(position))
-            checked.remove(checked.indexOf(position));
+    public Boolean select(int position, View view) {
+        ViewNIndex object = new ViewNIndex();
+        object.index = position;
+        object.view = view;
+        if (checked.contains(object))
+            checked.remove(checked.indexOf(object));
         else
-            checked.add(position);
-        return checked.contains(position);
+            checked.add(object);
+        return checked.contains(object);
     }
 
-    public ArrayList<Integer> getSelected() {
+    public ArrayList<ViewNIndex> getSelected() {
         return checked;
     }
 
@@ -209,6 +216,14 @@ class FilesListAdapter extends ArrayAdapter<File> {
         public ImageView thumbnail;
         public FrameLayout frame;
         public Boolean selected;
+        public ViewAnimator animator;
+        public int page;
+    }
+
+    static class ViewNIndex {
+        public Integer index;
+        public View view;
+
     }
 
 

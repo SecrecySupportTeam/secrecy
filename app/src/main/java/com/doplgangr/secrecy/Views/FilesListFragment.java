@@ -33,13 +33,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.EmptyListener;
@@ -82,6 +81,9 @@ public class FilesListFragment extends FileViewer {
 
     private Vault secret;
     private FilesListAdapter adapter;
+    private int decryptCounter = 0;
+    private boolean isGallery = false;
+
     private ActionMode mActionMode;
     private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
 
@@ -125,8 +127,8 @@ public class FilesListFragment extends FileViewer {
         void sendSecure() {
             Intent newIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
             ArrayList<Uri> Uris = new ArrayList<Uri>();
-            for (Integer position : adapter.getSelected())
-                Uris.add(Uri.fromFile(adapter.getItem(position).getFile()));
+            for (FilesListAdapter.ViewNIndex object : adapter.getSelected())
+                Uris.add(Uri.fromFile(adapter.getItem(object.index).getFile()));
             newIntent.setType("text/plain");
             newIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, Uris);
 
@@ -150,12 +152,21 @@ public class FilesListFragment extends FileViewer {
 
     @UiThread
     void switchView(View parentView, int showView) {
-        parentView.findViewById(R.id.DecryptLayout).setVisibility(View.GONE);
-        parentView.findViewById(R.id.dataLayout).setVisibility(View.GONE);
-        View shownView = parentView.findViewById(showView);
-        shownView.setVisibility(View.VISIBLE);
-        Animation slide = AnimationUtils.loadAnimation(context, R.anim.slide_down);
-        shownView.setAnimation(slide);
+        FilesListAdapter.ViewHolder holder = (FilesListAdapter.ViewHolder) parentView.getTag();
+
+        ViewAnimator viewAnimator = holder.animator;
+        viewAnimator.setInAnimation(context, R.anim.slide_down);
+        int viewIndex = 0;
+        switch (showView) {
+            case R.id.dataLayout:
+                viewIndex = 0;
+                break;
+            case R.id.DecryptLayout:
+                viewIndex = 1;
+                break;
+        }
+        viewAnimator.setDisplayedChild(viewIndex);
+        holder.page = viewIndex;
     }
 
     @Override
@@ -173,7 +184,8 @@ public class FilesListFragment extends FileViewer {
     void onCreate() {
         context = (ActionBarActivity) getActivity();
         secret = new Vault(vault, password);
-        adapter = new FilesListAdapter(context, R.layout.file_item);
+        adapter = new FilesListAdapter(context,
+                isGallery ? R.layout.file_item : R.layout.gallery_item);
         if (secret.wrongPass) {
             Util.alert(
                     context,
@@ -304,18 +316,23 @@ public class FilesListFragment extends FileViewer {
     }
 
     void decryptCurrentItem() {
-        final ArrayList<Integer> adapterSelected = new ArrayList<Integer>(adapter.getSelected());
-        for (Integer position : adapterSelected) {
+        final ArrayList<FilesListAdapter.ViewNIndex> adapterSelected =
+                new ArrayList<FilesListAdapter.ViewNIndex>(adapter.getSelected());
+        for (final FilesListAdapter.ViewNIndex object : adapterSelected) {
+            int position = object.index;
             com.doplgangr.secrecy.FileSystem.File file = adapter.getItem(position);
-            final View mView = mListView.getChildAt(position);
+            final View mView = object.view;
             if (!file.decrypting) {
-                ProgressBar pBar = (ProgressBar) mView.findViewById(R.id.progressBar);
+                decryptCounter++;
                 switchView(mView, R.id.DecryptLayout);
+                ProgressBar pBar = (ProgressBar) mView.findViewById(R.id.progressBar);
                 EmptyListener onFinish = new EmptyListener() {
                     @Override
                     public void run() {
+                        decryptCounter--;
                         switchView(mView, R.id.dataLayout);
-                        Util.toast(context, getString(R.string.save_to_SD), Toast.LENGTH_SHORT);
+                        if (decryptCounter == 0)
+                            Util.toast(context, getString(R.string.save_to_SD), Toast.LENGTH_SHORT);
                     }
                 };
                 decrypt_and_save(file, pBar, onFinish);
@@ -325,22 +342,24 @@ public class FilesListFragment extends FileViewer {
     }
 
     void deleteCurrentItem() {
-        final ArrayList<Integer> adapterSelected = new ArrayList<Integer>(adapter.getSelected());
+        final ArrayList<FilesListAdapter.ViewNIndex> adapterSelected =
+                new ArrayList<FilesListAdapter.ViewNIndex>(adapter.getSelected());
         DialogInterface.OnClickListener positive = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                for (Integer position : adapterSelected)
+                for (FilesListAdapter.ViewNIndex object : adapterSelected) {
+                    int position = object.index;
                     if (!adapter.getItem(position).decrypting) {
                         adapter.getItem(position).delete();
                         adapter.remove(position);
-                    }
-                    else
+                    } else
                         Util.toast(context, getString(R.string.error_delete_decrypting), Toast.LENGTH_SHORT);
+                }
             }
         };
         String FilesToDelete = "\n";
-        for (Integer position : adapter.getSelected())
-            FilesToDelete += "- " + adapter.getItem(position).getName() + "\n";
+        for (FilesListAdapter.ViewNIndex object : adapterSelected)
+            FilesToDelete += "- " + adapter.getItem(object.index).getName() + "\n";
         DialogInterface.OnClickListener negative = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -356,7 +375,7 @@ public class FilesListFragment extends FileViewer {
 
     void select(int position, View mView) {
         FilesListAdapter.ViewHolder viewHolder = (FilesListAdapter.ViewHolder) mView.getTag();
-        viewHolder.selected = adapter.select(position);
+        viewHolder.selected = adapter.select(position, mView);
         ((FrameLayout) mView.findViewById(R.id.frame))
                 .setForeground(viewHolder.selected ?
                         selector :
@@ -371,7 +390,7 @@ public class FilesListFragment extends FileViewer {
 
     void finish() {
         getActivity().finish();
-        BackgroundExecutor.cancelAll(Config.cancellable_task, true);
+        BackgroundExecutor.cancelAll(Config.cancellable_task, false);
         //mFinishListener.onFinish(this);
     }
 }
