@@ -25,7 +25,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
@@ -33,10 +32,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewAnimator;
 
@@ -52,6 +54,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.OptionsMenuItem;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.DrawableRes;
@@ -67,23 +70,28 @@ public class FilesListFragment extends FileViewer {
     private static final int REQUEST_CODE = 6384; // onActivityResult request code
     private static final ArrayList<String> INCLUDE_EXTENSIONS_LIST = new ArrayList<String>();
     @ViewById(android.R.id.list)
-    ListView mListView = null;
+    ListView listView = null;
+    @ViewById(R.id.gridView)
+    GridView gridView = null;
     @ViewById(R.id.nothing)
     View nothing;
     @ViewById(R.id.progressBar)
     ProgressBar addFilepBar;
+    @ViewById(R.id.tag)
+    TextView mTag;
+    @OptionsMenuItem(R.id.action_switch_interface)
+    MenuItem switchInterface;
     @DrawableRes(R.drawable.file_selector)
     Drawable selector;
     @FragmentArg(Config.vault_extra)
     String vault;
     @FragmentArg(Config.password_extra)
     String password;
-
     private Vault secret;
     private FilesListAdapter adapter;
     private int decryptCounter = 0;
-    private boolean isGallery = false;
-
+    private boolean isGallery = true;
+    private AbsListView mListView;
     private ActionMode mActionMode;
     private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
 
@@ -150,6 +158,12 @@ public class FilesListFragment extends FileViewer {
     };
     private VaultsListFragment.OnFragmentFinishListener mFinishListener;
 
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        switchInterface.setIcon(isGallery ? R.drawable.ic_gallery : R.drawable.ic_list);
+    }
+
     @UiThread
     void switchView(View parentView, int showView) {
         FilesListAdapter.ViewHolder holder = (FilesListAdapter.ViewHolder) parentView.getTag();
@@ -185,7 +199,7 @@ public class FilesListFragment extends FileViewer {
         context = (ActionBarActivity) getActivity();
         secret = new Vault(vault, password);
         adapter = new FilesListAdapter(context,
-                isGallery ? R.layout.file_item : R.layout.gallery_item);
+                isGallery ? R.layout.gallery_item : R.layout.file_item);
         if (secret.wrongPass) {
             Util.alert(
                     context,
@@ -217,6 +231,14 @@ public class FilesListFragment extends FileViewer {
 
     @UiThread
     void setupViews() {
+        mTag.setText(isGallery ? R.string.page_header_gallery : R.string.page_header_files);
+        mListView = isGallery ? gridView : listView;
+        mListView = isGallery ? (GridView) mListView : (ListView) mListView;     // Cast ListView back to its correct form
+        listView.setVisibility(View.GONE);
+        gridView.setVisibility(View.GONE);
+        mListView.setVisibility(View.VISIBLE);
+        context.supportInvalidateOptionsMenu();
+
         mListView.setAdapter(adapter);
         context.getSupportActionBar().setTitle(secret.getName());
         mListView.setEmptyView(nothing);
@@ -228,20 +250,30 @@ public class FilesListFragment extends FileViewer {
                     select(i, view);
                     return;
                 }
-                com.doplgangr.secrecy.FileSystem.File file = adapter.getItem(i);
+                if (isGallery) {
 
-                if (!file.decrypting) {
-                    ProgressBar pBar = (ProgressBar) view.findViewById(R.id.progressBar);
-                    switchView(view, R.id.DecryptLayout);
-                    EmptyListener onFinish = new EmptyListener() {
-                        @Override
-                        public void run() {
-                            switchView(view, R.id.dataLayout);
-                        }
-                    };
-                    decrypt(file, pBar, onFinish);
-                } else
-                    Util.toast(context, getString(R.string.error_already_decrypting), Toast.LENGTH_SHORT);
+                    Intent intent = new Intent(context, FilePhotoFragment_.class);
+                    intent.putExtra(Config.vault_extra, vault);
+                    intent.putExtra(Config.password_extra, password);
+                    intent.putExtra(Config.gallery_item_extra, i);
+                    startActivity(intent);
+                } else {
+
+                    com.doplgangr.secrecy.FileSystem.File file = adapter.getItem(i);
+
+                    if (!file.decrypting) {
+                        ProgressBar pBar = (ProgressBar) view.findViewById(R.id.progressBar);
+                        switchView(view, R.id.DecryptLayout);
+                        EmptyListener onFinish = new EmptyListener() {
+                            @Override
+                            public void run() {
+                                switchView(view, R.id.dataLayout);
+                            }
+                        };
+                        decrypt(file, pBar, onFinish);
+                    } else
+                        Util.toast(context, getString(R.string.error_already_decrypting), Toast.LENGTH_SHORT);
+                }
             }
         });
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -278,12 +310,8 @@ public class FilesListFragment extends FileViewer {
 
     @OptionsItem(R.id.action_switch_interface)
     void switchInterface() {
-        FilesGalleryFragment_ fragment = new FilesGalleryFragment_();
-        Bundle data = new Bundle();
-        data.putString(Config.vault_extra, vault);
-        data.putString(Config.password_extra, password);
-        mFinishListener.onNew(data, fragment);
-        mFinishListener.onFinish(this);
+        isGallery = !isGallery;
+        onCreate();
     }
 
     @OptionsItem(R.id.action_add_file)
@@ -393,4 +421,5 @@ public class FilesListFragment extends FileViewer {
         BackgroundExecutor.cancelAll(Config.cancellable_task, false);
         //mFinishListener.onFinish(this);
     }
+
 }

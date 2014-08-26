@@ -42,6 +42,7 @@ class FilesListAdapter extends ArrayAdapter<File> {
     // store the resource (typically file_item.xml)
     private final int resource;
     private final ArrayList<ViewNIndex> checked = new ArrayList<ViewNIndex>();
+    private boolean isGallery;
     // store (a reference to) the data
     private ArrayList<File> data = new ArrayList<File>();
 
@@ -49,12 +50,16 @@ class FilesListAdapter extends ArrayAdapter<File> {
         super(context, layout, new ArrayList<File>());
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.resource = layout;
+        this.isGallery = (layout == R.layout.gallery_item);
     }
 
     /**
      * Add data to data set.
      */
     public void add(File file) {
+        if (isGallery)
+            if (!file.hasThumbnail())
+                return; //abort if not images.
         data.add(file);
         notifyDataSetChanged();
     }
@@ -158,12 +163,13 @@ class FilesListAdapter extends ArrayAdapter<File> {
             viewHolder.thumbnail.setVisibility(View.GONE);
             viewHolder.thumbnail.setTag(file.getName());
         }
-
-        viewHolder.frame.setForeground(
-                viewHolder.selected ?
-                        getContext().getResources().getDrawable(R.drawable.file_selector) :
-                        null);
-        viewHolder.animator.setDisplayedChild(viewHolder.page);
+        if (viewHolder.frame != null)
+            viewHolder.frame.setForeground(
+                    viewHolder.selected ?
+                            getContext().getResources().getDrawable(R.drawable.file_selector) :
+                            null);
+        if (viewHolder.animator != null)
+            viewHolder.animator.setDisplayedChild(viewHolder.page);
 
         // This class is for binding thumbnail to UI
         class BindImageTask extends AsyncTask<File, Void, Bitmap> {
@@ -173,7 +179,7 @@ class FilesListAdapter extends ArrayAdapter<File> {
 
             protected void onPostExecute(Bitmap thumbnail) {
                 String name = (String) viewHolder.thumbnail.getTag();
-                if (name.equals(file.getName()) && (thumbnail != null)) {
+                if (name.equals(file.getName()) && (thumbnail != null) && (viewHolder.thumbnail != null)) {
                     viewHolder.thumbnail.setImageBitmap(thumbnail);   // bind thumbnail in UI thread
                     viewHolder.thumbnail.setVisibility(View.VISIBLE);
                 }

@@ -51,6 +51,23 @@
             android:drawSelectorOnTop="true"
             android:layoutMode="clipBounds" />
 
+
+        <GridView
+            android:id="@+id/gridView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/tag"
+            android:animateLayoutChanges="true"
+            android:choiceMode="multipleChoice"
+            android:columnWidth="120dp"
+            android:divider="@android:color/transparent"
+            android:drawSelectorOnTop="true"
+            android:horizontalSpacing="0dp"
+            android:layoutMode="clipBounds"
+            android:numColumns="auto_fit"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="0dp" />
+
         <LinearLayout
             android:id="@+id/nothing"
             android:layout_width="wrap_content"
