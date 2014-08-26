@@ -12,6 +12,7 @@ import com.doplgangr.secrecy.FileSystem.storage;
 import com.doplgangr.secrecy.Premium.PremiumActivity_;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.SettingsActivity_;
+import com.uservoice.uservoicesdk.UserVoice;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -80,6 +81,11 @@ public class FilesActivity extends ActionBarActivity
     @OptionsItem(R.id.action_donate)
     void donate() {
         startActivity(new Intent(this, PremiumActivity_.class));
+    }
+
+    @OptionsItem(R.id.action_support)
+    void support() {
+        UserVoice.launchUserVoice(this);    //launch uservoice portal
     }
 
     @Override
