@@ -195,11 +195,13 @@ class FilesListAdapter extends ArrayAdapter<File> {
         ViewNIndex object = new ViewNIndex();
         object.index = position;
         object.view = view;
-        if (checked.contains(object))
-            checked.remove(checked.indexOf(object));
-        else
-            checked.add(object);
-        return checked.contains(object);
+        for (ViewNIndex obj : checked)
+            if (position == obj.index) {
+                checked.remove(checked.indexOf(obj));
+                return false;
+            }
+        checked.add(object);
+        return true;
     }
 
     public ArrayList<ViewNIndex> getSelected() {

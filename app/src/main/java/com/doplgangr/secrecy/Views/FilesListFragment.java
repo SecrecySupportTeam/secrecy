@@ -90,7 +90,7 @@ public class FilesListFragment extends FileViewer {
     private Vault secret;
     private FilesListAdapter adapter;
     private int decryptCounter = 0;
-    private boolean isGallery = true;
+    private boolean isGallery = false;
     private AbsListView mListView;
     private ActionMode mActionMode;
     private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
@@ -161,7 +161,7 @@ public class FilesListFragment extends FileViewer {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        switchInterface.setIcon(isGallery ? R.drawable.ic_gallery : R.drawable.ic_list);
+        switchInterface.setIcon(isGallery ? R.drawable.ic_list : R.drawable.ic_gallery);
     }
 
     @UiThread

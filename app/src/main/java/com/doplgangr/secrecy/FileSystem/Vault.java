@@ -67,6 +67,14 @@ public class Vault implements Serializable {
         //do not initialize now coz this is temp
     }
 
+    private static boolean fileFilter(java.io.File file) {
+        String regex = "^((?!_thumb|.nomedia).)*$";            //Filter out .nomedia and thumbnails
+        final Pattern p = Pattern.compile(regex);
+        p.matcher(file.getName()).matches();
+        return p.matcher(file.getName()).matches();
+
+    }
+
     public String getName() {
         return name;
     }
@@ -177,31 +185,30 @@ public class Vault implements Serializable {
     }
 
     private List<java.io.File> getFileList() {
-        String regex = "^((?!_thumb|.nomedia).)*$";            //Filter out .nomedia and thumbnails
-        final Pattern p = Pattern.compile(regex);
         java.io.File folder = new java.io.File(path);
-        List<java.io.File> absFiles = Arrays.asList(
+        return Arrays.asList(
                 folder.listFiles(
                         new FileFilter() {
                             @Override
                             public boolean accept(java.io.File file) {
-                                p.matcher(file.getName()).matches();
-                                return p.matcher(file.getName()).matches();
+                                return fileFilter(file);
                             }
                         }
                 )
         );
-        return absFiles;
     }
 
     public void startWatching(final Listeners.FileObserverEventListener mListener) {
         final android.os.FileObserver observer = new android.os.FileObserver(path) { // set up a file observer to watch this directory on sd card
             @Override
-            public void onEvent(int event, String file) {
-                if (event == android.os.FileObserver.CREATE || event == android.os.FileObserver.MOVED_TO)
-                    mListener.add(new java.io.File(path, file));
-                if (event == android.os.FileObserver.DELETE || event == android.os.FileObserver.MOVED_FROM)
-                    mListener.remove(new java.io.File(path, file));
+            public void onEvent(int event, String filename) {
+                java.io.File file = new java.io.File(path, filename);
+                if (fileFilter(file)) {
+                    if (event == android.os.FileObserver.CREATE || event == android.os.FileObserver.MOVED_TO)
+                        mListener.add(file);
+                    if (event == android.os.FileObserver.DELETE || event == android.os.FileObserver.MOVED_FROM)
+                        mListener.remove(file);
+                }
             }
         };
         observer.startWatching(); //START OBSERVING
