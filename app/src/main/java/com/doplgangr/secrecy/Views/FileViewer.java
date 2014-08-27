@@ -34,7 +34,6 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.doplgangr.secrecy.Config;
-import com.doplgangr.secrecy.EmptyListener;
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.File;
 import com.doplgangr.secrecy.FileSystem.FileObserver;
@@ -42,6 +41,7 @@ import com.doplgangr.secrecy.FileSystem.FileOptionsService_;
 import com.doplgangr.secrecy.FileSystem.OurFileProvider;
 import com.doplgangr.secrecy.FileSystem.Vault;
 import com.doplgangr.secrecy.FileSystem.storage;
+import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 
@@ -96,7 +96,7 @@ public class FileViewer extends Fragment {
 
 
     @Background
-    void decrypt(File file, final ProgressBar pBar, final EmptyListener onFinish) {
+    void decrypt(File file, final ProgressBar pBar, final Listeners.EmptyListener onFinish) {
         java.io.File tempFile = getFile(file, pBar, onFinish);
         //File specified is not invalid
         if (tempFile != null) {
@@ -138,7 +138,7 @@ public class FileViewer extends Fragment {
 
     }
 
-    java.io.File getFile(final File file, final ProgressBar pBar, final EmptyListener onfinish) {
+    java.io.File getFile(final File file, final ProgressBar pBar, final Listeners.EmptyListener onfinish) {
         CryptStateListener listener = new CryptStateListener() {
             @Override
             public void updateProgress(int progress) {

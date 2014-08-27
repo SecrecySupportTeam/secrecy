@@ -43,8 +43,8 @@ import android.widget.Toast;
 import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.Config;
-import com.doplgangr.secrecy.EmptyListener;
 import com.doplgangr.secrecy.FileSystem.Vault;
+import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 import com.ipaulpro.afilechooser.FileChooserActivity;
@@ -215,6 +215,21 @@ public class FilesListFragment extends FileViewer {
             return;
         }
         addFiles();
+        secret.startWatching(
+                new Listeners.FileObserverEventListener() {
+                    @Override
+                    public void add(File file) {
+                        if (adapter != null)
+                            addToList(new com.doplgangr.secrecy.FileSystem.File(file, password));
+                    }
+
+                    @Override
+                    public void remove(File file) {
+                        if (adapter != null)
+                            adapter.remove(new com.doplgangr.secrecy.FileSystem.File(file, password));
+                    }
+                }
+        );
     }
 
     @Background(id = Config.cancellable_task)
@@ -264,7 +279,7 @@ public class FilesListFragment extends FileViewer {
                     if (!file.decrypting) {
                         ProgressBar pBar = (ProgressBar) view.findViewById(R.id.progressBar);
                         switchView(view, R.id.DecryptLayout);
-                        EmptyListener onFinish = new EmptyListener() {
+                        Listeners.EmptyListener onFinish = new Listeners.EmptyListener() {
                             @Override
                             public void run() {
                                 switchView(view, R.id.dataLayout);
@@ -297,12 +312,12 @@ public class FilesListFragment extends FileViewer {
 
     @Background(id = Config.cancellable_task)
     @Override
-    void decrypt(com.doplgangr.secrecy.FileSystem.File file, final ProgressBar pBar, EmptyListener onFinish) {
+    void decrypt(com.doplgangr.secrecy.FileSystem.File file, final ProgressBar pBar, Listeners.EmptyListener onFinish) {
         super.decrypt(file, pBar, onFinish);
     }
 
     @Background(id = Config.cancellable_task)
-    void decrypt_and_save(com.doplgangr.secrecy.FileSystem.File file, final ProgressBar pBar, final EmptyListener onFinish) {
+    void decrypt_and_save(com.doplgangr.secrecy.FileSystem.File file, final ProgressBar pBar, final Listeners.EmptyListener onFinish) {
         File tempFile = super.getFile(file, pBar, onFinish);
         File storedFile = new File(Environment.getExternalStorageDirectory(), file.getName() + "." + file.getType());
         tempFile.renameTo(storedFile);
@@ -354,7 +369,7 @@ public class FilesListFragment extends FileViewer {
                 decryptCounter++;
                 switchView(mView, R.id.DecryptLayout);
                 ProgressBar pBar = (ProgressBar) mView.findViewById(R.id.progressBar);
-                EmptyListener onFinish = new EmptyListener() {
+                Listeners.EmptyListener onFinish = new Listeners.EmptyListener() {
                     @Override
                     public void run() {
                         decryptCounter--;
@@ -419,7 +434,6 @@ public class FilesListFragment extends FileViewer {
     void finish() {
         getActivity().finish();
         BackgroundExecutor.cancelAll(Config.cancellable_task, false);
-        //mFinishListener.onFinish(this);
     }
 
 }

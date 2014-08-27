@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.webkit.MimeTypeMap;
 
 import com.doplgangr.secrecy.Config;
+import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.Util;
 
 import org.apache.commons.io.FileUtils;
@@ -193,6 +194,18 @@ public class Vault implements Serializable {
         return absFiles;
     }
 
+    public void startWatching(final Listeners.FileObserverEventListener mListener) {
+        final android.os.FileObserver observer = new android.os.FileObserver(path) { // set up a file observer to watch this directory on sd card
+            @Override
+            public void onEvent(int event, String file) {
+                if (event == android.os.FileObserver.CREATE || event == android.os.FileObserver.MOVED_TO)
+                    mListener.add(new java.io.File(path, file));
+                if (event == android.os.FileObserver.DELETE || event == android.os.FileObserver.MOVED_FROM)
+                    mListener.remove(new java.io.File(path, file));
+            }
+        };
+        observer.startWatching(); //START OBSERVING
+    }
 
     public interface onFileFoundListener {
         void dothis(File file);
