@@ -66,6 +66,9 @@ public class SettingsFragment extends PreferenceFragment
     private static final int REQUEST_CODE_2 = 2058; // onActivityResult request code
     private static final ArrayList<String> INCLUDE_EXTENSIONS_LIST = new ArrayList<String>();
 
+    @StringRes(R.string.stealth_mode_message)
+    String stealth_mode_message;
+
     static {
         INCLUDE_EXTENSIONS_LIST.add(".");
     }
@@ -184,7 +187,7 @@ public class SettingsFragment extends PreferenceFragment
 
             @Override
             public void notPremium() {
-                stealth_mode.setSummary(stealth_mode.getSummary() + " Only available to donate users");
+                stealth_mode.setSummary(stealth_mode_message + " Only available to donate users");
                 stealth_mode.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
