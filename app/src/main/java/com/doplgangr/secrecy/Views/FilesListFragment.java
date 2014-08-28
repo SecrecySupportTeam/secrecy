@@ -381,24 +381,26 @@ public class FilesListFragment extends FileViewer {
                 new ArrayList<FilesListAdapter.ViewNIndex>(adapter.getSelected());
         for (final FilesListAdapter.ViewNIndex object : adapterSelected) {
             int position = object.index;
-            com.doplgangr.secrecy.FileSystem.File file = adapter.getItem(position);
-            final View mView = object.view;
-            if (!file.decrypting) {
-                decryptCounter++;
-                switchView(mView, R.id.DecryptLayout);
-                ProgressBar pBar = (ProgressBar) mView.findViewById(R.id.progressBar);
-                Listeners.EmptyListener onFinish = new Listeners.EmptyListener() {
-                    @Override
-                    public void run() {
-                        decryptCounter--;
-                        switchView(mView, R.id.dataLayout);
-                        if (decryptCounter == 0 && attached)
-                            Util.toast(context, getString(R.string.save_to_SD), Toast.LENGTH_SHORT);
-                    }
-                };
-                decrypt_and_save(file, pBar, onFinish);
-            } else
-                Util.toast(context, getString(R.string.error_already_decrypting), Toast.LENGTH_SHORT);
+            if (adapter.hasIndex(position)) {
+                com.doplgangr.secrecy.FileSystem.File file = adapter.getItem(position);
+                final View mView = object.view;
+                if (!file.decrypting) {
+                    decryptCounter++;
+                    switchView(mView, R.id.DecryptLayout);
+                    ProgressBar pBar = (ProgressBar) mView.findViewById(R.id.progressBar);
+                    Listeners.EmptyListener onFinish = new Listeners.EmptyListener() {
+                        @Override
+                        public void run() {
+                            decryptCounter--;
+                            switchView(mView, R.id.dataLayout);
+                            if (decryptCounter == 0 && attached)
+                                Util.toast(context, getString(R.string.save_to_SD), Toast.LENGTH_SHORT);
+                        }
+                    };
+                    decrypt_and_save(file, pBar, onFinish);
+                } else
+                    Util.toast(context, getString(R.string.error_already_decrypting), Toast.LENGTH_SHORT);
+            }
         }
     }
 
@@ -410,17 +412,19 @@ public class FilesListFragment extends FileViewer {
             public void onClick(DialogInterface dialogInterface, int i) {
                 for (FilesListAdapter.ViewNIndex object : adapterSelected) {
                     int position = object.index;
-                    if (!adapter.getItem(position).decrypting) {
-                        adapter.getItem(position).delete();
-                        adapter.remove(position);
-                    } else
-                        Util.toast(context, getString(R.string.error_delete_decrypting), Toast.LENGTH_SHORT);
+                    if (adapter.hasIndex(object.index))
+                        if (!adapter.getItem(position).decrypting) {
+                            adapter.getItem(position).delete();
+                            adapter.remove(position);
+                        } else
+                            Util.toast(context, getString(R.string.error_delete_decrypting), Toast.LENGTH_SHORT);
                 }
             }
         };
         String FilesToDelete = "\n";
         for (FilesListAdapter.ViewNIndex object : adapterSelected)
-            FilesToDelete += "- " + adapter.getItem(object.index).getName() + "\n";
+            if (adapter.hasIndex(object.index))
+                FilesToDelete += "- " + adapter.getItem(object.index).getName() + "\n";
         DialogInterface.OnClickListener negative = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {

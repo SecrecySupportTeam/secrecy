@@ -80,6 +80,13 @@ class FilesListAdapter extends ArrayAdapter<File> {
     }
 
     /**
+     * Return if index is in data set.
+     */
+    public boolean hasIndex(int position) {
+        return this.data.size() > position && position > -1;
+    }
+
+    /**
      * Return an object in the data set.
      */
     public File getItem(int position) {
