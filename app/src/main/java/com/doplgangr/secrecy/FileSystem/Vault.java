@@ -226,12 +226,14 @@ public class Vault implements Serializable {
         final android.os.FileObserver observer = new android.os.FileObserver(path) { // set up a file observer to watch this directory on sd card
             @Override
             public void onEvent(int event, String filename) {
-                java.io.File file = new java.io.File(path, filename);
-                if (fileFilter(file)) {
-                    if (event == android.os.FileObserver.CREATE || event == android.os.FileObserver.MOVED_TO)
-                        mListener.add(file);
-                    if (event == android.os.FileObserver.DELETE || event == android.os.FileObserver.MOVED_FROM)
-                        mListener.remove(file);
+                if (filename != null) {
+                    java.io.File file = new java.io.File(path, filename);
+                    if (fileFilter(file)) {
+                        if (event == android.os.FileObserver.CREATE || event == android.os.FileObserver.MOVED_TO)
+                            mListener.add(file);
+                        if (event == android.os.FileObserver.DELETE || event == android.os.FileObserver.MOVED_FROM)
+                            mListener.remove(file);
+                    }
                 }
             }
         };
