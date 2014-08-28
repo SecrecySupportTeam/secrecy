@@ -202,6 +202,7 @@ public class SettingsFragment extends PreferenceFragment
     }
 
     void confirm_stealth(String password) {
+
         final View dialogView = View.inflate(getActivity(), R.layout.dialog_confirm_stealth, null);
         ((TextView) dialogView
                 .findViewById(R.id.stealth_keycode))
@@ -320,7 +321,7 @@ public class SettingsFragment extends PreferenceFragment
         }
         try {
             org.apache.commons.io.FileUtils.deleteDirectory(oldRoot);
-        } catch (IOException e) {
+        } catch (IOException ignored) {
             //ignore
         }
         progressDialog.dismiss();
