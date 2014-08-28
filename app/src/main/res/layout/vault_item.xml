@@ -173,6 +173,52 @@
 
         </RelativeLayout>
 
+        <RelativeLayout
+            android:id="@+id/vault_rename_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal">
+
+            <EditText
+                android:id="@+id/rename_name"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="8dp"
+                android:layout_toLeftOf="@+id/rename_ok"
+                android:layout_toStartOf="@+id/rename_ok"
+                android:inputType="text" />
+
+            <ImageButton
+                android:id="@+id/rename_ok"
+                android:layout_width="@dimen/list_item_single_line_height"
+                android:layout_height="@dimen/list_item_single_line_height"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/rename_cancel"
+                android:layout_toStartOf="@+id/rename_cancel"
+                android:background="@drawable/list_selector"
+                android:clickable="true"
+                android:longClickable="true"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_accept"
+                android:tint="@color/accent_dark" />
+
+            <ImageButton
+                android:id="@+id/rename_cancel"
+                android:layout_width="@dimen/list_item_single_line_height"
+                android:layout_height="@dimen/list_item_single_line_height"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/list_selector"
+                android:clickable="true"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_cancel" />
+
+        </RelativeLayout>
+
     </ViewAnimator>
 
 

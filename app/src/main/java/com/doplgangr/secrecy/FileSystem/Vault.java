@@ -198,6 +198,30 @@ public class Vault implements Serializable {
         );
     }
 
+    public Vault rename(String name) {
+        if (wrongPass)
+            return null; //bye
+        java.io.File folder = new java.io.File(path);
+        java.io.File newFoler = new java.io.File(folder.getParent(), name);
+        try {
+            FileUtils.copyDirectory(folder, newFoler);
+        } catch (IOException e) {
+            // New Folder should be cleared. Only preserver old folder
+            try {
+                FileUtils.deleteDirectory(newFoler);
+            } catch (IOException ignored) {
+                //ignore
+            }
+            return null;
+        }
+        try {
+            FileUtils.deleteDirectory(folder);
+        } catch (IOException ignored) {
+            //ignored
+        }
+        return new Vault(name, key);
+    }
+
     public void startWatching(final Listeners.FileObserverEventListener mListener) {
         final android.os.FileObserver observer = new android.os.FileObserver(path) { // set up a file observer to watch this directory on sd card
             @Override

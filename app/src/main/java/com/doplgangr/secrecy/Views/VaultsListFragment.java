@@ -158,6 +158,49 @@ public class VaultsListFragment extends Fragment {
                 open(adapter.getItem(i), mView, i);
             }
         });
+        mView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                mSwipeListener.onPanic();
+                switchView(mView, R.id.vault_rename_layout);
+                ((EditText) mView.findViewById(R.id.rename_name)).setText(adapter.getItem(i));
+                mView.findViewById(R.id.rename_ok)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View ignored) {
+                                final String newName = ((EditText) mView.findViewById(R.id.rename_name))
+                                        .getText().toString();
+                                switchView(mView, R.id.vault_decrypt_layout);
+                                mView.findViewById(R.id.open_ok)
+                                        .setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View ignored) {
+                                                String password = ((EditText) mView.findViewById(R.id.open_password))
+                                                        .getText().toString();
+                                                rename(i, newName, password);
+                                                switchView(mView, R.id.vault_decrypt_layout);
+                                            }
+                                        });
+                                mView.findViewById(R.id.open_cancel)
+                                        .setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View ignored) {
+                                                switchView(mView, R.id.vault_name_layout);
+                                            }
+                                        });
+                            }
+                        });
+                mView.findViewById(R.id.rename_cancel)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                switchView(mView, R.id.vault_name_layout);
+                            }
+                        });
+                return true;
+            }
+        });
+
         mView.setOnTouchListener(mSwipeListener);
     }
 
@@ -261,6 +304,18 @@ public class VaultsListFragment extends Fragment {
         oncreate();
     }
 
+    void rename(final int position, final String newName, final String password) {
+        Vault newVault = new Vault(adapter.getItem(position), password).rename(newName);
+        if (newVault == null)
+            Util.alert(context,
+                    getString(R.string.error_rename_password_incorrect),
+                    getString(R.string.error_rename_password_incorrect_message),
+                    Util.emptyClickListener,
+                    null
+            );
+        oncreate();
+    }
+
     @UiThread
     void switchView(final View parentView, int showView) {
         ViewAnimator viewAnimator = (ViewAnimator) parentView.findViewById(R.id.viewAnimator);
@@ -276,11 +331,17 @@ public class VaultsListFragment extends Fragment {
             case R.id.vault_delete_layout:
                 viewIndex = 2;
                 break;
+            case R.id.vault_rename_layout:
+                viewIndex = 3;
+                break;
         }
         viewAnimator.setDisplayedChild(viewIndex);
         View passwordView = parentView.findViewById(R.id.open_password);
         if (passwordView != null)
             passwordView.requestFocus();
+        View renameView = parentView.findViewById(R.id.rename_name);
+        if (renameView != null)
+            renameView.requestFocus();
     }
 
     void finish() {
