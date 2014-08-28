@@ -107,12 +107,9 @@ class VaultsAdapter extends BaseAdapter {
      * This is the only method not required by base adapter.
      */
     View bindData(View view, final int position) {
-        // make sure it's worth drawing the view
-        if (this.data.get(position) == null) {
-            return view;
-        }
-
         // pull out the object
+        if (this.data.size() <= position)
+            return view; //whattt???? Abort! abort!
         String vault = this.data.get(position);
 
         // extract the view object
