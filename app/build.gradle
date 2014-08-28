@@ -20,7 +20,7 @@ android {
         applicationId "com.doplgangr.secrecy"
         minSdkVersion 10
         targetSdkVersion 19
-        versionCode 16
+        versionCode 17
         versionName "alpha-1.6"
     }
     buildTypes {
