@@ -15,7 +15,9 @@ import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.File;
 import com.doplgangr.secrecy.FileSystem.Vault;
 import com.doplgangr.secrecy.FileSystem.storage;
+import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
+import com.doplgangr.secrecy.Util;
 import com.doplgangr.secrecy.Views.DummyViews.HackyViewPager;
 
 import org.androidannotations.annotations.AfterViews;
@@ -44,7 +46,7 @@ public class FilePhotoFragment extends Activity {
 
     @AfterViews
     void onCreate() {
-        final SamplePagerAdapter adapter = new SamplePagerAdapter();
+        final SamplePagerAdapter adapter = new SamplePagerAdapter(this);
         mViewPager.setAdapter(adapter);
         Vault secret = new Vault(vault, password);
         Vault.onFileFoundListener mListener = new Vault.onFileFoundListener() {
@@ -61,8 +63,10 @@ public class FilePhotoFragment extends Activity {
     static class SamplePagerAdapter extends PagerAdapter {
 
         private static ArrayList<File> sDrawables = new ArrayList<File>();
+        private static Activity context;
 
-        public SamplePagerAdapter() {
+        public SamplePagerAdapter(Activity activity) {
+            context = activity;
         }
 
         //Load a bitmap from a resource with a target size
@@ -116,6 +120,17 @@ public class FilePhotoFragment extends Activity {
                         public void onFinish(String file) {
                             storage.purgeFile(new java.io.File(file));
                         }
+                    },
+                    new Listeners.EmptyListener() {
+
+                        @Override
+                        public void run() {
+                            Util.alert(context,
+                                    context.getString(R.string.error_out_of_memory),
+                                    context.getString(R.string.error_out_of_memory_message),
+                                    Util.emptyClickListener,
+                                    null);
+                        }
                     });
 
             // Now just add PhotoView to ViewPager and return it
@@ -153,10 +168,18 @@ public class FilePhotoFragment extends Activity {
 
                 @Override
                 public void onPostExecute(java.io.File file) {
-
-                    photoView.setImageFile(
-                            file.getAbsolutePath()
-                    );
+                    try {
+                        photoView.setImageFile(
+                                file.getAbsolutePath()
+                        );
+                    } catch (OutOfMemoryError e) {
+                        Util.alert(context,
+                                context.getString(R.string.error_out_of_memory),
+                                context.getString(R.string.error_out_of_memory_message),
+                                Util.emptyClickListener,
+                                null);
+                        context.finish();
+                    }
                     photoView.setTag(file);
                 }
 

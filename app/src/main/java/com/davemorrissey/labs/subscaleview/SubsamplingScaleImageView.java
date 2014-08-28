@@ -45,6 +45,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R.styleable;
 
 import java.lang.ref.WeakReference;
@@ -144,6 +145,8 @@ public class SubsamplingScaleImageView extends View {
     private static final String TAG = SubsamplingScaleImageView.class.getSimpleName();
     private static final int MESSAGE_LONG_CLICK = 1;
     private static onFileFinishCalled mListener;
+    //Out of memory listener
+    private static Listeners.EmptyListener OutOfMemListener;
     private final Object decoderLock = new Object();
     // Overlay tile boundaries and other info
     private boolean debug = false;
@@ -233,9 +236,10 @@ public class SubsamplingScaleImageView extends View {
         }
     }
 
-    public SubsamplingScaleImageView(Context context, AttributeSet attr, onFileFinishCalled mListener) {
+    public SubsamplingScaleImageView(Context context, AttributeSet attr, onFileFinishCalled mListener, Listeners.EmptyListener emptyListener) {
         this(context, null);
         SubsamplingScaleImageView.mListener = mListener;
+        OutOfMemListener = emptyListener;
     }
 
     /**
@@ -1672,7 +1676,13 @@ public class SubsamplingScaleImageView extends View {
                             options.inSampleSize = tile.sampleSize;
                             options.inPreferredConfig = Config.RGB_565;
                             options.inDither = true;
-                            Bitmap bitmap = decoder.decodeRegion(view.fileSRect(tile.sRect), options);
+                            Bitmap bitmap;
+                            try {
+                                bitmap = decoder.decodeRegion(view.fileSRect(tile.sRect), options);
+                            } catch (OutOfMemoryError e) {
+                                OutOfMemListener.run();
+                                return null;
+                            }
                             int rotation = view.getRequiredRotation();
                             if (rotation != 0) {
                                 Matrix matrix = new Matrix();
@@ -1754,13 +1764,14 @@ public class SubsamplingScaleImageView extends View {
         private long duration = 500;
         private boolean interruptible = true;
         private boolean panLimited = true;
-        private int easing = EASE_IN_OUT_QUAD;
 
         private AnimationBuilder(PointF sCenter) {
             this.targetScale = scale;
             this.targetSCenter = sCenter;
             this.vFocus = null;
         }
+
+        private int easing = EASE_IN_OUT_QUAD;
 
         private AnimationBuilder(float scale) {
             this.targetScale = scale;
@@ -1866,6 +1877,8 @@ public class SubsamplingScaleImageView extends View {
 
             invalidate();
         }
+
+
 
 
     }
