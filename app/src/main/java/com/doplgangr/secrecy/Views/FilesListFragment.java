@@ -436,6 +436,12 @@ public class FilesListFragment extends FileViewer {
     }
 
     @Override
+    void afterDecrypt(Intent newIntent, Intent altIntent) {
+        if (attached)
+            super.afterDecrypt(newIntent, altIntent);       // check if fragment is attached.
+    }
+
+    @Override
     void paused() {
         //Do not end activity
     }
