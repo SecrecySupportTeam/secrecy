@@ -91,6 +91,7 @@ public class FilesListFragment extends FileViewer {
     private FilesListAdapter adapter;
     private int decryptCounter = 0;
     private boolean isGallery = false;
+    private boolean attached = false;
     private AbsListView mListView;
     private ActionMode mActionMode;
     private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
@@ -186,11 +187,18 @@ public class FilesListFragment extends FileViewer {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        attached = true;
         try {
             mFinishListener = (VaultsListFragment.OnFragmentFinishListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement Listener");
         }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        attached = false;
     }
 
     @Background
@@ -375,7 +383,7 @@ public class FilesListFragment extends FileViewer {
                     public void run() {
                         decryptCounter--;
                         switchView(mView, R.id.dataLayout);
-                        if (decryptCounter == 0)
+                        if (decryptCounter == 0 && attached)
                             Util.toast(context, getString(R.string.save_to_SD), Toast.LENGTH_SHORT);
                     }
                 };
