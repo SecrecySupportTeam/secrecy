@@ -47,5 +47,7 @@
     <string name="Decrypt__password">Password</string>
     <string name="Decrypt__confirm_delete">Confirm delete?</string>
     <string name="action_support">Help Desk</string>
+    <string name="Stealth__no_telephony">Opps… Hi tablets</string>
+    <string name="Stealth__no_telephony_message">Tablets without phone function is not supported at the time. Please stay tuned!</string>
 
 </resources>

@@ -25,6 +25,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -164,6 +165,14 @@ public class SettingsFragment extends PreferenceFragment
                 stealth_mode.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
+                        if (!getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEPHONY)) {
+                            Util.alert(getActivity(),
+                                    getString(R.string.Stealth__no_telephony),
+                                    getString(R.string.Stealth__no_telephony_message),
+                                    Util.emptyClickListener,
+                                    null);
+                            return true;
+                        }
                         final View dialogView = View.inflate(getActivity(), R.layout.dialog_stealth, null);
                         new AlertDialog.Builder(getActivity())
                                 .setMessage("In stealth mode, the app icon is hidden from the app launcher. The only way to enter the app is through dialing your secret code from the dialer. Please choose a secret code easy to remember:")
@@ -202,7 +211,6 @@ public class SettingsFragment extends PreferenceFragment
     }
 
     void confirm_stealth(String password) {
-
         final View dialogView = View.inflate(getActivity(), R.layout.dialog_confirm_stealth, null);
         ((TextView) dialogView
                 .findViewById(R.id.stealth_keycode))
