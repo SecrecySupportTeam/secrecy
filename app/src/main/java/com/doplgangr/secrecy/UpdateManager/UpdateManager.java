@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.doplgangr.secrecy.FileSystem.storage;
 import com.doplgangr.secrecy.R;
+import com.doplgangr.secrecy.Settings.Prefs_;
 import com.doplgangr.secrecy.Util;
 import com.doplgangr.secrecy.Views.VaultsListFragment;
 
@@ -65,6 +66,8 @@ public class UpdateManager extends Fragment {
     //Preference that stores last app version
     @Pref
     AppVersion_ version;
+    @Pref
+    Prefs_ Prefs;
     VaultsListFragment.OnFragmentFinishListener mFinishListener;
     //Current version
     private Integer versionnow;
@@ -107,6 +110,9 @@ public class UpdateManager extends Fragment {
 
         // Switches between different upgrades, based on last app version.
         switch (version.no().get()) {
+            case 17:
+                version17to18();
+                break;
             case 16:
                 version16to17();
                 break;
@@ -158,9 +164,16 @@ public class UpdateManager extends Fragment {
         appendlog(getString(R.string.updating));
     }
     @Background
+    void version17to18() {
+        if (Prefs.OpenPIN().exists())           // version 18 adds option to enable/disable stealth.
+            Prefs.stealth().put(true);          // enable stealth if is set prior to 18.
+        onFinishAllUpgrade();
+    }
+
+    @Background
     void version16to17() {
         //Still nothing...
-        onFinishAllUpgrade();
+        version17to18();
     }
 
     @Background
