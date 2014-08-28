@@ -329,6 +329,15 @@ public class FilesListFragment extends FileViewer {
     void decrypt_and_save(com.doplgangr.secrecy.FileSystem.File file, final ProgressBar pBar, final Listeners.EmptyListener onFinish) {
         File tempFile = super.getFile(file, pBar, onFinish);
         File storedFile = new File(Environment.getExternalStorageDirectory(), file.getName() + "." + file.getType());
+        if (tempFile == null) {
+            Util.alert(context,
+                    getString(R.string.error_decrypting_file),
+                    getString(R.string.error_decrypting_file_message),
+                    Util.emptyClickListener,
+                    null
+            );
+            return;
+        }
         tempFile.renameTo(storedFile);
     }
 

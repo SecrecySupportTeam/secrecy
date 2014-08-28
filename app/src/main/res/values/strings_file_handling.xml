@@ -33,6 +33,8 @@ If no or you don\'t understand, press cancel to quit.</string>
     <string name="error_delete_password_incorrect_message">Deletion is aborted.</string>
     <string name="error_rename_password_incorrect">Password incorrect.</string>
     <string name="error_rename_password_incorrect_message">Rename is aborted.</string>
+    <string name="error_decrypting_file">Error decrypting file.</string>
+    <string name="error_decrypting_file_message">Please try again later.</string>
     <string name="decrypting">Decrypting…</string>
     <string name="action_decrypt">Decrypt</string>
     <string name="action_delete">Delete</string>
