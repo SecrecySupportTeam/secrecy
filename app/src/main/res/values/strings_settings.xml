@@ -36,6 +36,7 @@
     <string name="security">Security</string>
     <string name="stealth_mode_title">Stealth Mode</string>
     <string name="stealth_mode_message">Hide this app completely from app launcher. </string>
+    <string name="stealth_mode_password_title">Stealth Mode Password</string>
     <string name="misc_title">Miscellaneous</string>
     <string name="misc_analytics_title">Send Usage Analytics</string>
     <string name="misc_analytics_message">We only send non-vault related information like device model, Android version, app launch count, etc.</string>

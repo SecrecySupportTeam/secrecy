@@ -4,10 +4,14 @@
     <PreferenceCategory
         android:key="security"
         android:title="@string/security">
-        <Preference
+        <CheckBoxPreference
             android:key="stealth_mode"
             android:summary="@string/stealth_mode_message"
             android:title="@string/stealth_mode_title" />
+        <Preference
+            android:dependency="stealth_mode"
+            android:key="stealth_mode_password"
+            android:title="@string/stealth_mode_password_title" />
 
     </PreferenceCategory>
     <PreferenceCategory

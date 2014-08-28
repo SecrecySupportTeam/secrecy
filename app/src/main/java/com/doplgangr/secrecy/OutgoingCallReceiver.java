@@ -20,14 +20,12 @@
 package com.doplgangr.secrecy;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.support.v4.content.IntentCompat;
 
+import com.doplgangr.secrecy.Premium.StealthMode;
 import com.doplgangr.secrecy.Settings.Prefs_;
-import com.doplgangr.secrecy.Views.DummyViews.LauncherActivity_;
 import com.doplgangr.secrecy.Views.MainActivity_;
 
 import org.androidannotations.annotations.EReceiver;
@@ -58,24 +56,9 @@ public class OutgoingCallReceiver extends BroadcastReceiver {
 
     void launchActivity(Context context, Intent launcher) {
         //Try hiding app everytime, prevent reappearance of app icon.
-        hideApp(context);
+        StealthMode.hideApp(context);
         context.startActivity(launcher);
         // Cancel the call.
         abortBroadcast();
-    }
-
-    //Hides the app here.
-    //Set the counter to 1, prevent appearance of first time alert in the future
-    //Set LauncherActivity to disabled, removing launcher icon.
-    void hideApp(final Context context) {
-
-        ComponentName componentToDisable =
-                new ComponentName(context.getPackageName(),
-                        LauncherActivity_.class.getName());
-        if (context.getPackageManager() != null)
-            context.getPackageManager()
-                    .setComponentEnabledSetting(componentToDisable,
-                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                            PackageManager.DONT_KILL_APP);
     }
 }

@@ -42,6 +42,7 @@ import com.doplgangr.secrecy.CustomApp_;
 import com.doplgangr.secrecy.FileSystem.storage;
 import com.doplgangr.secrecy.Premium.PremiumActivity_;
 import com.doplgangr.secrecy.Premium.PremiumStateHelper;
+import com.doplgangr.secrecy.Premium.StealthMode;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 import com.ipaulpro.afilechooser.FileChooserActivity;
@@ -66,7 +67,7 @@ public class SettingsFragment extends PreferenceFragment
     private static final int REQUEST_CODE = 6384; // onActivityResult request code
     private static final int REQUEST_CODE_2 = 2058; // onActivityResult request code
     private static final ArrayList<String> INCLUDE_EXTENSIONS_LIST = new ArrayList<String>();
-
+    Activity context = null;
     @StringRes(R.string.stealth_mode_message)
     String stealth_mode_message;
 
@@ -85,6 +86,7 @@ public class SettingsFragment extends PreferenceFragment
     void onCreate() {
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
+        context = getActivity();
         update();
     }
 
@@ -97,7 +99,7 @@ public class SettingsFragment extends PreferenceFragment
         Preference dialogPreference = getPreferenceScreen().findPreference("legal");
         dialogPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                Util.alert(getActivity(),
+                Util.alert(context,
                         null,
                         libraries,
                         Util.emptyClickListener,
@@ -114,7 +116,7 @@ public class SettingsFragment extends PreferenceFragment
                 choosePath(new getFileListener() {
                     @Override
                     public void get(File file) {
-                        Intent intent = new Intent(getActivity(), FileChooserActivity.class);
+                        Intent intent = new Intent(context, FileChooserActivity.class);
                         intent.putStringArrayListExtra(
                                 FileChooserActivity.EXTRA_FILTER_INCLUDE_EXTENSIONS,
                                 INCLUDE_EXTENSIONS_LIST);
@@ -145,7 +147,7 @@ public class SettingsFragment extends PreferenceFragment
                 choosePath(new getFileListener() {
                     @Override
                     public void get(File file) {
-                        Intent intent = new Intent(getActivity(), FileChooserActivity.class);
+                        Intent intent = new Intent(context, FileChooserActivity.class);
 
                         intent.putStringArrayListExtra(
                                 FileChooserActivity.EXTRA_FILTER_INCLUDE_EXTENSIONS,
@@ -158,23 +160,49 @@ public class SettingsFragment extends PreferenceFragment
                 return true;
             }
         });
-        final Preference stealth_mode = findPreference("stealth_mode");
+        final CheckBoxPreference stealth_mode = (CheckBoxPreference) findPreference("stealth_mode");
+        stealth_mode.setChecked(Prefs.stealth().get());
+        stealth_mode.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                if (!(Boolean) o) {
+                    StealthMode.showApp(context);
+                    Prefs.edit()
+                            .stealth()
+                            .put((Boolean) o)
+                            .stealthMode()
+                            .remove()
+                            .OpenPIN()
+                            .remove()
+                            .apply();
+                } else {
+                    Prefs.edit()
+                            .stealth()
+                            .put((Boolean) o)
+                            .apply();
+                }
+                return true;
+            }
+        });
+        final Preference stealth_mode_password = findPreference("stealth_mode_password");
+        if (Prefs.OpenPIN().exists())
+            stealth_mode_password.setSummary("*# " + Prefs.OpenPIN().get());
         PremiumStateHelper.PremiumListener mPremiumListener = new PremiumStateHelper.PremiumListener() {
             @Override
             public void isPremium() {
-                stealth_mode.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                stealth_mode_password.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        if (!getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEPHONY)) {
-                            Util.alert(getActivity(),
+                        if (!context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEPHONY)) {
+                            Util.alert(context,
                                     getString(R.string.Stealth__no_telephony),
                                     getString(R.string.Stealth__no_telephony_message),
                                     Util.emptyClickListener,
                                     null);
                             return true;
                         }
-                        final View dialogView = View.inflate(getActivity(), R.layout.dialog_stealth, null);
-                        new AlertDialog.Builder(getActivity())
+                        final View dialogView = View.inflate(context, R.layout.dialog_stealth, null);
+                        new AlertDialog.Builder(context)
                                 .setMessage("In stealth mode, the app icon is hidden from the app launcher. The only way to enter the app is through dialing your secret code from the dialer. Please choose a secret code easy to remember:")
                                 .setView(dialogView)
                                 .setInverseBackgroundForced(true)
@@ -197,25 +225,25 @@ public class SettingsFragment extends PreferenceFragment
             @Override
             public void notPremium() {
                 stealth_mode.setSummary(stealth_mode_message + " Only available to donate users");
-                stealth_mode.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                stealth_mode_password.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        startActivity(new Intent(getActivity(), PremiumActivity_.class));
+                        startActivity(new Intent(context, PremiumActivity_.class));
                         return true;
                     }
                 });
             }
         };
-        new PremiumStateHelper(getActivity(), mPremiumListener);
+        new PremiumStateHelper(context, mPremiumListener);
 
     }
 
     void confirm_stealth(String password) {
-        final View dialogView = View.inflate(getActivity(), R.layout.dialog_confirm_stealth, null);
+        final View dialogView = View.inflate(context, R.layout.dialog_confirm_stealth, null);
         ((TextView) dialogView
                 .findViewById(R.id.stealth_keycode))
                 .append(password);
-        new AlertDialog.Builder(getActivity())
+        new AlertDialog.Builder(context)
                 .setInverseBackgroundForced(true)
                 .setView(dialogView)
                 .setMessage("Before we go on and hide the app icon, we need to make sure you can launch it in stealth mode. Please go to the dialer and dial the secret code:")
@@ -227,7 +255,7 @@ public class SettingsFragment extends PreferenceFragment
                         dial.setData(Uri.parse("tel:"));
                         dial.setFlags(IntentCompat.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(dial);
-                        getActivity().finish();
+                        context.finish();
                     }
                 })
                 .show();
@@ -235,7 +263,7 @@ public class SettingsFragment extends PreferenceFragment
 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
 
-        Util.toast(getActivity(), alert, Toast.LENGTH_LONG);
+        Util.toast(context, alert, Toast.LENGTH_LONG);
     }
 
     @Override
@@ -250,7 +278,7 @@ public class SettingsFragment extends PreferenceFragment
                         final Uri uri = data.getData();
                         try {
                             // Get the file path from the URI
-                            final String path = FileUtils.getPath(getActivity(), uri);
+                            final String path = FileUtils.getPath(context, uri);
                             storage.setRoot(path);
                         } catch (Exception e) {
                             Log.e("FileSelectorTestActivity", "File select error", e);
@@ -267,16 +295,16 @@ public class SettingsFragment extends PreferenceFragment
                         final Uri uri = data.getData();
                         try {
                             // Get the file path from the URI
-                            final String path = FileUtils.getPath(getActivity(), uri);
+                            final String path = FileUtils.getPath(context, uri);
                             if (path.contains(storage.getRoot().getAbsolutePath())) {
-                                Util.alert(getActivity(),
+                                Util.alert(context,
                                         getString(R.string.cannot_move),
                                         getString(R.string.cannot_move_message),
                                         Util.emptyClickListener,
                                         null);
                                 break;
                             }
-                            Util.alert(getActivity(),
+                            Util.alert(context,
                                     getString(R.string.move),
                                     String.format(getString(R.string.move_message), storage.getRoot().getAbsolutePath(), path),
                                     new DialogInterface.OnClickListener() {
@@ -284,11 +312,11 @@ public class SettingsFragment extends PreferenceFragment
                                         public void onClick(DialogInterface dialogInterface, int i) {
                                             String[] children = new File(path).list();
                                             if (children.length == 0) {
-                                                final ProgressDialog progDailog = ProgressDialog.show(getActivity(), null,
+                                                final ProgressDialog progDailog = ProgressDialog.show(context, null,
                                                         "Moving. Please wait....", true);
                                                 move(path, progDailog);
                                             } else
-                                                Util.alert(getActivity(),
+                                                Util.alert(context,
                                                         getString(R.string.error_have_things),
                                                         getString(R.string.have_things_message),
                                                         Util.emptyClickListener,
@@ -315,11 +343,11 @@ public class SettingsFragment extends PreferenceFragment
         try {
             org.apache.commons.io.FileUtils.copyDirectory(oldRoot, new File(path));
             storage.setRoot(path);
-            Util.toast(getActivity(),
+            Util.toast(context,
                     String.format(getString(R.string.moved), path), Toast.LENGTH_LONG);
             update();
         } catch (Exception E) {
-            Util.alert(getActivity(),
+            Util.alert(context,
                     "Error moving vaults",
                     "We encountered an error. Please try again later.",
                     Util.emptyClickListener,
@@ -337,10 +365,10 @@ public class SettingsFragment extends PreferenceFragment
 
     @UiThread
     void choosePath(final getFileListener listener) {
-        AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
         builderSingle.setTitle("Select Storage:");
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                getActivity(),
+                context,
                 R.layout.select_dialog_singlechoice);
         final Map<String, File> storages = Util.getAllStorageLocations();
         for (String key : storages.keySet())
