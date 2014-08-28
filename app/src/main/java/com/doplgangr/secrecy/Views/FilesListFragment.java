@@ -248,13 +248,14 @@ public class FilesListFragment extends FileViewer {
     void setupViews() {
         mTag.setText(isGallery ? R.string.page_header_gallery : R.string.page_header_files);
         mListView = isGallery ? gridView : listView;
-        mListView = isGallery ? (GridView) mListView : (ListView) mListView;     // Cast ListView back to its correct form
+        if (isGallery)
+            gridView.setAdapter(adapter);
+        else
+            listView.setAdapter(adapter);
         listView.setVisibility(View.GONE);
         gridView.setVisibility(View.GONE);
         mListView.setVisibility(View.VISIBLE);
         context.supportInvalidateOptionsMenu();
-
-        mListView.setAdapter(adapter);
         context.getSupportActionBar().setTitle(secret.getName());
         mListView.setEmptyView(nothing);
 
