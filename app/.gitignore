@@ -1,3 +1,11 @@
 /build
 /src/gen
 *.apk
+/crashlytics.properties
+/mapping.txt
+/seeds.txt
+/src/main/assets/
+/src/main/crashlytics.properties
+/src/main/res/values/com_crashlytics_export_strings.xml
+/unused.txt
+/*.iml
