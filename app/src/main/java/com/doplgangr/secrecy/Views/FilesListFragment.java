@@ -58,7 +58,6 @@ import org.androidannotations.annotations.OptionsMenuItem;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.DrawableRes;
-import org.androidannotations.api.BackgroundExecutor;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -356,6 +355,7 @@ public class FilesListFragment extends FileViewer {
                 target, getString(R.string.chooser_title));
         try {
             startActivityForResult(intent, REQUEST_CODE);
+            onPauseDecision.startActivity();
         } catch (ActivityNotFoundException e) {
             intent = new Intent(context, FileChooserActivity.class);
             intent.putStringArrayListExtra(
@@ -363,10 +363,12 @@ public class FilesListFragment extends FileViewer {
                     INCLUDE_EXTENSIONS_LIST);
             intent.putExtra(FileChooserActivity.EXTRA_SELECT_FOLDER, false);
             startActivityForResult(intent, REQUEST_CODE);
+            onPauseDecision.startActivity();
         }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        onPauseDecision.finishActivity();
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE && data.getData() != null) {
             Util.log("intent received=", data.getData().toString(), data.getData().getLastPathSegment());
             addFile(secret, data);
@@ -453,15 +455,4 @@ public class FilesListFragment extends FileViewer {
         if (attached)
             super.afterDecrypt(newIntent, altIntent);       // check if fragment is attached.
     }
-
-    @Override
-    void paused() {
-        //Do not end activity
-    }
-
-    void finish() {
-        getActivity().finish();
-        BackgroundExecutor.cancelAll(Config.cancellable_task, false);
-    }
-
 }

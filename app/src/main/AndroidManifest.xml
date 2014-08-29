@@ -44,6 +44,9 @@
             android:label="@string/chooser_title" />
         <activity
             android:name=".Views.MainActivity_"
+            android:clearTaskOnLaunch="true"
+            android:excludeFromRecents="true"
+            android:finishOnTaskLaunch="true"
             android:label="@string/app_name" />
         <activity
             android:name=".Views.FileImportActivity_"
@@ -78,7 +81,9 @@
 
         <activity
             android:name=".Views.DummyViews.LauncherActivity_"
+            android:clearTaskOnLaunch="true"
             android:excludeFromRecents="true"
+            android:finishOnTaskLaunch="true"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -91,7 +96,15 @@
             android:label="@string/donate_title" />
         <activity
             android:name=".Views.FilePhotoFragment_"
-            android:label="Gallery" />
+            android:clearTaskOnLaunch="true"
+            android:excludeFromRecents="true"
+            android:finishOnTaskLaunch="true"
+            android:label="Gallery"
+            android:parentActivityName=".Views.FilesActivity_">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.doplgangr.secrecy.Views.FilesActivity_" />
+        </activity>
         <activity
             android:name=".Views.FilesActivity_"
             android:label="@string/app_name"

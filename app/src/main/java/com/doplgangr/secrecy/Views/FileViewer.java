@@ -80,7 +80,7 @@ public class FileViewer extends Fragment {
                     }
                 }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                paused();
+                finish();
             }
         }).show();
     }
@@ -178,16 +178,18 @@ public class FileViewer extends Fragment {
     void afterDecrypt(Intent newIntent, Intent altIntent) {
         try {
             startActivity(newIntent);
-            paused();
+            onPauseDecision.startActivity();
         } catch (android.content.ActivityNotFoundException e) {
             try {
                 startActivity(altIntent);
-                paused();
+                onPauseDecision.startActivity();
             } catch (android.content.ActivityNotFoundException e2) {
                 Util.toast(context, getString(R.string.error_no_activity_view), Toast.LENGTH_LONG);
+                onPauseDecision.finishActivity();
             }
         } catch (IllegalStateException e) {
             //duh why you leave so early
+            onPauseDecision.finishActivity();
         }
     }
 
@@ -195,7 +197,7 @@ public class FileViewer extends Fragment {
     void alert(String message) {
         DialogInterface.OnClickListener click = new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                paused();
+                finish();
             }
         };
         Util.alert(context, getString(R.string.error_decrypt_dialog), message, click, null);
@@ -213,7 +215,22 @@ public class FileViewer extends Fragment {
             pBar.setMax(max);
     }
 
-    void paused() {
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (onPauseDecision.shouldFinish())
+            finish();
+    }
+
+    void finish() {
+        BackgroundExecutor.cancelAll(Config.cancellable_task, false);
+        getActivity().finish();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        onPauseDecision.finishActivity();
     }
 
     @Override
@@ -222,5 +239,23 @@ public class FileViewer extends Fragment {
         context.stopService(intent);
         BackgroundExecutor.cancelAll(Config.cancellable_task, true);
         super.onDestroy();
+    }
+
+    static class onPauseDecision {
+        static Boolean pause = true;
+
+        // An activity is started, should not pause and kill this fragment.
+        static void startActivity() {
+            pause = false;
+        }
+
+        // Fragment returns to top, allow it to be paused and killed.
+        static void finishActivity() {
+            pause = true;
+        }
+
+        static Boolean shouldFinish() {
+            return pause;
+        }
     }
 }
