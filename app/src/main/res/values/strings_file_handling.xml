@@ -37,6 +37,9 @@ If no or you don\'t understand, press cancel to quit.</string>
     <string name="error_decrypting_file_message">Please try again later.</string>
     <string name="error_out_of_memory">Out of memory!</string>
     <string name="error_out_of_memory_message">Seems like your device does not have enough power to house that much info. Please try again.</string>
+
+    <string name="error_root_IOException">Vault location not writable!</string>
+    <string name="error_root_IOException_message">We cannot access the vault location you have set. Please try again later, or set another vault location.</string>
     <string name="decrypting">Decrypting…</string>
     <string name="action_decrypt">Decrypt</string>
     <string name="action_delete">Delete</string>

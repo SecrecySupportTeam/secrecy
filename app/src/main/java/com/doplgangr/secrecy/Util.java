@@ -167,6 +167,8 @@ public class Util {
     }
 
     public static Boolean canWrite(java.io.File root) {
+        if (root == null)
+            return false;
         if (!root.exists())
             return false;
         if (!root.isDirectory())

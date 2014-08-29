@@ -22,6 +22,7 @@ package com.doplgangr.secrecy.Views;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,6 +38,7 @@ import com.doplgangr.secrecy.FileSystem.Vault;
 import com.doplgangr.secrecy.FileSystem.storage;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.Prefs_;
+import com.doplgangr.secrecy.Settings.SettingsActivity_;
 import com.doplgangr.secrecy.Util;
 import com.doplgangr.secrecy.Views.DummyViews.SwipeDismissTouchListener;
 
@@ -89,6 +91,20 @@ public class VaultsListFragment extends Fragment {
         //if (context.getSupportActionBar() != null)
         //  context.getSupportActionBar().setSubtitle(storage.getRoot().getAbsolutePath());
         java.io.File root = storage.getRoot();
+        if (!Util.canWrite(root)) {
+            Util.alert(context,
+                    context.getString(R.string.error_root_IOException),
+                    context.getString(R.string.error_root_IOException_message),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            startActivity(new Intent(context, SettingsActivity_.class));
+                        }
+                    },
+                    null
+            );
+            return;
+        }
         java.io.File[] files = root.listFiles();
         adapter = new VaultsAdapter(context, null);
         for (int i = 0; i < files.length; i++)
