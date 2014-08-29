@@ -34,6 +34,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.doplgangr.secrecy.Config;
+import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.File;
 import com.doplgangr.secrecy.FileSystem.FileObserver;
@@ -235,8 +236,8 @@ public class FileViewer extends Fragment {
 
     @Override
     public void onDestroy() {
-        Intent intent = new Intent(context, FileObserver.class);
-        context.stopService(intent);
+        Intent fileObserverIntent = new Intent(CustomApp.context, FileObserver.class);
+        CustomApp.context.stopService(fileObserverIntent);          //Use App context since context might be null.
         BackgroundExecutor.cancelAll(Config.cancellable_task, true);
         super.onDestroy();
     }
