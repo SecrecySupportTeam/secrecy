@@ -54,6 +54,7 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 @EFragment(R.layout.activity_list_vault)
 @OptionsMenu(R.menu.list_vault)
@@ -105,15 +106,14 @@ public class VaultsListFragment extends Fragment {
             );
             return;
         }
-        java.io.File[] files = root.listFiles();
         adapter = new VaultsAdapter(context, null);
-        for (int i = 0; i < files.length; i++)
-            if (files[i].isDirectory() && !files[i].equals(storage.getTempFolder())) {
-                adapter.add(files[i].getName());
-                final View mView = adapter.getView(i, mLinearView); //inject vaults into list
-                mLinearView.addView(mView, i);
-                setClickListener(mView, i);
-            }
+        ArrayList<File> files = storage.getDirectories(root);
+        for (int i = 0; i < files.size(); i++) {
+            adapter.add(files.get(i).getName());
+            final View mView = adapter.getView(i, mLinearView); //inject vaults into list
+            mLinearView.addView(mView, i);
+            setClickListener(mView, i);
+        }
         if (adapter.getCount() == 0) {
             nothing.setVisibility(View.VISIBLE);
             mLinearView.setVisibility(View.GONE);

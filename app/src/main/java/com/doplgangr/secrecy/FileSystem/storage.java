@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import static com.ipaulpro.afilechooser.utils.FileUtils.getPath;
@@ -128,6 +129,15 @@ public class storage {
             Util.log(e);
         }
         return tempDir;
+    }
+
+    public static ArrayList<java.io.File> getDirectories(File folder) {
+        File[] subfiles = folder.listFiles();
+        ArrayList<File> subfolders = new ArrayList<File>();
+        for (java.io.File subfolder : subfiles)
+            if (subfolder.isDirectory())
+                subfolders.add(subfolder);
+        return subfolders;
     }
 
     public static Boolean setRoot(String root) {
