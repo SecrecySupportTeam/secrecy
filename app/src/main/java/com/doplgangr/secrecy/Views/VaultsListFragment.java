@@ -318,6 +318,8 @@ public class VaultsListFragment extends Fragment {
 
     @UiThread
     void switchView(final View parentView, int showView) {
+        EditText passwordView = (EditText) parentView.findViewById(R.id.open_password);
+        View renameView = parentView.findViewById(R.id.rename_name);
         ViewAnimator viewAnimator = (ViewAnimator) parentView.findViewById(R.id.viewAnimator);
         viewAnimator.setInAnimation(context, R.anim.slide_down);
         int viewIndex = 0;
@@ -327,21 +329,21 @@ public class VaultsListFragment extends Fragment {
                 break;
             case R.id.vault_decrypt_layout:
                 viewIndex = 1;
+                if (passwordView != null) {
+                    passwordView.requestFocus();
+                    passwordView.setText("");                               //Reset password field everytime
+                }
                 break;
             case R.id.vault_delete_layout:
                 viewIndex = 2;
                 break;
             case R.id.vault_rename_layout:
                 viewIndex = 3;
+                if (renameView != null)
+                    renameView.requestFocus();
                 break;
         }
         viewAnimator.setDisplayedChild(viewIndex);
-        View passwordView = parentView.findViewById(R.id.open_password);
-        if (passwordView != null)
-            passwordView.requestFocus();
-        View renameView = parentView.findViewById(R.id.rename_name);
-        if (renameView != null)
-            renameView.requestFocus();
     }
 
     void finish() {
