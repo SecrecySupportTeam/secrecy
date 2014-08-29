@@ -96,10 +96,10 @@
     <orderEntry type="library" exported="" name="library-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="androidannotations-api-3.0.1" level="project" />
     <orderEntry type="library" exported="" name="commons-io-1.3.2" level="project" />
-    <orderEntry type="module" module-name="android-support-v4-preferencefragment" exported="" />
     <orderEntry type="module" module-name="UserVoiceSDK" exported="" />
     <orderEntry type="module" module-name="payme" exported="" />
     <orderEntry type="module" module-name="aFileChooser" exported="" />
+    <orderEntry type="module" module-name="Preferencefragment" exported="" />
   </component>
 </module>
 

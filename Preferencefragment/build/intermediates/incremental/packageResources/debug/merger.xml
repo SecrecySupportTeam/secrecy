@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="2" >
+
+    <dataSet config="main" >
+        <source path="/home/matthew/Documents/Secrecy/Preferencefragment/res" >
+            <file
+                name="preference_list_fragment"
+                path="/home/matthew/Documents/Secrecy/Preferencefragment/res/layout/preference_list_fragment.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                path="/home/matthew/Documents/Secrecy/Preferencefragment/res/values-sw320dp/dimens.xml"
+                qualifiers="sw320dp-v13" >
+                <dimen name="preference_fragment_padding_side" >16dp
+                </dimen>
+                <dimen name="preference_fragment_padding_bottom" >0dp
+                </dimen>
+            </file>
+            <file
+                path="/home/matthew/Documents/Secrecy/Preferencefragment/res/values/strings.xml"
+                qualifiers="" >
+                <string name="next_button_label" >Next
+                </string>
+                <string name="skip_button_label" >Skip
+                </string>
+                <string name="back_button_label" >Back
+                </string>
+            </file>
+            <file
+                path="/home/matthew/Documents/Secrecy/Preferencefragment/res/values/dimens.xml"
+                qualifiers="" >
+                <dimen name="preference_fragment_padding_bottom" >0dp
+                </dimen>
+                <dimen name="preference_fragment_padding_side" >16dp
+                </dimen>
+
+                <integer name="preference_fragment_scrollbarStyle" >
+0x02000000
+                </integer>
+            </file>
+            <file
+                path="/home/matthew/Documents/Secrecy/Preferencefragment/res/values-w720dp/dimens.xml"
+                qualifiers="w720dp-v13" >
+                <dimen name="preference_fragment_padding_side" >32dp
+                </dimen>
+            </file>
+        </source>
+        <source path="/home/matthew/Documents/Secrecy/Preferencefragment/build/generated/res/rs/debug" />
+        <source path="/home/matthew/Documents/Secrecy/Preferencefragment/build/generated/res/generated/debug" />
+    </dataSet>
+    <dataSet config="debug" >
+        <source path="/home/matthew/Documents/Secrecy/Preferencefragment/src/debug/res" />
+    </dataSet>
+
+</merger>
