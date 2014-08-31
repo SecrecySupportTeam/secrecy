@@ -57,12 +57,10 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/name"
+            android:id="@+id/Tutorial__instruction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="middle"
-            android:singleLine="true"
-            android:text="@string/Tutorial__swipe_to_delete"
             android:textColor="@color/accent_light"
             android:textSize="16sp" />
 

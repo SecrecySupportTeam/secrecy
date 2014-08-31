@@ -43,7 +43,8 @@
     <string name="page_header_files">Files</string>
     <string name="page_header_vaults">Vaults</string>
     <string name="Updater__log_firstline">Update Manager is Starting...\n</string>
-    <string name="Tutorial__swipe_to_delete">Swipe to delete any vault. Try me!</string>
+    <string name="Tutorial__swipe_to_delete">Swipe to delete vaults. Try me!</string>
+    <string name="Tutorial__long_click_to_rename">Long click to rename vaults. Try me!</string>
     <string name="Decrypt__password">Password</string>
     <string name="Decrypt__confirm_delete">Confirm delete?</string>
     <string name="action_support">Help Desk</string>

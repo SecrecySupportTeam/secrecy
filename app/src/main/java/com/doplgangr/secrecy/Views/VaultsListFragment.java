@@ -32,6 +32,7 @@ import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.FileSystem.Vault;
@@ -377,6 +378,9 @@ public class VaultsListFragment extends Fragment {
         if ((adapter.getCount() > 0) && (Pref.showVaultSwipeDeleteTutorial().get())) {
             final View mView =
                     context.getLayoutInflater().inflate(R.layout.vault_item_tutorial, mLinearView, false);
+            TextView mInstructions = (TextView) mView.findViewById(R.id.Tutorial__instruction);
+            if (mInstructions != null)
+                mInstructions.setText(R.string.Tutorial__swipe_to_delete);
             mLinearView.addView(mView, 0);
             mView.setOnTouchListener(new SwipeDismissTouchListener(
                     mView,
@@ -391,7 +395,28 @@ public class VaultsListFragment extends Fragment {
                                     .apply();
                         }
                     }));
+            return;                 //Show only one tutorial at a time. Don't overload users!!
 
+        }
+        if ((adapter.getCount() > 0) && (Pref.showVaultLongPressRenameTutorial().get())) {
+            final View mView =
+                    context.getLayoutInflater().inflate(R.layout.vault_item_tutorial, mLinearView, false);
+            TextView mInstructions = (TextView) mView.findViewById(R.id.Tutorial__instruction);
+            if (mInstructions != null)
+                mInstructions.setText(R.string.Tutorial__long_click_to_rename);
+            mLinearView.addView(mView, 0);
+            mView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    mLinearView.removeView(mView);
+                    Pref.edit()
+                            .showVaultLongPressRenameTutorial()
+                            .put(false)
+                            .apply();
+                    return true;
+                }
+            });
+            return;                 //Show only one tutorial at a time. Don't overload users!!
         }
     }
 

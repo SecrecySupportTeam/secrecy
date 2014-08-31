@@ -38,5 +38,8 @@ public interface Prefs {
     boolean showVaultSwipeDeleteTutorial();
 
     @DefaultBoolean(true)
+    boolean showVaultLongPressRenameTutorial();
+
+    @DefaultBoolean(true)
     boolean showHelpDeskTutorial();
 }
