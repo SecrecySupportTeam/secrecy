@@ -42,32 +42,21 @@ public class CircularImageView extends ImageView {
         Canvas canvas = new Canvas(output);
 
         final Paint paint = new Paint();
-        final Paint stroke = new Paint();
 
         final Rect rect = new Rect(0, 0, radius, radius);
 
         paint.setAntiAlias(true);
-        stroke.setAntiAlias(true);
 
         paint.setFilterBitmap(true);
-        stroke.setFilterBitmap(true);
 
         paint.setDither(true);
-        stroke.setDither(true);
 
         canvas.drawARGB(0, 0, 0, 0);
         paint.setColor(Color.parseColor("#BAB399"));
-        stroke.setColor(Color.parseColor("#5f61b6"));
-        stroke.setStyle(Paint.Style.STROKE);
-        stroke.setStrokeWidth(4f);
         canvas.drawCircle(radius / 2 + 0.7f,
                 radius / 2 + 0.7f, radius / 2 + 0.1f, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(sbmp, rect, rect, paint);
-
-        canvas.drawCircle(radius / 2 + 0.7f,
-                radius / 2 + 0.7f, radius / 2 - stroke.getStrokeWidth() / 2 + 0.1f, stroke);
-
         return output;
     }
 
