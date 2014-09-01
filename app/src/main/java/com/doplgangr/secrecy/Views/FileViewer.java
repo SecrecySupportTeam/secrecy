@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.text.InputType;
@@ -53,7 +54,12 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.api.BackgroundExecutor;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @EFragment(R.layout.activity_file_viewer)
 public class FileViewer extends Fragment {
@@ -137,6 +143,50 @@ public class FileViewer extends Fragment {
             context.startService(mServiceIntent);
         }
 
+    }
+
+    @Background
+    void sendMultiple(ArrayList<FilesListFragment.DecryptArgHolder> args) {
+        ArrayList<Uri> uris = new ArrayList<Uri>();
+        Set<String> mimes = new HashSet<String>();
+        MimeTypeMap myMime = MimeTypeMap.getSingleton();
+        for (FilesListFragment.DecryptArgHolder arg : args) {
+            java.io.File tempFile = getFile(arg.file, arg.pBar, arg.onFinish);
+            //File specified is not invalid
+            if (tempFile != null) {
+                if (tempFile.getParentFile().equals(storage.getTempFolder()))
+                    tempFile = new java.io.File(storage.getTempFolder(), tempFile.getName());
+                uris.add(OurFileProvider.getUriForFile(context, OurFileProvider.FILE_PROVIDER_AUTHORITY, tempFile));
+                mimes.add(myMime.getMimeTypeFromExtension(arg.file.getType()));
+
+                //startFileOb
+                Intent mServiceIntent = new Intent(context, FileObserver.class);
+                mServiceIntent.putExtra(Config.file_extra, tempFile.getAbsolutePath());
+                context.startService(mServiceIntent);
+            }
+        }
+        Intent newIntent;
+        if (uris.size() == 1) {
+            newIntent = new Intent(Intent.ACTION_SEND);
+            newIntent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
+        } else {
+            newIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+            newIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+        }
+        if (mimes.size() > 1)
+            newIntent.setType("text/plain");                        //Mixed filetypes
+        else
+            newIntent.setType(new ArrayList<String>(mimes).get(0));
+        newIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        Intent chooserIntent = generateCustomChooserIntent(newIntent, uris);
+        try {
+            startActivity(Intent.createChooser(chooserIntent, getString(R.string.send_file_dialog)));
+            onPauseDecision.startActivity();
+        } catch (android.content.ActivityNotFoundException e) {
+            Util.toast(context, getString(R.string.error_no_activity_view), Toast.LENGTH_LONG);
+            onPauseDecision.finishActivity();
+        }
     }
 
     java.io.File getFile(final File file, final ProgressBar pBar, final Listeners.EmptyListener onfinish) {
@@ -240,6 +290,54 @@ public class FileViewer extends Fragment {
         CustomApp.context.stopService(fileObserverIntent);          //Use App context since context might be null.
         BackgroundExecutor.cancelAll(Config.cancellable_task, true);
         super.onDestroy();
+    }
+
+    private Intent generateCustomChooserIntent(Intent prototype, ArrayList<Uri> uris) {
+        List<Intent> targetedShareIntents = new ArrayList<Intent>();
+        List<HashMap<String, String>> intentMetaInfo = new ArrayList<HashMap<String, String>>();
+        Intent chooserIntent;
+
+        Intent dummy = new Intent(prototype.getAction());
+        dummy.setType(prototype.getType());
+        List<ResolveInfo> resInfo = context.getPackageManager().queryIntentActivities(dummy, 0);
+
+        if (!resInfo.isEmpty()) {
+            for (ResolveInfo resolveInfo : resInfo) {
+                if (resolveInfo.activityInfo == null || resolveInfo.activityInfo.packageName.equalsIgnoreCase("com.doplgangr.secrecy"))
+                    continue;
+
+                HashMap<String, String> info = new HashMap<String, String>();
+                info.put("packageName", resolveInfo.activityInfo.packageName);
+                info.put("className", resolveInfo.activityInfo.name);
+                info.put("simpleName", String.valueOf(resolveInfo.activityInfo.loadLabel(context.getPackageManager())));
+                intentMetaInfo.add(info);
+                for (Uri uri : uris)
+                    context.grantUriPermission(resolveInfo.activityInfo.packageName, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            }
+
+            if (!intentMetaInfo.isEmpty()) {
+                // sorting for nice readability
+                Collections.sort(intentMetaInfo, new Comparator<HashMap<String, String>>() {
+                    @Override
+                    public int compare(HashMap<String, String> map, HashMap<String, String> map2) {
+                        return map.get("simpleName").compareTo(map2.get("simpleName"));
+                    }
+                });
+
+                // create the custom intent list
+                for (HashMap<String, String> metaInfo : intentMetaInfo) {
+                    Intent targetedShareIntent = (Intent) prototype.clone();
+                    targetedShareIntent.setPackage(metaInfo.get("packageName"));
+                    targetedShareIntent.setClassName(metaInfo.get("packageName"), metaInfo.get("className"));
+                    targetedShareIntents.add(targetedShareIntent);
+                }
+                chooserIntent = Intent.createChooser(targetedShareIntents.remove(targetedShareIntents.size() - 1), getString(R.string.send_file_dialog));
+                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetedShareIntents.toArray(new Parcelable[targetedShareIntents.size()]));
+                return chooserIntent;
+            }
+        }
+
+        return new Intent(Intent.ACTION_SEND);  //Unable to do anything. Duh.
     }
 
     static class onPauseDecision {

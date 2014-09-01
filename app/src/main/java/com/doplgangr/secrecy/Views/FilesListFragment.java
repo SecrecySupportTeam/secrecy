@@ -24,7 +24,6 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
@@ -115,10 +114,10 @@ public class FilesListFragment extends FileViewer {
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
-                // case R.id.action_send_secure:
-                //    sendSecure();
-                //     mode.finish();
-                //     return true;
+                case R.id.action_send:
+                    sendRaw();
+                    mode.finish();
+                    return true;
                 case R.id.action_decrypt:
                     decryptCurrentItem();
                     mode.finish();
@@ -130,17 +129,6 @@ public class FilesListFragment extends FileViewer {
                 default:
                     return false;
             }
-        }
-
-        void sendSecure() {
-            Intent newIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-            ArrayList<Uri> Uris = new ArrayList<Uri>();
-            for (FilesListAdapter.ViewNIndex object : adapter.getSelected())
-                Uris.add(Uri.fromFile(adapter.getItem(object.index).getFile()));
-            newIntent.setType("text/plain");
-            newIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, Uris);
-
-            startActivity(Intent.createChooser(newIntent, getString(R.string.send_file_dialog)));
         }
 
         // Called when the user exits the action mode
@@ -406,6 +394,32 @@ public class FilesListFragment extends FileViewer {
         }
     }
 
+
+    void sendRaw() {
+        ArrayList<DecryptArgHolder> Args = new ArrayList<DecryptArgHolder>();
+        for (FilesListAdapter.ViewNIndex object : adapter.getSelected()) {
+            int position = object.index;
+            if (adapter.hasIndex(position)) {
+                com.doplgangr.secrecy.FileSystem.File file = adapter.getItem(position);
+                final View mView = object.view;
+                if (!file.decrypting) {
+                    switchView(mView, R.id.DecryptLayout);
+                    ProgressBar pBar = (ProgressBar) mView.findViewById(R.id.progressBar);
+                    Listeners.EmptyListener onFinish = new Listeners.EmptyListener() {
+                        @Override
+                        public void run() {
+                            switchView(mView, R.id.dataLayout);
+                        }
+                    };
+                    Args.add(new DecryptArgHolder(file, pBar, onFinish));
+                } else
+                    Util.toast(context, getString(R.string.error_already_decrypting), Toast.LENGTH_SHORT);
+            }
+        }
+        sendMultiple(Args);
+    }
+
+
     void deleteCurrentItem() {
         final ArrayList<FilesListAdapter.ViewNIndex> adapterSelected =
                 new ArrayList<FilesListAdapter.ViewNIndex>(adapter.getSelected());
@@ -454,5 +468,17 @@ public class FilesListFragment extends FileViewer {
     void afterDecrypt(Intent newIntent, Intent altIntent) {
         if (attached)
             super.afterDecrypt(newIntent, altIntent);       // check if fragment is attached.
+    }
+
+    class DecryptArgHolder {
+        public com.doplgangr.secrecy.FileSystem.File file;
+        public ProgressBar pBar;
+        public Listeners.EmptyListener onFinish;
+
+        public DecryptArgHolder(com.doplgangr.secrecy.FileSystem.File file, ProgressBar pBar, Listeners.EmptyListener onFinish) {
+            this.file = file;
+            this.pBar = pBar;
+            this.onFinish = onFinish;
+        }
     }
 }
