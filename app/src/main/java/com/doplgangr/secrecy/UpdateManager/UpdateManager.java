@@ -110,6 +110,9 @@ public class UpdateManager extends Fragment {
 
         // Switches between different upgrades, based on last app version.
         switch (version.no().get()) {
+            case 18:
+                version18to19();
+                break;
             case 17:
                 version17to18();
                 break;
@@ -164,10 +167,16 @@ public class UpdateManager extends Fragment {
         appendlog(getString(R.string.updating));
     }
     @Background
+    void version18to19() {
+        //Nahh
+        onFinishAllUpgrade();
+    }
+
+    @Background
     void version17to18() {
         if (Prefs.OpenPIN().exists())           // version 18 adds option to enable/disable stealth.
             Prefs.stealth().put(true);          // enable stealth if is set prior to 18.
-        onFinishAllUpgrade();
+        version18to19();
     }
 
     @Background
@@ -225,7 +234,7 @@ public class UpdateManager extends Fragment {
         // Changes filebase path to new format.
         if (!Util.canWrite(storage.getRoot())) {
             //Append with sdcard link
-            log.append("\nOld sdCard format. Changing to new format.");
+            appendlog("\nOld sdCard format. Changing to new format.");
             String newRoot = Environment.getExternalStorageDirectory()
                     .getAbsoluteFile()
                     + "/" + storage.getRoot().getAbsolutePath();
@@ -245,7 +254,7 @@ public class UpdateManager extends Fragment {
         // Fix a bug in version 6 that corrupts the vault if user tries to move it elsewhere
 
         if (!storage.getRoot().getName().equals("SECRECYFILES")) {
-            log.append("\nUser have used v6 and moved vaults elsewhere");
+            appendlog("\nUser have used v6 and moved vaults elsewhere");
             Util.alert(context,
                     "Upgrading from alpha 0.6 to 0.7",
                     "We detect that you have moved your vaults using version 0.6." +
@@ -254,7 +263,7 @@ public class UpdateManager extends Fragment {
                     Util.emptyClickListener,
                     null
             );
-            log.append("\nTrying to move again...");
+            appendlog("\nTrying to move again...");
             try {
                 org.apache.commons.io.FileUtils.copyDirectory(getRoot(), storage.getRoot());
                 appendlog("\nFinish re-moving vaults");
@@ -295,12 +304,14 @@ public class UpdateManager extends Fragment {
     void version1to2() {
         // remove the temp folder, we do not use it anymore.
         java.io.File root = storage.getRoot();
-        java.io.File[] files = root.listFiles();
-        for (java.io.File inFile : files)
-            if (inFile.isDirectory())
-                if ("TEMP".equals(inFile.getName()))
-                    storage.DeleteRecursive(inFile);
-        appendlog(getString(R.string.one_to_two));
+        if (Util.canWrite(root)) {
+            java.io.File[] files = root.listFiles();
+            for (java.io.File inFile : files)
+                if (inFile.isDirectory())
+                    if ("TEMP".equals(inFile.getName()))
+                        storage.DeleteRecursive(inFile);
+            appendlog(getString(R.string.one_to_two));
+        }
         version2to3();
     }
 
