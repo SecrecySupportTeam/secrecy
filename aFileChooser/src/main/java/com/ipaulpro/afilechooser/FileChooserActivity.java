@@ -49,13 +49,11 @@ public class FileChooserActivity extends ActionBarActivity implements
     public static final String EXTRA_FILTER_INCLUDE_EXTENSIONS =
     		"com.ipaulpro.afilechooser.EXTRA_FILTER_INCLUDE_EXTENSIONS";
 	public static final String EXTRA_SELECT_FOLDER = "com.ipaulpro.afilechooser.EXTRA_SELECT_FOLDER";
-	private boolean mSelectFolder = false;
-    private ArrayList<String> mFilterIncludeExtensions = new ArrayList<String>();
-    public static final String EXTERNAL_BASE_PATH = Environment
-            .getExternalStorageDirectory().getAbsolutePath();
-
     private static final boolean HAS_ACTIONBAR = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
-
+    public static String EXTERNAL_BASE_PATH = Environment
+            .getExternalStorageDirectory().getAbsolutePath();
+    private boolean mSelectFolder = false;
+    private ArrayList<String> mFilterIncludeExtensions = new ArrayList<String>();
     private FragmentManager mFragmentManager;
     private BroadcastReceiver mStorageListener = new BroadcastReceiver() {
         @Override
@@ -75,7 +73,9 @@ public class FileChooserActivity extends ActionBarActivity implements
 		if(intent != null){
 			mFilterIncludeExtensions = intent.getStringArrayListExtra(EXTRA_FILTER_INCLUDE_EXTENSIONS);
 			mSelectFolder = intent.getBooleanExtra(EXTRA_SELECT_FOLDER, false);
-		}
+            if (intent.getStringExtra(PATH) != null)
+                EXTERNAL_BASE_PATH = intent.getStringExtra(PATH);
+        }
 
         mFragmentManager = getSupportFragmentManager();
         mFragmentManager.addOnBackStackChangedListener(this);
