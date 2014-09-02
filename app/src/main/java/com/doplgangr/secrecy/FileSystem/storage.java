@@ -68,16 +68,14 @@ public class storage {
                 .start();
     }
 
-    public static void shredFile(File file){
+    public static void shredFile(OutputStream fileOS, long size) {
+        Util.log("Purge File", size);
         try {
             // Double check
-            if (!file.exists() || !file.canWrite())
-                throw new Exception("Unable to write to file: " + file);
-            long bytes = file.length();
-            OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+            OutputStream os = new BufferedOutputStream(fileOS);
             try
             {
-                for (int i = 0; i < bytes; i++)
+                for (int i = 0; i < size; i++)
                     os.write(0);
             }
             finally
@@ -89,12 +87,6 @@ public class storage {
                 }
             }
         } catch (Exception ignored) {
-        } finally {
-            try {
-                FileUtils.forceDelete(file);
-            } catch (Exception e1) {
-                Util.log(e1);
-            }
         }
     }
 

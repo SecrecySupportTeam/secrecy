@@ -22,6 +22,7 @@ package com.doplgangr.secrecy.FileSystem;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.content.res.XmlResourceParser;
@@ -33,6 +34,9 @@ import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
+
+import com.doplgangr.secrecy.Config;
+import com.doplgangr.secrecy.CustomApp;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -315,9 +319,17 @@ public class OurFileProvider extends ContentProvider {
     @Override
     public ParcelFileDescriptor openFile(Uri uri, String mode) throws FileNotFoundException {
         // ContentProvider has already checked granted permissions
-        final File file = mStrategy.getFileForUri(uri);
-        final int fileMode = modeToMode(mode);
-        return ParcelFileDescriptor.open(file, fileMode);
+        try {
+            final File file = mStrategy.getFileForUri(uri);
+            final int fileMode = modeToMode(mode);
+            return ParcelFileDescriptor.open(file, fileMode);
+        } finally {
+            final File file = mStrategy.getFileForUri(uri);
+            //startFileOb
+            Intent mServiceIntent = new Intent(CustomApp.context, FileObserver.class);
+            mServiceIntent.putExtra(Config.file_extra, file.getAbsolutePath());
+            CustomApp.context.startService(mServiceIntent);
+        }
     }
 
     interface PathStrategy {

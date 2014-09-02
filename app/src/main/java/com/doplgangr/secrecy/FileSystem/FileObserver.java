@@ -25,6 +25,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.ParcelFileDescriptor;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 
@@ -33,7 +34,12 @@ import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 import com.doplgangr.secrecy.Views.MainActivity_;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 public class FileObserver extends IntentService {
@@ -48,14 +54,16 @@ public class FileObserver extends IntentService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Util.log("FileOb", "onStart " + intent.getStringExtra(Config.file_extra));
         mNotificationManager = (NotificationManager) this
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         File file = new java.io.File(intent.getStringExtra(Config.file_extra));
         MyFileObserver fileOb = new MyFileObserver(file.getParent());
         fileOb.setup(file);
-        fileOb.startWatching();
-        fileObs.add(fileOb);
+        if (!fileObs.contains(fileOb)) {
+            fileOb.startWatching();
+            Util.log("FileOb", "onStart " + intent.getStringExtra(Config.file_extra));
+            fileObs.add(fileOb);
+        }
         sendNotif(String.format(getString(R.string.files_decrypted_notif), fileObs.size()), true);
         return Service.START_NOT_STICKY;
     }
@@ -91,10 +99,8 @@ public class FileObserver extends IntentService {
     @Override
     public void onDestroy() {
         Util.log("FileOb", "IntentService Ondestroy.");
-        for (MyFileObserver fileOb : fileObs) {
-            storage.shredFile(fileOb.file);
-            fileOb.stopWatching();
-        }
+        for (MyFileObserver fileOb : fileObs)
+            fileOb.kill();
         mNotificationManager.cancelAll();
         super.onDestroy();
     }
@@ -102,7 +108,8 @@ public class FileObserver extends IntentService {
     class MyFileObserver extends android.os.FileObserver {
         public final String absolutePath;
         public java.io.File file;
-        long timestamp;
+        private ParcelFileDescriptor pfd;
+        private long size;
 
         public MyFileObserver(String path) {
             super(path, android.os.FileObserver.ALL_EVENTS);
@@ -110,8 +117,13 @@ public class FileObserver extends IntentService {
         }
 
         public void setup(java.io.File file) {
-            timestamp = file.lastModified();
             this.file = file;
+            try {
+                pfd = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_WRITE_ONLY);
+                size = file.length();
+            } catch (IOException ignored) {
+                //FINEE
+            }
         }
 
         @Override
@@ -124,10 +136,15 @@ public class FileObserver extends IntentService {
             //    Log.d("FileOb",path + " is opened\n");
             //}
             //data was read from a file
-            if ((android.os.FileObserver.ACCESS & event) != 0) {
-                Util.log(absolutePath + "/" + path + " is accessed/read");
+            if ((android.os.FileObserver.CLOSE_NOWRITE & event) != 0 ||
+                    (android.os.FileObserver.CLOSE_WRITE & event) != 0) {
+                Util.log(absolutePath + "/" + path + " CLOSED");
                 stopWatching();
-                kill(file, 10); //delayed Kill
+                kill();
+            }
+            if ((android.os.FileObserver.OPEN & event) != 0 ||
+                    (android.os.FileObserver.ACCESS & event) != 0) {
+                delete();
             }
             //data was written to a file
             //if ((FileObserver.MODIFY & event)!=0) {
@@ -174,16 +191,26 @@ public class FileObserver extends IntentService {
             //}
         }
 
-        void kill(final File file, final int seconds) {
-            for (int i = 0; i < seconds; i++) {
+        void delete() {
+            try {
+                Thread.sleep(1000);
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) {
                 try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    //ignored
+                    FileUtils.forceDelete(file);
+                } catch (IOException ignored2) {
+                    //fine
                 }
             }
+        }
+
+        void kill() {
             Util.log("Delete File @ " + SystemClock.elapsedRealtime());
-            storage.shredFile(file);
+            if (pfd != null) {
+                Util.log(pfd.getFileDescriptor().toString());
+                OutputStream fileOutputStream = new FileOutputStream(pfd.getFileDescriptor());
+                storage.shredFile(fileOutputStream, size);
+            }
             fileObs.remove(this);
 
             if (fileObs.size() == 0)
@@ -192,7 +219,6 @@ public class FileObserver extends IntentService {
                 sendNotif(String.format(getString(R.string.files_decrypted_notif), fileObs.size()), true);
 
         }
-
     }
 
 

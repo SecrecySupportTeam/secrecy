@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v4.app.NotificationCompat;
 
 import com.doplgangr.secrecy.R;
@@ -14,6 +15,11 @@ import com.doplgangr.secrecy.Views.MainActivity_;
 
 import org.androidannotations.annotations.EIntentService;
 import org.androidannotations.annotations.ServiceAction;
+import org.apache.commons.io.FileUtils;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 /**
  * Created by matthew on 8/22/14.
@@ -22,6 +28,7 @@ import org.androidannotations.annotations.ServiceAction;
 public class FileOptionsService extends IntentService {
     public static final int NOTIFICATION_ID = 1;
     private static final int NOTIFICATION_FOREGROUND = 0;
+    OutputStream os = null;
     private NotificationManager mNotificationManager;
     private int count = 0;
     private int countAddFiles = 0;
@@ -31,13 +38,38 @@ public class FileOptionsService extends IntentService {
     }
 
     @ServiceAction
-    void delete(java.io.File file) {
+    void delete(final java.io.File file) {
         count++;
         sendNotif("Shredding Files...", true);
-        storage.shredFile(file);
-        count--;
-        if (count == 0)
-            sendNotif("Done.", false);
+        final long size = file.length();
+        class StaticTask extends AsyncTask<Void, Void, OutputStream> {
+
+            @Override
+            protected OutputStream doInBackground(Void... voids) {
+                try {
+                    os = new FileOutputStream(file);
+                } catch (FileNotFoundException ignored) {
+
+                }
+                return os;
+            }
+
+            @Override
+            public void onPostExecute(OutputStream os) {
+                try {
+                    FileUtils.forceDelete(file);
+                } catch (Exception ignored) {
+                } finally {
+                    storage.shredFile(os, size);
+                    count--;
+                    if (count == 0)
+                        sendNotif("Done.", false);
+                }
+            }
+
+        }
+
+        new StaticTask().execute();
     }
 
     @ServiceAction
