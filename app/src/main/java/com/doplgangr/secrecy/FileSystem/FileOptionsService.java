@@ -40,7 +40,7 @@ public class FileOptionsService extends IntentService {
     @ServiceAction
     void delete(final java.io.File file) {
         count++;
-        sendNotif("Shredding Files...", true);
+        sendNotif("", true);
         class StaticTask extends AsyncTask<Void, Void, OutputStream> {
 
             @Override
@@ -65,7 +65,7 @@ public class FileOptionsService extends IntentService {
                     storage.shredFile(os, size);
                     count--;
                     if (count == 0)
-                        sendNotif("Done.", false);
+                        sendNotif("", false);
                 }
             }
 

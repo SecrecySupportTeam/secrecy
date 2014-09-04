@@ -96,8 +96,8 @@ public class MainActivity
     private void showHelpDeskTutorial() {
         if (Prefs.showHelpDeskTutorial().get())
             Util.alert(this,
-                    "Don't panic, just ask!",
-                    "Do you know we have a help centre? Come if you have questions, suggestions, or if you just want to have a chit-chat.",
+                    getString(R.string.Dialog__help_centre_tutorial),
+                    getString(R.string.Dialog__help_centre_tutorial_message),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -126,7 +126,7 @@ public class MainActivity
                 .append(password);
         new AlertDialog.Builder(context)
                 .setInverseBackgroundForced(true)
-                .setMessage("You're all set and ready to go! We will now hide the app icon. It will be gone after you reboot. Again, remember your secret code:")
+                .setMessage(getString(R.string.Stealth__finish))
                 .setView(dialogView)
                 .setPositiveButton(getString(R.string.OK),
                         new DialogInterface.OnClickListener() {

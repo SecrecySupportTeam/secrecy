@@ -39,6 +39,14 @@
     <string name="Vault__password">Password</string>
     <string name="Vault__vault_name_hint">Vault Name</string>
     <string name="Vault__vault_password_hint">Password</string>
+    <string name="Dialog__help_centre_tutorial">Don\'t panic, just ask!</string>
+    <string name="Dialog__help_centre_tutorial_message">Do you know we have a help centre? Come if you have questions, suggestions, or if you just want to have a chit-chat.</string>
+    <string name="Stealth__finish">You\'re all set and ready to go! We will now hide the app icon. It will be gone after you reboot. Again, remember your secret code:</string>
+    <string name="Error__error_processing_purchase">Error processing the purchase. It is probably cancelled mid-way.</string>
+    <string name="Error__check_play_store">Problem setting up in-app billing. Please check your Play store.</string>
+    <string name="Dialog__purchased">Already donated!</string>
+    <string name="Dialog__purchase_message">Thank you for purchasing the Donation Package!</string>
+    <string name="Error__cannot_set_up_IAP">Problem setting up in-app billing. Please check your Play store.</string>
     <string-array name="Donation__google_catalog_values">
         <item>2 USD</item>
         <item>5 USD</item>

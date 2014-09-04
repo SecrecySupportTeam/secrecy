@@ -36,7 +36,7 @@ public class FileImportFragment extends VaultsListFragment {
     @AfterViews
     void afterViews() {
         super.oncreate();
-        context.setTitle("Select Vault to place files in");
+        context.setTitle(R.string.Dialog_header__import_files);
         getActivity().supportInvalidateOptionsMenu();
     }
 

@@ -203,7 +203,7 @@ public class SettingsFragment extends PreferenceFragment
                         }
                         final View dialogView = View.inflate(context, R.layout.dialog_stealth, null);
                         new AlertDialog.Builder(context)
-                                .setMessage("In stealth mode, the app icon is hidden from the app launcher. The only way to enter the app is through dialing your secret code from the dialer. Please choose a secret code easy to remember:")
+                                .setMessage(context.getString(R.string.Settings__stealth_explanation))
                                 .setView(dialogView)
                                 .setInverseBackgroundForced(true)
                                 .setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
@@ -224,7 +224,7 @@ public class SettingsFragment extends PreferenceFragment
 
             @Override
             public void notPremium() {
-                stealth_mode.setSummary(stealth_mode_message + " Only available to donate users");
+                stealth_mode.setSummary(stealth_mode_message + context.getString(R.string.Settings__only_permium));
                 stealth_mode_password.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
@@ -246,7 +246,7 @@ public class SettingsFragment extends PreferenceFragment
         new AlertDialog.Builder(context)
                 .setInverseBackgroundForced(true)
                 .setView(dialogView)
-                .setMessage("Before we go on and hide the app icon, we need to make sure you can launch it in stealth mode. Please go to the dialer and dial the secret code:")
+                .setMessage()
                 .setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Prefs.stealthMode().put(-1);
@@ -313,7 +313,7 @@ public class SettingsFragment extends PreferenceFragment
                                             String[] children = new File(path).list();
                                             if (children.length == 0) {
                                                 final ProgressDialog progDailog = ProgressDialog.show(context, null,
-                                                        "Moving. Please wait....", true);
+                                                        context.getString(R.string.Settings__moving_vault), true);
                                                 move(path, progDailog);
                                             } else
                                                 Util.alert(context,
@@ -348,8 +348,8 @@ public class SettingsFragment extends PreferenceFragment
             update();
         } catch (Exception E) {
             Util.alert(context,
-                    "Error moving vaults",
-                    "We encountered an error. Please try again later.",
+                    context.getString(R.string.Error__moving_vault),
+                    ,
                     Util.emptyClickListener,
                     null);
             progressDialog.dismiss();
@@ -366,14 +366,14 @@ public class SettingsFragment extends PreferenceFragment
     @UiThread
     void choosePath(final getFileListener listener) {
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
-        builderSingle.setTitle("Select Storage:");
+        builderSingle.setTitle(context.getString(R.string.Settings__select_storage_title));
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 context,
                 R.layout.select_dialog_singlechoice);
         final Map<String, File> storages = Util.getAllStorageLocations();
         for (String key : storages.keySet())
             arrayAdapter.add(key);
-        builderSingle.setNegativeButton("Cancel",
+        builderSingle.setNegativeButton(R.string.CANCEL,
                 new DialogInterface.OnClickListener() {
 
                     @Override

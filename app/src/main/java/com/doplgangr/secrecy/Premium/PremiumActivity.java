@@ -67,7 +67,7 @@ public class PremiumActivity extends Activity {
 
             if (result.isFailure()) {
                 complain("Error purchasing: " + result);
-                alert("Error processing the purchase. It is probably cancelled mid-way.");
+                alert(getString(R.string.Error__error_processing_purchase));
                 setWaitScreen(false);
                 return;
             }
@@ -98,7 +98,7 @@ public class PremiumActivity extends Activity {
 
             // Is it a failure?
             if (result.isFailure()) {
-                alert("Problem setting up in-app billing. Please check your Play store.");
+                alert(getString(R.string.Error__check_play_store));
                 complain("Failed to query inventory: " + result);
                 return;
             }
@@ -118,8 +118,8 @@ public class PremiumActivity extends Activity {
             updateUi();
             if (mIsPremium) {
                 Util.alert(context,
-                        "Already donated!",
-                        "Thank you for purchasing the Donation Package!",
+                        getString(R.string.Dialog__purchased),
+                        getString(R.string.Dialog__purchase_message),
                         Util.emptyClickListener,
                         null);
             }
@@ -161,7 +161,7 @@ public class PremiumActivity extends Activity {
 
                 if (!result.isSuccess()) {
                     // Oh noes, there was a problem.
-                    alert("Problem setting up in-app billing. Please check your Play store.");
+                    alert(getString(R.string.Error__cannot_set_up_IAP));
                     complain("Problem setting up in-app billing: " + result);
                     return;
                 }
@@ -270,7 +270,7 @@ public class PremiumActivity extends Activity {
     void alert(String message) {
         AlertDialog.Builder bld = new AlertDialog.Builder(this);
         bld.setMessage(message);
-        bld.setNeutralButton("OK", null);
+        bld.setNeutralButton(R.string.OK, null);
         Util.log("Showing alert dialog: " + message);
         bld.create().show();
     }
