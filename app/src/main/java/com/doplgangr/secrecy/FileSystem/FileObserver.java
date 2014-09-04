@@ -100,7 +100,7 @@ public class FileObserver extends IntentService {
     public void onDestroy() {
         Util.log("FileOb", "IntentService Ondestroy.");
         for (MyFileObserver fileOb : fileObs)
-            fileOb.kill();
+            fileOb.kill(false);
         mNotificationManager.cancelAll();
         super.onDestroy();
     }
@@ -140,7 +140,7 @@ public class FileObserver extends IntentService {
                     (android.os.FileObserver.CLOSE_WRITE & event) != 0) {
                 Util.log(absolutePath + "/" + path + " CLOSED");
                 stopWatching();
-                kill();
+                kill(true);
             }
             if ((android.os.FileObserver.OPEN & event) != 0 ||
                     (android.os.FileObserver.ACCESS & event) != 0) {
@@ -211,7 +211,8 @@ public class FileObserver extends IntentService {
                 OutputStream fileOutputStream = new FileOutputStream(pfd.getFileDescriptor());
                 storage.shredFile(fileOutputStream, size);
             }
-            fileObs.remove(this);
+            if (deleteSelf)
+                fileObs.remove(this);
 
             if (fileObs.size() == 0)
                 sendNotif(getString(R.string.Notif__temp_deleted), false);
