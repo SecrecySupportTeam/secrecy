@@ -62,7 +62,7 @@ public class Util {
                 if (positive != null)
                     a.setPositiveButton(context.getString(R.string.OK), positive);
                 if (negative != null)
-                    a.setNegativeButton(context.getString(R.string.cancel), negative);
+                    a.setNegativeButton(context.getString(R.string.CANCEL), negative);
                 a.setCancelable(false);
                 a.show();
             }

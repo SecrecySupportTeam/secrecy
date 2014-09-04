@@ -68,16 +68,16 @@ public class SettingsFragment extends PreferenceFragment
     private static final int REQUEST_CODE_2 = 2058; // onActivityResult request code
     private static final ArrayList<String> INCLUDE_EXTENSIONS_LIST = new ArrayList<String>();
     Activity context = null;
-    @StringRes(R.string.stealth_mode_message)
+    @StringRes(R.string.Settings__stealth_mode_message)
     String stealth_mode_message;
 
     static {
         INCLUDE_EXTENSIONS_LIST.add(".");
     }
 
-    @StringRes(R.string.on_changed_alert)
+    @StringRes(R.string.Settings__changed_alert)
     String alert;
-    @StringRes(R.string.legal_long)
+    @StringRes(R.string.Settings__libraries_message)
     String libraries;
     @Pref
     Prefs_ Prefs;
@@ -215,7 +215,7 @@ public class SettingsFragment extends PreferenceFragment
                                         confirm_stealth(password);
                                     }
                                 })
-                                .setNegativeButton(getString(R.string.cancel), Util.emptyClickListener)
+                                .setNegativeButton(getString(R.string.CANCEL), Util.emptyClickListener)
                                 .show();
                         return true;
                     }
@@ -298,14 +298,14 @@ public class SettingsFragment extends PreferenceFragment
                             final String path = FileUtils.getPath(context, uri);
                             if (path.contains(storage.getRoot().getAbsolutePath())) {
                                 Util.alert(context,
-                                        getString(R.string.cannot_move),
-                                        getString(R.string.cannot_move_message),
+                                        getString(R.string.Settings__cannot_move_vault),
+                                        getString(R.string.Settings__cannot_move_vault_message),
                                         Util.emptyClickListener,
                                         null);
                                 break;
                             }
                             Util.alert(context,
-                                    getString(R.string.move),
+                                    getString(R.string.Settings__move_vault),
                                     String.format(getString(R.string.move_message), storage.getRoot().getAbsolutePath(), path),
                                     new DialogInterface.OnClickListener() {
                                         @Override
@@ -317,8 +317,8 @@ public class SettingsFragment extends PreferenceFragment
                                                 move(path, progDailog);
                                             } else
                                                 Util.alert(context,
-                                                        getString(R.string.error_have_things),
-                                                        getString(R.string.have_things_message),
+                                                        getString(R.string.Error__files_exist),
+                                                        getString(R.string.Error__files_exist_message),
                                                         Util.emptyClickListener,
                                                         null
                                                 );
@@ -344,7 +344,7 @@ public class SettingsFragment extends PreferenceFragment
             org.apache.commons.io.FileUtils.copyDirectory(oldRoot, new File(path));
             storage.setRoot(path);
             Util.toast(context,
-                    String.format(getString(R.string.moved), path), Toast.LENGTH_LONG);
+                    String.format(getString(R.string.Settings__moved_vault), path), Toast.LENGTH_LONG);
             update();
         } catch (Exception E) {
             Util.alert(context,

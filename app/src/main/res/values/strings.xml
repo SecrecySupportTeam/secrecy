@@ -1,22 +1,16 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-
-    <string name="app_name">Secrecy</string>
-    <string name="title_activity_settings">Settings</string>
-    <string name="action_settings">Settings</string>
-    <string name="action_switch_interface">Switch Interface</string>
-    <string-array name="donation_google_catalog_values">
-        <item>2 USD</item>
-        <item>5 USD</item>
-        <item>10 USD</item>
-        <item>15 USD</item>
-        <item>20 USD</item>
-    </string-array>
-
-    <string name="title_activity_choose_folder">Choose a Folder</string>
-    <string name="chooser_title">Pick a File…</string>
-    <string name="donate_title">Buy me a coffee!</string>
-    <string name="donate_description">			By donating, you are:\n
+    <string name="action__add_vault">Add vault</string>
+    <string name="action__donate">Donate</string>
+    <string name="action__support">Help Desk</string>
+    <string name="action__switch_interface">Switch Interface</string>
+    <string name="App__name">Secrecy</string>
+    <string name="CANCEL">Cancel</string>
+    <string name="CONTINUE">CONTINUE</string>
+    <string name="Dialog_header__import_files">Import Files to Secrecy</string>
+    <string name="Dialog_header__pick_file">Pick a File…</string>
+    <string name="Donation__buy_button">BUY DONATION PACKAGE</string>
+    <string name="Donation__encouragement">			By donating, you are:\n
             \n
 			• Acknowledging my hardwork\n
 			• Investing in the future of this software\n
@@ -26,29 +20,30 @@
 			More importantly…\n
             \n
 		    By donating, you can enjoy many more advanced functions.</string>
+    <string name="File__nothing_here_message">Try adding files here</string>
     <string name="OK">OK</string>
-    <string name="cancel">Cancel</string>
-    <string name="import_files">Import Files to Secrecy</string>
-    <string name="empty_list">There\'s nothing here!</string>
-    <string name="hint_add_vault">Try creating a new vault</string>
-    <string name="next">CONTINUE</string>
-    <string name="hint_add_files">Try adding files here</string>
-    <string name="hint_vault_name">Vault Name</string>
-    <string name="hint_password">Password</string>
-    <string name="hint_confirm_password">Confirm Password</string>
-    <string name="action_donate">Donate</string>
-    <string name="action_add_vault">Add vault</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="page_header_gallery">Gallery</string>
-    <string name="page_header_files">Files</string>
-    <string name="page_header_vaults">Vaults</string>
-    <string name="Updater__log_firstline">Update Manager is Starting...\n</string>
-    <string name="Tutorial__swipe_to_delete">Swipe to delete vaults. Try me!</string>
-    <string name="Tutorial__long_click_to_rename">Long click to rename vaults. Try me!</string>
-    <string name="Decrypt__password">Password</string>
-    <string name="Decrypt__confirm_delete">Confirm delete?</string>
-    <string name="action_support">Help Desk</string>
-    <string name="Stealth__no_telephony">Opps… Hi tablets</string>
+    <string name="Page_header__choose_folder">Choose a Folder</string>
+    <string name="Page_header__donation">Buy me a coffee!</string>
+    <string name="Page_header__files">Files</string>
+    <string name="Page_header__gallery">Gallery</string>
+    <string name="Page_header__settings">Settings</string>
+    <string name="Page_header__vaults">Vaults</string>
     <string name="Stealth__no_telephony_message">Tablets without phone function is not supported at the time. Please stay tuned!</string>
-
+    <string name="Stealth__no_telephony">Opps… Hi tablets</string>
+    <string name="Tutorial__long_click_to_rename">Long click to rename vaults. Try me!</string>
+    <string name="Tutorial__swipe_to_delete">Swipe to delete vaults. Try me!</string>
+    <string name="Vault__confirm_password_hint">Confirm Password</string>
+    <string name="Vault__confirm_delete">Confirm delete?</string>
+    <string name="Vault__nothing_here_message">Try creating a new vault</string>
+    <string name="Vault__nothing_here">There\'s nothing here!</string>
+    <string name="Vault__password">Password</string>
+    <string name="Vault__vault_name_hint">Vault Name</string>
+    <string name="Vault__vault_password_hint">Password</string>
+    <string-array name="Donation__google_catalog_values">
+        <item>2 USD</item>
+        <item>5 USD</item>
+        <item>10 USD</item>
+        <item>15 USD</item>
+        <item>20 USD</item>
+    </string-array>
 </resources>

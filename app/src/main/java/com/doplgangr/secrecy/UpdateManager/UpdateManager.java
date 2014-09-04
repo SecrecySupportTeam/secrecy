@@ -105,11 +105,14 @@ public class UpdateManager extends Fragment {
         }
 
         // Writes the previous/current version into the log view
-        appendlog(String.format(getString(R.string.previous_version), version.no().get(), version.name().get()));
-        appendlog(String.format(getString(R.string.upgrade_to), versionnow, versionnow_name));
+        appendlog(String.format(getString(R.string.Updater__previous_version), version.no().get(), version.name().get()));
+        appendlog(String.format(getString(R.string.Updater__next_version), versionnow, versionnow_name));
 
         // Switches between different upgrades, based on last app version.
         switch (version.no().get()) {
+            case 19:
+                version19to20();
+                break;
             case 18:
                 version18to19();
                 break;
@@ -164,12 +167,19 @@ public class UpdateManager extends Fragment {
         }
 
         // Notify user that app is upgrading
-        appendlog(getString(R.string.updating));
+        appendlog(getString(R.string.Updater__updating));
     }
+
+    @Background
+    void version19to20() {
+        //Nahh
+        onFinishAllUpgrade();
+    }
+
     @Background
     void version18to19() {
         //Nahh
-        onFinishAllUpgrade();
+        version19to20();
     }
 
     @Background
@@ -310,7 +320,7 @@ public class UpdateManager extends Fragment {
                 if (inFile.isDirectory())
                     if ("TEMP".equals(inFile.getName()))
                         storage.DeleteRecursive(inFile);
-            appendlog(getString(R.string.one_to_two));
+            appendlog(getString(R.string.Updater__one_to_two));
         }
         version2to3();
     }
@@ -318,7 +328,7 @@ public class UpdateManager extends Fragment {
     @UiThread
     void onFinishAllUpgrade() {
         // When all updates are finished, notify user and enable the continue button
-        appendlog(getString(R.string.update_finish));
+        appendlog(getString(R.string.Updater__update_finish));
         continueButton.setEnabled(true);
 
         // Write the new version info into the preferences, for next upgrades.
@@ -343,8 +353,8 @@ public class UpdateManager extends Fragment {
         //Define 100 as initial beta code
         if (versionnow < 100)
             Util.alert(context,
-                    getString(R.string.alpha_header),
-                    getString(R.string.alpha_message),
+                    getString(R.string.Updater__alpha),
+                    getString(R.string.Updater__alpha_message),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -356,8 +366,8 @@ public class UpdateManager extends Fragment {
             //Define 200 as initial official release code
         else if (versionnow < 200)
             Util.alert(context,
-                    getString(R.string.beta_title),
-                    getString(R.string.beta_message),
+                    getString(R.string.Updater__beta),
+                    getString(R.string.Updater__beta_message),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {

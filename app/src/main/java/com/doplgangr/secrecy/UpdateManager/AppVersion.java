@@ -27,7 +27,7 @@ import org.androidannotations.annotations.sharedpreferences.SharedPref;
 
 @SharedPref
 public interface AppVersion {
-    @DefaultRes(R.string.alpha0_1)
+    @DefaultRes(R.string.Updater__alpha0_1)
     String name();
 
     @DefaultInt(1)

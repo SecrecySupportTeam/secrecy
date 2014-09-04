@@ -95,8 +95,8 @@ public class VaultsListFragment extends Fragment {
         java.io.File root = storage.getRoot();
         if (!Util.canWrite(root)) {
             Util.alert(context,
-                    context.getString(R.string.error_root_IOException),
-                    context.getString(R.string.error_root_IOException_message),
+                    context.getString(R.string.Error__root_IOException),
+                    context.getString(R.string.Error__root_IOException_message),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -227,8 +227,7 @@ public class VaultsListFragment extends Fragment {
         final EditText password = new EditText(context);
         password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         new AlertDialog.Builder(context)
-                .setTitle(getString(R.string.new_vault))
-                .setMessage(getString(R.string.prompt_credentials))
+                .setTitle(getString(R.string.Vault__new))
                 .setView(dialogView)
                 .setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -258,7 +257,7 @@ public class VaultsListFragment extends Fragment {
                             failedtocreate();
 
                     }
-                }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                }).setNegativeButton(getString(R.string.CANCEL), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // Do nothing.
             }
@@ -267,8 +266,8 @@ public class VaultsListFragment extends Fragment {
 
     void passwordWrong() {
         new AlertDialog.Builder(context)
-                .setTitle(getString(R.string.error_wrong_password_confirmation))
-                .setMessage(getString(R.string.error_wrong_password_confirmation_message))
+                .setTitle(getString(R.string.Error__wrong_password_confirmation))
+                .setMessage(getString(R.string.Error__wrong_password_confirmation_message))
                 .setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                     }
@@ -277,8 +276,8 @@ public class VaultsListFragment extends Fragment {
 
     void failedtocreate() {
         new AlertDialog.Builder(context)
-                .setTitle(getString(R.string.error_cannot_create_vault))
-                .setMessage(getString(R.string.error_cannot_create_vault_message))
+                .setTitle(getString(R.string.Error__cannot_create_vault))
+                .setMessage(getString(R.string.Error__cannot_create_vault_message))
                 .setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                     }
@@ -313,8 +312,8 @@ public class VaultsListFragment extends Fragment {
         Boolean pwState = new Vault(adapter.getItem(position), value).delete();
         if (!pwState)
             Util.alert(context,
-                    getString(R.string.error_delete_password_incorrect),
-                    getString(R.string.error_delete_password_incorrect_message),
+                    getString(R.string.Error__delete_password_incorrect),
+                    getString(R.string.Error__delete_password_incorrect_message),
                     Util.emptyClickListener,
                     null
             );
@@ -325,8 +324,8 @@ public class VaultsListFragment extends Fragment {
         Vault newVault = new Vault(adapter.getItem(position), password).rename(newName);
         if (newVault == null)
             Util.alert(context,
-                    getString(R.string.error_rename_password_incorrect),
-                    getString(R.string.error_rename_password_incorrect_message),
+                    getString(R.string.Error__rename_password_incorrect),
+                    getString(R.string.Error__rename_password_incorrect_message),
                     Util.emptyClickListener,
                     null
             );

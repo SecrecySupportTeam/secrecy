@@ -64,7 +64,7 @@ public class FileObserver extends IntentService {
             Util.log("FileOb", "onStart " + intent.getStringExtra(Config.file_extra));
             fileObs.add(fileOb);
         }
-        sendNotif(String.format(getString(R.string.files_decrypted_notif), fileObs.size()), true);
+        sendNotif(String.format(getString(R.string.Notif__files_decrypted), fileObs.size()), true);
         return Service.START_NOT_STICKY;
     }
 
@@ -82,7 +82,7 @@ public class FileObserver extends IntentService {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
                 this).setSmallIcon(R.drawable.ic_stat_alert)
-                .setContentTitle(getString(R.string.app_name))
+                .setContentTitle(getString(R.string.App__name))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
                 .setOngoing(ongoing)
                 .setContentIntent(contentIntent)
@@ -204,7 +204,7 @@ public class FileObserver extends IntentService {
             }
         }
 
-        void kill() {
+        void kill(Boolean deleteSelf) {
             Util.log("Delete File @ " + SystemClock.elapsedRealtime());
             if (pfd != null) {
                 Util.log(pfd.getFileDescriptor().toString());
@@ -214,9 +214,9 @@ public class FileObserver extends IntentService {
             fileObs.remove(this);
 
             if (fileObs.size() == 0)
-                sendNotif(getString(R.string.all_temp_deleted), false);
+                sendNotif(getString(R.string.Notif__temp_deleted), false);
             else
-                sendNotif(String.format(getString(R.string.files_decrypted_notif), fileObs.size()), true);
+                sendNotif(String.format(getString(R.string.Notif__files_decrypted), fileObs.size()), true);
 
         }
     }

@@ -32,7 +32,7 @@
         android:paddingLeft="@dimen/margin_from_edge"
         android:paddingRight="@dimen/margin_from_edge"
         android:paddingTop="@dimen/margin_text_top"
-        android:text="@string/version_changed"
+        android:text="@string/Updater__version_changed"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textSize="@dimen/text_multiline_size" />
 
@@ -51,7 +51,7 @@
             android:id="@+id/log"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/Updater__log_firstline"
+            android:text="@string/Updater__starting"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/primary"
             android:textSize="@dimen/text_multiline_size" />
@@ -68,6 +68,6 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
         android:enabled="false"
-        android:text="@string/next" />
+        android:text="@string/CONTINUE" />
 
 </RelativeLayout>

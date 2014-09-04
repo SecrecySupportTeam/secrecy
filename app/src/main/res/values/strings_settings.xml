@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
 
-    <string name="on_changed_alert">Settings will take place after you restart this app</string>
+    <string name="Settings__changed_alert">Settings will take place after you restart this app</string>
 
-    <string name="legal">Libraries used for Secrecy</string>
+    <string name="Settings_libraries">Libraries used for Secrecy</string>
     
-    <string name="legal_long">
+    <string name="Settings__libraries_message">
         AndroidAnnotations (Apache 2.0),
         \n
         android-support-v4-preferencefragment (Apache 2.0),
@@ -18,26 +18,26 @@
         \n
         NineoldAndroids (Apache 2.0)
     </string>
-    <string name="cannot_move">Cannot move vaults</string>
-    <string name="cannot_move_message">Cannot move into subdirectories, would result in errors.</string>
-    <string name="move">Move Vaults</string><string name="move_message">Are you sure to move
+    <string name="Settings__cannot_move_vault">Cannot move vaults</string>
+    <string name="Settings__cannot_move_vault_message">Cannot move into subdirectories, would result in errors.</string>
+    <string name="Settings__move_vault">Move Vaults</string><string name="move_message">Are you sure to move
     \n\n From: %1$s
     \n To: %2$s ?</string>
-    <string name="moved">Moved to: %s</string>
-    <string name="error_have_things">Please use empty folder</string>
-    <string name="have_things_message">To ensure integrity of your files, please choose an empty folder to put your vaults in.</string>
-    <string name="legal_title">Legal info</string>
-    <string name="version_title">Version name</string>
-    <string name="about_title">About</string>
-    <string name="vault_management_title">Vault Management</string>
-    <string name="vault_location_title">Vault location</string>
-    <string name="move_all_vaults_title">Move all vaults</string>
-    <string name="move_all_vaults_message">Click here to move all your vaults to another location, e.g. External SD</string>
-    <string name="security">Security</string>
-    <string name="stealth_mode_title">Stealth Mode</string>
-    <string name="stealth_mode_message">Hide this app completely from app launcher. </string>
-    <string name="stealth_mode_password_title">Stealth Mode Password</string>
-    <string name="misc_title">Miscellaneous</string>
-    <string name="misc_analytics_title">Send Usage Analytics</string>
-    <string name="misc_analytics_message">We only send non-vault related information like device model, Android version, app launch count, etc.</string>
+    <string name="Settings__moved_vault">Moved to: %s</string>
+    <string name="Error__files_exist">Please use empty folder</string>
+    <string name="Error__files_exist_message">To ensure integrity of your files, please choose an empty folder to put your vaults in.</string>
+    <string name="Settings__legal">Legal info</string>
+    <string name="Settings__version">Version name</string>
+    <string name="Settings__about">About</string>
+    <string name="Settings__vault_management">Vault Management</string>
+    <string name="Settings__vault_location">Vault location</string>
+    <string name="Settings__move_all_vaults">Move all vaults</string>
+    <string name="Settings__move_all_vaults_message">Click here to move all your vaults to another location, e.g. External SD</string>
+    <string name="Settings__security">Security</string>
+    <string name="Settings__stealth_mode">Stealth Mode</string>
+    <string name="Settings__stealth_mode_message">Hide this app completely from app launcher. </string>
+    <string name="Settings__stealth_mode_password">Stealth Mode Password</string>
+    <string name="Settings__misc">Miscellaneous</string>
+    <string name="Settings__analytics">Send Usage Analytics</string>
+    <string name="Settings__analytics_message">We only send non-vault related information like device model, Android version, app launch count, etc.</string>
 </resources>

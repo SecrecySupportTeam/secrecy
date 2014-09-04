@@ -6,16 +6,16 @@
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="99"
-        android:title="@string/action_settings"
+        android:title="@string/Page_header__settings"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_donate"
         android:orderInCategory="80"
-        android:title="@string/action_donate"
+        android:title="@string/action__donate"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_support"
         android:orderInCategory="100"
-        android:title="@string/action_support"
+        android:title="@string/action__support"
         app:showAsAction="never" />
 </menu>

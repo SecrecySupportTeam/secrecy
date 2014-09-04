@@ -75,8 +75,8 @@ public class FileViewer extends Fragment {
         final EditText input = new EditText(context);
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         new AlertDialog.Builder(context)
-                .setTitle(getString(R.string.open_file))
-                .setMessage(getString(R.string.open_file_message))
+                .setTitle(getString(R.string.File__open))
+                .setMessage(getString(R.string.File__open_message))
                 .setView(input)
                 .setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -84,7 +84,7 @@ public class FileViewer extends Fragment {
                         Uri file = context.getIntent().getData();
                         decrypt(new File(new java.io.File(file.getPath()), password), null, null);
                     }
-                }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                }).setNegativeButton(getString(R.string.CANCEL), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 finish();
             }
@@ -157,10 +157,10 @@ public class FileViewer extends Fragment {
 
         Intent chooserIntent = generateCustomChooserIntent(newIntent, uris);
         try {
-            startActivity(Intent.createChooser(chooserIntent, getString(R.string.send_file_dialog)));
+            startActivity(Intent.createChooser(chooserIntent, getString(R.string.Dialog__send_file)));
             onPauseDecision.startActivity();
         } catch (android.content.ActivityNotFoundException e) {
-            Util.toast(context, getString(R.string.error_no_activity_view), Toast.LENGTH_LONG);
+            Util.toast(context, getString(R.string.Error__no_activity_view), Toast.LENGTH_LONG);
             onPauseDecision.finishActivity();
         }
     }
@@ -182,13 +182,13 @@ public class FileViewer extends Fragment {
                 String message;
                 switch (statCode) {
                     case Config.wrong_password:
-                        message = getString(R.string.error_wrong_password);
+                        message = getString(R.string.Error__wrong_password);
                         break;
                     case Config.file_not_found:
-                        message = getString(R.string.error_file_not_found);
+                        message = getString(R.string.Error__file_not_found);
                         break;
                     default:
-                        message = getString(R.string.error_unknown);
+                        message = getString(R.string.Error__unknown);
                 }
                 alert(message);
             }
@@ -211,7 +211,7 @@ public class FileViewer extends Fragment {
                 startActivity(altIntent);
                 onPauseDecision.startActivity();
             } catch (android.content.ActivityNotFoundException e2) {
-                Util.toast(context, getString(R.string.error_no_activity_view), Toast.LENGTH_LONG);
+                Util.toast(context, getString(R.string.Error__no_activity_view), Toast.LENGTH_LONG);
                 onPauseDecision.finishActivity();
             }
         } catch (IllegalStateException e) {
@@ -227,7 +227,7 @@ public class FileViewer extends Fragment {
                 finish();
             }
         };
-        Util.alert(context, getString(R.string.error_decrypt_dialog), message, click, null);
+        Util.alert(context, getString(R.string.Error__decrypt_file), message, click, null);
     }
 
     @UiThread
@@ -307,7 +307,7 @@ public class FileViewer extends Fragment {
                     targetedShareIntent.setClassName(metaInfo.get("packageName"), metaInfo.get("className"));
                     targetedShareIntents.add(targetedShareIntent);
                 }
-                chooserIntent = Intent.createChooser(targetedShareIntents.remove(targetedShareIntents.size() - 1), getString(R.string.send_file_dialog));
+                chooserIntent = Intent.createChooser(targetedShareIntents.remove(targetedShareIntents.size() - 1), getString(R.string.Dialog__send_file));
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetedShareIntents.toArray(new Parcelable[targetedShareIntents.size()]));
                 return chooserIntent;
             }

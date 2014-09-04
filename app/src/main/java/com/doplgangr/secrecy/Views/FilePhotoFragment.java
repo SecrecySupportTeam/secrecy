@@ -126,8 +126,8 @@ public class FilePhotoFragment extends Activity {
                         @Override
                         public void run() {
                             Util.alert(context,
-                                    context.getString(R.string.error_out_of_memory),
-                                    context.getString(R.string.error_out_of_memory_message),
+                                    context.getString(R.string.Error__out_of_memory),
+                                    context.getString(R.string.Error__out_of_memory_message),
                                     Util.emptyClickListener,
                                     null);
                         }
@@ -174,8 +174,8 @@ public class FilePhotoFragment extends Activity {
                         );
                     } catch (OutOfMemoryError e) {
                         Util.alert(context,
-                                context.getString(R.string.error_out_of_memory),
-                                context.getString(R.string.error_out_of_memory_message),
+                                context.getString(R.string.Error__out_of_memory),
+                                context.getString(R.string.Error__out_of_memory_message),
                                 Util.emptyClickListener,
                                 null);
                         context.finish();

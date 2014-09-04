@@ -55,8 +55,8 @@ public class FileImportActivity extends ActionBarActivity
         if (secret.wrongPass) {
             Util.alert(
                     this,
-                    getString(R.string.open_failed),
-                    getString(R.string.open_failed_message),
+                    getString(R.string.Error__open_vault),
+                    getString(R.string.Error__open_vault_message),
                     Util.emptyClickListener,
                     null
             );
@@ -110,7 +110,7 @@ public class FileImportActivity extends ActionBarActivity
         //intent.putExtra(Config.vault_extra, secret.name);
         //intent.putExtra(Config.password_extra, password);
         //startActivity(intent);
-        Util.toast(this, getString(R.string.import_finish), Toast.LENGTH_SHORT);
+        Util.toast(this, getString(R.string.Import__finish), Toast.LENGTH_SHORT);
         finish();
     }
 

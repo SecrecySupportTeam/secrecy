@@ -3,51 +3,51 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
         android:key="security"
-        android:title="@string/security">
+        android:title="@string/Settings__security">
         <CheckBoxPreference
             android:key="stealth_mode"
-            android:summary="@string/stealth_mode_message"
-            android:title="@string/stealth_mode_title" />
+            android:summary="@string/Settings__stealth_mode_message"
+            android:title="@string/Settings__stealth_mode" />
         <Preference
             android:dependency="stealth_mode"
             android:key="stealth_mode_password"
-            android:title="@string/stealth_mode_password_title" />
+            android:title="@string/Settings__stealth_mode_password" />
 
     </PreferenceCategory>
     <PreferenceCategory
         android:key="vault"
-        android:title="@string/vault_management_title">
+        android:title="@string/Settings__vault_management">
 
         <Preference
             android:key="vault_root"
-            android:title="@string/vault_location_title" />
+            android:title="@string/Settings__vault_location" />
         <Preference
             android:key="vault_move"
-            android:summary="@string/move_all_vaults_message"
-            android:title="@string/move_all_vaults_title" />
+            android:summary="@string/Settings__move_all_vaults_message"
+            android:title="@string/Settings__move_all_vaults" />
 
     </PreferenceCategory>
     <PreferenceCategory
         android:key="misc"
-        android:title="@string/misc_title">
+        android:title="@string/Settings__misc">
 
         <CheckBoxPreference
             android:key="analytics"
-            android:summary="@string/misc_analytics_message"
-            android:title="@string/misc_analytics_title" />
+            android:summary="@string/Settings__analytics_message"
+            android:title="@string/Settings__analytics" />
     </PreferenceCategory>
 
     <PreferenceCategory
         android:key="about"
-        android:title="@string/about_title">
+        android:title="@string/Settings__about">
 
         <Preference
             android:key="version"
-            android:title="@string/version_title" />
+            android:title="@string/Settings__version" />
         <Preference
             android:key="legal"
-            android:summary="@string/legal"
-            android:title="@string/legal_title" />
+            android:summary="@string/Settings_libraries"
+            android:title="@string/Settings_libraries" />
 
     </PreferenceCategory>
 

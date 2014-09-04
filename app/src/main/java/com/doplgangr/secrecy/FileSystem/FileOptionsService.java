@@ -104,7 +104,7 @@ public class FileOptionsService extends IntentService {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
                 this).setSmallIcon(R.drawable.ic_stat_alert)
-                .setContentTitle(getString(R.string.app_name))
+                .setContentTitle(getString(R.string.App__name))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
                 .setOngoing(ongoing)
                 .setContentIntent(contentIntent)

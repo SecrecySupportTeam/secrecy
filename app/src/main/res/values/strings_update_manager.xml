@@ -1,20 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-    <string name="version_changed">You have recently downloaded/updated secrecy. This wizard is to help you manage version changes.</string>
-    <string name="alpha0_1">alpha-0.1 / no previous installations</string>
-    <string name="previous_version">\nPrevious version is %1$d (%2$s)</string>
-    <string name="upgrade_to">\nUpgrade to version %1$d (%2$s)</string>
-    <string name="updating">\nUpdating…</string>
-    <string name="update_finish">\nUpdate Finished.</string>
-    <string name="one_to_two">\nVault structure updated from version 1 to version 2</string>
-    <string name="alpha_header">This is an incomplete product!</string>
-    <string name="alpha_message">This app is still in alpha stage, meaning many functions are still inexistent or incomplete.
+    <string name="Updater__version_changed">You have recently downloaded/updated secrecy. This wizard is to help you manage version changes.</string>
+    <string name="Updater__starting">Update Manager is Starting…\n</string>
+    <string name="Updater__alpha0_1">alpha-0.1 / no previous installations</string>
+    <string name="Updater__previous_version">\nPrevious version is %1$d (%2$s)</string>
+    <string name="Updater__next_version">\nUpgrade to version %1$d (%2$s)</string>
+    <string name="Updater__updating">\nUpdating…</string>
+    <string name="Updater__update_finish">\nUpdate Finished.</string>
+    <string name="Updater__one_to_two">\nVault structure updated from version 1 to version 2</string>
+    <string name="Updater__alpha">This is an incomplete product!</string>
+    <string name="Updater__alpha_message">This app is still in alpha stage, meaning many functions are still inexistent or incomplete.
 
         Please do not judge it against other fully-functional product. If you find any problem, please leave a comment in Play Store so that we can follow up.
 
         Please don\'t just leave a low rating, which can\'t help us find the problem and enhance it. Thank you!</string>
-    <string name="beta_title">This is an incomplete product!</string>
-    <string name="beta_message">This app is still in beta stage, meaning many functions are still being tested.
+    <string name="Updater__beta">This is an incomplete product!</string>
+    <string name="Updater__beta_message">This app is still in beta stage, meaning many functions are still being tested.
 
         Please do not judge it against other fully-functional product. If you find any problem, please leave a comment in Play Store so that we can follow up.
 

@@ -57,11 +57,11 @@
             android:padding="8dp">
 
 
-        <TextView
+            <TextView
                 android:id="@+id/decrypting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/decrypting"
+                android:text="@string/File__decrypting"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/primary"
                 android:textSize="12sp" />
@@ -84,7 +84,7 @@
             android:layout_gravity="center_vertical"
             android:padding="8dp">
 
-        <LinearLayout
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"

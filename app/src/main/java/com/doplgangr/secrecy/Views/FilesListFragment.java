@@ -198,8 +198,8 @@ public class FilesListFragment extends FileViewer {
         if (secret.wrongPass) {
             Util.alert(
                     context,
-                    getString(R.string.open_failed),
-                    getString(R.string.open_failed_message),
+                    getString(R.string.Error__open_vault),
+                    getString(R.string.Error__open_vault_message),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             finish(); //Done for now -_-'
@@ -241,7 +241,7 @@ public class FilesListFragment extends FileViewer {
 
     @UiThread
     void setupViews() {
-        mTag.setText(isGallery ? R.string.page_header_gallery : R.string.page_header_files);
+        mTag.setText(isGallery ? R.string.Page_header__gallery : R.string.Page_header__files);
         mListView = isGallery ? gridView : listView;
         if (isGallery)
             gridView.setAdapter(adapter);
@@ -283,7 +283,7 @@ public class FilesListFragment extends FileViewer {
                         };
                         decrypt(file, pBar, onFinish);
                     } else
-                        Util.toast(context, getString(R.string.error_already_decrypting), Toast.LENGTH_SHORT);
+                        Util.toast(context, getString(R.string.Error__already_decrypting), Toast.LENGTH_SHORT);
                 }
             }
         });
@@ -318,8 +318,8 @@ public class FilesListFragment extends FileViewer {
         File storedFile = new File(Environment.getExternalStorageDirectory(), file.getName() + "." + file.getType());
         if (tempFile == null) {
             Util.alert(context,
-                    getString(R.string.error_decrypting_file),
-                    getString(R.string.error_decrypting_file_message),
+                    getString(R.string.Error__decrypting_file),
+                    getString(R.string.Error__decrypting_file_message),
                     Util.emptyClickListener,
                     null
             );
@@ -340,7 +340,7 @@ public class FilesListFragment extends FileViewer {
         Intent target = com.ipaulpro.afilechooser.utils.FileUtils.createGetContentIntent();
         // Create the chooser Intent
         Intent intent = Intent.createChooser(
-                target, getString(R.string.chooser_title));
+                target, getString(R.string.Dialog_header__pick_file));
         try {
             startActivityForResult(intent, REQUEST_CODE);
             onPauseDecision.startActivity();
@@ -362,7 +362,7 @@ public class FilesListFragment extends FileViewer {
             addFile(secret, data);
             super.onActivityResult(requestCode, resultCode, data);
         } else {
-            Util.toast(context, getString(R.string.error_no_file_selected), 4000);
+            Util.toast(context, getString(R.string.Error__no_file_selected), 4000);
         }
     }
 
@@ -384,12 +384,12 @@ public class FilesListFragment extends FileViewer {
                             decryptCounter--;
                             switchView(mView, R.id.dataLayout);
                             if (decryptCounter == 0 && attached)
-                                Util.toast(context, getString(R.string.save_to_SD), Toast.LENGTH_SHORT);
+                                Util.toast(context, getString(R.string.Files__save_to_SD), Toast.LENGTH_SHORT);
                         }
                     };
                     decrypt_and_save(file, pBar, onFinish);
                 } else
-                    Util.toast(context, getString(R.string.error_already_decrypting), Toast.LENGTH_SHORT);
+                    Util.toast(context, getString(R.string.Error__already_decrypting), Toast.LENGTH_SHORT);
             }
         }
     }
@@ -413,7 +413,7 @@ public class FilesListFragment extends FileViewer {
                     };
                     Args.add(new DecryptArgHolder(file, pBar, onFinish));
                 } else
-                    Util.toast(context, getString(R.string.error_already_decrypting), Toast.LENGTH_SHORT);
+                    Util.toast(context, getString(R.string.Error__already_decrypting), Toast.LENGTH_SHORT);
             }
         }
         sendMultiple(Args);
@@ -433,7 +433,7 @@ public class FilesListFragment extends FileViewer {
                             adapter.getItem(position).delete();
                             adapter.remove(position);
                         } else
-                            Util.toast(context, getString(R.string.error_delete_decrypting), Toast.LENGTH_SHORT);
+                            Util.toast(context, getString(R.string.Error__already_decrypting_delete), Toast.LENGTH_SHORT);
                 }
             }
         };
@@ -447,8 +447,8 @@ public class FilesListFragment extends FileViewer {
             }
         };
         Util.alert(context,
-                getString(R.string.delete_files),
-                String.format(getString(R.string.delete_files_message), FilesToDelete),
+                getString(R.string.Files__delete),
+                String.format(getString(R.string.Files__delete_message), FilesToDelete),
                 positive,
                 negative
         );
@@ -461,7 +461,7 @@ public class FilesListFragment extends FileViewer {
                 .setForeground(viewHolder.selected ?
                         selector :
                         null);
-        mActionMode.setTitle(String.format(getString(R.string.action_mode_title_no_selection), adapter.getSelected().size()));
+        mActionMode.setTitle(String.format(getString(R.string.Files__number_selected), adapter.getSelected().size()));
     }
 
     @Override

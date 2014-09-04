@@ -37,7 +37,7 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="@dimen/margin_from_edge"
                 android:paddingRight="@dimen/margin_from_edge"
-                android:text="@string/page_header_vaults"
+                android:text="@string/Page_header__vaults"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/text_secondary" />
 
@@ -77,14 +77,14 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/empty_list"
+            android:text="@string/Vault__nothing_here"
             android:textColor="@color/primary"
             android:textSize="24sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/hint_add_vault"
+            android:text="@string/Vault__nothing_here_message"
             android:textColor="@color/accent_light"
             android:textSize="18sp" />
     </LinearLayout>

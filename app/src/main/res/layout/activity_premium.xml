@@ -37,7 +37,7 @@
         android:layout_marginRight="@dimen/margin_from_edge"
         android:enabled="false"
         android:onClick="onUpgradeAppButtonClicked"
-        android:text="@string/premium__donate_button" />
+        android:text="@string/Donation__buy_button" />
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -57,7 +57,7 @@
             android:id="@+id/Premium__reasons_to_upgrade"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/donate_description"
+            android:text="@string/Donation__encouragement"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textSize="@dimen/text_multiline_size" />
     </ScrollView>

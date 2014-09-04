@@ -96,7 +96,7 @@
                 android:layout_margin="8dp"
                 android:layout_toLeftOf="@+id/open_ok"
                 android:layout_toStartOf="@+id/open_ok"
-                android:hint="@string/Decrypt__password"
+                android:hint="@string/Vault__password"
                 android:inputType="textPassword" />
 
             <ImageButton
@@ -141,7 +141,7 @@
                 android:layout_alignParentTop="true"
                 android:gravity="center_vertical"
                 android:padding="8dp"
-                android:text="@string/Decrypt__confirm_delete"
+                android:text="@string/Vault__confirm_delete"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/accent" />
 
