@@ -387,8 +387,9 @@ public class FilesListFragment extends FileViewer {
                                 Util.toast(context, getString(R.string.Files__save_to_SD), Toast.LENGTH_SHORT);
                         }
                     };
-                    decrypt_and_save(file, pBar, onFinish);
-                } else
+                    if (attached)
+                        decrypt_and_save(file, pBar, onFinish);
+                } else if (attached)
                     Util.toast(context, getString(R.string.Error__already_decrypting), Toast.LENGTH_SHORT);
             }
         }
@@ -412,11 +413,12 @@ public class FilesListFragment extends FileViewer {
                         }
                     };
                     Args.add(new DecryptArgHolder(file, pBar, onFinish));
-                } else
+                } else if (attached)
                     Util.toast(context, getString(R.string.Error__already_decrypting), Toast.LENGTH_SHORT);
             }
         }
-        sendMultiple(Args);
+        if (attached)
+            sendMultiple(Args);
     }
 
 
@@ -432,7 +434,7 @@ public class FilesListFragment extends FileViewer {
                         if (!adapter.getItem(position).decrypting) {
                             adapter.getItem(position).delete();
                             adapter.remove(position);
-                        } else
+                        } else if (attached)
                             Util.toast(context, getString(R.string.Error__already_decrypting_delete), Toast.LENGTH_SHORT);
                 }
             }
