@@ -41,7 +41,6 @@ public class FileOptionsService extends IntentService {
     void delete(final java.io.File file) {
         count++;
         sendNotif("Shredding Files...", true);
-        final long size = file.length();
         class StaticTask extends AsyncTask<Void, Void, OutputStream> {
 
             @Override
@@ -56,6 +55,9 @@ public class FileOptionsService extends IntentService {
 
             @Override
             public void onPostExecute(OutputStream os) {
+                long size = 0;
+                if (file != null)
+                    size = file.length();
                 try {
                     FileUtils.forceDelete(file);
                 } catch (Exception ignored) {
