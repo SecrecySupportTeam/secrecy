@@ -38,6 +38,11 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:key="translators_list"
+        android:title="@string/Settings__translators">
+
+    </PreferenceCategory>
+    <PreferenceCategory
         android:key="about"
         android:title="@string/Settings__about">
 
@@ -46,7 +51,6 @@
             android:title="@string/Settings__version" />
         <Preference
             android:key="legal"
-            android:summary="@string/Settings_libraries"
             android:title="@string/Settings_libraries" />
 
     </PreferenceCategory>

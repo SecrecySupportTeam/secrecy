@@ -29,6 +29,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
+import android.preference.PreferenceGroup;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.preference.PreferenceFragment;
 import android.util.Log;
@@ -52,6 +53,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.res.StringArrayRes;
 import org.androidannotations.annotations.res.StringRes;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
@@ -70,6 +72,12 @@ public class SettingsFragment extends PreferenceFragment
     Activity context = null;
     @StringRes(R.string.Settings__stealth_mode_message)
     String stealth_mode_message;
+    @StringArrayRes(R.array.Contributor__names)
+    String[] contributorNames;
+    @StringArrayRes(R.array.Contributor__description)
+    String[] contributorDescription;
+    @StringArrayRes(R.array.Contributor__links)
+    String[] contributorLinks;
 
     static {
         INCLUDE_EXTENSIONS_LIST.add(".");
@@ -128,6 +136,23 @@ public class SettingsFragment extends PreferenceFragment
                 return true;
             }
         });
+        PreferenceGroup translatorList = (PreferenceGroup) findPreference("translators_list");
+        for (int i = 0; i < contributorNames.length; i++) {
+            Preference newPreference = new Preference(getActivity());
+            newPreference.setTitle(contributorNames[i]);
+            newPreference.setSummary(contributorDescription[i]);
+            final int finali = i;
+            newPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Uri uri = Uri.parse(contributorLinks[finali]);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                    return true;
+                }
+            });
+            translatorList.addPreference(newPreference);
+        }
         CheckBoxPreference analytics = (CheckBoxPreference) findPreference("analytics");
         analytics.setChecked(Prefs.analytics().get());
         analytics.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -246,7 +271,7 @@ public class SettingsFragment extends PreferenceFragment
         new AlertDialog.Builder(context)
                 .setInverseBackgroundForced(true)
                 .setView(dialogView)
-                .setMessage()
+                .setMessage(R.string.Settings__try_once_before_hide)
                 .setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Prefs.stealthMode().put(-1);
@@ -349,7 +374,7 @@ public class SettingsFragment extends PreferenceFragment
         } catch (Exception E) {
             Util.alert(context,
                     context.getString(R.string.Error__moving_vault),
-                    ,
+                    context.getString(R.string.Error__moving_vault_message),
                     Util.emptyClickListener,
                     null);
             progressDialog.dismiss();

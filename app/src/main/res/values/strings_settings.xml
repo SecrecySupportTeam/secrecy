@@ -18,6 +18,9 @@
         \n
         NineoldAndroids (Apache 2.0)
     </string>
+
+    <string name="Settings__credits">Credits</string>
+    <string name="Settings__translators">Translators</string>
     <string name="Settings__cannot_move_vault">Cannot move vaults</string>
     <string name="Settings__cannot_move_vault_message">Cannot move into subdirectories, would result in errors.</string>
     <string name="Settings__move_vault">Move Vaults</string><string name="move_message">Are you sure to move

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="Contributor__names">
+        <item>faststart</item>
+        <item>Magissia The Dark Lady</item>
+        <item>Bink Feed</item>
+        <item>wimaen</item>
+    </string-array>
+    <string-array name="Contributor__description">
+        <item>Supportive user and active translator</item>
+        <item>Magissia La Dame Noir /Магисья Темная Леди</item>
+        <item>The dutch language is provided for you by XDA senior member @Bink Feed</item>
+        <item>Professional translator and moderator for Clean Master and various projects</item>
+    </string-array>
+    <string-array name="Contributor__links">
+        <item>https://play.google.com/store/apps/developer?id=LeanWeb</item>
+        <item>http://forum.xda-developers.com/member.php?u=4634775</item>
+        <item>http://forum.xda-developers.com/member.php?u=5390562</item>
+        <item>https://plus.google.com/+WimN_023/about</item>
+    </string-array>
+</resources>
