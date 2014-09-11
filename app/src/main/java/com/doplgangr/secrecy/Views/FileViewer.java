@@ -141,6 +141,8 @@ public class FileViewer extends Fragment {
 
             }
         }
+        if (uris.size() == 0 || mimes.size() == 0)
+            return;
         Intent newIntent;
         if (uris.size() == 1) {
             newIntent = new Intent(Intent.ACTION_SEND);
