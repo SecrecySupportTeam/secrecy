@@ -17,7 +17,6 @@ import org.androidannotations.annotations.EIntentService;
 import org.androidannotations.annotations.ServiceAction;
 import org.apache.commons.io.FileUtils;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
@@ -47,7 +46,7 @@ public class FileOptionsService extends IntentService {
             protected OutputStream doInBackground(Void... voids) {
                 try {
                     os = new FileOutputStream(file);
-                } catch (FileNotFoundException ignored) {
+                } catch (Exception ignored) {
 
                 }
                 return os;
