@@ -157,10 +157,10 @@ public class FileViewer extends Fragment {
 
         Intent chooserIntent = generateCustomChooserIntent(newIntent, uris);
         try {
-            startActivity(Intent.createChooser(chooserIntent, getString(R.string.Dialog__send_file)));
+            startActivity(Intent.createChooser(chooserIntent, CustomApp.context.getString(R.string.Dialog__send_file)));
             onPauseDecision.startActivity();
         } catch (android.content.ActivityNotFoundException e) {
-            Util.toast(context, getString(R.string.Error__no_activity_view), Toast.LENGTH_LONG);
+            Util.toast(context, CustomApp.context.getString(R.string.Error__no_activity_view), Toast.LENGTH_LONG);
             onPauseDecision.finishActivity();
         }
     }
@@ -307,7 +307,7 @@ public class FileViewer extends Fragment {
                     targetedShareIntent.setClassName(metaInfo.get("packageName"), metaInfo.get("className"));
                     targetedShareIntents.add(targetedShareIntent);
                 }
-                chooserIntent = Intent.createChooser(targetedShareIntents.remove(targetedShareIntents.size() - 1), getString(R.string.Dialog__send_file));
+                chooserIntent = Intent.createChooser(targetedShareIntents.remove(targetedShareIntents.size() - 1), CustomApp.context.getString(R.string.Dialog__send_file));
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetedShareIntents.toArray(new Parcelable[targetedShareIntents.size()]));
                 return chooserIntent;
             }

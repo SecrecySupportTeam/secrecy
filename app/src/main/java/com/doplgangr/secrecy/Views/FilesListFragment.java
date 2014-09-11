@@ -42,6 +42,7 @@ import android.widget.Toast;
 import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.Config;
+import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.Vault;
 import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
@@ -318,8 +319,8 @@ public class FilesListFragment extends FileViewer {
         File storedFile = new File(Environment.getExternalStorageDirectory(), file.getName() + "." + file.getType());
         if (tempFile == null) {
             Util.alert(context,
-                    getString(R.string.Error__decrypting_file),
-                    getString(R.string.Error__decrypting_file_message),
+                    CustomApp.context.getString(R.string.Error__decrypting_file),
+                    CustomApp.context.getString(R.string.Error__decrypting_file_message),
                     Util.emptyClickListener,
                     null
             );
