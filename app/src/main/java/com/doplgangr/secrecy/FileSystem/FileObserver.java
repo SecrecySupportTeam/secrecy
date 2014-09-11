@@ -46,6 +46,7 @@ public class FileObserver extends IntentService {
     public static final int NOTIFICATION_ID = 1;
     private static final int NOTIFICATION_FOREGROUND = 0;
     private static final ArrayList<MyFileObserver> fileObs = new ArrayList<MyFileObserver>();
+    private static int fileObsCount;
     private NotificationManager mNotificationManager;
 
     public FileObserver() {
@@ -63,6 +64,7 @@ public class FileObserver extends IntentService {
             fileOb.startWatching();
             Util.log("FileOb", "onStart " + intent.getStringExtra(Config.file_extra));
             fileObs.add(fileOb);
+            fileObsCount++;
         }
         sendNotif(String.format(getString(R.string.Notif__files_decrypted), fileObs.size()), true);
         return Service.START_NOT_STICKY;
@@ -100,7 +102,7 @@ public class FileObserver extends IntentService {
     public void onDestroy() {
         Util.log("FileOb", "IntentService Ondestroy.");
         for (MyFileObserver fileOb : fileObs)
-            fileOb.kill(false);
+            fileOb.kill();
         mNotificationManager.cancelAll();
         super.onDestroy();
     }
@@ -139,8 +141,7 @@ public class FileObserver extends IntentService {
             if ((android.os.FileObserver.CLOSE_NOWRITE & event) != 0 ||
                     (android.os.FileObserver.CLOSE_WRITE & event) != 0) {
                 Util.log(absolutePath + "/" + path + " CLOSED");
-                stopWatching();
-                kill(true);
+                kill();
             }
             if ((android.os.FileObserver.OPEN & event) != 0 ||
                     (android.os.FileObserver.ACCESS & event) != 0) {
@@ -204,17 +205,16 @@ public class FileObserver extends IntentService {
             }
         }
 
-        void kill(Boolean deleteSelf) {
+        void kill() {
+            stopWatching();
             Util.log("Delete File @ " + SystemClock.elapsedRealtime());
             if (pfd != null) {
                 Util.log(pfd.getFileDescriptor().toString());
                 OutputStream fileOutputStream = new FileOutputStream(pfd.getFileDescriptor());
                 storage.shredFile(fileOutputStream, size);
             }
-            if (deleteSelf)
-                fileObs.remove(this);
-
-            if (fileObs.size() == 0)
+            fileObsCount--;
+            if (fileObsCount == 0)
                 sendNotif(getString(R.string.Notif__temp_deleted), false);
             else
                 sendNotif(String.format(getString(R.string.Notif__files_decrypted), fileObs.size()), true);
