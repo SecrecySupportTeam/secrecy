@@ -33,3 +33,7 @@
 -keep public class android.net.http.** {*;}
 -keep class android.net.http.** {*;}
 -keep class org.apache.** { *; }
+
+-keepclassmembers class ** {
+    public void onEvent*(**);
+}
