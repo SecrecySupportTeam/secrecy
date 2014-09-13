@@ -29,6 +29,8 @@ import com.uservoice.uservoicesdk.UserVoice;
 
 import org.androidannotations.annotations.EApplication;
 
+import de.greenrobot.event.EventBus;
+
 @EApplication
 public class CustomApp extends Application {
     public static Context context;
@@ -47,6 +49,16 @@ public class CustomApp extends Application {
         storage.deleteTemp(); //Start clean every time!!
         // Set this up once when your application launches
         UserVoice.init(Config.uservoice(this), this);  //Uservoice init
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        EventBus.getDefault().post(new LowMemoryEvent());
+    }
+
+
+    public class LowMemoryEvent {
     }
 
 }

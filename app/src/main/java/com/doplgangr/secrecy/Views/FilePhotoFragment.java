@@ -1,24 +1,27 @@
 package com.doplgangr.secrecy.Views;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.support.v4.view.PagerAdapter;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
-import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.doplgangr.secrecy.Config;
-import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.File;
 import com.doplgangr.secrecy.FileSystem.Vault;
-import com.doplgangr.secrecy.FileSystem.storage;
-import com.doplgangr.secrecy.Listeners;
+import com.doplgangr.secrecy.Jobs.ImageLoadJob;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 import com.doplgangr.secrecy.Views.DummyViews.HackyViewPager;
+import com.ipaulpro.afilechooser.utils.FileUtils;
+import com.path.android.jobqueue.JobManager;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -29,11 +32,16 @@ import org.androidannotations.annotations.WindowFeature;
 
 import java.util.ArrayList;
 
+import de.greenrobot.event.EventBus;
+import uk.co.senab.photoview.PhotoView;
+
 @Fullscreen
 @WindowFeature(Window.FEATURE_NO_TITLE)
 @EActivity(R.layout.activity_view_pager)
-public class FilePhotoFragment extends Activity {
+public class FilePhotoFragment extends FragmentActivity {
 
+    static JobManager jobManager;
+    static Activity context;
     @Extra(Config.vault_extra)
     String vault;
     @Extra(Config.password_extra)
@@ -43,10 +51,11 @@ public class FilePhotoFragment extends Activity {
     @ViewById(R.id.view_pager)
     HackyViewPager mViewPager;
 
-
     @AfterViews
     void onCreate() {
-        final SamplePagerAdapter adapter = new SamplePagerAdapter(this);
+        jobManager = new JobManager(this);
+        context = this;
+        final SamplePagerAdapter adapter = new SamplePagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(adapter);
         Vault secret = new Vault(vault, password);
         Vault.onFileFoundListener mListener = new Vault.onFileFoundListener() {
@@ -60,146 +69,92 @@ public class FilePhotoFragment extends Activity {
             mViewPager.setCurrentItem(itemNo);
     }
 
-    static class SamplePagerAdapter extends PagerAdapter {
+    static class SamplePagerAdapter extends FragmentPagerAdapter {
 
-        private static ArrayList<File> sDrawables = new ArrayList<File>();
-        private static Activity context;
+        private static ArrayList<File> files;
 
-        public SamplePagerAdapter(Activity activity) {
-            context = activity;
-        }
-
-        //Load a bitmap from a resource with a target size
-        static Bitmap decodeSampledBitmapFromResource(java.io.File file, int reqWidth, int reqHeight) {
-            // First decode with inJustDecodeBounds=true to check dimensions
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-            // Calculate inSampleSize
-            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-            // Decode bitmap with inSampleSize set
-            options.inJustDecodeBounds = false;
-            return BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-        }
-
-        //Given the bitmap size and View size calculate a subsampling size (powers of 2)
-        static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-            int inSampleSize = 1;    //Default subsampling size
-            // See if image raw height and width is bigger than that of required view
-            if (options.outHeight > reqHeight || options.outWidth > reqWidth) {
-                //bigger
-                final int halfHeight = options.outHeight / 2;
-                final int halfWidth = options.outWidth / 2;
-                // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-                // height and width larger than the requested height and width.
-                while ((halfHeight / inSampleSize) > reqHeight
-                        && (halfWidth / inSampleSize) > reqWidth) {
-                    inSampleSize *= 2;
-                }
-            }
-            return inSampleSize;
+        public SamplePagerAdapter(FragmentManager fm) {
+            super(fm);
+            files = new ArrayList<File>();
         }
 
         public void add(File file) {
-            if (file.hasThumbnail())
-                sDrawables.add(file);
+            String mimeType = FileUtils.getMimeType(file.getFile());
+            if (mimeType.contains("image"))
+                files.add(file);
             notifyDataSetChanged();
         }
 
         @Override
         public int getCount() {
-            return sDrawables.size();
+            return files.size();
         }
 
         @Override
-        public View instantiateItem(ViewGroup container, final int position) {
-            final SubsamplingScaleImageView photoView = new SubsamplingScaleImageView(container.getContext(),
-                    null,
-                    new SubsamplingScaleImageView.onFileFinishCalled() {
-                        @Override
-                        public void onFinish(String file) {
-                            storage.purgeFile(new java.io.File(file));
-                        }
-                    },
-                    new Listeners.EmptyListener() {
+        public Fragment getItem(int position) {
+            return PhotoFragment.newInstance(position);
+        }
 
-                        @Override
-                        public void run() {
-                            Util.alert(context,
-                                    context.getString(R.string.Error__out_of_memory),
-                                    context.getString(R.string.Error__out_of_memory_message),
-                                    Util.emptyClickListener,
-                                    null);
-                        }
-                    });
+        public static class PhotoFragment extends Fragment {
+            int mNum;
 
-            // Now just add PhotoView to ViewPager and return it
-            container.addView(photoView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            static PhotoFragment newInstance(int num) {
+                PhotoFragment f = new PhotoFragment();
 
-            class bindImage extends AsyncTask<Void, Void, java.io.File> {
+                Bundle args = new Bundle();
+                args.putInt(Config.gallery_item_extra, num);
+                f.setArguments(args);
 
-                @Override
-                protected java.io.File doInBackground(Void... voids) {
-
-                    java.io.File imageFile =
-                            sDrawables.get(position).readFile(new CryptStateListener() {
-                                @Override
-                                public void updateProgress(int progress) {
-
-                                }
-
-                                @Override
-                                public void setMax(int max) {
-
-                                }
-
-                                @Override
-                                public void onFailed(int statCode) {
-
-                                }
-
-                                @Override
-                                public void Finished() {
-
-                                }
-                            });
-                    return imageFile;
-                }
-
-                @Override
-                public void onPostExecute(java.io.File file) {
-                    try {
-                        photoView.setImageFile(
-                                file.getAbsolutePath()
-                        );
-                    } catch (OutOfMemoryError e) {
-                        Util.alert(context,
-                                context.getString(R.string.Error__out_of_memory),
-                                context.getString(R.string.Error__out_of_memory_message),
-                                Util.emptyClickListener,
-                                null);
-                        context.finish();
-                    }
-                    photoView.setTag(file);
-                }
-
+                return f;
             }
 
-            new bindImage().execute();
 
-            return photoView;
+            public void onEventMainThread(ImageLoadJob.ImageLoadDoneEvent event) {
+                Util.log("Recieving imageview and bm");
+                try {
+                    event.imageView.setImageBitmap(event.bitmap);
+                } catch (OutOfMemoryError e) {
+                    Util.alert(context,
+                            context.getString(R.string.Error__out_of_memory),
+                            context.getString(R.string.Error__out_of_memory_message),
+                            Util.emptyClickListener,
+                            null);
+                    context.finish();
+                }
+                event.progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCreate(Bundle savedInstanceState) {
+                super.onCreate(savedInstanceState);
+                EventBus.getDefault().register(this);
+                mNum = getArguments() != null ? getArguments().getInt(Config.gallery_item_extra) : 1;
+            }
+
+            /**
+             * The Fragment's UI is just a simple text view showing its
+             * instance number.
+             */
+            @Override
+            public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                     Bundle savedInstanceState) {
+
+                final RelativeLayout relativeLayout = new RelativeLayout(container.getContext());
+                final File file = files.get(mNum);
+                final PhotoView photoView = new PhotoView(container.getContext());
+                relativeLayout.addView(photoView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                photoView.setImageBitmap(file.getThumb());
+                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+                final ProgressBar pBar = new ProgressBar(container.getContext());
+                pBar.setIndeterminate(false);
+                relativeLayout.addView(pBar, layoutParams);
+                Util.log("video", FileUtils.getMimeType(file.getFile()));
+                jobManager.addJobInBackground(new ImageLoadJob(file, photoView, pBar));
+                return relativeLayout;
+            }
         }
 
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            java.io.File file = (java.io.File) ((View) object).getTag();
-            storage.purgeFile(file);  //Just to be sure. Like when view is deleted before it finishes loading.
-            container.removeView((View) object);
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view == object;
-        }
     }
+
 }

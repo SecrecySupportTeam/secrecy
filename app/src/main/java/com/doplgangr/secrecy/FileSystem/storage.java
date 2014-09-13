@@ -43,6 +43,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.crypto.CipherInputStream;
+
 import static com.ipaulpro.afilechooser.utils.FileUtils.getPath;
 
 public class storage {
@@ -50,7 +52,7 @@ public class storage {
     public static void DeleteRecursive(java.io.File directory) {
         try {
             Collection files = FileUtils.listFiles(directory, null, true);
-            for(Object file: files)
+            for (Object file : files)
                 purgeFile((File) file);
         } catch (Exception e) {
             Util.log(e);
@@ -62,7 +64,7 @@ public class storage {
         }
     }
 
-    public static void purgeFile(java.io.File file){        //Starts a service to do the real
+    public static void purgeFile(java.io.File file) {        //Starts a service to do the real
         FileOptionsService_.intent(CustomApp.context)       // deletion in background
                 .delete(file)
                 .start();
@@ -73,13 +75,10 @@ public class storage {
         try {
             // Double check
             OutputStream os = new BufferedOutputStream(fileOS);
-            try
-            {
+            try {
                 for (int i = 0; i < size; i++)
                     os.write(0);
-            }
-            finally
-            {
+            } finally {
                 try {
                     os.close();
                 } catch (Throwable ignored) {
@@ -184,11 +183,9 @@ public class storage {
         return null;
     }
 
-    public static Bitmap getThumbnailfromFile(java.io.File file) {
-        if (file != null)
-            if (file.exists())
-                if (file.length() > 0)
-                    return BitmapFactory.decodeFile(file.getAbsolutePath());
+    public static Bitmap getThumbnailfromStream(CipherInputStream streamThumb) {
+        if (streamThumb != null)
+            return BitmapFactory.decodeStream(streamThumb);
         return null;
     }
 

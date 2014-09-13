@@ -33,6 +33,7 @@ import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.FileSystem.File;
 import com.doplgangr.secrecy.R;
+import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import java.util.ArrayList;
 
@@ -57,9 +58,11 @@ class FilesListAdapter extends ArrayAdapter<File> {
      * Add data to data set.
      */
     public void add(File file) {
-        if (isGallery)
-            if (!file.hasThumbnail())
+        if (isGallery) {
+            String mimeType = FileUtils.getMimeType(file.getFile());
+            if (!mimeType.contains("image"))
                 return; //abort if not images.
+        }
         data.add(file);
         notifyDataSetChanged();
     }
