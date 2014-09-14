@@ -92,7 +92,7 @@ public class FileViewer extends Fragment {
 
 
     @Background
-    void addFile(Vault secret, final Intent data) {
+    void addFile(Vault secret, final Uri data) {
         CustomApp.jobManager.addJobInBackground(new AddFileJob(context, secret, data));
     }
 

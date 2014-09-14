@@ -10,8 +10,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.widget.Toast;
 
+import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.Vault;
-import com.doplgangr.secrecy.FileSystem.storage;
+import com.doplgangr.secrecy.Jobs.AddFileJob;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 
@@ -20,7 +21,6 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 
-import java.io.File;
 import java.util.ArrayList;
 
 @EActivity(R.layout.activity_main)
@@ -90,18 +90,7 @@ public class FileImportActivity extends ActionBarActivity
 
     @Background
     void handleData(final Uri data) {
-        String filename = secret.addFile(this, data);
-        Uri thumbnail = storage.saveThumbnail(this, data, filename);
-        if (thumbnail != null) {
-            secret.addFile(this, thumbnail);
-            storage.purgeFile(new java.io.File(thumbnail.getPath()));
-        }
-        storage.purgeFile(new File(data.getPath())); //Try to delete original file.
-        try {
-            this.getContentResolver().delete(data, null, null); //Try to delete under content resolver
-        } catch (Exception ignored) {
-            //Ignore fail to delete original file
-        }
+        CustomApp.jobManager.addJobInBackground(new AddFileJob(this, secret, data));
     }
 
     @UiThread

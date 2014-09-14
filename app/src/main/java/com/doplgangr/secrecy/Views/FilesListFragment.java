@@ -366,7 +366,7 @@ public class FilesListFragment extends FileViewer {
         onPauseDecision.finishActivity();
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE && data.getData() != null) {
             Util.log("intent received=", data.getData().toString(), data.getData().getLastPathSegment());
-            addFile(secret, data);
+            addFile(secret, data.getData());
             super.onActivityResult(requestCode, resultCode, data);
         } else {
             Util.toast(context, getString(R.string.Error__no_file_selected), 4000);
