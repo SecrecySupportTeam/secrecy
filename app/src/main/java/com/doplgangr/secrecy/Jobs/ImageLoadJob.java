@@ -1,5 +1,6 @@
 package com.doplgangr.secrecy.Jobs;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.ProgressBar;
@@ -21,9 +22,11 @@ public class ImageLoadJob extends Job {
     private final PhotoView imageView;
     private final File file;
     private final ProgressBar pBar;
+    private final Activity context;
 
-    public ImageLoadJob(File file, PhotoView imageView, ProgressBar pBar) {
+    public ImageLoadJob(Activity context, File file, PhotoView imageView, ProgressBar pBar) {
         super(new Params(PRIORITY));
+        this.context = context;
         this.file = file;
         this.imageView = imageView;
         this.pBar = pBar;
@@ -58,8 +61,12 @@ public class ImageLoadJob extends Job {
         if (imageStream != null) {
             //Decode image size
             byte[] bytes = IOUtils.toByteArray(imageStream);
-            Bitmap bm = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            EventBus.getDefault().post(new ImageLoadDoneEvent(imageView, bm, pBar));
+            try {
+                Bitmap bm = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                EventBus.getDefault().post(new ImageLoadDoneEvent(imageView, bm, pBar));
+            } catch (OutOfMemoryError e) {
+                EventBus.getDefault().post(new ImageLoadDoneEvent(null, null, null));
+            }
         }
     }
 

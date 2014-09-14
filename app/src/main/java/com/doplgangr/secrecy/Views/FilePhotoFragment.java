@@ -1,6 +1,7 @@
 package com.doplgangr.secrecy.Views;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -81,6 +82,7 @@ public class FilePhotoFragment extends FragmentActivity {
             if (mimeType != null)
                 if (!mimeType.contains("image"))
                     return; //abort if not images.
+            files.add(file);
             notifyDataSetChanged();
         }
 
@@ -92,6 +94,12 @@ public class FilePhotoFragment extends FragmentActivity {
         @Override
         public Fragment getItem(int position) {
             return PhotoFragment.newInstance(position);
+        }
+
+
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            PhotoFragment photoFragment = (PhotoFragment) object;
+            photoFragment.removeSelf();
         }
 
         public static class PhotoFragment extends Fragment {
@@ -110,15 +118,32 @@ public class FilePhotoFragment extends FragmentActivity {
 
             public void onEventMainThread(ImageLoadJob.ImageLoadDoneEvent event) {
                 Util.log("Recieving imageview and bm");
+                if (event.bitmap == null && event.progressBar == null && event.imageView == null) {
+                    Util.alert(context,
+                            context.getString(R.string.Error__out_of_memory),
+                            context.getString(R.string.Error__out_of_memory_message),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    context.finish();
+                                }
+                            },
+                            null);
+                    return;
+                }
                 try {
                     event.imageView.setImageBitmap(event.bitmap);
                 } catch (OutOfMemoryError e) {
                     Util.alert(context,
                             context.getString(R.string.Error__out_of_memory),
                             context.getString(R.string.Error__out_of_memory_message),
-                            Util.emptyClickListener,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    context.finish();
+                                }
+                            },
                             null);
-                    context.finish();
                 }
                 event.progressBar.setVisibility(View.GONE);
             }
@@ -138,7 +163,7 @@ public class FilePhotoFragment extends FragmentActivity {
             @Override
             public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                      Bundle savedInstanceState) {
-
+                Util.log("onCreateView!!");
                 final RelativeLayout relativeLayout = new RelativeLayout(container.getContext());
                 final File file = files.get(mNum);
                 final PhotoView photoView = new PhotoView(container.getContext());
@@ -149,10 +174,14 @@ public class FilePhotoFragment extends FragmentActivity {
                 final ProgressBar pBar = new ProgressBar(container.getContext());
                 pBar.setIndeterminate(false);
                 relativeLayout.addView(pBar, layoutParams);
-                Util.log("video", FileUtils.getMimeType(file.getFile()));
-                CustomApp.jobManager.addJobInBackground(new ImageLoadJob(file, photoView, pBar));
+                CustomApp.jobManager.addJobInBackground(new ImageLoadJob(context, file, photoView, pBar));
                 return relativeLayout;
             }
+
+            public void removeSelf() {
+                onDestroy();
+            }
+
         }
 
     }

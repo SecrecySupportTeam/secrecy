@@ -274,6 +274,7 @@ public class FilesListFragment extends FileViewer {
                     intent.putExtra(Config.vault_extra, vault);
                     intent.putExtra(Config.password_extra, password);
                     intent.putExtra(Config.gallery_item_extra, i);
+                    onPauseDecision.startActivity();
                     startActivity(intent);
                 } else {
 
