@@ -36,6 +36,7 @@ import com.doplgangr.secrecy.R;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 class FilesListAdapter extends ArrayAdapter<File> {
     // store the context (as an inflated layout)
@@ -60,10 +61,12 @@ class FilesListAdapter extends ArrayAdapter<File> {
     public void add(File file) {
         if (isGallery) {
             String mimeType = FileUtils.getMimeType(file.getFile());
-            if (!mimeType.contains("image"))
-                return; //abort if not images.
+            if (mimeType != null)
+                if (!mimeType.contains("image"))
+                    return; //abort if not images.
         }
-        data.add(file);
+        if (!data.contains(file))
+            data.add(file);
         notifyDataSetChanged();
     }
 
@@ -99,8 +102,8 @@ class FilesListAdapter extends ArrayAdapter<File> {
     /**
      * Return the position provided.
      */
-    public long getItemId(int position) {
-        return position;
+    public int getItemId(File file) {
+        return data.indexOf(file);
     }
 
     /**
@@ -224,6 +227,16 @@ class FilesListAdapter extends ArrayAdapter<File> {
 
     public void clear() {
         data.clear();
+    }
+
+    public void sort() {
+        this.sort(new Comparator<File>() {
+            @Override
+            public int compare(com.doplgangr.secrecy.FileSystem.File file, com.doplgangr.secrecy.FileSystem.File file2) {
+                return file.getName().compareTo(file2.getName());
+            }
+        });
+        notifyDataSetChanged();
     }
 
     static class ViewHolder {

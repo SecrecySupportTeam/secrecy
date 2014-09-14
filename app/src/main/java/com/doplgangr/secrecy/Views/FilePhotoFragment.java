@@ -78,8 +78,9 @@ public class FilePhotoFragment extends FragmentActivity {
 
         public void add(File file) {
             String mimeType = FileUtils.getMimeType(file.getFile());
-            if (mimeType.contains("image"))
-                files.add(file);
+            if (mimeType != null)
+                if (!mimeType.contains("image"))
+                    return; //abort if not images.
             notifyDataSetChanged();
         }
 

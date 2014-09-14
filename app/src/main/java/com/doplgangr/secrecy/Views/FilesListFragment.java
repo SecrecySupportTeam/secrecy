@@ -231,8 +231,16 @@ public class FilesListFragment extends FileViewer {
     }
 
     public void onEventMainThread(AddFileJob.NewFileEvent event) {
-        if (adapter != null)
+        // Add new file to the list, sort it to its alphabetical position, and highlight
+        // it with smooth scrolling.
+
+        if (adapter != null) {
             addToList(event.file);
+            adapter.sort();
+            int index = adapter.getItemId(event.file);
+            if (index != -1)
+                listView.smoothScrollToPosition(index);
+        }
     }
 
     @UiThread
