@@ -234,7 +234,10 @@ public class FilesListFragment extends FileViewer {
         // Add new file to the list, sort it to its alphabetical position, and highlight
         // it with smooth scrolling.
 
-        if (adapter != null) {
+        if ((adapter != null) && (attached)) {
+            Util.toast(context,
+                    CustomApp.context.getString(R.string.Files__add_successful),
+                    Toast.LENGTH_SHORT);
             addToList(event.file);
             adapter.sort();
             int index = adapter.getItemId(event.file);
