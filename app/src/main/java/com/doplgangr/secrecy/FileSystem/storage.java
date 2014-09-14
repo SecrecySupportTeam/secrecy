@@ -31,11 +31,12 @@ import android.provider.MediaStore;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
+import com.doplgangr.secrecy.Jobs.DeleteFileJob;
+import com.doplgangr.secrecy.Jobs.ShredFileJob;
 import com.doplgangr.secrecy.Util;
 
 import org.apache.commons.io.FileUtils;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -64,29 +65,18 @@ public class storage {
         }
     }
 
-    public static void purgeFile(java.io.File file) {        //Starts a service to do the real
-        FileOptionsService_.intent(CustomApp.context)       // deletion in background
-                .delete(file)
-                .start();
+    public static void purgeFile(java.io.File file) {
+        purgeFile(file, null);
+    }
+
+    public static void purgeFile(java.io.File file, Uri uri) {        //Starts a job to do the real
+        DeleteFileJob job = new DeleteFileJob(file);
+        job.addURI(uri);
+        CustomApp.jobManager.addJobInBackground(job); // deletion in background
     }
 
     public static void shredFile(OutputStream fileOS, long size) {
-        Util.log("Purge File", size);
-        try {
-            // Double check
-            OutputStream os = new BufferedOutputStream(fileOS);
-            try {
-                for (int i = 0; i < size; i++)
-                    os.write(0);
-            } finally {
-                try {
-                    os.close();
-                } catch (Throwable ignored) {
-
-                }
-            }
-        } catch (Exception ignored) {
-        }
+        CustomApp.jobManager.addJobInBackground(new ShredFileJob(fileOS, size));
     }
 
     public static java.io.File getTempFolder() {

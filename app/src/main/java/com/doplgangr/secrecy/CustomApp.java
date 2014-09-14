@@ -25,6 +25,9 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
 import com.doplgangr.secrecy.FileSystem.storage;
+import com.path.android.jobqueue.JobManager;
+import com.path.android.jobqueue.config.Configuration;
+import com.path.android.jobqueue.log.CustomLogger;
 import com.uservoice.uservoicesdk.UserVoice;
 
 import org.androidannotations.annotations.EApplication;
@@ -35,6 +38,7 @@ import de.greenrobot.event.EventBus;
 public class CustomApp extends Application {
     public static Context context;
     public static String VERSIONNAME = "";
+    public static JobManager jobManager;
 
     @Override
     public void onCreate() {
@@ -47,6 +51,8 @@ public class CustomApp extends Application {
             e.printStackTrace();
         }
         storage.deleteTemp(); //Start clean every time!!
+
+        jobManager = new JobManager(this);
         // Set this up once when your application launches
         UserVoice.init(Config.uservoice(this), this);  //Uservoice init
     }
@@ -57,6 +63,37 @@ public class CustomApp extends Application {
         EventBus.getDefault().post(new LowMemoryEvent());
     }
 
+    void generateJobManager() {
+        Configuration configuration = new Configuration.Builder(this)
+                .customLogger(new CustomLogger() {
+                    private static final String TAG = "JOBS";
+
+                    @Override
+                    public boolean isDebugEnabled() {
+                        return true;
+                    }
+
+                    @Override
+                    public void d(String text, Object... args) {
+                        Util.log(TAG, String.format(text, args));
+                    }
+
+                    @Override
+                    public void e(Throwable t, String text, Object... args) {
+                        Util.log(TAG, String.format(text, args), t);
+                    }
+
+                    @Override
+                    public void e(String text, Object... args) {
+                        Util.log(TAG, String.format(text, args));
+                    }
+                })
+                .minConsumerCount(1)//always keep at least one consumer alive
+                .maxConsumerCount(10)//up to 10 consumers at a time
+                .loadFactor(2)//2 jobs per consumer
+                .build();
+        jobManager = new JobManager(this, configuration);
+    }
 
     public class LowMemoryEvent {
     }

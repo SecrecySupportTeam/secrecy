@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.doplgangr.secrecy.Config;
+import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.File;
 import com.doplgangr.secrecy.FileSystem.Vault;
 import com.doplgangr.secrecy.Jobs.ImageLoadJob;
@@ -21,7 +22,6 @@ import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 import com.doplgangr.secrecy.Views.DummyViews.HackyViewPager;
 import com.ipaulpro.afilechooser.utils.FileUtils;
-import com.path.android.jobqueue.JobManager;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -40,7 +40,6 @@ import uk.co.senab.photoview.PhotoView;
 @EActivity(R.layout.activity_view_pager)
 public class FilePhotoFragment extends FragmentActivity {
 
-    static JobManager jobManager;
     static Activity context;
     @Extra(Config.vault_extra)
     String vault;
@@ -53,7 +52,6 @@ public class FilePhotoFragment extends FragmentActivity {
 
     @AfterViews
     void onCreate() {
-        jobManager = new JobManager(this);
         context = this;
         final SamplePagerAdapter adapter = new SamplePagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(adapter);
@@ -127,7 +125,8 @@ public class FilePhotoFragment extends FragmentActivity {
             @Override
             public void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
-                EventBus.getDefault().register(this);
+                if (!EventBus.getDefault().isRegistered(this))
+                    EventBus.getDefault().register(this);
                 mNum = getArguments() != null ? getArguments().getInt(Config.gallery_item_extra) : 1;
             }
 
@@ -150,7 +149,7 @@ public class FilePhotoFragment extends FragmentActivity {
                 pBar.setIndeterminate(false);
                 relativeLayout.addView(pBar, layoutParams);
                 Util.log("video", FileUtils.getMimeType(file.getFile()));
-                jobManager.addJobInBackground(new ImageLoadJob(file, photoView, pBar));
+                CustomApp.jobManager.addJobInBackground(new ImageLoadJob(file, photoView, pBar));
                 return relativeLayout;
             }
         }

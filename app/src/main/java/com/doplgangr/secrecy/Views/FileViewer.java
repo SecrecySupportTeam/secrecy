@@ -37,11 +37,10 @@ import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.File;
-import com.doplgangr.secrecy.FileSystem.FileObserver;
-import com.doplgangr.secrecy.FileSystem.FileOptionsService_;
 import com.doplgangr.secrecy.FileSystem.OurFileProvider;
 import com.doplgangr.secrecy.FileSystem.Vault;
 import com.doplgangr.secrecy.FileSystem.storage;
+import com.doplgangr.secrecy.Jobs.AddFileJob;
 import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
@@ -94,10 +93,7 @@ public class FileViewer extends Fragment {
 
     @Background
     void addFile(Vault secret, final Intent data) {
-        FileOptionsService_.intent(this)
-                .addFile(secret, data)
-                .start();
-        onCreate();
+        CustomApp.jobManager.addJobInBackground(new AddFileJob(context, secret, data));
     }
 
 
@@ -264,8 +260,6 @@ public class FileViewer extends Fragment {
 
     @Override
     public void onDestroy() {
-        Intent fileObserverIntent = new Intent(CustomApp.context, FileObserver.class);
-        CustomApp.context.stopService(fileObserverIntent);          //Use App context since context might be null.
         BackgroundExecutor.cancelAll(Config.cancellable_task, true);
         super.onDestroy();
     }

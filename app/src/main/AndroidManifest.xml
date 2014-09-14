@@ -20,9 +20,6 @@
         android:label="@string/App__name"
         android:theme="@style/CustomActionBarTheme">
         <service
-            android:name=".FileSystem.FileObserver"
-            android:enabled="true" />
-        <service
             android:name=".FileSystem.FileOptionsService_"
             android:enabled="true" />
 

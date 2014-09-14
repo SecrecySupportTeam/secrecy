@@ -44,6 +44,7 @@ import android.widget.ViewAnimator;
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.Vault;
+import com.doplgangr.secrecy.Jobs.AddFileJob;
 import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
@@ -61,6 +62,8 @@ import org.androidannotations.annotations.res.DrawableRes;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import de.greenrobot.event.EventBus;
 
 
 @EFragment(R.layout.list_file)
@@ -192,6 +195,8 @@ public class FilesListFragment extends FileViewer {
     @Background
     @Override
     void onCreate() {
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
         context = (ActionBarActivity) getActivity();
         secret = new Vault(vault, password);
         adapter = new FilesListAdapter(context,
@@ -211,21 +216,6 @@ public class FilesListFragment extends FileViewer {
             return;
         }
         addFiles();
-        secret.startWatching(
-                new Listeners.FileObserverEventListener() {
-                    @Override
-                    public void add(File file) {
-                        if (adapter != null)
-                            addToList(new com.doplgangr.secrecy.FileSystem.File(file, password));
-                    }
-
-                    @Override
-                    public void remove(File file) {
-                        if (adapter != null)
-                            adapter.remove(new com.doplgangr.secrecy.FileSystem.File(file, password));
-                    }
-                }
-        );
     }
 
     @Background(id = Config.cancellable_task)
@@ -238,6 +228,11 @@ public class FilesListFragment extends FileViewer {
                         addToList(file);
                     }
                 });
+    }
+
+    public void onEventMainThread(AddFileJob.NewFileEvent event) {
+        if (adapter != null)
+            addToList(event.file);
     }
 
     @UiThread

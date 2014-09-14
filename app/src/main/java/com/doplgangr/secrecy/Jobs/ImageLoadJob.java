@@ -6,7 +6,6 @@ import android.widget.ProgressBar;
 
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.File;
-import com.doplgangr.secrecy.Util;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
@@ -59,12 +58,9 @@ public class ImageLoadJob extends Job {
         if (imageStream != null) {
             //Decode image size
             byte[] bytes = IOUtils.toByteArray(imageStream);
-            Util.log("Finish enrolling file ", file.getName(), bytes.length);
             Bitmap bm = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
             EventBus.getDefault().post(new ImageLoadDoneEvent(imageView, bm, pBar));
         }
-
-
     }
 
     @Override

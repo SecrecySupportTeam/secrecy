@@ -171,7 +171,13 @@ public class Vault implements Serializable {
                 e.printStackTrace();
             }
         }
+
         return filename;
+    }
+
+    public File getFileInstance(String name) {
+        java.io.File requestedFile = new java.io.File(path, name);
+        return new File(requestedFile, key);
     }
 
     public Boolean delete() {

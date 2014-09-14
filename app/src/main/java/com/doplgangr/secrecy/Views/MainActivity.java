@@ -35,7 +35,6 @@ import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 import com.doplgangr.secrecy.Config;
-import com.doplgangr.secrecy.FileSystem.FileObserver;
 import com.doplgangr.secrecy.FileSystem.storage;
 import com.doplgangr.secrecy.Premium.PremiumActivity_;
 import com.doplgangr.secrecy.R;
@@ -70,8 +69,6 @@ public class MainActivity
     public void onCreate() {
         Crashlytics.start(this);
         storage.deleteTemp();                                           //Start clean
-        Intent intent = new Intent(this, FileObserver.class);
-        stopService(intent);                                            //disable fileObserver now
         fragmentManager = getSupportFragmentManager();
         if (Prefs.stealthMode().get() == -1) {
             //if this is the first time, display a dialog to inform successful trial
