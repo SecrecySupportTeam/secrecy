@@ -4,5 +4,7 @@
     <translate
         android:duration="@android:integer/config_shortAnimTime"
         android:fromYDelta="-100%"
-        android:toYDelta="0%" />
+        android:interpolator="@android:anim/decelerate_interpolator"
+        android:toYDelta="0%"
+        android:zAdjustment="top" />
 </set>

@@ -46,6 +46,7 @@ import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.Vault;
 import com.doplgangr.secrecy.Jobs.AddFileJob;
+import com.doplgangr.secrecy.Jobs.InitializeVaultJob;
 import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
@@ -202,32 +203,14 @@ public class FilesListFragment extends FileViewer {
     @Background
     @Override
     void onCreate() {
+        context = (ActionBarActivity) getActivity();
         if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
-        context = (ActionBarActivity) getActivity();
-        secret = new Vault(vault, password);
-        adapter = new FilesListAdapter(context,
-                isGallery ? R.layout.gallery_item : R.layout.file_item);
-        if (secret.wrongPass) {
-            Util.alert(
-                    context,
-                    getString(R.string.Error__open_vault),
-                    getString(R.string.Error__open_vault_message),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            finish(); //Done for now -_-'
-                        }
-                    },
-                    null
-            );
-            return;
-        }
-        addFiles();
+        CustomApp.jobManager.addJobInBackground(new InitializeVaultJob(vault, password));
     }
 
     @Background(id = Config.cancellable_task)
     void addFiles() {
-        setupViews();
         secret.iterateAllFiles(
                 new Vault.onFileFoundListener() {
                     @Override
@@ -253,6 +236,31 @@ public class FilesListFragment extends FileViewer {
         }
     }
 
+    public void onEventMainThread(Vault vault) {
+        //The vault finishes initializing, is prepared to be populated.
+
+        secret = vault;
+        if (secret.wrongPass) {
+            Util.alert(
+                    context,
+                    getString(R.string.Error__open_vault),
+                    getString(R.string.Error__open_vault_message),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            finish(); //Done for now -_-'
+                        }
+                    },
+                    null
+            );
+            return;
+        }
+        addFiles();
+        mActionBarTitle.setText(secret.getName());
+        adapter = new FilesListAdapter(context,
+                isGallery ? R.layout.gallery_item : R.layout.file_item);
+        setupViews();
+    }
+
     @UiThread
     void setupViews() {
         mTag.setText(isGallery ? R.string.Page_header__gallery : R.string.Page_header__files);
@@ -266,7 +274,6 @@ public class FilesListFragment extends FileViewer {
         mListView.setVisibility(View.VISIBLE);
         context.supportInvalidateOptionsMenu();
         context.getSupportActionBar().setTitle("");
-        mActionBarTitle.setText(secret.getName());
         mListView.setEmptyView(nothing);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -328,7 +335,7 @@ public class FilesListFragment extends FileViewer {
             public void onScroll(AbsListView absListView, int i, int i2, int i3) {
                 int scrollY = getScrollY();
                 //sticky actionbar
-                if (scrollY > 0) {
+                if (scrollY >= 0) {
                     mHeader.setTranslationY(Math.max(-scrollY, -mHeaderTextHeight));
 
                     ViewGroup.LayoutParams params = mActionBarTitle.getLayoutParams();

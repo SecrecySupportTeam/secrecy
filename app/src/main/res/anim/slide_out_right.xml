@@ -3,11 +3,12 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android">
 
     <translate
-        android:duration="@android:integer/config_shortAnimTime"
-        android:fromAlpha="0.0"
+        android:duration="@android:integer/config_mediumAnimTime"
+        android:fromAlpha="1.0"
         android:fromXDelta="0"
         android:interpolator="@android:anim/accelerate_interpolator"
-        android:toAlpha="1.0"
-        android:toXDelta="100%p" />
+        android:toAlpha="0.0"
+        android:toXDelta="100%p"
+        android:zAdjustment="top" />
 
 </set>
