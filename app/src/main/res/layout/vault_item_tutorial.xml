@@ -52,8 +52,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="false"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/list_item_text_from_margin"
-        android:layout_marginStart="@dimen/list_item_text_from_margin"
+        android:layout_marginLeft="@dimen/text_from_margin"
+        android:layout_marginStart="@dimen/text_from_margin"
         android:orientation="vertical">
 
         <TextView

@@ -100,6 +100,7 @@ public class VaultsListFragment extends Fragment {
         if (mLinearView != null)
             mLinearView.removeAllViews();
         context.getSupportActionBar().setTitle("");
+        mActionBarTitle.setText(R.string.App__name);
         java.io.File root = storage.getRoot();
         if (!Util.canWrite(root)) {
             Util.alert(context,

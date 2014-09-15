@@ -37,8 +37,8 @@
                 android:layout_height="@dimen/divider_height"
                 android:layout_marginTop="@dimen/header_paper_height"
                 android:gravity="center_vertical"
-                android:paddingLeft="@dimen/list_item_text_from_margin"
-                android:paddingRight="@dimen/list_item_text_from_margin"
+                android:paddingLeft="@dimen/text_from_edge"
+                android:paddingRight="@dimen/text_from_edge"
                 android:text="@string/Page_header__vaults"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/text_secondary" />
@@ -102,10 +102,9 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/header_text_height"
             android:layout_gravity="bottom"
-            android:layout_marginLeft="@dimen/list_item_text_from_margin"
-            android:layout_marginStart="@dimen/list_item_text_from_margin"
+            android:layout_marginLeft="@dimen/text_from_edge"
+            android:layout_marginStart="@dimen/text_from_edge"
             android:gravity="center_vertical"
-            android:text="@string/App__name"
             android:textColor="@color/white"
             android:textSize="@dimen/text_title_size" />
     </FrameLayout>

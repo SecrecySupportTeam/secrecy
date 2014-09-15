@@ -17,7 +17,8 @@
     <dimen name="list_item_single_line_height">56dp</dimen>
     <dimen name="list_item_two_line_height">72dp</dimen>
     <dimen name="margin_from_edge">16dp</dimen>
-    <dimen name="list_item_text_from_margin">56dp</dimen>
+    <dimen name="text_from_margin">56dp</dimen>
+    <dimen name="text_from_edge">72dp</dimen>
     <dimen name="icon_size">24dp</dimen>
     <dimen name="list_item_avatar_size">40dp</dimen>
     <dimen name="margin_text_top">20dp</dimen>
