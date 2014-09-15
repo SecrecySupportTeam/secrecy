@@ -4,23 +4,40 @@
     <style name="CustomActionBarTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
         <item name="android:actionBarStyle">@style/MyActionBar</item>
         <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowContentOverlay">@null</item>
         <item name="App_color">@color/primary</item>
         <!-- Support library compatibility -->
         <item name="actionBarStyle">@style/MyActionBar</item>
         <item name="actionOverflowButtonStyle">@style/OverFlow</item>
+        <item name="windowActionBarOverlay">true</item>
+
     </style>
 
     <!-- ActionBar styles -->
     <style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@color/primary</item>
+        <item name="android:background">@null</item>
+        <item name="android:height">@dimen/action_bar_height</item>
+        <item name="android:icon">@android:color/transparent</item>
+        <item name="android:titleTextStyle">@style/TitleText</item>
 
         <!-- Support library compatibility -->
-        <item name="background">@color/primary</item>
-        <item name="android:icon">@android:color/transparent</item>
-        <!-- This does the magic! -->
+        <item name="background">@null</item>
+        <item name="height">@dimen/action_bar_height</item>
+        <item name="icon">@android:color/transparent</item>
+        <item name="titleTextStyle">@style/TitleText</item>
     </style>
 
     <style name="OverFlow" parent="@style/Widget.AppCompat.Base.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_overflow</item>
+        <!-- Support library compatibility -->
+        <item name="src">@drawable/ic_overflow</item>
+    </style>
+
+    <!-- ActionBar title text -->
+    <style name="TitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/white</item>
+        <!-- The textColor property is backward compatible with the Support Library -->
     </style>
 </resources>

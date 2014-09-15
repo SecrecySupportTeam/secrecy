@@ -31,6 +31,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
@@ -79,6 +80,12 @@ public class FilesListFragment extends FileViewer {
     View nothing;
     @ViewById(R.id.progressBar)
     ProgressBar addFilepBar;
+
+    @ViewById(R.id.actionBarTitle)
+    TextView mActionBarTitle;
+    @ViewById(R.id.header)
+    View mHeader;
+
     @ViewById(R.id.tag)
     TextView mTag;
     @OptionsMenuItem(R.id.action_switch_interface)
@@ -258,7 +265,8 @@ public class FilesListFragment extends FileViewer {
         gridView.setVisibility(View.GONE);
         mListView.setVisibility(View.VISIBLE);
         context.supportInvalidateOptionsMenu();
-        context.getSupportActionBar().setTitle(secret.getName());
+        context.getSupportActionBar().setTitle("");
+        mActionBarTitle.setText(secret.getName());
         mListView.setEmptyView(nothing);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -305,6 +313,46 @@ public class FilesListFragment extends FileViewer {
                 //switchView(view, R.id.file_actions_layout);
                 //mListView.setOnClickListener(null);
                 return true;
+            }
+        });
+        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            int mHeaderTextHeight = context.getResources().getDimensionPixelSize(R.dimen.header_text_height);
+            int mActionBarHeight = context.getResources().getDimensionPixelSize(R.dimen.action_bar_height);
+
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+                onScroll(absListView, i, 0, 0);
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int i, int i2, int i3) {
+                int scrollY = getScrollY();
+                //sticky actionbar
+                if (scrollY > 0) {
+                    mHeader.setTranslationY(Math.max(-scrollY, -mHeaderTextHeight));
+
+                    ViewGroup.LayoutParams params = mActionBarTitle.getLayoutParams();
+                    params.height = scrollY > mActionBarHeight ? mActionBarHeight : mHeaderTextHeight;
+                    mActionBarTitle.setLayoutParams(params);
+                    mTag.setTranslationY(-scrollY);
+                }
+            }
+
+            public int getScrollY() {
+                View c = mListView.getChildAt(0);
+                if (c == null) {
+                    return 0;
+                }
+
+                int firstVisiblePosition = mListView.getFirstVisiblePosition();
+                int top = c.getTop();
+
+                int headerHeight = mHeader.getHeight() + mTag.getHeight();
+                if (firstVisiblePosition >= 1) {
+                    headerHeight = mTag.getHeight();
+                }
+
+                return -top + firstVisiblePosition * c.getHeight() + headerHeight;
             }
         });
     }

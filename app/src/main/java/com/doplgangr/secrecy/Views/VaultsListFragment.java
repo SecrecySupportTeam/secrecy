@@ -30,8 +30,11 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.text.InputType;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
@@ -62,6 +65,12 @@ import java.util.ArrayList;
 public class VaultsListFragment extends Fragment {
     @ViewById(R.id.list)
     LinearLayout mLinearView;
+    @ViewById(R.id.actionBarTitle)
+    TextView mActionBarTitle;
+    @ViewById(R.id.scrollView)
+    ScrollView mScrollView;
+    @ViewById(R.id.header)
+    View mHeader;
     @ViewById(R.id.nothing)
     View nothing;
     @DrawableRes(R.drawable.file_selector)
@@ -90,8 +99,7 @@ public class VaultsListFragment extends Fragment {
         context = (ActionBarActivity) getActivity();
         if (mLinearView != null)
             mLinearView.removeAllViews();
-        //if (context.getSupportActionBar() != null)
-        //  context.getSupportActionBar().setSubtitle(storage.getRoot().getAbsolutePath());
+        context.getSupportActionBar().setTitle("");
         java.io.File root = storage.getRoot();
         if (!Util.canWrite(root)) {
             Util.alert(context,
@@ -122,6 +130,22 @@ public class VaultsListFragment extends Fragment {
             nothing.setVisibility(View.GONE);
             mLinearView.setVisibility(View.VISIBLE);
         }
+        mScrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+
+            @Override
+            public void onScrollChanged() {
+                int scrollY = mScrollView.getScrollY(); //for verticalScrollViewint scrollY = getScrollY();
+                //sticky actionbar
+                int mHeaderTextHeight = context.getResources().getDimensionPixelSize(R.dimen.header_text_height);
+                int mActionBarHeight = context.getResources().getDimensionPixelSize(R.dimen.action_bar_height);
+                mHeader.setTranslationY(Math.max(-scrollY, -mHeaderTextHeight));
+
+                ViewGroup.LayoutParams params = mActionBarTitle.getLayoutParams();
+                params.height = scrollY > mActionBarHeight ? mActionBarHeight : mHeaderTextHeight;
+                mActionBarTitle.setLayoutParams(params);
+
+            }
+        });
         showTutorial();
     }
 
@@ -432,5 +456,4 @@ public class VaultsListFragment extends Fragment {
     public interface onPanic {
         void onPanic();
     }
-
 }

@@ -21,6 +21,7 @@
     android:layout_height="fill_parent">
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bg_paper">
@@ -34,9 +35,10 @@
                 android:id="@+id/tag"
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/divider_height"
+                android:layout_marginTop="@dimen/header_paper_height"
                 android:gravity="center_vertical"
-                android:paddingLeft="@dimen/margin_from_edge"
-                android:paddingRight="@dimen/margin_from_edge"
+                android:paddingLeft="@dimen/list_item_text_from_margin"
+                android:paddingRight="@dimen/list_item_text_from_margin"
                 android:text="@string/Page_header__vaults"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/text_secondary" />
@@ -88,4 +90,24 @@
             android:textColor="@color/accent_light"
             android:textSize="18sp" />
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/header_paper_height"
+        android:background="@color/primary">
+
+        <TextView
+            android:id="@+id/actionBarTitle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/header_text_height"
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="@dimen/list_item_text_from_margin"
+            android:layout_marginStart="@dimen/list_item_text_from_margin"
+            android:gravity="center_vertical"
+            android:text="@string/App__name"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_title_size" />
+    </FrameLayout>
+
 </RelativeLayout>
