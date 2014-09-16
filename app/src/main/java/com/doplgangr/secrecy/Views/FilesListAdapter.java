@@ -59,6 +59,10 @@ class FilesListAdapter extends ArrayAdapter<File> {
      * Add data to data set.
      */
     public void add(File file) {
+        if (file == null)
+            return;
+        if (file.getName() == null)
+            return;
         if (isGallery) {
             String mimeType = FileUtils.getMimeType(file.getFile());
             if (mimeType != null)
