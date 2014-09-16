@@ -138,6 +138,8 @@ public class File implements Serializable {
 
     public String getTimestamp() {
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        if (Timestamp == null)
+            return "";
         return df.format(Timestamp);
     }
 
