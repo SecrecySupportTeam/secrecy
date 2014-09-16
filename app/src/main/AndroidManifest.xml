@@ -19,10 +19,6 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/App__name"
         android:theme="@style/CustomMaterialTheme">
-        <service
-            android:name=".FileSystem.FileOptionsService_"
-            android:enabled="true" />
-
 
         <provider
             android:name=".FileSystem.OurFileProvider"
@@ -38,7 +34,8 @@
         <activity
             android:name="com.ipaulpro.afilechooser.FileChooserActivity"
             android:icon="@drawable/ic_launcher"
-            android:label="@string/Dialog_header__pick_file" />
+            android:label="@string/Dialog_header__pick_file"
+            android:theme="@style/NormalActionBarTheme" />/>
         <activity
             android:name=".Views.MainActivity_"
             android:clearTaskOnLaunch="true"
@@ -65,7 +62,8 @@
         </activity>
         <activity
             android:name=".Views.ChooseFolder"
-            android:label="@string/Page_header__choose_folder" />
+            android:label="@string/Page_header__choose_folder"
+            android:theme="@style/NormalActionBarTheme" />
         <activity
             android:name=".Settings.SettingsActivity_"
             android:label="" />
