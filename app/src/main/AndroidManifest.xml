@@ -18,7 +18,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/App__name"
-        android:theme="@style/CustomActionBarTheme">
+        android:theme="@style/CustomMaterialTheme">
         <service
             android:name=".FileSystem.FileOptionsService_"
             android:enabled="true" />
@@ -44,7 +44,7 @@
             android:clearTaskOnLaunch="true"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
-            android:label="@string/App__name" />
+            android:label="" />
         <activity
             android:name=".Views.FileImportActivity_"
             android:label="@string/Dialog_header__import_files">
@@ -68,7 +68,7 @@
             android:label="@string/Page_header__choose_folder" />
         <activity
             android:name=".Settings.SettingsActivity_"
-            android:label="@string/Page_header__settings" />
+            android:label="" />
 
         <receiver android:name=".OutgoingCallReceiver_">
             <intent-filter android:priority="9999">
@@ -90,13 +90,13 @@
         </activity>
         <activity
             android:name=".Premium.PremiumActivity_"
-            android:label="@string/Page_header__donation" />
+            android:label="" />
         <activity
             android:name=".Views.FilePhotoFragment_"
             android:clearTaskOnLaunch="true"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
-            android:label="Gallery"
+            android:label=""
             android:parentActivityName=".Views.FilesActivity_">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -104,7 +104,7 @@
         </activity>
         <activity
             android:name=".Views.FilesActivity_"
-            android:label="@string/App__name"
+            android:label=""
             android:parentActivityName=".Views.MainActivity_">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -116,16 +116,26 @@
             android:value="ece21e8448f317038da716131b18b8affb2ac68b" />
 
         <!-- UserVoice user support activities-->
-        <activity android:name="com.uservoice.uservoicesdk.activity.PortalActivity" />
-        <activity android:name="com.uservoice.uservoicesdk.activity.ForumActivity" />
-        <activity android:name="com.uservoice.uservoicesdk.activity.ArticleActivity" />
-        <activity android:name="com.uservoice.uservoicesdk.activity.TopicActivity" />
+        <activity
+            android:name="com.uservoice.uservoicesdk.activity.PortalActivity"
+            android:theme="@style/NormalActionBarTheme" />
+        <activity
+            android:name="com.uservoice.uservoicesdk.activity.ForumActivity"
+            android:theme="@style/NormalActionBarTheme" />
+        <activity
+            android:name="com.uservoice.uservoicesdk.activity.ArticleActivity"
+            android:theme="@style/NormalActionBarTheme" />
+        <activity
+            android:name="com.uservoice.uservoicesdk.activity.TopicActivity"
+            android:theme="@style/NormalActionBarTheme" />
         <activity
             android:name="com.uservoice.uservoicesdk.activity.ContactActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize" />
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/NormalActionBarTheme" />
         <activity
             android:name="com.uservoice.uservoicesdk.activity.PostIdeaActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize" />
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/NormalActionBarTheme" />
     </application>
 
 </manifest>

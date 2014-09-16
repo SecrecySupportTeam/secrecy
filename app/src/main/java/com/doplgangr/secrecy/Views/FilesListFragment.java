@@ -31,7 +31,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
@@ -337,10 +336,8 @@ public class FilesListFragment extends FileViewer {
                 //sticky actionbar
                 if (scrollY >= 0) {
                     mHeader.setTranslationY(Math.max(-scrollY, -mHeaderTextHeight));
-
-                    ViewGroup.LayoutParams params = mActionBarTitle.getLayoutParams();
-                    params.height = scrollY > mActionBarHeight ? mActionBarHeight : mHeaderTextHeight;
-                    mActionBarTitle.setLayoutParams(params);
+                    mActionBarTitle.setVisibility(scrollY > mActionBarHeight ? View.GONE : View.VISIBLE);
+                    context.getSupportActionBar().setTitle(scrollY > mActionBarHeight ? secret.getName() : "");
                     mTag.setTranslationY(-scrollY);
                 }
             }
