@@ -20,6 +20,7 @@
 package com.doplgangr.secrecy.Views;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,12 +28,14 @@ import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ListView;
@@ -394,6 +397,35 @@ public class FilesListFragment extends FileViewer {
     void switchInterface() {
         isGallery = !isGallery;
         onCreate();
+    }
+
+    @OptionsItem(R.id.action_delete)
+    void deleteVault() {
+        final EditText passwordView = new EditText(context);
+        passwordView.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        passwordView.setHint(R.string.Vault__confirm_password_hint);
+        new AlertDialog.Builder(context)
+                .setTitle(getString(R.string.Vault__confirm_delete))
+                .setView(passwordView)
+                .setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String input = passwordView.getText().toString();
+                        if (password.equals(input)) {
+                            secret.delete();
+
+                            context.finish();
+                        } else {
+                            Util.alert(context,
+                                    CustomApp.context.getString(R.string.Error__delete_password_incorrect),
+                                    CustomApp.context.getString(R.string.Error__delete_password_incorrect_message),
+                                    Util.emptyClickListener,
+                                    null
+                            );
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.CANCEL, Util.emptyClickListener)
+                .show();
     }
 
     @OptionsItem(R.id.action_add_file)

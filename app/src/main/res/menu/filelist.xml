@@ -10,9 +10,15 @@
         android:title="@string/action__add_file"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/action_delete"
+        android:icon="@drawable/ic_action_discard"
+        android:orderInCategory="2"
+        android:title="@string/action__delete"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/action_switch_interface"
         android:icon="@drawable/ic_gallery"
-        android:orderInCategory="10"
+        android:orderInCategory="5"
         android:title="@string/action__switch_interface"
         app:showAsAction="ifRoom" />
 </menu>

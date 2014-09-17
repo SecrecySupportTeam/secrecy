@@ -44,7 +44,6 @@ import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.Prefs_;
 import com.doplgangr.secrecy.Settings.SettingsActivity_;
 import com.doplgangr.secrecy.Util;
-import com.doplgangr.secrecy.Views.DummyViews.SwipeDismissTouchListener;
 import com.nineoldandroids.view.ViewHelper;
 
 import org.androidannotations.annotations.AfterViews;
@@ -153,59 +152,16 @@ public class VaultsListFragment extends Fragment {
     }
 
     public void setClickListener(final View mView, final int i) {
-        final SwipeDismissTouchListener mSwipeListener = new SwipeDismissTouchListener(
-                mView,
-                null,
-                new SwipeDismissTouchListener.OnDismissCallback() {
-                    @Override
-                    public void onDismiss(View view, Object token) {
-                        switchView(mView, R.id.vault_delete_layout);
-                        mView.findViewById(R.id.delete_ok)
-                                .setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View ignored) {
-                                        switchView(mView, R.id.vault_decrypt_layout);
-                                        mView.findViewById(R.id.open_ok)
-                                                .setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View ignored) {
-                                                        String password = ((EditText) mView.findViewById(R.id.open_password))
-                                                                .getText().toString();
-                                                        delete(i, password);
-                                                        switchView(mView, R.id.vault_decrypt_layout);
-                                                    }
-                                                });
-                                        mView.findViewById(R.id.open_cancel)
-                                                .setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View ignored) {
-                                                        switchView(mView, R.id.vault_name_layout);
-                                                    }
-                                                });
-                                    }
-                                });
-                        mView.findViewById(R.id.delete_cancel)
-                                .setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        switchView(mView, R.id.vault_name_layout);
-                                    }
-                                });
-                    }
-                }
-        );
 
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mSwipeListener.onPanic();
                 open(adapter.getItem(i), mView, i);
             }
         });
         mView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                mSwipeListener.onPanic();
                 switchView(mView, R.id.vault_rename_layout);
                 ((EditText) mView.findViewById(R.id.rename_name)).setText(adapter.getItem(i));
                 mView.findViewById(R.id.rename_ok)
@@ -244,8 +200,6 @@ public class VaultsListFragment extends Fragment {
                 return true;
             }
         });
-
-        mView.setOnTouchListener(mSwipeListener);
     }
 
     @OptionsItem(R.id.action_add_vault)
@@ -334,19 +288,6 @@ public class VaultsListFragment extends Fragment {
                 });
     }
 
-    void delete(final int position, final String password) {
-        String value = password;
-        Boolean pwState = new Vault(adapter.getItem(position), value).delete();
-        if (!pwState)
-            Util.alert(context,
-                    getString(R.string.Error__delete_password_incorrect),
-                    getString(R.string.Error__delete_password_incorrect_message),
-                    Util.emptyClickListener,
-                    null
-            );
-        oncreate();
-    }
-
     void rename(final int position, final String newName, final String password) {
         Vault newVault = new Vault(adapter.getItem(position), password).rename(newName);
         if (newVault == null)
@@ -400,30 +341,6 @@ public class VaultsListFragment extends Fragment {
     }
 
     void showTutorial() {
-
-        if ((adapter.getCount() > 0) && (Pref.showVaultSwipeDeleteTutorial().get())) {
-            final View mView =
-                    context.getLayoutInflater().inflate(R.layout.vault_item_tutorial, mLinearView, false);
-            TextView mInstructions = (TextView) mView.findViewById(R.id.Tutorial__instruction);
-            if (mInstructions != null)
-                mInstructions.setText(R.string.Tutorial__swipe_to_delete);
-            mLinearView.addView(mView, 0);
-            mView.setOnTouchListener(new SwipeDismissTouchListener(
-                    mView,
-                    null,
-                    new SwipeDismissTouchListener.OnDismissCallback() {
-                        @Override
-                        public void onDismiss(View view, Object token) {
-                            mLinearView.removeView(mView);
-                            Pref.edit()
-                                    .showVaultSwipeDeleteTutorial()
-                                    .put(false)
-                                    .apply();
-                        }
-                    }));
-            return;                 //Show only one tutorial at a time. Don't overload users!!
-
-        }
         if ((adapter.getCount() > 0) && (Pref.showVaultLongPressRenameTutorial().get())) {
             final View mView =
                     context.getLayoutInflater().inflate(R.layout.vault_item_tutorial, mLinearView, false);
