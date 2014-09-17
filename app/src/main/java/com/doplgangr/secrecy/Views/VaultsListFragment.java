@@ -45,6 +45,7 @@ import com.doplgangr.secrecy.Settings.Prefs_;
 import com.doplgangr.secrecy.Settings.SettingsActivity_;
 import com.doplgangr.secrecy.Util;
 import com.doplgangr.secrecy.Views.DummyViews.SwipeDismissTouchListener;
+import com.nineoldandroids.view.ViewHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
@@ -139,7 +140,8 @@ public class VaultsListFragment extends Fragment {
                 //sticky actionbar
                 int mHeaderTextHeight = context.getResources().getDimensionPixelSize(R.dimen.header_text_height);
                 int mActionBarHeight = context.getResources().getDimensionPixelSize(R.dimen.action_bar_height);
-                mHeader.setTranslationY(Math.max(-scrollY, -mHeaderTextHeight));
+                int translationY = Math.max(-scrollY, -mHeaderTextHeight);
+                ViewHelper.setTranslationY(mHeader, translationY);
 
                 ViewGroup.LayoutParams params = mActionBarTitle.getLayoutParams();
                 params.height = scrollY > mActionBarHeight ? mActionBarHeight : mHeaderTextHeight;

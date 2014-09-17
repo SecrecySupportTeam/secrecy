@@ -50,6 +50,7 @@ import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 import com.ipaulpro.afilechooser.FileChooserActivity;
+import com.nineoldandroids.view.ViewHelper;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EFragment;
@@ -335,10 +336,11 @@ public class FilesListFragment extends FileViewer {
                 int scrollY = getScrollY();
                 //sticky actionbar
                 if (scrollY >= 0) {
-                    mHeader.setTranslationY(Math.max(-scrollY, -mHeaderTextHeight));
+
+                    ViewHelper.setTranslationY(mHeader, Math.max(-scrollY, -mHeaderTextHeight));
                     mActionBarTitle.setVisibility(scrollY > mActionBarHeight ? View.GONE : View.VISIBLE);
                     context.getSupportActionBar().setTitle(scrollY > mActionBarHeight ? secret.getName() : "");
-                    mTag.setTranslationY(-scrollY);
+                    ViewHelper.setTranslationY(mTag, -scrollY);
                 }
             }
 
