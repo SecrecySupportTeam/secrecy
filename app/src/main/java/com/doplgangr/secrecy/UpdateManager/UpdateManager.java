@@ -173,6 +173,8 @@ public class UpdateManager extends Fragment {
             case 1:
                 version1to2();
                 break;
+            default:
+                onFinishAllUpgrade();   //FailSafe
         }
 
         // Notify user that app is upgrading
