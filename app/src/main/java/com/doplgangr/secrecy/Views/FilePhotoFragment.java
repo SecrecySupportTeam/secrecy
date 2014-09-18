@@ -168,7 +168,7 @@ public class FilePhotoFragment extends FragmentActivity {
                 final File file = files.get(mNum);
                 final PhotoView photoView = new PhotoView(container.getContext());
                 relativeLayout.addView(photoView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                photoView.setImageBitmap(file.getThumb());
+                photoView.setImageBitmap(file.getThumb(150));
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
                 final ProgressBar pBar = new ProgressBar(container.getContext());

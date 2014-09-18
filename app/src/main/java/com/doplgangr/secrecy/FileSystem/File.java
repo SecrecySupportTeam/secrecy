@@ -96,7 +96,7 @@ public class File implements Serializable {
         return size;
     }
 
-    public Bitmap getThumb() {
+    public Bitmap getThumb(int size) {
         File thumbnailFile = new File(thumbnailRealFile, key);
         if ((!thumbnailFile.invalidFile) && (thumb == null)) {
             CipherInputStream streamThumb = thumbnailFile.readStream(new CryptStateListener() {
@@ -118,7 +118,7 @@ public class File implements Serializable {
 
                 }
             });
-            this.thumb = storage.getThumbnailfromStream(streamThumb);
+            this.thumb = storage.getThumbnailfromStream(streamThumb, size);
         }
         return thumb;
     }

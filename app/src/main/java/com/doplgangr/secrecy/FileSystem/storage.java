@@ -36,9 +36,11 @@ import com.doplgangr.secrecy.Jobs.ShredFileJob;
 import com.doplgangr.secrecy.Util;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -173,9 +175,14 @@ public class storage {
         return null;
     }
 
-    public static Bitmap getThumbnailfromStream(CipherInputStream streamThumb) {
-        if (streamThumb != null)
-            return BitmapFactory.decodeStream(streamThumb);
+    public static Bitmap getThumbnailfromStream(CipherInputStream streamThumb, int size) {
+        if (streamThumb != null) {
+            try {
+                byte[] bytes = IOUtils.toByteArray(streamThumb);
+                return decodeSampledBitmapFromByte(bytes, size, size);
+            } catch (IOException e) {
+            }
+        }
         return null;
     }
 
@@ -191,9 +198,24 @@ public class storage {
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
-        Bitmap bmp = BitmapFactory.decodeFile(path, options);
-        return bmp;
+        return BitmapFactory.decodeFile(path, options);
     }
+
+    public static Bitmap decodeSampledBitmapFromByte(byte[] stream, int reqWidth,
+                                                     int reqHeight) {
+
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(stream, 0, stream.length, options);
+
+        options.inSampleSize = calculateInSampleSize(options, reqWidth,
+                reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeByteArray(stream, 0, stream.length, options);
+    }
+
 
     public static int calculateInSampleSize(BitmapFactory.Options options,
                                             int reqWidth, int reqHeight) {
