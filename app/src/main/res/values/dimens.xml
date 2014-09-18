@@ -25,5 +25,6 @@
     <dimen name="text_multiline_size">16sp</dimen>
 
     <dimen name="text_title_size">20sp</dimen>
+    <dimen name="drawer_right_margin">56dp</dimen>
 
 </resources>

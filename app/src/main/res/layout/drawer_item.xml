@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_navigation_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/divider_height"
+    android:orientation="horizontal"
+    android:paddingEnd="@dimen/margin_from_edge"
+    android:paddingLeft="@dimen/margin_from_edge"
+    android:paddingRight="@dimen/margin_from_edge"
+    android:paddingStart="@dimen/margin_from_edge">
+
+    <RelativeLayout
+        android:layout_width="@dimen/divider_height"
+        android:layout_height="@dimen/divider_height"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/item_navigation_img"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_vault" />
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/item_navigation_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/text_from_margin"
+        android:layout_marginStart="@dimen/text_from_margin"
+        android:gravity="start|center"
+        android:text="123"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_multiline_size" />
+
+</RelativeLayout>
