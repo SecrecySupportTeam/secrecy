@@ -23,6 +23,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
@@ -180,6 +182,14 @@ public class Util {
             //Failed to create files
             return false;
         }
+
+    }
+
+    public static void openURI(String uri) {
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(uri));
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        CustomApp.context.startActivity(i);
 
     }
 }

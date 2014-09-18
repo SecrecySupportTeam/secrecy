@@ -31,12 +31,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
+import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.File;
+import com.doplgangr.secrecy.Jobs.ThumbnailLoadJob;
 import com.doplgangr.secrecy.R;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+
+import de.greenrobot.event.EventBus;
 
 class FilesListAdapter extends ArrayAdapter<File> {
     // store the context (as an inflated layout)
@@ -53,6 +57,8 @@ class FilesListAdapter extends ArrayAdapter<File> {
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.resource = layout;
         this.isGallery = (layout == R.layout.gallery_item);
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
     }
 
     /**
@@ -187,11 +193,14 @@ class FilesListAdapter extends ArrayAdapter<File> {
                             null);
         if (viewHolder.animator != null)
             viewHolder.animator.setDisplayedChild(viewHolder.page);
+        final int avatar_size = (int) CustomApp.context.getResources().getDimension(R.dimen.list_item_avatar_size);
 
         // This class is for binding thumbnail to UI
         class BindImageTask extends AsyncTask<File, Void, Bitmap> {
             protected Bitmap doInBackground(File... files) {
-                return files[0].getThumb();     // async decrypt thumbnail
+                if (isGallery)
+                    return files[0].getThumb(100);
+                return files[0].getThumb(avatar_size);     // async decrypt thumbnail
             }
 
             protected void onPostExecute(Bitmap thumbnail) {
@@ -206,6 +215,18 @@ class FilesListAdapter extends ArrayAdapter<File> {
 
         // return the final view object
         return view;
+    }
+
+
+    public void onEventMainThread(ThumbnailLoadJob.ThumbLoadDoneEvent event) {
+        try {
+            String name = (String) event.imageView.getTag();
+            if (name.equals(event.file.getName()) && (event.bitmap != null) && (event.imageView != null)) {
+                event.imageView.setImageBitmap(event.bitmap);   // bind thumbnail in UI thread
+                event.imageView.setVisibility(View.VISIBLE);
+            }
+        } catch (OutOfMemoryError ignored) {
+        }
     }
 
     public Boolean select(int position, View view) {

@@ -43,7 +43,6 @@ import com.doplgangr.secrecy.Settings.SettingsActivity_;
 import com.doplgangr.secrecy.UpdateManager.AppVersion_;
 import com.doplgangr.secrecy.UpdateManager.UpdateManager_;
 import com.doplgangr.secrecy.Util;
-import com.uservoice.uservoicesdk.UserVoice;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -167,7 +166,7 @@ public class MainActivity
 
     @OptionsItem(R.id.action_support)
     void support() {
-        UserVoice.launchUserVoice(this);    //launch uservoice portal
+        Util.openURI(Config.support_website);    //launch uservoice portal
     }
 
     @Override

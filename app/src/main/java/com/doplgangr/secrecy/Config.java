@@ -34,6 +34,7 @@ public class Config {
     public static final int file_not_found = 2;
     public static final String settingsStore = "__SETTINGS__";
     public static final String root = "__ROOT__";
+    public static final String support_website = "http://secrecy.uservoice.com";
 
     public static com.uservoice.uservoicesdk.Config uservoice(Context context) {
         com.uservoice.uservoicesdk.Config uservoice = new com.uservoice.uservoicesdk.Config("secrecy.uservoice.com");

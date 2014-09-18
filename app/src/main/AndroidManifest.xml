@@ -112,28 +112,6 @@
         <meta-data
             android:name="com.crashlytics.ApiKey"
             android:value="ece21e8448f317038da716131b18b8affb2ac68b" />
-
-        <!-- UserVoice user support activities-->
-        <activity
-            android:name="com.uservoice.uservoicesdk.activity.PortalActivity"
-            android:theme="@style/NormalActionBarTheme" />
-        <activity
-            android:name="com.uservoice.uservoicesdk.activity.ForumActivity"
-            android:theme="@style/NormalActionBarTheme" />
-        <activity
-            android:name="com.uservoice.uservoicesdk.activity.ArticleActivity"
-            android:theme="@style/NormalActionBarTheme" />
-        <activity
-            android:name="com.uservoice.uservoicesdk.activity.TopicActivity"
-            android:theme="@style/NormalActionBarTheme" />
-        <activity
-            android:name="com.uservoice.uservoicesdk.activity.ContactActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@style/NormalActionBarTheme" />
-        <activity
-            android:name="com.uservoice.uservoicesdk.activity.PostIdeaActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@style/NormalActionBarTheme" />
     </application>
 
 </manifest>
