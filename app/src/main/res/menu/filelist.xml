@@ -12,13 +12,13 @@
     <item
         android:id="@+id/action_delete_vault"
         android:icon="@drawable/ic_action_discard"
-        android:orderInCategory="2"
+        android:orderInCategory="5"
         android:title="@string/action__delete"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_switch_interface"
         android:icon="@drawable/ic_gallery"
-        android:orderInCategory="5"
+        android:orderInCategory="2"
         android:title="@string/action__switch_interface"
         app:showAsAction="ifRoom" />
 </menu>
