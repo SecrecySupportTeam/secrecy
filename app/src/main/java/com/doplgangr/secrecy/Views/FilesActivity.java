@@ -1,5 +1,6 @@
 package com.doplgangr.secrecy.Views;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,8 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 
+import de.greenrobot.event.EventBus;
+
 @EActivity(R.layout.activity_files)
 @OptionsMenu(R.menu.main)
 public class FilesActivity extends ActionBarActivity
@@ -33,6 +36,8 @@ public class FilesActivity extends ActionBarActivity
 
     @AfterViews
     void onCreate() {
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
         overridePendingTransition(R.anim.slide_in_right, R.anim.fadeout);
         fragmentManager = getSupportFragmentManager();
         FilesListFragment_ fragment = new FilesListFragment_();
@@ -92,6 +97,27 @@ public class FilesActivity extends ActionBarActivity
     public void onDestroy() {
         storage.deleteTemp(); //Cleanup every time
         super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        EventBus.getDefault().post(new OnBackPressedEvent(this));
+    }
+
+
+    public void onEventMainThread(FilesListFragment.OnBackPressedUnhandledEvent event) {
+        //Back is pressed. should continue with default activity.
+        if (event.activity == this)
+            super.onBackPressed();
+    }
+
+
+    public class OnBackPressedEvent {
+        public Activity activity;
+
+        public OnBackPressedEvent(Activity activity) {
+            this.activity = activity;
+        }
     }
 
 }

@@ -149,7 +149,10 @@ class FilesListAdapter extends ArrayAdapter<File> {
         } else {
             view = convertView;
             ViewHolder viewHolder = (ViewHolder) view.getTag();
-            viewHolder.selected = checked.contains(position);
+            viewHolder.selected = false;
+            for (ViewNIndex obj : checked)
+                if (obj.index == position)
+                    viewHolder.selected = true;
         }
 
         // bind the data to the view object
@@ -230,9 +233,7 @@ class FilesListAdapter extends ArrayAdapter<File> {
     }
 
     public Boolean select(int position, View view) {
-        ViewNIndex object = new ViewNIndex();
-        object.index = position;
-        object.view = view;
+        ViewNIndex object = new ViewNIndex(position, view);
         for (ViewNIndex obj : checked)
             if (position == obj.index) {
                 checked.remove(checked.indexOf(obj));
@@ -279,6 +280,11 @@ class FilesListAdapter extends ArrayAdapter<File> {
     static class ViewNIndex {
         public Integer index;
         public View view;
+
+        public ViewNIndex(Integer index, View view) {
+            this.index = index;
+            this.view = view;
+        }
 
     }
 
