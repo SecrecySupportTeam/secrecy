@@ -2,11 +2,14 @@ package com.doplgangr.secrecy.Views;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +57,8 @@ public class FilePhotoFragment extends FragmentActivity {
     @AfterViews
     void onCreate() {
         context = this;
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
         final SamplePagerAdapter adapter = new SamplePagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(adapter);
         Vault secret = new Vault(vault, password);
@@ -66,6 +71,46 @@ public class FilePhotoFragment extends FragmentActivity {
         secret.iterateAllFiles(mListener);
         if ((itemNo != null) && (itemNo < (mViewPager.getAdapter().getCount()))) //check if requested item is in bound
             mViewPager.setCurrentItem(itemNo);
+    }
+
+    public void onEventMainThread(ImageLoadJob.ImageLoadDoneEvent event) {
+        Util.log("Recieving imageview and bm");
+        if (event.bitmap == null && event.progressBar == null && event.imageView == null) {
+            Util.alert(context,
+                    context.getString(R.string.Error__out_of_memory),
+                    context.getString(R.string.Error__out_of_memory_message),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            context.finish();
+                        }
+                    },
+                    null);
+            return;
+        }
+        try {
+            int vHeight = event.imageView.getHeight();
+            int vWidth = event.imageView.getWidth();
+            int bHeight = event.bitmap.getHeight();
+            int bWidth = event.bitmap.getWidth();
+            float ratio = vHeight / bHeight < vWidth / bWidth ? (float) vHeight / bHeight : (float) vWidth / bWidth;
+            Util.log(vHeight, vWidth, bHeight, bWidth);
+            Util.log(ratio);
+            event.imageView.setImageBitmap(Bitmap.createScaledBitmap(event.bitmap, (int) (ratio * bWidth)
+                    , (int) (ratio * bHeight), false));
+        } catch (OutOfMemoryError e) {
+            Util.alert(context,
+                    context.getString(R.string.Error__out_of_memory),
+                    context.getString(R.string.Error__out_of_memory_message),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            context.finish();
+                        }
+                    },
+                    null);
+        }
+        event.progressBar.setVisibility(View.GONE);
     }
 
     static class SamplePagerAdapter extends FragmentPagerAdapter {
@@ -96,14 +141,20 @@ public class FilePhotoFragment extends FragmentActivity {
             return PhotoFragment.newInstance(position);
         }
 
-
+        @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-            PhotoFragment photoFragment = (PhotoFragment) object;
-            photoFragment.removeSelf();
+            if (position >= getCount()) {
+                ((Fragment) object).onDestroy();
+                FragmentManager manager = ((Fragment) object).getFragmentManager();
+                FragmentTransaction trans = manager.beginTransaction();
+                trans.remove((Fragment) object);
+                trans.commit();
+            }
         }
 
         public static class PhotoFragment extends Fragment {
             int mNum;
+            PhotoView photoView;
 
             static PhotoFragment newInstance(int num) {
                 PhotoFragment f = new PhotoFragment();
@@ -116,43 +167,9 @@ public class FilePhotoFragment extends FragmentActivity {
             }
 
 
-            public void onEventMainThread(ImageLoadJob.ImageLoadDoneEvent event) {
-                Util.log("Recieving imageview and bm");
-                if (event.bitmap == null && event.progressBar == null && event.imageView == null) {
-                    Util.alert(context,
-                            context.getString(R.string.Error__out_of_memory),
-                            context.getString(R.string.Error__out_of_memory_message),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    context.finish();
-                                }
-                            },
-                            null);
-                    return;
-                }
-                try {
-                    event.imageView.setImageBitmap(event.bitmap);
-                } catch (OutOfMemoryError e) {
-                    Util.alert(context,
-                            context.getString(R.string.Error__out_of_memory),
-                            context.getString(R.string.Error__out_of_memory_message),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    context.finish();
-                                }
-                            },
-                            null);
-                }
-                event.progressBar.setVisibility(View.GONE);
-            }
-
             @Override
             public void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
-                if (!EventBus.getDefault().isRegistered(this))
-                    EventBus.getDefault().register(this);
                 mNum = getArguments() != null ? getArguments().getInt(Config.gallery_item_extra) : 1;
             }
 
@@ -167,6 +184,7 @@ public class FilePhotoFragment extends FragmentActivity {
                 final RelativeLayout relativeLayout = new RelativeLayout(container.getContext());
                 final File file = files.get(mNum);
                 final PhotoView photoView = new PhotoView(container.getContext());
+                this.photoView = photoView;
                 relativeLayout.addView(photoView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                 photoView.setImageBitmap(file.getThumb(150));
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -174,12 +192,18 @@ public class FilePhotoFragment extends FragmentActivity {
                 final ProgressBar pBar = new ProgressBar(container.getContext());
                 pBar.setIndeterminate(false);
                 relativeLayout.addView(pBar, layoutParams);
-                CustomApp.jobManager.addJobInBackground(new ImageLoadJob(context, file, photoView, pBar));
+                CustomApp.jobManager.addJobInBackground(new ImageLoadJob(mNum, file, photoView, pBar));
                 return relativeLayout;
             }
 
-            public void removeSelf() {
-                onDestroy();
+            @Override
+            public void onDestroy() {
+                Util.log("onDestroy!!");
+                if (photoView != null) {
+                    BitmapDrawable bd = (BitmapDrawable) photoView.getDrawable();
+                    bd.getBitmap().recycle();
+                }
+                super.onDestroy();
             }
 
         }
