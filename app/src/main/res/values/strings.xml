@@ -47,4 +47,5 @@
     <string name="Dialog__purchased">Already donated!</string>
     <string name="Dialog__purchase_message">Thank you for purchasing the Donation Package!</string>
     <string name="Error__cannot_set_up_IAP">Problem setting up in-app billing. Please check your Play store.</string>
+    <string name="App__slogan">Be safe around geeks™</string>
 </resources>
