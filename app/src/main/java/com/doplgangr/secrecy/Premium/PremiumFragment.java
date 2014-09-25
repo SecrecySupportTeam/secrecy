@@ -17,8 +17,8 @@ package com.doplgangr.secrecy.Premium;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -36,22 +36,22 @@ import com.github.jberkel.pay.me.model.ItemType;
 import com.github.jberkel.pay.me.model.Purchase;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
-@EActivity(R.layout.activity_premium)
-public class PremiumActivity extends Activity {
+@EFragment(R.layout.activity_premium)
+public class PremiumFragment extends Fragment {
     // Debug tag, for logging
     private static final String TAG = "PremiumActivity";
     private static final String SKU_PREMIUM = "donation.package.2";
     // (arbitrary) request code for the purchase flow
     private static final int RC_REQUEST = 19283;
-    private final Context context = this;
     @ViewById(R.id.Premium__upgrade_button)
     Button mUpgradeButton;
     // SKUs for our products: the premium upgrade (non-consumable) and gas (consumable)
     @ViewById(R.id.Premium__progress_bar)
     ProgressBar mProgressBar;
+    private Activity context;
     //static final String SKU_PREMIUM = "android.test.purchased";
     // Does the user have the premium upgrade?
     private boolean mIsPremium = false;
@@ -130,6 +130,7 @@ public class PremiumActivity extends Activity {
 
     @AfterViews
     void onCreate() {
+        context = getActivity();
         loadData();
 
         /* base64EncodedPublicKey should be YOUR APPLICATION'S PUBLIC KEY
@@ -186,12 +187,12 @@ public class PremiumActivity extends Activity {
          *        an empty string, but on a production app you should carefully generate this. */
         String payload = "";
 
-        mHelper.launchPurchaseFlow(this, SKU_PREMIUM, ItemType.INAPP, RC_REQUEST,
+        mHelper.launchPurchaseFlow(context, SKU_PREMIUM, ItemType.INAPP, RC_REQUEST,
                 mPurchaseFinishedListener, payload);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Util.log("onActivityResult(" + requestCode + "," + resultCode + "," + data);
         if (mHelper == null) return;
 
@@ -268,7 +269,7 @@ public class PremiumActivity extends Activity {
     }
 
     void alert(String message) {
-        AlertDialog.Builder bld = new AlertDialog.Builder(this);
+        AlertDialog.Builder bld = new AlertDialog.Builder(context);
         bld.setMessage(message);
         bld.setNeutralButton(R.string.OK, null);
         Util.log("Showing alert dialog: " + message);

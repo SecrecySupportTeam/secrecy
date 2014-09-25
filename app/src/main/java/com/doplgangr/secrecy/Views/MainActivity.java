@@ -25,33 +25,43 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
+import com.balysv.materialmenu.MaterialMenuDrawable;
+import com.balysv.materialmenu.extras.abc.MaterialMenuIconCompat;
 import com.crashlytics.android.Crashlytics;
 import com.doplgangr.secrecy.Config;
+import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.storage;
-import com.doplgangr.secrecy.Premium.PremiumActivity_;
+import com.doplgangr.secrecy.Premium.PremiumFragment_;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.Prefs_;
-import com.doplgangr.secrecy.Settings.SettingsActivity_;
+import com.doplgangr.secrecy.Settings.SettingsFragment_;
 import com.doplgangr.secrecy.UpdateManager.AppVersion_;
 import com.doplgangr.secrecy.UpdateManager.UpdateManager_;
 import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.Views.DummyViews.NavDrawer.DrawerLayout;
+import com.doplgangr.secrecy.Views.DummyViews.NavDrawer.NavItem;
+import com.doplgangr.secrecy.Views.DummyViews.NavDrawer.NavListView;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
+import java.util.ArrayList;
+
 @EActivity(R.layout.activity_main)
-@OptionsMenu(R.menu.main)
 public class MainActivity
         extends ActionBarActivity
         implements
@@ -62,13 +72,21 @@ public class MainActivity
     AppVersion_ version;
     @Pref
     Prefs_ Prefs;
+    @ViewById(R.id.left_drawer_list)
+    NavListView mNavigation;
+    @ViewById(R.id.left_drawer)
+    View mDrawer;
+    @ViewById(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
     FragmentManager fragmentManager;
+    MaterialMenuIconCompat materialMenu;
 
     @AfterViews
     public void onCreate() {
         Crashlytics.start(this);
         storage.deleteTemp();                                           //Start clean
         fragmentManager = getSupportFragmentManager();
+
         if (Prefs.stealthMode().get() == -1) {
             //if this is the first time, display a dialog to inform successful trial
             onFirstLaunch();
@@ -85,7 +103,57 @@ public class MainActivity
             if (pInfo.versionCode != version.no().get())
                 addFragment(new UpdateManager_(), R.anim.slide_in_right, R.anim.fadeout);
         }
+        materialMenu = new MaterialMenuIconCompat(this, Color.WHITE, MaterialMenuDrawable.Stroke.THIN);
+        materialMenu.animateState(MaterialMenuDrawable.IconState.BURGER);
+        mNavigation.addNavigationItem(
+                CustomApp.context.getString(R.string.Page_header__vaults),
+                R.drawable.ic_vault,
+                false);
 
+        mNavigation.addNavigationItem(
+                CustomApp.context.getString(R.string.Page_header__settings),
+                R.drawable.ic_setting,
+                false);
+        mNavigation.addNavigationItem(
+                CustomApp.context.getString(R.string.action__donate),
+                R.drawable.ic_love,
+                false);
+        mNavigation.addNavigationItem(
+                CustomApp.context.getString(R.string.action__support),
+                R.drawable.ic_help,
+                false);
+        mNavigation.setNavigationItemClickListener(new NavListView.NavigationItemClickListener() {
+            @Override
+            public void onNavigationItemSelected(String item, ArrayList<NavItem> items, int position) {
+                Util.log(position, "Clicked");
+                switchFragment(position);
+                mDrawerLayout.closeDrawers();
+            }
+        });
+
+        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+                R.drawable.ic_launcher, 0, 0) {
+
+            /**
+             * Called when a drawer has settled in a completely closed state.
+             */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                materialMenu.animateState(MaterialMenuDrawable.IconState.BURGER);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            /**
+             * Called when a drawer has settled in a completely open state.
+             */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                materialMenu.animateState(MaterialMenuDrawable.IconState.X);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        switchFragment(0);
         showHelpDeskTutorial();
     }
 
@@ -114,6 +182,24 @@ public class MainActivity
 
     }
 
+    void switchFragment(int page) {
+        switch (page) {
+            case 0:
+                addFragment(new VaultsListFragment_(), 0, 0);
+                break;
+            case 1:
+                addFragment(new SettingsFragment_(), 0, 0);
+                break;
+            case 2:
+                addFragment(new PremiumFragment_(), 0, 0);
+                break;
+            case 3:
+                support();
+                return; //Do not set highlighted
+        }
+        mNavigation.setSelectedItem(page);
+    }
+
     void onFirstLaunch() {
         final View dialogView = View.inflate(context, R.layout.dialog_finish_stealth, null);
         String password = Prefs.OpenPIN().get();
@@ -136,6 +222,25 @@ public class MainActivity
                 .show();
     }
 
+    @OptionsItem(R.id.home)
+    void supporthomePressed() {
+        if (mDrawerLayout.isDrawerOpen(mDrawer)) {
+            mDrawerLayout.closeDrawer(mDrawer);
+        } else {
+            mDrawerLayout.openDrawer(mDrawer);
+        }
+    }
+
+    @OptionsItem(android.R.id.home)
+    void homePressed() {
+        if (mDrawerLayout.isDrawerOpen(mDrawer)) {
+            mDrawerLayout.closeDrawer(mDrawer);
+        }else {
+            mDrawerLayout.openDrawer(mDrawer);
+        }
+    }
+
+
     @Override
     public void onVaultSelected(String vault, String password) {
         Intent intent = new Intent(this, FilesActivity_.class);
@@ -148,23 +253,12 @@ public class MainActivity
         String tag = fragment.getClass().getName();
         fragmentManager.beginTransaction()
                 .setCustomAnimations(transition1, transition2)
-                .replace(android.R.id.content, fragment, tag)
+                .replace(R.id.content_frame, fragment, tag)
                 .addToBackStack(tag)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .commit();
     }
 
-    @OptionsItem(R.id.action_settings)
-    void settings() {
-        startActivity(new Intent(context, SettingsActivity_.class));
-    }
-
-    @OptionsItem(R.id.action_donate)
-    void donate() {
-        startActivity(new Intent(context, PremiumActivity_.class));
-    }
-
-    @OptionsItem(R.id.action_support)
     void support() {
         Util.openURI(Config.support_website);    //launch uservoice portal
     }
@@ -186,5 +280,21 @@ public class MainActivity
     public void onDestroy() {
         storage.deleteTemp(); //Cleanup every time
         super.onDestroy();
+    }
+
+    @Override
+
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        // If the nav drawer is open, hide action items related to the content view
+        boolean drawerOpen =
+                mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mDrawer);
+        hideMenuItems(menu, !drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    private void hideMenuItems(Menu menu, boolean visible){
+        for(int i = 0; i < menu.size(); i++)
+            menu.getItem(i).setVisible(visible);
     }
 }

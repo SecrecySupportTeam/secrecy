@@ -28,7 +28,6 @@ import com.doplgangr.secrecy.FileSystem.storage;
 import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
 import com.path.android.jobqueue.log.CustomLogger;
-import com.uservoice.uservoicesdk.UserVoice;
 
 import org.androidannotations.annotations.EApplication;
 
@@ -53,8 +52,6 @@ public class CustomApp extends Application {
         storage.deleteTemp(); //Start clean every time!!
 
         jobManager = new JobManager(this);
-        // Set this up once when your application launches
-        UserVoice.init(Config.uservoice(this), this);  //Uservoice init
     }
 
     @Override

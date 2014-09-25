@@ -1,19 +1,18 @@
 package com.doplgangr.secrecy.Views;
 
 import android.app.Activity;
-import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 
+import com.balysv.materialmenu.MaterialMenuDrawable;
+import com.balysv.materialmenu.extras.abc.MaterialMenuIconCompat;
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.FileSystem.storage;
-import com.doplgangr.secrecy.Premium.PremiumActivity_;
 import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.Settings.SettingsActivity_;
-import com.doplgangr.secrecy.Util;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -33,6 +32,7 @@ public class FilesActivity extends ActionBarActivity
     String vault;
     @Extra(Config.password_extra)
     String password;
+    MaterialMenuIconCompat materialMenu;
 
     @AfterViews
     void onCreate() {
@@ -48,6 +48,9 @@ public class FilesActivity extends ActionBarActivity
         fragmentManager.beginTransaction()
                 .replace(android.R.id.content, fragment)
                 .commit();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        materialMenu = new MaterialMenuIconCompat(this, Color.WHITE, MaterialMenuDrawable.Stroke.THIN);
+        materialMenu.animateState(MaterialMenuDrawable.IconState.ARROW);
     }
 
     @Override
@@ -78,21 +81,6 @@ public class FilesActivity extends ActionBarActivity
                 .commit();
     }
 
-    @OptionsItem(R.id.action_settings)
-    void settings() {
-        startActivity(new Intent(this, SettingsActivity_.class));
-    }
-
-    @OptionsItem(R.id.action_donate)
-    void donate() {
-        startActivity(new Intent(this, PremiumActivity_.class));
-    }
-
-    @OptionsItem(R.id.action_support)
-    void support() {
-        Util.openURI(Config.support_website);    //launch uservoice portal
-    }
-
     @Override
     public void onDestroy() {
         storage.deleteTemp(); //Cleanup every time
@@ -109,6 +97,16 @@ public class FilesActivity extends ActionBarActivity
         //Back is pressed. should continue with default activity.
         if (event.activity == this)
             super.onBackPressed();
+    }
+
+    @OptionsItem(R.id.home)
+    void supporthomePressed() {
+        onBackPressed();
+    }
+
+    @OptionsItem(android.R.id.home)
+    void homePressed() {
+        onBackPressed();
     }
 
 

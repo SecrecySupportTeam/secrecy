@@ -19,8 +19,6 @@
 
 package com.doplgangr.secrecy;
 
-import android.content.Context;
-
 public class Config {
     public static final int bufferSize = 2097152;
     public static final String file_extra = "FILE";
@@ -35,11 +33,5 @@ public class Config {
     public static final String settingsStore = "__SETTINGS__";
     public static final String root = "__ROOT__";
     public static final String support_website = "http://secrecy.uservoice.com";
-
-    public static com.uservoice.uservoicesdk.Config uservoice(Context context) {
-        com.uservoice.uservoicesdk.Config uservoice = new com.uservoice.uservoicesdk.Config("secrecy.uservoice.com");
-        uservoice.setForumId(263182);
-        return uservoice;
-    }
 
 }

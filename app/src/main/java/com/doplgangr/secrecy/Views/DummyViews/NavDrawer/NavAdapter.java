@@ -3,6 +3,8 @@ package com.doplgangr.secrecy.Views.DummyViews.NavDrawer;
 import android.content.Context;
 import android.graphics.ColorFilter;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.doplgangr.secrecy.R;
+import com.doplgangr.secrecy.Util;
 
 import java.util.ArrayList;
 
@@ -46,14 +49,16 @@ public class NavAdapter extends ArrayAdapter<NavItem> {
 
         itemView.setText(NavItem.getItem());
         imgView.setImageDrawable(getColouredDrawable(mContext.getResources().getDrawable(NavItem.getImg()), NavItem.getIsSelected()));
+        imgView.setTag(NavItem.getItem());
+        Util.log(imgView);
 
-        itemView.setTextColor(NavItem.getIsSelected() ? NavListView.mSelectedColour : mContext.getResources().getColor(R.color.text_secondary));
+        itemView.setTextColor(NavItem.getIsSelected() ? mContext.getResources().getColor(R.color.primary) : mContext.getResources().getColor(R.color.text_secondary));
 
         return v;
     }
 
     private Drawable getColouredDrawable(Drawable _drawable, boolean _isSelected) {
-        int iColor = _isSelected ? NavListView.mSelectedColour : mContext.getResources().getColor(R.color.text_secondary);
+        int iColor = _isSelected ? mContext.getResources().getColor(R.color.primary) : mContext.getResources().getColor(R.color.text_secondary);
 
         int red = (iColor & 0xFF0000) / 0xFFFF;
         int green = (iColor & 0xFF00) / 0xFF;
@@ -66,7 +71,7 @@ public class NavAdapter extends ArrayAdapter<NavItem> {
 
         ColorFilter colorFilter = new ColorMatrixColorFilter(matrix);
 
-        _drawable.setColorFilter(colorFilter);
+        _drawable.setColorFilter(new PorterDuffColorFilter(iColor, PorterDuff.Mode.SRC_IN));
 
         return _drawable;
     }

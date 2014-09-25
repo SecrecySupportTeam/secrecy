@@ -22,7 +22,6 @@ package com.doplgangr.secrecy.Views;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -38,14 +37,12 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
-import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.Vault;
 import com.doplgangr.secrecy.FileSystem.storage;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.Prefs_;
-import com.doplgangr.secrecy.Settings.SettingsActivity_;
+import com.doplgangr.secrecy.Settings.SettingsFragment_;
 import com.doplgangr.secrecy.Util;
-import com.doplgangr.secrecy.Views.DummyViews.NavDrawer.NavListView;
 import com.nineoldandroids.view.ViewHelper;
 
 import org.androidannotations.annotations.AfterViews;
@@ -75,8 +72,6 @@ public class VaultsListFragment extends Fragment {
     View mHeader;
     @ViewById(R.id.nothing)
     View nothing;
-    @ViewById(R.id.left_drawer)
-    NavListView mNavigation;
     @DrawableRes(R.drawable.file_selector)
     Drawable selector;
     @Pref
@@ -105,10 +100,6 @@ public class VaultsListFragment extends Fragment {
             mLinearView.removeAllViews();
         context.getSupportActionBar().setTitle("");
         mActionBarTitle.setText(R.string.App__name);
-        mNavigation.addNavigationItem(
-                CustomApp.context.getString(R.string.Page_header__vaults),
-                R.drawable.ic_vault,
-                true);
         java.io.File root = storage.getRoot();
         if (!Util.canWrite(root)) {
             Util.alert(context,
@@ -117,7 +108,7 @@ public class VaultsListFragment extends Fragment {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            startActivity(new Intent(context, SettingsActivity_.class));
+                            mFinishListener.onNew(null, new SettingsFragment_());
                         }
                     },
                     null
@@ -340,12 +331,6 @@ public class VaultsListFragment extends Fragment {
 
     void finish() {
         mFinishListener.onFinish(this);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        oncreate();
     }
 
     void showTutorial() {

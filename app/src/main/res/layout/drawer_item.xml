@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:gravity="center_vertical"
     android:minHeight="@dimen/divider_height"
     android:orientation="horizontal"
     android:paddingEnd="@dimen/margin_from_edge"
@@ -22,20 +21,24 @@
             android:id="@+id/item_navigation_img"
             android:layout_width="@dimen/icon_size"
             android:layout_height="@dimen/icon_size"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_vault" />
+            android:layout_gravity="center_vertical" />
     </RelativeLayout>
 
 
-    <TextView
-        android:id="@+id/item_navigation_title"
-        android:layout_width="fill_parent"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/text_from_margin"
-        android:layout_marginStart="@dimen/text_from_margin"
-        android:gravity="start|center"
-        android:text="123"
-        android:textColor="@color/text_secondary"
-        android:textSize="@dimen/text_multiline_size" />
+        android:layout_centerVertical="true">
+
+        <TextView
+            android:id="@+id/item_navigation_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_from_margin"
+            android:layout_marginStart="@dimen/text_from_margin"
+            android:gravity="start|center"
+            android:textSize="@dimen/text_multiline_size" />
+    </RelativeLayout>
+
 
 </RelativeLayout>

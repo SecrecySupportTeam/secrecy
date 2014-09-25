@@ -27,13 +27,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceGroup;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.preference.PreferenceFragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -41,7 +44,7 @@ import android.widget.Toast;
 
 import com.doplgangr.secrecy.CustomApp_;
 import com.doplgangr.secrecy.FileSystem.storage;
-import com.doplgangr.secrecy.Premium.PremiumActivity_;
+import com.doplgangr.secrecy.Premium.PremiumFragment_;
 import com.doplgangr.secrecy.Premium.PremiumStateHelper;
 import com.doplgangr.secrecy.Premium.StealthMode;
 import com.doplgangr.secrecy.R;
@@ -89,6 +92,11 @@ public class SettingsFragment extends PreferenceFragment
     String libraries;
     @Pref
     Prefs_ Prefs;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.activity_settings, container, false);
+    }
 
     @AfterViews
     void onCreate() {
@@ -253,7 +261,7 @@ public class SettingsFragment extends PreferenceFragment
                 stealth_mode_password.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        startActivity(new Intent(context, PremiumActivity_.class));
+                        startActivity(new Intent(context, PremiumFragment_.class));
                         return true;
                     }
                 });

@@ -45,13 +45,17 @@
             android:textSize="@dimen/text_title_size" />
     </FrameLayout>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/container"
+    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/header"
+        android:layout_marginEnd="@dimen/margin_from_edge"
+        android:layout_marginLeft="@dimen/margin_from_edge"
+        android:layout_marginRight="@dimen/margin_from_edge"
+        android:layout_marginStart="@dimen/margin_from_edge"
         android:orientation="vertical">
 
-    </LinearLayout>
+    </ListView>
 </RelativeLayout>
 
