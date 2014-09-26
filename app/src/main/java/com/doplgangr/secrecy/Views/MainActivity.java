@@ -86,6 +86,7 @@ public class MainActivity
         Crashlytics.start(this);
         storage.deleteTemp();                                           //Start clean
         fragmentManager = getSupportFragmentManager();
+        switchFragment(0);
 
         if (Prefs.stealthMode().get() == -1) {
             //if this is the first time, display a dialog to inform successful trial
@@ -153,7 +154,6 @@ public class MainActivity
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-        switchFragment(0);
         showHelpDeskTutorial();
     }
 

@@ -35,6 +35,7 @@ import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.Prefs_;
 import com.doplgangr.secrecy.Util;
 import com.doplgangr.secrecy.Views.VaultsListFragment;
+import com.doplgangr.secrecy.Views.VaultsListFragment_;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -465,6 +466,7 @@ public class UpdateManager extends Fragment {
 
     void finish() {
         mFinishListener.onFinish(this);
+        mFinishListener.onNew(null, new VaultsListFragment_());
     }
 
 }
