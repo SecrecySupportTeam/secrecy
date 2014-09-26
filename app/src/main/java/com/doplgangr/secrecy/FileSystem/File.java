@@ -68,6 +68,11 @@ public class File implements Serializable {
     public File(java.io.File file, String secret) {
         if (file.exists()) {
             name = FilenameUtils.getBaseName(file.getName());
+            try {
+                name = Base64Coder.decodeString(name);          //if name is invalid, return original name
+            } catch (IllegalArgumentException ignored) {
+
+            }
             FileType = FilenameUtils.getExtension(file.getName());
             this.file = file;
             this.key = secret;

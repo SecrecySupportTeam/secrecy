@@ -69,9 +69,10 @@ public class Vault implements Serializable {
 
     private static boolean fileFilter(java.io.File file) {
         String regex = "^((?!_thumb|.nomedia).)*$";            //Filter out .nomedia and thumbnails
+        String name = file.getName();
         final Pattern p = Pattern.compile(regex);
-        p.matcher(file.getName()).matches();
-        return p.matcher(file.getName()).matches();
+        p.matcher(name).matches();
+        return p.matcher(name).matches();
 
     }
 
@@ -130,12 +131,13 @@ public class Vault implements Serializable {
         } catch (Exception ignored) {
             // Leave it.
         }
-        if (!filename.contains("_thumb")) {
+        if (!filename.contains("_thumb") && !filename.contains(".nomedia")) {
             ContentResolver cR = context.getContentResolver();
             MimeTypeMap mime = MimeTypeMap.getSingleton();
             String type = mime.getExtensionFromMimeType(cR.getType(uri));
             if (type != null)
-                filename = FilenameUtils.removeExtension(filename) + "." + type;
+                filename = Base64Coder.encodeString(FilenameUtils.removeExtension(filename)) + "." +
+                        type;
         }
         InputStream is = null;
         OutputStream out = null;
