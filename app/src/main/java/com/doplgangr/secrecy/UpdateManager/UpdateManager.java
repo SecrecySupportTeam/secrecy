@@ -29,6 +29,7 @@ import android.support.v4.app.Fragment;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.doplgangr.secrecy.FileSystem.Base64Coder;
 import com.doplgangr.secrecy.FileSystem.storage;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.Prefs_;
@@ -43,8 +44,12 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 
 /*
 Called whenever user installs/upgrades.
@@ -110,6 +115,11 @@ public class UpdateManager extends Fragment {
 
         // Switches between different upgrades, based on last app version.
         switch (version.no().get()) {
+            case 32:
+                version32to40();
+            case 31:
+                version31to32();
+                break;
             case 30:
                 version30to31();
                 break;
@@ -182,9 +192,37 @@ public class UpdateManager extends Fragment {
     }
 
     @Background
+    void version32to40() {
+        //walks the whole file tree, find out files that do not have encoded file names
+        //and encode them.
+        Collection files = FileUtils.listFiles(storage.getRoot(), TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+        for (Object file : files) {
+            File realFile = (File) file;
+            String fileName = FilenameUtils.removeExtension(realFile.getName());
+            fileName = fileName.replace("_thumb", "");
+            if (".nomedia".equals(fileName))
+                continue;
+            try {
+                Base64Coder.decodeString(fileName);
+            } catch (IllegalArgumentException e) {
+                String encodedFileName = Base64Coder.encodeString(fileName);
+                fileName = realFile.getAbsolutePath().replace(fileName, encodedFileName);
+                Boolean ignored = realFile.renameTo(new File(fileName));
+            }
+        }
+        onFinishAllUpgrade();
+    }
+
+    @Background
+    void version31to32() {
+        //Nahh
+        version32to40();
+    }
+
+    @Background
     void version30to31() {
         //Nahh
-        onFinishAllUpgrade();
+        version31to32();
     }
 
     @Background
