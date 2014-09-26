@@ -47,4 +47,5 @@
     <string name="Dialog__purchased">Zaten bağışladı!</string>
     <string name="Dialog__purchase_message">Bağış Paketi satın aldığınız için teşekkür ederiz!</string>
     <string name="Error__cannot_set_up_IAP">Uygulama içi satın alma kurulumunda sorun oldu. Lütfen Play store hesabınızı kontrol edin.</string>
+    <string name="App__slogan">Be safe around geeks™</string>
 </resources>

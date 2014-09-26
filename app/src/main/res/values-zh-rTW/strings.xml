@@ -47,4 +47,5 @@
     <string name="Dialog__purchased">完成捐贈！</string>
     <string name="Dialog__purchase_message">感謝您的捐款</string>
     <string name="Error__cannot_set_up_IAP">內購功能有問題。請檢查您的Play商店。</string>
+    <string name="App__slogan">Be safe around geeks™</string>
 </resources>

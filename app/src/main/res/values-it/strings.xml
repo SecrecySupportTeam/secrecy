@@ -47,11 +47,5 @@ Donando tu potrai avere delle funzioni aggiuntive.</string>
     <string name="Dialog__purchased">Hai già donato!</string>
     <string name="Dialog__purchase_message">Grazie per aver acquistato il pacchetto di donazione!</string>
     <string name="Error__cannot_set_up_IAP">Problema nell\'impostazione fatturazione in-app.Si prega di controllare il Play Store.</string>
-    <string-array name="Donation__google_catalog_values">
-        <item>2 USD</item>
-        <item>5 USD</item>
-        <item>10 USD</item>
-        <item>15 USD</item>
-        <item>20 USD</item>
-    </string-array>
+    <string name="App__slogan">Essere al sicuro intorno ai geek™</string>
 </resources>

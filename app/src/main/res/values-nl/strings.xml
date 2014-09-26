@@ -47,11 +47,5 @@
     <string name="Dialog__purchased">All gedoneerd!</string>
     <string name="Dialog__purchase_message">Bedankt voor het aankopen van het Donatie Pakket!</string>
     <string name="Error__cannot_set_up_IAP">Instelling probleem met in-app facturering. Controleer uw Play Store.</string>
-    <string-array name="Donation__google_catalog_values">
-        <item>2 USD</item>
-        <item>5 USD</item>
-        <item>10 USD</item>
-        <item>15 USD</item>
-        <item>20 USD</item>
-    </string-array>
+    <string name="App__slogan">Be safe around geeks™</string>
 </resources>

@@ -47,4 +47,5 @@
     <string name="Dialog__purchased">捐赠完成！</string>
     <string name="Dialog__purchase_message">感谢您购买捐赠包</string>
     <string name="Error__cannot_set_up_IAP">设置应用内购时发生问题。请检查您的Play商店。</string>
+    <string name="App__slogan">Be safe around geeks™</string>
 </resources>

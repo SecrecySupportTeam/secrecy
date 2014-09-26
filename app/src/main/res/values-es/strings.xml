@@ -47,11 +47,5 @@ Al donar, se puede disfrutar de muchas funciones más avanzadas.</string>
     <string name="Dialog__purchased">Ya ha donado!</string>
     <string name="Dialog__purchase_message">Gracias por comprar el paquete Donación!</string>
     <string name="Error__cannot_set_up_IAP">Problemas al configurar la  compra. Por favor comprueba la Play Store.</string>
-    <string-array name="Donation__google_catalog_values">
-        <item>2 USD</item>
-        <item>5 USD</item>
-        <item>10 USD</item>
-        <item>15 USD</item>
-        <item>20 USD</item>
-    </string-array>
+    <string name="App__slogan">Sé seguro alrededor de frikis™</string>
 </resources>

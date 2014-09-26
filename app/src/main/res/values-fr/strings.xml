@@ -44,11 +44,5 @@ En faisant un don, vous pourrez profiter des nombreuses fonctions plus avancées
     <string name="Dialog__purchased">Donation déjà effectué!</string>
     <string name="Dialog__purchase_message">Merci d\'avoir acheté le package Donation !</string>
     <string name="Error__cannot_set_up_IAP">Problème lors du paramétrage du  service de paiement in-app. Veuillez vérifier votre Play Store.</string>
-    <string-array name="Donation__google_catalog_values">
-        <item>2 USD</item>
-        <item>5 USD</item>
-        <item>10 USD</item>
-        <item>15 USD</item>
-        <item>20 USD</item>
-    </string-array>
+    <string name="App__slogan">Soyez protégé autour de geeks™</string>
 </resources>

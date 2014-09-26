@@ -47,4 +47,5 @@
     <string name="Dialog__purchased">Уже пожертвовали!</string>
     <string name="Dialog__purchase_message">Спасибо за приобретение пакета поддержки!</string>
     <string name="Error__cannot_set_up_IAP">При запуске покупки возникла проблема. Проверьте установленный Play Маркет.</string>
+    <string name="App__slogan">Буди сигуран поред штребера™</string>
 </resources>

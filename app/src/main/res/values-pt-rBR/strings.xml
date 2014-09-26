@@ -47,11 +47,5 @@
     <string name="Dialog__purchased">Já doou!</string>
     <string name="Dialog__purchase_message">Obrigado por adquirir o pacote de doação!</string>
     <string name="Error__cannot_set_up_IAP">Problema ao configurar o faturamento in-app. Por favor, verifique a sua Play Store.</string>
-    <string-array name="Donation__google_catalog_values">
-        <item>2 USD</item>
-        <item>5 USD</item>
-        <item>10 USD</item>
-        <item>15 USD</item>
-        <item>20 USD</item>
-    </string-array>
+    <string name="App__slogan">Esteja seguro em torno dos geeks™</string>
 </resources>
