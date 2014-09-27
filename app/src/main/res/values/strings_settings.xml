@@ -4,20 +4,6 @@
     <string name="Settings__changed_alert">Settings will take place after you restart this app</string>
 
     <string name="Settings_libraries">Libraries used for Secrecy</string>
-    
-    <string name="Settings__libraries_message">
-        AndroidAnnotations (Apache 2.0),
-        \n
-        android-support-v4-preferencefragment (Apache 2.0),
-        \n
-        aFileChooser (Apache 2.0),
-        \n
-        pay-me (Apache 2.0),
-        \n
-        photoView (Apache 2.0),
-        \n
-        NineoldAndroids (Apache 2.0)
-    </string>
 
     <string name="Settings__credits">Credits</string>
     <string name="Settings__translators">Translators</string>

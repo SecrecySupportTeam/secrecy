@@ -24,4 +24,21 @@
         <item>https://crowdin.com/profile/jorge705</item>
         <item>http://forum.xda-developers.com/member.php?u=1265890</item>
     </string-array>
+    <string name="Settings__libraries_message">
+        AndroidAnnotations (Apache 2.0),
+        \n
+        android-support-v4-preferencefragment (Apache 2.0),
+        \n
+        aFileChooser (Apache 2.0),
+        \n
+        pay-me (Apache 2.0),
+        \n
+        subsampling-scale-image-view (Apache 2.0),
+        \n
+        NineoldAndroids (Apache 2.0),
+        \n
+        android-priority-jobqueue (Apache 2.0),
+        \n
+        EventBus (Apache 2.0)
+    </string>
 </resources>
