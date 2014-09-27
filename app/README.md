@@ -12,6 +12,6 @@ PROGUARD
 ------
 proguard-rules.pro is the project-specific proguard rules. This helps to slim down the app in attempt to reduce internal storage usage and download bandwidth.
 
-**You are encouraged to skip into [src/main/java] **
+**You are encouraged to skip into [src/main/java]**
 
-[src/main/java]:/src/main/java
+[src/main/java]:src/main/java
