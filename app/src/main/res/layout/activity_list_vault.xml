@@ -68,8 +68,8 @@
 
     <LinearLayout
         android:id="@+id/nothing"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:layout_centerInParent="true"
         android:gravity="center"
         android:orientation="vertical"
