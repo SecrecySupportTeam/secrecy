@@ -1,4 +1,3 @@
 include ':app', ':payme'
 include ':aFileChooser'
 include ':Preferencefragment'
-include ':UserVoiceSDK'
