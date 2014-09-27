@@ -59,6 +59,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import de.greenrobot.event.EventBus;
+
 @EFragment(R.layout.activity_list_vault)
 @OptionsMenu(R.menu.list_vault)
 public class VaultsListFragment extends Fragment {
@@ -95,6 +97,8 @@ public class VaultsListFragment extends Fragment {
 
     @AfterViews
     void oncreate() {
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
         context = (ActionBarActivity) getActivity();
         if (mLinearView != null)
             mLinearView.removeAllViews();
@@ -148,6 +152,10 @@ public class VaultsListFragment extends Fragment {
             }
         });
         showTutorial();
+    }
+
+    public void onEventMainThread(FilesActivity.shouldRefresh ignored) {
+        oncreate();
     }
 
     public void setClickListener(final View mView, final int i) {

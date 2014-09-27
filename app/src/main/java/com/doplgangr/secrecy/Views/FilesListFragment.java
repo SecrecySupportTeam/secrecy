@@ -106,7 +106,6 @@ public class FilesListFragment extends FileViewer {
     private boolean attached = false;
     private AbsListView mListView;
     private CustomActionMode mActionMode;
-    private VaultsListFragment.OnFragmentFinishListener mFinishListener;
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
@@ -139,11 +138,6 @@ public class FilesListFragment extends FileViewer {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         attached = true;
-        try {
-            mFinishListener = (VaultsListFragment.OnFragmentFinishListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement Listener");
-        }
     }
 
     @Override
@@ -334,7 +328,6 @@ public class FilesListFragment extends FileViewer {
                         String input = passwordView.getText().toString();
                         if (password.equals(input)) {
                             secret.delete();
-
                             context.finish();
                         } else {
                             Util.alert(context,
@@ -571,6 +564,10 @@ public class FilesListFragment extends FileViewer {
             return -top + firstVisiblePosition * c.getHeight() + headerHeight;
         }
 
+        public void setTitle(CharSequence chars) {
+            context.getSupportActionBar().setTitle(chars);
+        }
+
         public AbsListView.OnScrollListener listener = new AbsListView.OnScrollListener() {
             int mHeaderTextHeight = context.getResources().getDimensionPixelSize(R.dimen.header_text_height);
             int mActionBarHeight = context.getResources().getDimensionPixelSize(R.dimen.action_bar_height);
@@ -593,10 +590,6 @@ public class FilesListFragment extends FileViewer {
                 }
             }
         };
-
-        public void setTitle(CharSequence chars) {
-            context.getSupportActionBar().setTitle(chars);
-        }
 
 
     }
