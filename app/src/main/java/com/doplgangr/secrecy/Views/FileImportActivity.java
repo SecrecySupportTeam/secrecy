@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
 import android.widget.Toast;
 
 import com.doplgangr.secrecy.CustomApp;
@@ -101,12 +100,6 @@ public class FileImportActivity extends ActionBarActivity
         //startActivity(intent);
         Util.toast(this, getString(R.string.Import__finish), Toast.LENGTH_SHORT);
         finish();
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.clear(); //no options item should appear here.
-        return true;
     }
 
 }

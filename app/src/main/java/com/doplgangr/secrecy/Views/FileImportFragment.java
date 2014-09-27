@@ -37,7 +37,6 @@ public class FileImportFragment extends VaultsListFragment {
     void afterViews() {
         super.oncreate();
         mActionBarTitle.setText(R.string.Dialog_header__import_files);
-        getActivity().supportInvalidateOptionsMenu();
     }
 
 
