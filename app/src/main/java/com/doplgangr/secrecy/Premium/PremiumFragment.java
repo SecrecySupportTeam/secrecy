@@ -36,6 +36,7 @@ import com.github.jberkel.pay.me.model.ItemType;
 import com.github.jberkel.pay.me.model.Purchase;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
@@ -178,7 +179,8 @@ public class PremiumFragment extends Fragment {
     }
 
     // User clicked the "Upgrade to Premium" button.
-    public void onUpgradeAppButtonClicked(View v) {
+    @Click(R.id.Premium__upgrade_button)
+    public void onUpgradeAppButtonClicked() {
         Util.log("Upgrade button clicked; launching purchase flow for upgrade.");
         setWaitScreen(true);
 

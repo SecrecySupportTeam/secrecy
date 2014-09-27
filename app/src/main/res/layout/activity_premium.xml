@@ -57,7 +57,6 @@
         android:layout_marginLeft="@dimen/margin_from_edge"
         android:layout_marginRight="@dimen/margin_from_edge"
         android:enabled="false"
-        android:onClick="onUpgradeAppButtonClicked"
         android:text="@string/Donation__buy_button" />
 
     <ScrollView
