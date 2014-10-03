@@ -51,7 +51,7 @@ public class Vault implements Serializable {
     private final String name;
     private final String path;
     public Boolean wrongPass = true;
-    private String key = "0123784";
+    private String key;
 
     public Vault(String name, String secret) {
         this.key = secret;
