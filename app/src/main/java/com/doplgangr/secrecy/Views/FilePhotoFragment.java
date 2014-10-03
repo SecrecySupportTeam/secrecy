@@ -73,6 +73,12 @@ public class FilePhotoFragment extends FragmentActivity {
             mViewPager.setCurrentItem(itemNo);
     }
 
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
     public void onEventMainThread(ImageLoadJob.ImageLoadDoneEvent event) {
         Util.log("Recieving imageview and bm");
         if (event.bitmap == null && event.progressBar == null && event.imageView == null) {
