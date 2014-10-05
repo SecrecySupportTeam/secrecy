@@ -77,8 +77,8 @@ public class storage {
         CustomApp.jobManager.addJobInBackground(job); // deletion in background
     }
 
-    public static void shredFile(OutputStream fileOS, long size) {
-        CustomApp.jobManager.addJobInBackground(new ShredFileJob(fileOS, size));
+    public static void shredFile(OutputStream fileOS, long size, File file) {
+        CustomApp.jobManager.addJobInBackground(new ShredFileJob(fileOS, size, file));
     }
 
     public static java.io.File getTempFolder() {

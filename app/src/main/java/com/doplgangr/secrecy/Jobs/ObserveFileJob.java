@@ -111,7 +111,7 @@ public class ObserveFileJob extends Job {
             if (pfd != null) {
                 Util.log(pfd.getFileDescriptor().toString());
                 OutputStream fileOutputStream = new FileOutputStream(pfd.getFileDescriptor());
-                storage.shredFile(fileOutputStream, size);
+                storage.shredFile(fileOutputStream, size, file);
             }
         }
     }

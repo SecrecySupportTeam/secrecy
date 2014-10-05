@@ -4,18 +4,23 @@ import com.doplgangr.secrecy.Util;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.OutputStream;
 
 public class ShredFileJob extends Job {
     public static final int PRIORITY = 1;
     private OutputStream fileOs = null;
     private long size;
+    private File file;
 
-    public ShredFileJob(OutputStream os, long size) {
+    public ShredFileJob(OutputStream os, long size, File file) {
         super(new Params(PRIORITY));
         this.fileOs = os;
         this.size = size;
+        this.file = file;
     }
 
     @Override
@@ -33,16 +38,25 @@ public class ShredFileJob extends Job {
         } finally {
             os.close();
         }
+        Boolean ignored = file.delete();
+        FileUtils.forceDelete(file);
     }
 
     @Override
     protected void onCancel() {
         //Rarhhh go die.
+        Boolean ignoredBoolean = file.delete();
+        try {
+            FileUtils.forceDelete(file);
+        } catch (Exception ignored) { // If it never gets to the end...
+            ignored.printStackTrace();
+        }
     }
 
     @Override
     protected boolean shouldReRunOnThrowable(Throwable throwable) {
         Util.log("Shredding retry");
+        throwable.printStackTrace();
         return true;
     }
 
