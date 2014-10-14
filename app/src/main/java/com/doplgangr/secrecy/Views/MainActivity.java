@@ -141,7 +141,7 @@ public class MainActivity
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
                 materialMenu.animateState(MaterialMenuDrawable.IconState.BURGER);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
             /**
@@ -150,7 +150,7 @@ public class MainActivity
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 materialMenu.animateState(MaterialMenuDrawable.IconState.X);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
