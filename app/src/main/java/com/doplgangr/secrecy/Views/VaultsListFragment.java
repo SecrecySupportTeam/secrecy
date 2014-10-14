@@ -22,6 +22,7 @@ package com.doplgangr.secrecy.Views;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,6 +38,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
+import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.Vault;
 import com.doplgangr.secrecy.FileSystem.storage;
 import com.doplgangr.secrecy.R;
@@ -106,9 +108,9 @@ public class VaultsListFragment extends Fragment {
         mActionBarTitle.setText(R.string.App__name);
         java.io.File root = storage.getRoot();
         if (!Util.canWrite(root)) {
-            Util.alert(context,
-                    context.getString(R.string.Error__root_IOException),
-                    context.getString(R.string.Error__root_IOException_message),
+            Util.alert(CustomApp.context,
+                    CustomApp.context.getString(R.string.Error__root_IOException),
+                    CustomApp.context.getString(R.string.Error__root_IOException_message),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -140,8 +142,9 @@ public class VaultsListFragment extends Fragment {
             public void onScrollChanged() {
                 int scrollY = mScrollView.getScrollY(); //for verticalScrollViewint scrollY = getScrollY();
                 //sticky actionbar
-                int mHeaderTextHeight = context.getResources().getDimensionPixelSize(R.dimen.header_text_height);
-                int mActionBarHeight = context.getResources().getDimensionPixelSize(R.dimen.action_bar_height);
+                Resources res = CustomApp.context.getResources();
+                int mHeaderTextHeight = res.getDimensionPixelSize(R.dimen.header_text_height);
+                int mActionBarHeight = res.getDimensionPixelSize(R.dimen.action_bar_height);
                 int translationY = Math.max(-scrollY, -mHeaderTextHeight);
                 ViewHelper.setTranslationY(mHeader, translationY);
 
@@ -235,7 +238,7 @@ public class VaultsListFragment extends Fragment {
                                 outputStream.close();
                                 Uri nomediaURI = Uri.fromFile(file);
                                 Vault newVault = new Vault(name, password, true);
-                                newVault.addFile(context, nomediaURI);
+                                newVault.addFile(CustomApp.context, nomediaURI);
                                 file.delete();
                                 oncreate();
                             } catch (IOException e) {
