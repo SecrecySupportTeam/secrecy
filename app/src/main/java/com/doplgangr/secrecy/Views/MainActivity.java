@@ -251,12 +251,19 @@ public class MainActivity
 
     void addFragment(final Fragment fragment, int transition1, int transition2) {
         String tag = fragment.getClass().getName();
-        fragmentManager.beginTransaction()
+        FragmentManager manager = getSupportFragmentManager();
+        if (manager.getBackStackEntryCount() > 1) {
+            FragmentManager.BackStackEntry first = manager.getBackStackEntryAt(1);
+            manager.popBackStackImmediate(first.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }           //clear all except lowest
+        FragmentTransaction transaction = fragmentManager.beginTransaction()
                 .setCustomAnimations(transition1, transition2)
-                .replace(R.id.content_frame, fragment, tag)
-                .addToBackStack(tag)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .commit();
+                .replace(R.id.content_frame, fragment, tag);
+        if (fragment.getClass() != VaultsListFragment_.class)
+            transaction = transaction
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .addToBackStack(tag);
+        transaction.commit();
     }
 
     void support() {
