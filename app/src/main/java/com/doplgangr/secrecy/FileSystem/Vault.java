@@ -211,6 +211,8 @@ public class Vault implements Serializable {
             return null; //bye
         java.io.File folder = new java.io.File(path);
         java.io.File newFoler = new java.io.File(folder.getParent(), name);
+        if (folder.getAbsolutePath().equals(newFoler.getAbsolutePath()))
+            return this; //same name, bye
         try {
             FileUtils.copyDirectory(folder, newFoler);
         } catch (IOException e) {
