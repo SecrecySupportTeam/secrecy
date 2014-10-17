@@ -49,6 +49,7 @@ import com.doplgangr.secrecy.Premium.PremiumStateHelper;
 import com.doplgangr.secrecy.Premium.StealthMode;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.Views.VaultsListFragment;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
@@ -92,10 +93,21 @@ public class SettingsFragment extends PreferenceFragment
     String libraries;
     @Pref
     Prefs_ Prefs;
+    VaultsListFragment.OnFragmentFinishListener mFinishListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.activity_settings, container, false);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mFinishListener = (VaultsListFragment.OnFragmentFinishListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement Listener");
+        }
     }
 
     @AfterViews
@@ -261,7 +273,7 @@ public class SettingsFragment extends PreferenceFragment
                 stealth_mode_password.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        startActivity(new Intent(context, PremiumFragment_.class));
+                        mFinishListener.onNew(null, new PremiumFragment_());    //Switch fragment to donation
                         return true;
                     }
                 });
