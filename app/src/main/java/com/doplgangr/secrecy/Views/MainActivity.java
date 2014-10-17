@@ -60,6 +60,7 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity
@@ -67,6 +68,11 @@ public class MainActivity
         implements
         VaultsListFragment.OnVaultSelectedListener,
         VaultsListFragment.OnFragmentFinishListener {
+    final List<Class> mFragmentNameList = new ArrayList<Class>() {{
+        add(VaultsListFragment_.class);
+        add(SettingsFragment_.class);
+        add(PremiumFragment_.class);
+    }};
     private final Context context = this;
     @Pref
     AppVersion_ version;
@@ -195,9 +201,8 @@ public class MainActivity
                 break;
             case 3:
                 support();
-                return; //Do not set highlighted
+                break;
         }
-        mNavigation.setSelectedItem(page);
     }
 
     void onFirstLaunch() {
@@ -250,6 +255,8 @@ public class MainActivity
     }
 
     void addFragment(final Fragment fragment, int transition1, int transition2) {
+        if (mFragmentNameList.contains(fragment.getClass()))
+            mNavigation.setSelectedItem(mFragmentNameList.indexOf(fragment.getClass()));
         String tag = fragment.getClass().getName();
         FragmentManager manager = getSupportFragmentManager();
         if (manager.getBackStackEntryCount() > 1) {
