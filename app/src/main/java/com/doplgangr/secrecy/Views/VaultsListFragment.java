@@ -21,6 +21,7 @@ package com.doplgangr.secrecy.Views;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -32,6 +33,7 @@ import android.text.InputType;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -85,6 +87,7 @@ public class VaultsListFragment extends Fragment {
     OnVaultSelectedListener mOnVaultSelected;
     OnFragmentFinishListener mFinishListener;
     private boolean isPaused = false;
+    static InputMethodManager imm = null;
 
     @Override
     public void onAttach(Activity activity) {
@@ -310,13 +313,18 @@ public class VaultsListFragment extends Fragment {
         oncreate();
     }
 
+
     @UiThread
-    void switchView(final View parentView, int showView) {
-        EditText passwordView = (EditText) parentView.findViewById(R.id.open_password);
+    void switchView(final View parentView, final int showView) {
+        final EditText passwordView = (EditText) parentView.findViewById(R.id.open_password);
         View renameView = parentView.findViewById(R.id.rename_name);
         ViewAnimator viewAnimator = (ViewAnimator) parentView.findViewById(R.id.viewAnimator);
         viewAnimator.setInAnimation(context, R.anim.slide_down);
         int viewIndex = 0;
+
+        // Graveen: grab once and for all the IMM
+        if (imm==null)  imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+
         switch (showView) {
             case R.id.vault_name_layout:
                 viewIndex = 0;
@@ -327,6 +335,8 @@ public class VaultsListFragment extends Fragment {
                     passwordView.requestFocus();
                     passwordView.setText("");                               //Reset password field everytime
                 }
+                imm.showSoftInput(passwordView, InputMethodManager.SHOW_IMPLICIT); // Directly summon kbd if applicable
+
                 break;
             case R.id.vault_delete_layout:
                 viewIndex = 2;

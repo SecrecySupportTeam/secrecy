@@ -79,7 +79,7 @@
             android:clearTaskOnLaunch="true"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
-            android:label="@string/App__name">
+            android:label="@string/App__name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
