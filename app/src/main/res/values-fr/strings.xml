@@ -13,8 +13,8 @@
   <string name="Donation__encouragement">En faisant un don, vous: \n \n 
 • Êtes reconnaissant envers mon travail\n 
 • Investissez dans l\'avenir de ce logiciel\n 
-• M\'offrez un café pour les examens :) \n
-• M\'aidez à acheter des livres de médecine très onéreux\n \n
+• m\'offrez un café pour les examens :) \n 
+• m\'aidez à acheter des livres de médecine très onéreux\n \n 
 Et le plus important...\n \n 
 En faisant un don, vous pourrez profiter des nombreuses fonctions plus avancées.</string>
     <string name="File__nothing_here_message">Essayez d\'ajouter des fichiers ici</string>
@@ -25,7 +25,7 @@ En faisant un don, vous pourrez profiter des nombreuses fonctions plus avancées
     <string name="Page_header__gallery">Galerie</string>
     <string name="Page_header__settings">Paramètres</string>
     <string name="Page_header__vaults">Coffres-forts</string>
-    <string name="Stealth__no_telephony_message">Les tablettes sans fonction téléphone ne sont pas supportées pour le moment. Merci de votre patiente!</string>
+    <string name="Stealth__no_telephony_message">Les tablettes sans fonction téléphone ne sont pas supporté pour le moment. Merci de votre patiente!</string>
     <string name="Stealth__no_telephony">Oups... Bonjour utilisateur de tablette!</string>
     <string name="Tutorial__long_click_to_rename">Clic long pour renommer des coffres-forts. Essayez !</string>
     <string name="Tutorial__swipe_to_delete">Faites glisser pour effacer des coffres. Essayez !</string>
@@ -38,11 +38,11 @@ En faisant un don, vous pourrez profiter des nombreuses fonctions plus avancées
     <string name="Vault__vault_password_hint">Mot de passe</string>
     <string name="Dialog__help_centre_tutorial">Pas de panique, il suffit de demander!</string>
     <string name="Dialog__help_centre_tutorial_message">Savez-vous que nous avons un centre d\'aide? Si vous avez des questions, des suggestions, ou que vous souhaitez juste discuter, n\'hésitez pas.</string>
-    <string name="Stealth__finish">Tout est prêt pour le démarrage! Nous allons désormais cacher l\'icone de l\'application, qui aura disparu après que vous ayez redémarré le système. Encore une fois, n\'oubliez pas votre code secret:</string>
+    <string name="Stealth__finish">Tout est prêt pour le démarrage! Nous allons cacher désormais l\'icone de l\'application, il aura disparu après que vous aurez redémarré le système. Encore une fois, n\'oubliez pas votre code secret:</string>
     <string name="Error__error_processing_purchase">Erreur lors du traitement de l\'achat. La transaction a probablement été annulée en cours de route.</string>
     <string name="Error__check_play_store">Problème lors du paramétrage du  service de paiement in-app. Veuillez vérifier votre Play Store.</string>
-    <string name="Dialog__purchased">Donation déjà effectuée!</string>
+    <string name="Dialog__purchased">Donation déjà effectué!</string>
     <string name="Dialog__purchase_message">Merci d\'avoir acheté le package Donation !</string>
     <string name="Error__cannot_set_up_IAP">Problème lors du paramétrage du  service de paiement in-app. Veuillez vérifier votre Play Store.</string>
-    <string name="App__slogan">Soyez protégés... même entre geeks™</string>
+    <string name="App__slogan">Soyez protégé autour de geeks™</string>
 </resources>
