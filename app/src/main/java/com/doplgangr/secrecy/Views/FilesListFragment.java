@@ -53,7 +53,6 @@ import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 import com.ipaulpro.afilechooser.FileChooserActivity;
-import com.nineoldandroids.view.ViewHelper;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EFragment;
@@ -84,11 +83,6 @@ public class FilesListFragment extends FileViewer {
     View nothing;
     @ViewById(R.id.progressBar)
     ProgressBar addFilepBar;
-
-    @ViewById(R.id.actionBarTitle)
-    TextView mActionBarTitle;
-    @ViewById(R.id.header)
-    View mHeader;
 
     @ViewById(R.id.tag)
     TextView mTag;
@@ -263,7 +257,7 @@ public class FilesListFragment extends FileViewer {
         }
 
         addFiles();
-        mActionBarTitle.setText(secret.getName());
+        context.setTitle(secret.getName());
         adapter = new FilesListAdapter(context,
                 isGallery ? R.layout.gallery_item : R.layout.file_item);
         setupViews();
@@ -290,7 +284,6 @@ public class FilesListFragment extends FileViewer {
         gridView.setVisibility(View.GONE);
         mListView.setVisibility(View.VISIBLE);
         context.supportInvalidateOptionsMenu();
-        context.getSupportActionBar().setTitle("");
         mListView.setEmptyView(nothing);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -338,8 +331,6 @@ public class FilesListFragment extends FileViewer {
                 return true;
             }
         });
-
-        mListView.setOnScrollListener(new MaterialScroll().listener);
     }
 
     @UiThread
@@ -654,7 +645,6 @@ public class FilesListFragment extends FileViewer {
             }
             adapter.clearSelected();
             isActionMode = false;
-            new MaterialScroll().listener.onScroll(null, 0, 0, 0); //reset everything
             context.supportInvalidateOptionsMenu();
         }
 
@@ -666,61 +656,12 @@ public class FilesListFragment extends FileViewer {
                     .setForeground(viewHolder.selected ?
                             selector :
                             null);
-            new MaterialScroll().setTitle(
+            context.setTitle(
                     String.format(getString(R.string.Files__number_selected),
                             adapter.getSelected().size()));
             if (adapter.getSelected().size() == 0)
                 endActionMode();
         }
-
-    }
-
-    class MaterialScroll {
-
-        public int getScrollY() {
-            View c = mListView.getChildAt(0);
-            if (c == null) {
-                return 0;
-            }
-
-            int firstVisiblePosition = mListView.getFirstVisiblePosition();
-            int top = c.getTop();
-
-            int headerHeight = mHeader.getHeight() + mTag.getHeight();
-            if (firstVisiblePosition >= 1) {
-                headerHeight = mTag.getHeight();
-            }
-
-            return -top + firstVisiblePosition * c.getHeight() + headerHeight;
-        }
-
-        public void setTitle(CharSequence chars) {
-            context.getSupportActionBar().setTitle(chars);
-        }
-
-        public AbsListView.OnScrollListener listener = new AbsListView.OnScrollListener() {
-            int mHeaderTextHeight = context.getResources().getDimensionPixelSize(R.dimen.header_text_height);
-            int mActionBarHeight = context.getResources().getDimensionPixelSize(R.dimen.action_bar_height);
-
-            @Override
-            public void onScrollStateChanged(AbsListView absListView, int i) {
-                onScroll(absListView, i, 0, 0);
-            }
-
-            @Override
-            public void onScroll(AbsListView absListView, int i, int i2, int i3) {
-                int scrollY = getScrollY();
-                //sticky actionbar
-                if (scrollY >= 0) {
-                    if (!(mActionMode != null && mActionMode.isActionMode))
-                        setTitle(getScrollY() > mActionBarHeight ? secret.getName() : "");
-                    ViewHelper.setTranslationY(mHeader, Math.max(-scrollY, -mHeaderTextHeight));
-                    mActionBarTitle.setVisibility(scrollY > mActionBarHeight ? View.GONE : View.VISIBLE);
-                    ViewHelper.setTranslationY(mTag, -scrollY);
-                }
-            }
-        };
-
 
     }
 

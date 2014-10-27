@@ -7,9 +7,9 @@ buildscript {
         maven { url 'http://download.crashlytics.com/maven' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.2'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.2+'
-        classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.+'
+        classpath 'com.android.tools.build:gradle:0.13.3'
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
+        classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.14.2'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }

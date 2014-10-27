@@ -1,15 +1,13 @@
 package com.doplgangr.secrecy.Views;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 
-import com.balysv.materialmenu.MaterialMenuDrawable;
-import com.balysv.materialmenu.extras.abc.MaterialMenuIconCompat;
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.R;
@@ -32,7 +30,6 @@ public class FilesActivity extends ActionBarActivity
     String vault;
     @Extra(Config.password_extra)
     String password;
-    MaterialMenuIconCompat materialMenu;
 
     @AfterViews
     void onCreate() {
@@ -46,11 +43,11 @@ public class FilesActivity extends ActionBarActivity
         bundle.putString(Config.password_extra, password);
         fragment.setArguments(bundle);
         fragmentManager.beginTransaction()
-                .replace(android.R.id.content, fragment)
+                .replace(R.id.content, fragment)
                 .commit();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        materialMenu = new MaterialMenuIconCompat(this, Color.WHITE, MaterialMenuDrawable.Stroke.THIN);
-        materialMenu.animateState(MaterialMenuDrawable.IconState.ARROW);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

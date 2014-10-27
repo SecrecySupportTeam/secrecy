@@ -1,69 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- the theme applied to the application or activity -->
-    <style name="CustomMaterialTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:actionBarStyle">@style/MaterialActionBar</item>
-        <item name="android:actionOverflowButtonStyle">@style/MaterialOverFlow</item>
-        <item name="android:windowBackground">@null</item>
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="App_color">@color/primary</item>
-        <!-- Support library compatibility -->
-        <item name="actionBarStyle">@style/MaterialActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/MaterialOverFlow</item>
-        <item name="windowActionBarOverlay">true</item>
 
+    <style name="CustomMaterialTheme" parent="BaseTheme" />
+
+    <style name="BaseTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
     </style>
-
-    <!-- ActionBar styles -->
-    <style name="MaterialActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@null</item>
-        <item name="android:height">@dimen/action_bar_height</item>
-        <item name="android:icon">@android:color/transparent</item>
-        <item name="android:titleTextStyle">@style/MaterialTitleText</item>
-
-        <!-- Support library compatibility -->
-        <item name="background">@null</item>
-        <item name="height">@dimen/action_bar_height</item>
-        <item name="icon">@android:color/transparent</item>
-        <item name="titleTextStyle">@style/MaterialTitleText</item>
-    </style>
-
-    <style name="MaterialOverFlow" parent="@style/Widget.AppCompat.Base.ActionButton.Overflow">
-        <item name="android:src">@drawable/ic_action_overflow</item>
-        <!-- Support library compatibility -->
-        <item name="src">@drawable/ic_action_overflow</item>
-    </style>
-
-    <!-- ActionBar title text -->
-    <style name="MaterialTitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
-    <item name="android:textColor">@color/white</item>
-        <!-- The textColor property is backward compatible with the Support Library -->
-    </style>
-
-    <!-- the theme applied to the application or activity -->
-    <style name="NormalActionBarTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:actionBarStyle">@style/MyActionBar</item>
-        <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
-        <item name="App_color">@color/primary</item>
-        <!-- Support library compatibility -->
-        <item name="actionBarStyle">@style/MyActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/OverFlow</item>
-    </style>
-
-    <!-- ActionBar styles -->
-    <style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@color/primary</item>
-
-        <!-- Support library compatibility -->
-        <item name="background">@color/primary</item>
-        <item name="android:icon">@android:color/transparent</item>
-        <!-- This does the magic! -->
-    </style>
-
-    <style name="OverFlow" parent="@style/Widget.AppCompat.Base.ActionButton.Overflow">
-        <item name="android:src">@drawable/ic_action_overflow</item>
-    </style>
-
-
 </resources>

@@ -5,18 +5,15 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.2'
+        classpath 'com.android.tools.build:gradle:0.13.3'
     }
 }
 
 apply plugin: 'android-library'
 apply plugin: 'maven'
 
-version = VERSION
-group = GROUP
-
 dependencies {
-    compile 'com.android.support:support-v4:19.0.+'
+    compile 'com.android.support:support-v4:21.0.0'
 }
 
 android {

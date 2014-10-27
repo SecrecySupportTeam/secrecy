@@ -31,7 +31,6 @@
             android:id="@+id/tag"
             android:layout_width="fill_parent"
             android:layout_height="@dimen/divider_height"
-            android:layout_marginTop="@dimen/header_paper_height"
             android:gravity="center_vertical"
             android:paddingLeft="@dimen/text_from_edge"
             android:paddingRight="@dimen/text_from_edge"
@@ -44,20 +43,20 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentTop="true"
+            android:layout_below="@id/tag"
             android:animateLayoutChanges="true"
             android:choiceMode="multipleChoice"
             android:clipToPadding="false"
             android:divider="@android:color/transparent"
             android:drawSelectorOnTop="true"
-            android:layoutMode="clipBounds"
-            android:paddingTop="@dimen/header_paper_and_divider_height" />
+            android:layoutMode="clipBounds" />
 
 
         <GridView
             android:id="@+id/gridView"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+            android:layout_below="@id/tag"
             android:animateLayoutChanges="true"
             android:choiceMode="multipleChoice"
             android:clipToPadding="false"
@@ -67,7 +66,6 @@
             android:horizontalSpacing="0dp"
             android:layoutMode="clipBounds"
             android:numColumns="auto_fit"
-            android:paddingTop="@dimen/header_paper_and_divider_height"
             android:stretchMode="columnWidth"
             android:verticalSpacing="0dp" />
 
@@ -107,22 +105,5 @@
         android:indeterminate="true"
         android:visibility="gone" />
 
-    <FrameLayout
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/header_paper_height"
-        android:background="@color/primary">
-
-        <TextView
-            android:id="@+id/actionBarTitle"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/header_text_height"
-            android:layout_gravity="bottom"
-            android:layout_marginLeft="@dimen/text_from_edge"
-            android:layout_marginStart="@dimen/text_from_edge"
-            android:gravity="center_vertical"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_title_size" />
-    </FrameLayout>
 
 </RelativeLayout>
