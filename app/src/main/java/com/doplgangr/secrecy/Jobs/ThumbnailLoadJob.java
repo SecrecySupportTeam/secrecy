@@ -3,7 +3,8 @@ package com.doplgangr.secrecy.Jobs;
 import android.graphics.Bitmap;
 import android.widget.ImageView;
 
-import com.doplgangr.secrecy.FileSystem.File;
+import com.doplgangr.secrecy.Events.ThumbLoadDoneEvent;
+import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
@@ -13,11 +14,11 @@ public class ThumbnailLoadJob extends Job {
     public static final int PRIORITY = 10;
     private final ImageView imageView;
     private final int avatar_size;
-    private final File file;
+    private final EncryptedFile encryptedFile;
 
-    public ThumbnailLoadJob(File file, int size, ImageView imageView) {
+    public ThumbnailLoadJob(EncryptedFile encryptedFile, int size, ImageView imageView) {
         super(new Params(PRIORITY));
-        this.file = file;
+        this.encryptedFile = encryptedFile;
         this.avatar_size = size;
         this.imageView = imageView;
     }
@@ -29,8 +30,8 @@ public class ThumbnailLoadJob extends Job {
 
     @Override
     public void onRun() throws Throwable {
-        Bitmap bm = file.getThumb(avatar_size);
-        EventBus.getDefault().post(new ThumbLoadDoneEvent(file, imageView, bm));
+        Bitmap bm = encryptedFile.getEncryptedThumbnail().getThumb(avatar_size);
+        EventBus.getDefault().post(new ThumbLoadDoneEvent(encryptedFile, imageView, bm));
     }
 
     @Override
@@ -43,17 +44,4 @@ public class ThumbnailLoadJob extends Job {
         throwable.printStackTrace();
         return false;
     }
-
-    public class ThumbLoadDoneEvent {
-        public File file;
-        public ImageView imageView;
-        public Bitmap bitmap;
-
-        public ThumbLoadDoneEvent(File file, ImageView imageView, Bitmap bitmap) {
-            this.file = file;
-            this.imageView = imageView;
-            this.bitmap = bitmap;
-        }
-    }
-
 }

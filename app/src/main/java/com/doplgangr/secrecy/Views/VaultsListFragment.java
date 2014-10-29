@@ -23,7 +23,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -37,7 +36,7 @@ import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.Storage;
-import com.doplgangr.secrecy.FileSystem.Vault;
+import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.Prefs_;
 import com.doplgangr.secrecy.Settings.SettingsFragment_;
@@ -64,6 +63,8 @@ import de.greenrobot.event.EventBus;
 public class VaultsListFragment extends Fragment {
     @ViewById(R.id.list)
     LinearLayout mLinearView;
+    @ViewById(R.id.actionBarTitle)
+    TextView mActionBarTitle;
     @ViewById(R.id.scrollView)
     ScrollView mScrollView;
     @ViewById(R.id.header)
@@ -98,7 +99,8 @@ public class VaultsListFragment extends Fragment {
         context = (ActionBarActivity) getActivity();
         if (mLinearView != null)
             mLinearView.removeAllViews();
-        context.getSupportActionBar().setTitle(R.string.App__name);
+        context.getSupportActionBar().setTitle("");
+        mActionBarTitle.setText(R.string.App__name);
         java.io.File root = Storage.getRoot();
         if (!Util.canWrite(root)) {
             Util.alert(CustomApp.context,
@@ -205,16 +207,12 @@ public class VaultsListFragment extends Fragment {
                             passwordWrong();
                         else if (directory.mkdirs()) {
                             try {
-                                File file = new File(Storage.getTempFolder(), ".nomedia");
+                                File file = new File(directory +  "/.nomedia");
                                 file.delete();
                                 file.createNewFile();
                                 FileOutputStream outputStream = new FileOutputStream(file);
                                 outputStream.write(name.getBytes());
                                 outputStream.close();
-                                Uri nomediaURI = Uri.fromFile(file);
-                                Vault newVault = new Vault(name, password, true);
-                                newVault.addFile(CustomApp.context, nomediaURI);
-                                file.delete();
                                 oncreate();
                             } catch (IOException e) {
                                 e.printStackTrace();

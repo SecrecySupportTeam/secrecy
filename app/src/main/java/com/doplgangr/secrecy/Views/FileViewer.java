@@ -36,10 +36,10 @@ import android.widget.Toast;
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
-import com.doplgangr.secrecy.FileSystem.File;
+import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.FileSystem.OurFileProvider;
 import com.doplgangr.secrecy.FileSystem.Storage;
-import com.doplgangr.secrecy.FileSystem.Vault;
+import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.Jobs.AddFileJob;
 import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
@@ -51,6 +51,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.api.BackgroundExecutor;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -62,9 +63,7 @@ import java.util.Set;
 @EFragment(R.layout.activity_file_viewer)
 public class FileViewer extends Fragment {
 
-
     ActionBarActivity context;
-
 
     @AfterInject
     void onCreate() {
@@ -81,7 +80,9 @@ public class FileViewer extends Fragment {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String password = input.getText().toString();
                         Uri file = context.getIntent().getData();
-                        decrypt(new File(new java.io.File(file.getPath()), password), null, null);
+                      //TODO:  Cannot load file with only the password anymore.
+                      // Is this methods currently used=
+                      // decrypt(EncryptedFileFactory.getInstance().loadEncryptedFile(new File(file.getPath()), password), null, null);
                     }
                 }).setNegativeButton(getString(R.string.CANCEL), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
@@ -98,18 +99,18 @@ public class FileViewer extends Fragment {
 
 
     @Background
-    void decrypt(File file, final ProgressBar pBar, final Listeners.EmptyListener onFinish) {
-        java.io.File tempFile = getFile(file, pBar, onFinish);
+    void decrypt(EncryptedFile encryptedFile, final ProgressBar pBar, final Listeners.EmptyListener onFinish) {
+        File tempFile = getFile(encryptedFile, pBar, onFinish);
         //File specified is not invalid
         if (tempFile != null) {
             if (tempFile.getParentFile().equals(Storage.getTempFolder())) {
-                java.io.File newFile = new java.io.File(Storage.getTempFolder(), tempFile.getName());
+                File newFile = new File(Storage.getTempFolder(), tempFile.getName());
                 tempFile = newFile;
             }
             Uri uri = OurFileProvider.getUriForFile(context, OurFileProvider.FILE_PROVIDER_AUTHORITY, tempFile);
             MimeTypeMap myMime = MimeTypeMap.getSingleton();
             Intent newIntent = new Intent(android.content.Intent.ACTION_VIEW);
-            String mimeType = myMime.getMimeTypeFromExtension(file.getType());
+            String mimeType = myMime.getMimeTypeFromExtension(encryptedFile.getType());
             newIntent.setDataAndType(uri, mimeType);
             newIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             //altIntent: resort to using file provider when content provider does not work.
@@ -127,13 +128,13 @@ public class FileViewer extends Fragment {
         Set<String> mimes = new HashSet<String>();
         MimeTypeMap myMime = MimeTypeMap.getSingleton();
         for (FilesListFragment.DecryptArgHolder arg : args) {
-            java.io.File tempFile = getFile(arg.file, arg.pBar, arg.onFinish);
+            java.io.File tempFile = getFile(arg.encryptedFile, arg.pBar, arg.onFinish);
             //File specified is not invalid
             if (tempFile != null) {
                 if (tempFile.getParentFile().equals(Storage.getTempFolder()))
                     tempFile = new java.io.File(Storage.getTempFolder(), tempFile.getName());
                 uris.add(OurFileProvider.getUriForFile(context, OurFileProvider.FILE_PROVIDER_AUTHORITY, tempFile));
-                mimes.add(myMime.getMimeTypeFromExtension(arg.file.getType()));
+                mimes.add(myMime.getMimeTypeFromExtension(arg.encryptedFile.getType()));
 
             }
         }
@@ -163,7 +164,7 @@ public class FileViewer extends Fragment {
         }
     }
 
-    java.io.File getFile(final File file, final ProgressBar pBar, final Listeners.EmptyListener onfinish) {
+    File getFile(final EncryptedFile encryptedFile, final ProgressBar pBar, final Listeners.EmptyListener onfinish) {
         CryptStateListener listener = new CryptStateListener() {
             @Override
             public void updateProgress(int progress) {
@@ -196,7 +197,7 @@ public class FileViewer extends Fragment {
                 onfinish.run();
             }
         };
-        return file.readFile(listener);
+        return encryptedFile.readFile(listener);
     }
 
     @UiThread

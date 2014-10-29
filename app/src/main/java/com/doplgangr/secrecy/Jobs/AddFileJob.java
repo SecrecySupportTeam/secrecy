@@ -3,29 +3,32 @@ package com.doplgangr.secrecy.Jobs;
 import android.content.Context;
 import android.net.Uri;
 
-import com.doplgangr.secrecy.FileSystem.File;
+import com.doplgangr.secrecy.Events.NewFileEvent;
+import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.FileSystem.Storage;
-import com.doplgangr.secrecy.FileSystem.Vault;
+import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.Util;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
+
+import java.io.File;
 
 import de.greenrobot.event.EventBus;
 
 import static com.ipaulpro.afilechooser.utils.FileUtils.getPath;
 
 public class AddFileJob extends Job {
-    public static final int PRIORITY = 9;   //High. Lower than UI jobs
+    private static final int PRIORITY = 9;   //High. Lower than UI jobs
+    private static final int RETRY_LIMIT = 5; //Shouldn't try too much.
     private Vault vault;
-    private Uri data;
+    private Uri uri;
     private Context context;
-    private Boolean alreadyDeleting = false;
 
     public AddFileJob(Context context, Vault vault, Uri uri) {
         super(new Params(PRIORITY)
                 .groupBy(uri.toString()));
         this.vault = vault;
-        this.data = uri;
+        this.uri = uri;
         this.context = context;
     }
 
@@ -36,20 +39,11 @@ public class AddFileJob extends Job {
 
     @Override
     public void onRun() throws Throwable {
-        Util.log("Adding file", data);
-        if (!alreadyDeleting) {
-            String filename = vault.addFile(context, data);
-            Uri thumbnail = Storage.saveThumbnail(context, data, filename);
-            if (thumbnail != null) {
-                vault.addFile(context, thumbnail);
-                Storage.purgeFile(new java.io.File(thumbnail.getPath()));
-            }
-            File returnedFile = vault.getFileInstance(filename);
-            EventBus.getDefault().post(new NewFileEvent(returnedFile));
-            alreadyDeleting = true;
-        }
-        java.io.File actualFile = new java.io.File(getPath(context, data));
-        Storage.purgeFile(actualFile, data); //Try to delete original file.
+        Util.log("Adding file: ", uri);
+        EncryptedFile returnedEncryptedFile = vault.addFile(context, uri);
+        EventBus.getDefault().post(new NewFileEvent(returnedEncryptedFile));
+        File actualFile = new File(getPath(context, uri));
+        Storage.purgeFile(actualFile, uri); //Try to delete original file.
     }
 
     @Override
@@ -65,16 +59,6 @@ public class AddFileJob extends Job {
 
     @Override
     protected int getRetryLimit() {
-        return 5;  //Shouldn't try too much.
+        return RETRY_LIMIT;
     }
-
-    public class NewFileEvent {
-        public File file;
-
-        public NewFileEvent(File file) {
-            this.file = file;
-        }
-    }
-
-
 }

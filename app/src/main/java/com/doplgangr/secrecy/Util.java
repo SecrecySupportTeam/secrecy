@@ -29,6 +29,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
@@ -191,5 +192,12 @@ public class Util {
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         CustomApp.context.startActivity(i);
 
+    }
+
+    public static String getFileTypeFromExtension(String extension){
+        if (extension.length() > 0) {
+            return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        }
+        return "application/octet-stream";
     }
 }

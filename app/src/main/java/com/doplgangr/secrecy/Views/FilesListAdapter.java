@@ -32,17 +32,17 @@ import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.CustomApp;
-import com.doplgangr.secrecy.FileSystem.File;
-import com.doplgangr.secrecy.Jobs.ThumbnailLoadJob;
+import com.doplgangr.secrecy.Events.ThumbLoadDoneEvent;
+import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.R;
-import com.ipaulpro.afilechooser.utils.FileUtils;
+import com.doplgangr.secrecy.Util;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 
 import de.greenrobot.event.EventBus;
 
-class FilesListAdapter extends ArrayAdapter<File> {
+class FilesListAdapter extends ArrayAdapter<EncryptedFile> {
     // store the context (as an inflated layout)
     private final LayoutInflater inflater;
     // store the resource (typically file_item.xml)
@@ -50,10 +50,10 @@ class FilesListAdapter extends ArrayAdapter<File> {
     private final ArrayList<ViewNIndex> checked = new ArrayList<ViewNIndex>();
     private boolean isGallery;
     // store (a reference to) the data
-    private ArrayList<File> data = new ArrayList<File>();
+    private ArrayList<EncryptedFile> data = new ArrayList<EncryptedFile>();
 
     public FilesListAdapter(Context context, int layout) {
-        super(context, layout, new ArrayList<File>());
+        super(context, layout, new ArrayList<EncryptedFile>());
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.resource = layout;
         this.isGallery = (layout == R.layout.gallery_item);
@@ -64,19 +64,19 @@ class FilesListAdapter extends ArrayAdapter<File> {
     /**
      * Add data to data set.
      */
-    public void add(File file) {
-        if (file == null)
+    public void add(EncryptedFile encryptedFile) {
+        if (encryptedFile == null)
             return;
-        if (file.getName() == null)
+        if (encryptedFile.getDecryptedFileName() == null)
             return;
         if (isGallery) {
-            String mimeType = FileUtils.getMimeType(file.getFile());
+            String mimeType = Util.getFileTypeFromExtension(encryptedFile.getFileExtension());
             if (mimeType != null)
                 if (!mimeType.contains("image"))
                     return; //abort if not images.
         }
-        if (!data.contains(file))
-            data.add(file);
+        if (!data.contains(encryptedFile))
+            data.add(encryptedFile);
         notifyDataSetChanged();
     }
 
@@ -105,27 +105,27 @@ class FilesListAdapter extends ArrayAdapter<File> {
     /**
      * Return an object in the data set.
      */
-    public File getItem(int position) {
+    public EncryptedFile getItem(int position) {
         return this.data.get(position);
     }
 
     /**
      * Return the position provided.
      */
-    public int getItemId(File file) {
-        return data.indexOf(file);
+    public int getItemId(EncryptedFile encryptedFile) {
+        return data.indexOf(encryptedFile);
     }
 
     /**
      * Return a generated view for a position.
      */
-    public void update(ArrayList<File> data) {
+    public void update(ArrayList<EncryptedFile> data) {
         this.data = data;
         checked.clear();
     }
 
-    public View getView(File file, View convertView, ViewGroup parent) {
-        int position = data.indexOf(file);
+    public View getView(EncryptedFile encryptedFile, View convertView, ViewGroup parent) {
+        int position = data.indexOf(encryptedFile);
         return getView(position, convertView, parent);
     }
 
@@ -172,22 +172,22 @@ class FilesListAdapter extends ArrayAdapter<File> {
             return view;
 
         // pull out the object
-        final File file = this.data.get(position);
+        final EncryptedFile encryptedFile = this.data.get(position);
         if (viewHolder.name != null)
-            viewHolder.name.setText(file.getName());
+            viewHolder.name.setText(encryptedFile.getDecryptedFileName());
 
         if (viewHolder.type != null)
-            viewHolder.type.setText(file.getType());
+            viewHolder.type.setText(encryptedFile.getType());
 
         if (viewHolder.size != null)
-            viewHolder.size.setText(file.getSize());
+            viewHolder.size.setText(encryptedFile.getFileSize());
 
         if (viewHolder.date != null)
-            viewHolder.date.setText(file.getTimestamp());
+            viewHolder.date.setText(encryptedFile.getTimestamp());
 
         if (viewHolder.thumbnail != null) {
             viewHolder.thumbnail.setVisibility(View.GONE);
-            viewHolder.thumbnail.setTag(file.getName());
+            viewHolder.thumbnail.setTag(encryptedFile.getDecryptedFileName());
         }
         if (viewHolder.frame != null)
             viewHolder.frame.setForeground(
@@ -199,32 +199,32 @@ class FilesListAdapter extends ArrayAdapter<File> {
         final int avatar_size = (int) CustomApp.context.getResources().getDimension(R.dimen.list_item_avatar_size);
 
         // This class is for binding thumbnail to UI
-        class BindImageTask extends AsyncTask<File, Void, Bitmap> {
-            protected Bitmap doInBackground(File... files) {
+        class BindImageTask extends AsyncTask<EncryptedFile, Void, Bitmap> {
+            protected Bitmap doInBackground(EncryptedFile... files) {
                 if (isGallery)
-                    return files[0].getThumb(100);
-                return files[0].getThumb(avatar_size);     // async decrypt thumbnail
+                    return files[0].getEncryptedThumbnail().getThumb(100);
+                return files[0].getEncryptedThumbnail().getThumb(avatar_size);     // async decrypt thumbnail
             }
 
             protected void onPostExecute(Bitmap thumbnail) {
                 String name = (String) viewHolder.thumbnail.getTag();
-                if (name.equals(file.getName()) && (thumbnail != null) && (viewHolder.thumbnail != null)) {
+                if (name.equals(encryptedFile.getDecryptedFileName()) && (thumbnail != null) && (viewHolder.thumbnail != null)) {
                     viewHolder.thumbnail.setImageBitmap(thumbnail);   // bind thumbnail in UI thread
                     viewHolder.thumbnail.setVisibility(View.VISIBLE);
                 }
             }
         }
-        new BindImageTask().execute(file);
+        new BindImageTask().execute(encryptedFile);
 
         // return the final view object
         return view;
     }
 
 
-    public void onEventMainThread(ThumbnailLoadJob.ThumbLoadDoneEvent event) {
+    public void onEventMainThread(ThumbLoadDoneEvent event) {
         try {
             String name = (String) event.imageView.getTag();
-            if (name.equals(event.file.getName()) && (event.bitmap != null) && (event.imageView != null)) {
+            if (name.equals(event.encryptedFile.getDecryptedFileName()) && (event.bitmap != null) && (event.imageView != null)) {
                 event.imageView.setImageBitmap(event.bitmap);   // bind thumbnail in UI thread
                 event.imageView.setVisibility(View.VISIBLE);
             }
@@ -256,10 +256,10 @@ class FilesListAdapter extends ArrayAdapter<File> {
     }
 
     public void sort() {
-        this.sort(new Comparator<File>() {
+        this.sort(new Comparator<EncryptedFile>() {
             @Override
-            public int compare(com.doplgangr.secrecy.FileSystem.File file, com.doplgangr.secrecy.FileSystem.File file2) {
-                return file.getName().compareTo(file2.getName());
+            public int compare(EncryptedFile encryptedFile, EncryptedFile encryptedFile2) {
+                return encryptedFile.getDecryptedFileName().compareTo(encryptedFile2.getDecryptedFileName());
             }
         });
         notifyDataSetChanged();

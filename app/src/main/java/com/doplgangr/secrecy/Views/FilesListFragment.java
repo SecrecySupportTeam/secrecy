@@ -45,7 +45,9 @@ import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
-import com.doplgangr.secrecy.FileSystem.Vault;
+import com.doplgangr.secrecy.Events.NewFileEvent;
+import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
+import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.Jobs.AddFileJob;
 import com.doplgangr.secrecy.Jobs.InitializeVaultJob;
 import com.doplgangr.secrecy.Listeners;
@@ -160,13 +162,13 @@ public class FilesListFragment extends FileViewer {
         secret.iterateAllFiles(
                 new Vault.onFileFoundListener() {
                     @Override
-                    public void dothis(com.doplgangr.secrecy.FileSystem.File file) {
-                        addToList(file);
+                    public void dothis(EncryptedFile encryptedFile) {
+                        addToList(encryptedFile);
                     }
                 });
     }
 
-    public void onEventMainThread(AddFileJob.NewFileEvent event) {
+    public void onEventMainThread(NewFileEvent event) {
         // Add new file to the list, sort it to its alphabetical position, and highlight
         // it with smooth scrolling.
 
@@ -174,9 +176,9 @@ public class FilesListFragment extends FileViewer {
             Util.toast(context,
                     CustomApp.context.getString(R.string.Files__add_successful),
                     Toast.LENGTH_SHORT);
-            addToList(event.file);
+            addToList(event.encryptedFile);
             adapter.sort();
-            int index = adapter.getItemId(event.file);
+            int index = adapter.getItemId(event.encryptedFile);
             if (index != -1)
                 listView.smoothScrollToPosition(index);
         }
@@ -248,9 +250,9 @@ public class FilesListFragment extends FileViewer {
                     startActivity(intent);
                 } else {
 
-                    com.doplgangr.secrecy.FileSystem.File file = adapter.getItem(i);
+                    EncryptedFile encryptedFile = adapter.getItem(i);
 
-                    if (!file.decrypting) {
+                    if (!encryptedFile.getIsDecrypting()) {
                         ProgressBar pBar = (ProgressBar) view.findViewById(R.id.progressBar);
                         switchView(view, R.id.DecryptLayout);
                         Listeners.EmptyListener onFinish = new Listeners.EmptyListener() {
@@ -259,7 +261,7 @@ public class FilesListFragment extends FileViewer {
                                 switchView(view, R.id.dataLayout);
                             }
                         };
-                        decrypt(file, pBar, onFinish);
+                        decrypt(encryptedFile, pBar, onFinish);
                     } else
                         Util.toast(context, getString(R.string.Error__already_decrypting), Toast.LENGTH_SHORT);
                 }
@@ -283,20 +285,20 @@ public class FilesListFragment extends FileViewer {
     }
 
     @UiThread
-    void addToList(com.doplgangr.secrecy.FileSystem.File file) {
-        adapter.add(file);
+    void addToList(EncryptedFile encryptedFile) {
+        adapter.add(encryptedFile);
     }
 
     @Background(id = Config.cancellable_task)
     @Override
-    void decrypt(com.doplgangr.secrecy.FileSystem.File file, final ProgressBar pBar, Listeners.EmptyListener onFinish) {
-        super.decrypt(file, pBar, onFinish);
+    void decrypt(EncryptedFile encryptedFile, final ProgressBar pBar, Listeners.EmptyListener onFinish) {
+        super.decrypt(encryptedFile, pBar, onFinish);
     }
 
     @Background(id = Config.cancellable_task)
-    void decrypt_and_save(com.doplgangr.secrecy.FileSystem.File file, final ProgressBar pBar, final Listeners.EmptyListener onFinish) {
-        File tempFile = super.getFile(file, pBar, onFinish);
-        File storedFile = new File(Environment.getExternalStorageDirectory(), file.getName() + "." + file.getType());
+    void decrypt_and_save(EncryptedFile encryptedFile, final ProgressBar pBar, final Listeners.EmptyListener onFinish) {
+        File tempFile = super.getFile(encryptedFile, pBar, onFinish);
+        File storedFile = new File(Environment.getExternalStorageDirectory(), encryptedFile.getDecryptedFileName() + "." + encryptedFile.getType());
         if (tempFile == null) {
             Util.alert(context,
                     CustomApp.context.getString(R.string.Error__decrypting_file),
@@ -382,12 +384,12 @@ public class FilesListFragment extends FileViewer {
         for (final FilesListAdapter.ViewNIndex object : adapterSelected) {
             int position = object.index;
             if (adapter.hasIndex(position)) {
-                com.doplgangr.secrecy.FileSystem.File file = adapter.getItem(position);
+                EncryptedFile encryptedFile = adapter.getItem(position);
                 final View mView =
                         ((FilesListAdapter.ViewHolder) object.view.getTag()).selected ?
                                 object.view :
                                 null;
-                if (!file.decrypting) {
+                if (!encryptedFile.getIsDecrypting()) {
                     decryptCounter++;
                     switchView(mView, R.id.DecryptLayout);
                     ProgressBar pBar =
@@ -404,7 +406,7 @@ public class FilesListFragment extends FileViewer {
                         }
                     };
                     if (attached)
-                        decrypt_and_save(file, pBar, onFinish);
+                        decrypt_and_save(encryptedFile, pBar, onFinish);
                 } else if (attached)
                     Util.toast(context, getString(R.string.Error__already_decrypting), Toast.LENGTH_SHORT);
             }
@@ -418,11 +420,11 @@ public class FilesListFragment extends FileViewer {
         for (FilesListAdapter.ViewNIndex object : adapter.getSelected()) {
             int position = object.index;
             if (adapter.hasIndex(position)) {
-                com.doplgangr.secrecy.FileSystem.File file = adapter.getItem(position);
+                EncryptedFile encryptedFile = adapter.getItem(position);
                 final View mView = ((FilesListAdapter.ViewHolder) object.view.getTag()).selected ?
                         object.view :
                         null;
-                if (!file.decrypting) {
+                if (!encryptedFile.getIsDecrypting()) {
                     switchView(mView, R.id.DecryptLayout);
                     ProgressBar pBar = mView != null ?
                             (ProgressBar) mView.findViewById(R.id.progressBar) :
@@ -433,7 +435,7 @@ public class FilesListFragment extends FileViewer {
                             switchView(mView, R.id.dataLayout);
                         }
                     };
-                    Args.add(new DecryptArgHolder(file, pBar, onFinish));
+                    Args.add(new DecryptArgHolder(encryptedFile, pBar, onFinish));
                 } else if (attached)
                     Util.toast(context, getString(R.string.Error__already_decrypting), Toast.LENGTH_SHORT);
             }
@@ -453,7 +455,7 @@ public class FilesListFragment extends FileViewer {
                 for (FilesListAdapter.ViewNIndex object : adapterSelected) {
                     int position = object.index;
                     if (adapter.hasIndex(object.index))
-                        if (!adapter.getItem(position).decrypting) {
+                        if (!adapter.getItem(position).getIsDecrypting()) {
                             adapter.getItem(position).delete();
                             adapter.remove(position);
                         } else if (attached)
@@ -464,7 +466,7 @@ public class FilesListFragment extends FileViewer {
         String FilesToDelete = "\n";
         for (FilesListAdapter.ViewNIndex object : adapterSelected)
             if (adapter.hasIndex(object.index))
-                FilesToDelete += "- " + adapter.getItem(object.index).getName() + "\n";
+                FilesToDelete += "- " + adapter.getItem(object.index).getDecryptedFileName() + "\n";
         DialogInterface.OnClickListener negative = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -496,12 +498,12 @@ public class FilesListFragment extends FileViewer {
     }
 
     class DecryptArgHolder {
-        public com.doplgangr.secrecy.FileSystem.File file;
+        public EncryptedFile encryptedFile;
         public ProgressBar pBar;
         public Listeners.EmptyListener onFinish;
 
-        public DecryptArgHolder(com.doplgangr.secrecy.FileSystem.File file, ProgressBar pBar, Listeners.EmptyListener onFinish) {
-            this.file = file;
+        public DecryptArgHolder(EncryptedFile encryptedFile, ProgressBar pBar, Listeners.EmptyListener onFinish) {
+            this.encryptedFile = encryptedFile;
             this.pBar = pBar;
             this.onFinish = onFinish;
         }
