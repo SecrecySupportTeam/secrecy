@@ -43,7 +43,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.doplgangr.secrecy.CustomApp_;
-import com.doplgangr.secrecy.FileSystem.storage;
+import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Premium.PremiumFragment_;
 import com.doplgangr.secrecy.Premium.PremiumStateHelper;
 import com.doplgangr.secrecy.Premium.StealthMode;
@@ -137,7 +137,7 @@ public class SettingsFragment extends PreferenceFragment
         });
 
         Preference vault_root = findPreference("vault_root");
-        vault_root.setSummary(storage.getRoot().getAbsolutePath());
+        vault_root.setSummary(Storage.getRoot().getAbsolutePath());
         vault_root.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -324,7 +324,7 @@ public class SettingsFragment extends PreferenceFragment
                         try {
                             // Get the file path from the URI
                             final String path = FileUtils.getPath(context, uri);
-                            storage.setRoot(path);
+                            Storage.setRoot(path);
                         } catch (Exception e) {
                             Log.e("FileSelectorTestActivity", "File select error", e);
                         }
@@ -341,7 +341,7 @@ public class SettingsFragment extends PreferenceFragment
                         try {
                             // Get the file path from the URI
                             final String path = FileUtils.getPath(context, uri);
-                            if (path.contains(storage.getRoot().getAbsolutePath())) {
+                            if (path.contains(Storage.getRoot().getAbsolutePath())) {
                                 Util.alert(context,
                                         getString(R.string.Settings__cannot_move_vault),
                                         getString(R.string.Settings__cannot_move_vault_message),
@@ -351,7 +351,7 @@ public class SettingsFragment extends PreferenceFragment
                             }
                             Util.alert(context,
                                     getString(R.string.Settings__move_vault),
-                                    String.format(getString(R.string.move_message), storage.getRoot().getAbsolutePath(), path),
+                                    String.format(getString(R.string.move_message), Storage.getRoot().getAbsolutePath(), path),
                                     new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -384,10 +384,10 @@ public class SettingsFragment extends PreferenceFragment
 
     @Background
     void move(String path, ProgressDialog progressDialog) {
-        File oldRoot = storage.getRoot();
+        File oldRoot = Storage.getRoot();
         try {
             org.apache.commons.io.FileUtils.copyDirectory(oldRoot, new File(path));
-            storage.setRoot(path);
+            Storage.setRoot(path);
             Util.toast(context,
                     String.format(getString(R.string.Settings__moved_vault), path), Toast.LENGTH_LONG);
             update();

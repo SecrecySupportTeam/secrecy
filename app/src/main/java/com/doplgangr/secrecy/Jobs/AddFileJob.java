@@ -4,8 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.doplgangr.secrecy.FileSystem.File;
+import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.FileSystem.Vault;
-import com.doplgangr.secrecy.FileSystem.storage;
 import com.doplgangr.secrecy.Util;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
@@ -39,17 +39,17 @@ public class AddFileJob extends Job {
         Util.log("Adding file", data);
         if (!alreadyDeleting) {
             String filename = vault.addFile(context, data);
-            Uri thumbnail = storage.saveThumbnail(context, data, filename);
+            Uri thumbnail = Storage.saveThumbnail(context, data, filename);
             if (thumbnail != null) {
                 vault.addFile(context, thumbnail);
-                storage.purgeFile(new java.io.File(thumbnail.getPath()));
+                Storage.purgeFile(new java.io.File(thumbnail.getPath()));
             }
             File returnedFile = vault.getFileInstance(filename);
             EventBus.getDefault().post(new NewFileEvent(returnedFile));
             alreadyDeleting = true;
         }
         java.io.File actualFile = new java.io.File(getPath(context, data));
-        storage.purgeFile(actualFile, data); //Try to delete original file.
+        Storage.purgeFile(actualFile, data); //Try to delete original file.
     }
 
     @Override

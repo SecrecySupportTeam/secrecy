@@ -38,8 +38,8 @@ import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.File;
 import com.doplgangr.secrecy.FileSystem.OurFileProvider;
+import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.FileSystem.Vault;
-import com.doplgangr.secrecy.FileSystem.storage;
 import com.doplgangr.secrecy.Jobs.AddFileJob;
 import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
@@ -70,7 +70,7 @@ public class FileViewer extends Fragment {
     void onCreate() {
         context = (ActionBarActivity) getActivity();
         if (context.getSupportActionBar() != null)
-            context.getSupportActionBar().setSubtitle(storage.getRoot().getAbsolutePath());
+            context.getSupportActionBar().setSubtitle(Storage.getRoot().getAbsolutePath());
         final EditText input = new EditText(context);
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         new AlertDialog.Builder(context)
@@ -102,8 +102,8 @@ public class FileViewer extends Fragment {
         java.io.File tempFile = getFile(file, pBar, onFinish);
         //File specified is not invalid
         if (tempFile != null) {
-            if (tempFile.getParentFile().equals(storage.getTempFolder())) {
-                java.io.File newFile = new java.io.File(storage.getTempFolder(), tempFile.getName());
+            if (tempFile.getParentFile().equals(Storage.getTempFolder())) {
+                java.io.File newFile = new java.io.File(Storage.getTempFolder(), tempFile.getName());
                 tempFile = newFile;
             }
             Uri uri = OurFileProvider.getUriForFile(context, OurFileProvider.FILE_PROVIDER_AUTHORITY, tempFile);
@@ -130,8 +130,8 @@ public class FileViewer extends Fragment {
             java.io.File tempFile = getFile(arg.file, arg.pBar, arg.onFinish);
             //File specified is not invalid
             if (tempFile != null) {
-                if (tempFile.getParentFile().equals(storage.getTempFolder()))
-                    tempFile = new java.io.File(storage.getTempFolder(), tempFile.getName());
+                if (tempFile.getParentFile().equals(Storage.getTempFolder()))
+                    tempFile = new java.io.File(Storage.getTempFolder(), tempFile.getName());
                 uris.add(OurFileProvider.getUriForFile(context, OurFileProvider.FILE_PROVIDER_AUTHORITY, tempFile));
                 mimes.add(myMime.getMimeTypeFromExtension(arg.file.getType()));
 

@@ -50,7 +50,7 @@ import javax.crypto.CipherInputStream;
 
 import static com.ipaulpro.afilechooser.utils.FileUtils.getPath;
 
-public class storage {
+public class Storage {
 
     public static void DeleteRecursive(java.io.File directory) {
         try {
@@ -145,7 +145,7 @@ public class storage {
             stream = context.getContentResolver().openInputStream(uri);
             java.io.File thumbpath = new java.io.File(getAbsTempFolder() + "/" + "_thumb" + filename);
             if (thumbpath.exists())
-                storage.purgeFile(thumbpath);
+                Storage.purgeFile(thumbpath);
             thumbpath.createNewFile();
             FileOutputStream out = new FileOutputStream(thumbpath);
             Bitmap bitmap = decodeSampledBitmapFromPath(getPath(context, uri), 150, 150);
@@ -156,7 +156,7 @@ public class storage {
             }
             if (bitmap == null) {
                 out.close();
-                storage.purgeFile(thumbpath);
+                Storage.purgeFile(thumbpath);
                 return null;
             }
             bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);

@@ -56,14 +56,14 @@ public class Vault implements Serializable {
     public Vault(String name, String secret) {
         this.key = secret;
         this.name = name;
-        path = storage.getRoot().getAbsolutePath() + "/" + name;
+        path = Storage.getRoot().getAbsolutePath() + "/" + name;
         initialize();
     }
 
     public Vault(String name, String secret, Boolean istemp) {
         this.key = secret;
         this.name = name;
-        path = storage.getRoot().getAbsolutePath() + "/" + name;
+        path = Storage.getRoot().getAbsolutePath() + "/" + name;
         //do not initialize now coz this is temp
     }
 
@@ -81,7 +81,7 @@ public class Vault implements Serializable {
     }
 
     public void initialize() {
-        java.io.File nomedia = new java.io.File(storage.getRoot().getAbsolutePath() + "/" +
+        java.io.File nomedia = new java.io.File(Storage.getRoot().getAbsolutePath() + "/" +
                 name + "/.nomedia");
         if (!nomedia.exists())
             return;
@@ -106,7 +106,7 @@ public class Vault implements Serializable {
         });
         if (tempnomedia != null) {
             wrongPass = false;
-            storage.purgeFile(tempnomedia);
+            Storage.purgeFile(tempnomedia);
         }
         Util.log("Password is Wrong=", wrongPass);
     }

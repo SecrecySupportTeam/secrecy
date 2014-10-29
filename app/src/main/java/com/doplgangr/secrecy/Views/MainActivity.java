@@ -41,7 +41,7 @@ import com.balysv.materialmenu.extras.abc.MaterialMenuIconCompat;
 import com.crashlytics.android.Crashlytics;
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
-import com.doplgangr.secrecy.FileSystem.storage;
+import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Premium.PremiumFragment_;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.Prefs_;
@@ -90,7 +90,7 @@ public class MainActivity
     @AfterViews
     public void onCreate() {
         Crashlytics.start(this);
-        storage.deleteTemp();                                           //Start clean
+        Storage.deleteTemp();                                           //Start clean
         fragmentManager = getSupportFragmentManager();
         switchFragment(0);
 
@@ -292,7 +292,7 @@ public class MainActivity
 
     @Override
     public void onDestroy() {
-        storage.deleteTemp(); //Cleanup every time
+        Storage.deleteTemp(); //Cleanup every time
         super.onDestroy();
     }
 

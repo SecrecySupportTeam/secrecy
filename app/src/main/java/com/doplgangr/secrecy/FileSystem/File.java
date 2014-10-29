@@ -123,7 +123,7 @@ public class File implements Serializable {
 
                 }
             });
-            this.thumb = storage.getThumbnailfromStream(streamThumb, size);
+            this.thumb = Storage.getThumbnailfromStream(streamThumb, size);
         }
         return thumb;
     }
@@ -154,7 +154,7 @@ public class File implements Serializable {
         OutputStream out = null;
         java.io.File outputFile = null;
         try {
-            outputFile = java.io.File.createTempFile("tmp" + name, "." + FileType, storage.getTempFolder());
+            outputFile = java.io.File.createTempFile("tmp" + name, "." + FileType, Storage.getTempFolder());
             outputFile.mkdirs();
             outputFile.createNewFile();
             AES_Encryptor enc = new AES_Encryptor(key);
@@ -200,7 +200,7 @@ public class File implements Serializable {
         }
         // An error occured. Too Bad
         if (outputFile != null)
-            storage.purgeFile(outputFile);
+            Storage.purgeFile(outputFile);
         return null;
     }
 
@@ -236,7 +236,7 @@ public class File implements Serializable {
     }
 
     public void delete() {
-        storage.purgeFile(file);
+        Storage.purgeFile(file);
         File thumbnailFile = new File(thumbnailRealFile, key);
         if (!thumbnailFile.invalidFile)
             thumbnailFile.delete();
