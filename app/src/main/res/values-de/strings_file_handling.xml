@@ -39,6 +39,7 @@
     <string name="action__decrypt">Entschlüsseln</string>
     <string name="action__delete">Löschen</string>
     <string name="action__add_file">Datei hinzufügen</string>
+    <string name="action__change_passphrase">Passphrase ändern</string>
     <string name="File__open">Verschlüsselte Datei wird geöffnet</string>
     <string name="File__open_message">Bitte Passwort eingeben, um diese Datei zu öffnen</string>
 </resources>
