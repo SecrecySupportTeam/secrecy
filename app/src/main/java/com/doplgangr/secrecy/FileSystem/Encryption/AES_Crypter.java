@@ -34,6 +34,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -214,7 +215,7 @@ abstract class AES_Crypter implements Crypter {
         Cipher c;
         try {
             c = Cipher.getInstance(encryptionMode);
-        }  catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new SecrecyCipherStreamException("Encryption algorithm not found!");
         } catch (NoSuchPaddingException e) {
             throw new SecrecyCipherStreamException("Selected padding not found!");
@@ -236,7 +237,7 @@ abstract class AES_Crypter implements Crypter {
         try {
             c.init(Cipher.DECRYPT_MODE, vaultFileEncryptionKey,
                     new IvParameterSpec(fileHeader.getFileIV().toByteArray()));
-        }  catch (InvalidKeyException e) {
+        } catch (InvalidKeyException e) {
             throw new SecrecyCipherStreamException("Invalid encryption key!");
         } catch (InvalidAlgorithmParameterException e) {
             throw new SecrecyCipherStreamException("Invalid algorithm parameter!");
@@ -279,11 +280,78 @@ abstract class AES_Crypter implements Crypter {
         byte[] decryptedFileName;
         try {
             decryptedFileName = c.doFinal(fileHeader.getEncryptedFileName().toByteArray());
-        }catch (IllegalBlockSizeException e) {
+        } catch (IllegalBlockSizeException e) {
             throw new SecrecyCipherStreamException("Illegal block size!");
         } catch (BadPaddingException e) {
             throw new SecrecyCipherStreamException("Bad padding");
         }
         return new String(decryptedFileName);
+    }
+
+    @Override
+    public boolean changePassphrase(String oldPassphrase, String newPassphrase) {
+        SecretKeyFactory secretKeyFactory;
+
+        File headerFileOld = new File(this.vaultPath + VAULT_HEADER_FILENAME);
+        File headerFileNew = new File(this.vaultPath + VAULT_HEADER_FILENAME + "NEW");
+        if (!headerFileNew.exists()) {
+            try {
+                // Decrypt AES encryption key
+                secretKeyFactory = SecretKeyFactory.getInstance(SECRET_KEY_ALGORITHM);
+                SecretKey oldKeyFromPassphrase = secretKeyFactory.generateSecret(
+                        new PBEKeySpec(oldPassphrase.toCharArray(), vaultHeader.getSalt().toByteArray(),
+                                PBKDF2_ITERATION_COUNT, AES_KEY_SIZE_BIT));
+                Cipher c = Cipher.getInstance(HEADER_ENCRYPTION_MODE);
+                c.init(Cipher.DECRYPT_MODE, oldKeyFromPassphrase, new IvParameterSpec(
+                        vaultHeader.getVaultIV().toByteArray()));
+                byte[] decryptedKey = c.doFinal(vaultHeader.getEncryptedAesKey().toByteArray());
+
+                // Create new vault nonce and salt
+                byte[] vaultNonce = new byte[NONCE_LENGTH_BYTE];
+                byte[] salt = new byte[SALT_SIZE_BYTE];
+                secureRandom.nextBytes(vaultNonce);
+                secureRandom.nextBytes(salt);
+
+                // Create new key for AES key encryption
+                SecretKey newKeyFromPassphrase = secretKeyFactory.generateSecret(
+                        new PBEKeySpec(newPassphrase.toCharArray(), salt,
+                                PBKDF2_ITERATION_COUNT, AES_KEY_SIZE_BIT));
+
+                writeVaultHeader(headerFileNew, vaultNonce, decryptedKey, salt, newKeyFromPassphrase);
+
+            } catch (Exception e) {
+                Util.log("Error while reading or creating new vault header!");
+                return false;
+            }
+        } else {
+            Util.log("New header file already exists. Cannot change passphrase!");
+            return false;
+        }
+
+        // Try to parse new header file
+        try {
+            FileInputStream headerInputStream = new FileInputStream(headerFileNew);
+            vaultHeader = VaultHeader.parseFrom(headerInputStream);
+        } catch (Exception e) {
+            Util.log("Cannot read vault header!");
+            headerFileNew.delete();
+            return false;
+        }
+
+        // Delete old header file and replace with new header file
+        if (!headerFileOld.delete()){
+            headerFileNew.delete();
+            Util.log("Cannot delete old vault header!");
+            return false;
+        }
+        try {
+            org.apache.commons.io.FileUtils.copyFile(headerFileNew, headerFileOld);
+        } catch (IOException e) {
+            Util.log("Cannot replace old vault header!");
+            return false;
+        }
+
+        headerFileNew.delete();
+        return true;
     }
 }

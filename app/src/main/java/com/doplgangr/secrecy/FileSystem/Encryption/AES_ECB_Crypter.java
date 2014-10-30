@@ -124,6 +124,11 @@ class AES_ECB_Crypter implements Crypter {
         return name;
     }
 
+    @Override
+    public boolean changePassphrase(String oldPassphrase, String newPassphrase) {
+        return false;
+    }
+
     public byte[] getKey() {
         return key;
     }
