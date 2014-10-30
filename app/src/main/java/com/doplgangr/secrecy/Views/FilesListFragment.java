@@ -297,7 +297,7 @@ public class FilesListFragment extends FileViewer {
     @Background(id = Config.cancellable_task)
     void decrypt_and_save(EncryptedFile encryptedFile, final ProgressBar pBar, final Listeners.EmptyListener onFinish) {
         File tempFile = super.getFile(encryptedFile, pBar, onFinish);
-        File storedFile = new File(Environment.getExternalStorageDirectory(), encryptedFile.getDecryptedFileName() + "." + encryptedFile.getType());
+        File storedFile = new File(Environment.getExternalStorageDirectory(), encryptedFile.getDecryptedFileName());
         if (tempFile == null) {
             Util.alert(context,
                     CustomApp.context.getString(R.string.Error__decrypting_file),
