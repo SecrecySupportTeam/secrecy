@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.Events.ImageLoadDoneEvent;
+import com.doplgangr.secrecy.Exceptions.SecrecyFileException;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.Jobs.ImageLoadJob;
@@ -193,7 +194,11 @@ public class FilePhotoFragment extends FragmentActivity {
                 final PhotoView photoView = new PhotoView(container.getContext());
                 this.photoView = photoView;
                 relativeLayout.addView(photoView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                photoView.setImageBitmap(encryptedFile.getEncryptedThumbnail().getThumb(150));
+                try {
+                    photoView.setImageBitmap(encryptedFile.getEncryptedThumbnail().getThumb(150));
+                } catch (SecrecyFileException e) {
+                    Util.log("No bitmap available!");
+                }
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
                 final ProgressBar pBar = new ProgressBar(container.getContext());

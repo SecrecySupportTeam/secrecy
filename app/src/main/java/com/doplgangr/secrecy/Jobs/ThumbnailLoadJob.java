@@ -4,7 +4,9 @@ import android.graphics.Bitmap;
 import android.widget.ImageView;
 
 import com.doplgangr.secrecy.Events.ThumbLoadDoneEvent;
+import com.doplgangr.secrecy.Exceptions.SecrecyFileException;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
+import com.doplgangr.secrecy.Util;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
@@ -30,8 +32,12 @@ public class ThumbnailLoadJob extends Job {
 
     @Override
     public void onRun() throws Throwable {
-        Bitmap bm = encryptedFile.getEncryptedThumbnail().getThumb(avatar_size);
-        EventBus.getDefault().post(new ThumbLoadDoneEvent(encryptedFile, imageView, bm));
+        try {
+            Bitmap bm = encryptedFile.getEncryptedThumbnail().getThumb(avatar_size);
+            EventBus.getDefault().post(new ThumbLoadDoneEvent(encryptedFile, imageView, bm));
+        } catch(SecrecyFileException e){
+            Util.log("No bitmap available!");
+        }
     }
 
     @Override

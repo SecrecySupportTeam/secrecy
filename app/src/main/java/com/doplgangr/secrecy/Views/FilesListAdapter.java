@@ -33,6 +33,7 @@ import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.Events.ThumbLoadDoneEvent;
+import com.doplgangr.secrecy.Exceptions.SecrecyFileException;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
@@ -201,9 +202,19 @@ class FilesListAdapter extends ArrayAdapter<EncryptedFile> {
         // This class is for binding thumbnail to UI
         class BindImageTask extends AsyncTask<EncryptedFile, Void, Bitmap> {
             protected Bitmap doInBackground(EncryptedFile... files) {
-                if (isGallery)
-                    return files[0].getEncryptedThumbnail().getThumb(100);
-                return files[0].getEncryptedThumbnail().getThumb(avatar_size);     // async decrypt thumbnail
+                if (isGallery) {
+                    try {
+                        return files[0].getEncryptedThumbnail().getThumb(100);
+                    } catch (SecrecyFileException e) {
+                        Util.log("No bitmap available!");
+                    }
+                }
+                try {
+                    return files[0].getEncryptedThumbnail().getThumb(avatar_size);     // async decrypt thumbnail
+                } catch (SecrecyFileException e) {
+                    Util.log("No bitmap available!");
+                }
+                return null;
             }
 
             protected void onPostExecute(Bitmap thumbnail) {

@@ -24,6 +24,7 @@ package com.doplgangr.secrecy.FileSystem.Files;
  *
  */
 
+import com.doplgangr.secrecy.Exceptions.SecrecyFileException;
 import com.doplgangr.secrecy.FileSystem.Encryption.Crypter;
 import com.doplgangr.secrecy.FileSystem.Storage;
 
@@ -45,12 +46,12 @@ public class EncryptedFile extends SecrecyFile {
      * @param crypter
      */
     EncryptedFile(File file, Crypter crypter, EncryptedThumbnail encryptedThumbnail)
-            throws FileNotFoundException{
+            throws FileNotFoundException {
         this.file = file;
         this.crypter = crypter;
         this.encryptedThumbnail = encryptedThumbnail;
 
-        if (!file.exists()){
+        if (!file.exists()) {
             throw new FileNotFoundException();
         }
         try {
@@ -58,7 +59,8 @@ public class EncryptedFile extends SecrecyFile {
         } catch (Exception e) {
             //Ignored
         }
-        if (encryptedThumbnail != null && encryptedThumbnail.isThumbnailCreated()){
+
+        if (encryptedThumbnail != null && encryptedThumbnail.isThumbnailCreated()) {
             hasThumbnail = true;
         }
 
@@ -67,12 +69,14 @@ public class EncryptedFile extends SecrecyFile {
         timestamp = new Date(file.lastModified());
     }
 
-
     public boolean hasThumbnail() {
         return (hasThumbnail);
     }
 
-    public EncryptedThumbnail getEncryptedThumbnail() {
+    public EncryptedThumbnail getEncryptedThumbnail() throws SecrecyFileException {
+        if (encryptedThumbnail == null) {
+            throw new SecrecyFileException("No encrypted thumbnail available!");
+        }
         return encryptedThumbnail;
     }
 
