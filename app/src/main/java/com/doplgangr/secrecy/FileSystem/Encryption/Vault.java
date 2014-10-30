@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
 public class Vault implements Serializable {
     private final String name;
     private final String path;
-    private String passphrase;
+    private final String passphrase;
     private Crypter crypter;
 
     public Boolean wrongPass = false;
@@ -119,7 +119,7 @@ public class Vault implements Serializable {
            encryptedFile = EncryptedFileFactory.getInstance().loadEncryptedFile(requestedFile,
                    crypter);
         } catch (FileNotFoundException e){
-
+            Util.log("File not found: " + requestedFile.getAbsolutePath());
         }
         return encryptedFile;
     }

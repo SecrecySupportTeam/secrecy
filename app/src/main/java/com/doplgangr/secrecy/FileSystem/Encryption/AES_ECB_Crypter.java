@@ -18,13 +18,9 @@
 */
 package com.doplgangr.secrecy.FileSystem.Encryption;
 
-import android.content.ContentResolver;
-import android.webkit.MimeTypeMap;
-
 import com.doplgangr.secrecy.Exceptions.SecrecyCipherStreamException;
 import com.doplgangr.secrecy.FileSystem.Base64Coder;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
-import com.doplgangr.secrecy.FileSystem.Files.SecrecyFile;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -47,7 +43,7 @@ class AES_ECB_Crypter implements Crypter {
 
     private final String mode = "AES/ECB/PKCS5Padding";
     private SecretKeySpec aesKey;
-    private String vaultPath;
+    private final String vaultPath;
     private byte[] key;
 
     public AES_ECB_Crypter(String vaultPath, String password) throws InvalidKeyException{

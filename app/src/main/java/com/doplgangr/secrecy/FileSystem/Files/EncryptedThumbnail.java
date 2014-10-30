@@ -33,7 +33,7 @@ import javax.crypto.CipherInputStream;
 public class EncryptedThumbnail extends SecrecyFile {
 
     private Bitmap thumbBitmap = null;
-    private boolean thumbnailCreated = false;
+    private final boolean thumbnailCreated = false;
 
     EncryptedThumbnail(File file, Crypter crypter) {
         this.crypter = crypter;

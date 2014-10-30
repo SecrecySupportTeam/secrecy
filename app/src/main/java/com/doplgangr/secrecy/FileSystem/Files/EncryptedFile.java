@@ -36,7 +36,7 @@ import java.util.Date;
 
 public class EncryptedFile extends SecrecyFile {
 
-    private EncryptedThumbnail encryptedThumbnail;
+    private final EncryptedThumbnail encryptedThumbnail;
     private Boolean hasThumbnail = false;
 
     /**

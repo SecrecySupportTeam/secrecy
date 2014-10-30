@@ -151,6 +151,7 @@ public class SecrecyFile implements Serializable {
         try {
             return crypter.getCipherInputStream(getFile());
         } catch (Exception e) {
+            Util.log("Error reading stream!");
         }
         return null;
     }

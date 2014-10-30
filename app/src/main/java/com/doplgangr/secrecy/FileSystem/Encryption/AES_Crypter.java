@@ -22,7 +22,6 @@ package com.doplgangr.secrecy.FileSystem.Encryption;
 import com.doplgangr.secrecy.Exceptions.SecrecyCipherStreamException;
 import com.doplgangr.secrecy.Exceptions.SecrecyFileException;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
-import com.doplgangr.secrecy.FileSystem.Files.SecrecyFile;
 import com.doplgangr.secrecy.FileSystem.Files.SecrecyHeaders.FileHeader;
 import com.doplgangr.secrecy.FileSystem.Files.SecrecyHeaders.VaultHeader;
 import com.doplgangr.secrecy.FileSystem.Storage;
@@ -38,7 +37,6 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -67,12 +65,12 @@ abstract class AES_Crypter implements Crypter {
     private static final int VAULT_HEADER_VERSION = 1;
     private static final int FILE_HEADER_VERSION = 1;
 
-    private SecureRandom secureRandom;
-    private SecretKeySpec vaultFileEncryptionKey;
+    private final SecureRandom secureRandom;
+    private final String vaultPath;
+    private final String encryptionMode;
 
-    private String encryptionMode;
+    private SecretKeySpec vaultFileEncryptionKey;
     private VaultHeader vaultHeader;
-    private String vaultPath;
 
     protected AES_Crypter(String vaultPath, String passphrase, String encryptionMode)
             throws InvalidKeyException {

@@ -27,7 +27,6 @@ import com.doplgangr.secrecy.Jobs.ImageLoadJob;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 import com.doplgangr.secrecy.Views.DummyViews.HackyViewPager;
-import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;

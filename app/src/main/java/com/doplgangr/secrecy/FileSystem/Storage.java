@@ -138,6 +138,7 @@ public class Storage {
                 byte[] bytes = IOUtils.toByteArray(streamThumb);
                 return decodeSampledBitmapFromByte(bytes, size, size);
             } catch (IOException e) {
+                Util.log("Error reading thumbnail!");
             }
         }
         return null;
