@@ -68,7 +68,7 @@ public class EncryptedFileFactory {
         String outputFileName = UUID.randomUUID().toString();
         File outputFile = new File(vault.getPath() + "/" + outputFileName);
 
-        while (outputFile.exists()){
+        while (outputFile.exists()) {
             Util.log("Output file name already exists. Trying new file name!");
             outputFileName = UUID.randomUUID().toString();
             outputFile = new File(vault.getPath() + "/" + outputFileName);
@@ -127,22 +127,18 @@ public class EncryptedFileFactory {
     }
 
     private boolean createThumbnail(File inputFile, File outputFile, Crypter crypter) {
-        Bitmap bitmap = null;
-        try {
-            Util.log("Trying to create thumbnail for: " + inputFile.getPath());
-            bitmap = Storage.decodeSampledBitmapFromPath(inputFile.getPath(),
-                    150, 150);
-            if (bitmap == null) {   //If photo fails, try Video
-                Util.log("Trying to create video thumbnail for: " + inputFile.getPath());
-                bitmap = ThumbnailUtils.createVideoThumbnail(inputFile.getPath(),
-                        MediaStore.Video.Thumbnails.MICRO_KIND);
-            }
-            if (bitmap == null) {
-                Util.log("Could not create thumbnail for: " + inputFile.getPath());
-                return false;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        Bitmap bitmap;
+        Util.log("Trying to create thumbnail for: " + inputFile.getPath());
+        bitmap = Storage.decodeSampledBitmapFromPath(inputFile.getPath(),
+                150, 150);
+        if (bitmap == null) {   //If photo fails, try Video
+            Util.log("Trying to create video thumbnail for: " + inputFile.getPath());
+            bitmap = ThumbnailUtils.createVideoThumbnail(inputFile.getPath(),
+                    MediaStore.Video.Thumbnails.MICRO_KIND);
+        }
+        if (bitmap == null) {
+            Util.log("Could not create thumbnail for: " + inputFile.getPath());
+            return false;
         }
 
         CipherOutputStream out;
