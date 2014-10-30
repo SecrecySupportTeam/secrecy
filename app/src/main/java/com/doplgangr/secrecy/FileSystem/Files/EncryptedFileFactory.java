@@ -64,7 +64,16 @@ public class EncryptedFileFactory {
     public EncryptedFile createNewEncryptedFile(File unencryptedFile, Crypter crypter, Vault vault)
             throws SecrecyFileException {
         Util.log(this.getClass().getName() + ": Creating new encrypted file!");
+
         String outputFileName = UUID.randomUUID().toString();
+        File outputFile = new File(vault.getPath() + "/" + outputFileName);
+
+        while (outputFile.exists()){
+            Util.log("Output file name already exists. Trying new file name!");
+            outputFileName = UUID.randomUUID().toString();
+            outputFile = new File(vault.getPath() + "/" + outputFileName);
+        }
+
         FileInputStream is;
         CipherOutputStream out;
 
@@ -109,8 +118,7 @@ public class EncryptedFileFactory {
 
         EncryptedFile encryptedFile;
         try {
-            encryptedFile = new EncryptedFile(
-                    new File(vault.getPath() + "/" + outputFileName), crypter, encryptedThumbnail);
+            encryptedFile = new EncryptedFile(outputFile, crypter, encryptedThumbnail);
         } catch (FileNotFoundException e) {
             Util.log(this.getClass().getName() + ": Encrypted file not found!");
             throw new SecrecyFileException("Encrypted file not found!");
