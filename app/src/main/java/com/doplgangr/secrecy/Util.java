@@ -73,6 +73,28 @@ public class Util {
         });
     }
 
+    public static void alert(final Context context,
+                             final String title, final String message,
+                             final DialogInterface.OnClickListener ok) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+
+            @Override
+            public void run() {
+                AlertDialog.Builder a = new AlertDialog.Builder(context);
+                if (title != null)
+                    a.setTitle(title);
+                if (message != null)
+                    a.setMessage(message);
+                if (ok != null)
+                    a.setPositiveButton(context.getString(R.string.OK), ok);
+                a.setCancelable(false);
+                a.show();
+            }
+
+        });
+    }
+
     public static void toast(final Activity context, final String msg, final Integer duration) {
         context.runOnUiThread(new Runnable() {
             public void run() {

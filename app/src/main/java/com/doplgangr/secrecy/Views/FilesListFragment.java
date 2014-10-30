@@ -46,9 +46,8 @@ import android.widget.ViewAnimator;
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.Events.NewFileEvent;
-import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
-import com.doplgangr.secrecy.Jobs.AddFileJob;
+import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.Jobs.InitializeVaultJob;
 import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
@@ -315,6 +314,61 @@ public class FilesListFragment extends FileViewer {
     void switchInterface() {
         isGallery = !isGallery;
         onCreate();
+    }
+
+    @OptionsItem(R.id.action_change_passphrase)
+    void changePassphrase() {
+        final View dialogView = View.inflate(context, R.layout.change_passphrase, null);
+        new AlertDialog.Builder(context)
+                .setTitle(getString(R.string.Vault__change_passphrase))
+                .setView(dialogView)
+                .setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String oldPassphrase = ((EditText) dialogView.findViewById(R.id.oldPassphrase)).getText().toString();
+                        String newPassphrase = ((EditText) dialogView.findViewById(R.id.newPassphrase)).getText().toString();
+                        String confirmNewPassphrase = ((EditText) dialogView.findViewById(R.id.confirmPassphrase)).getText().toString();
+
+                        if (newPassphrase.length() == 0) {
+                            Util.alert(context,
+                                    CustomApp.context.getString(R.string.Error__change_passphrase_failed),
+                                    CustomApp.context.getString(R.string.Error__passphrase_empty_message),
+                                    Util.emptyClickListener,
+                                    null
+                            );
+                            return;
+                        }
+                        if (!newPassphrase.equals(confirmNewPassphrase)) {
+                            Util.alert(context,
+                                    CustomApp.context.getString(R.string.Error__change_passphrase_failed),
+                                    CustomApp.context.getString(R.string.Error__passphrase_no_match_message),
+                                    Util.emptyClickListener,
+                                    null
+                            );
+                            return;
+                        }
+                        if (!secret.changePassphrase(oldPassphrase, newPassphrase)) {
+                            Util.alert(context,
+                                    CustomApp.context.getString(R.string.Error__change_passphrase_failed),
+                                    CustomApp.context.getString(R.string.Error__change_passphrase_failed_message),
+                                    Util.emptyClickListener,
+                                    null
+                            );
+                        } else {
+                            Util.alert(context,
+                                    CustomApp.context.getString(R.string.Vault__change_passphrase_ok),
+                                    CustomApp.context.getString(R.string.Vault__change_passphrase_ok_message),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            context.finish();
+                                        }
+                                    }
+                            );
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.CANCEL, Util.emptyClickListener)
+                .show();
     }
 
     @OptionsItem(R.id.action_delete_vault)

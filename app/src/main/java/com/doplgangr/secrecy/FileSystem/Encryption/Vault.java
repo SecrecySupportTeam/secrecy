@@ -49,7 +49,6 @@ public class Vault implements Serializable {
 
     public Boolean wrongPass = false;
 
-
     public Vault(String name, String passphrase) {
         this.name = name;
         this.passphrase = passphrase;
@@ -197,4 +196,7 @@ public class Vault implements Serializable {
         void dothis(EncryptedFile encryptedFile);
     }
 
+    public boolean changePassphrase(String oldPassphrase, String newPassphrase){
+        return crypter.changePassphrase(oldPassphrase, newPassphrase);
+    }
 }
