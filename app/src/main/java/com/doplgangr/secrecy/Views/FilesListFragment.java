@@ -510,7 +510,7 @@ public class FilesListFragment extends FileViewer {
                     int position = object.index;
                     if (adapter.hasIndex(object.index))
                         if (!adapter.getItem(position).getIsDecrypting()) {
-                            adapter.getItem(position).delete();
+                            secret.deleteFile(adapter.getItem(position));
                             adapter.remove(position);
                         } else if (attached)
                             Util.toast(context, getString(R.string.Error__already_decrypting_delete), Toast.LENGTH_SHORT);

@@ -134,6 +134,10 @@ public class Vault implements Serializable {
         return !wrongPass;
     }
 
+    public void deleteFile(EncryptedFile file){
+        crypter.deleteFile(file);
+    }
+
     private List<File> getFileList() {
         File folder = new File(path);
         return Arrays.asList(

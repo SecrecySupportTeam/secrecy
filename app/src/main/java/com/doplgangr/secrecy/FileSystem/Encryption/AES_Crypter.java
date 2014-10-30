@@ -20,8 +20,12 @@
 package com.doplgangr.secrecy.FileSystem.Encryption;
 
 import com.doplgangr.secrecy.Exceptions.SecrecyCipherStreamException;
+import com.doplgangr.secrecy.Exceptions.SecrecyFileException;
+import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
+import com.doplgangr.secrecy.FileSystem.Files.SecrecyFile;
 import com.doplgangr.secrecy.FileSystem.Files.SecrecyHeaders.FileHeader;
 import com.doplgangr.secrecy.FileSystem.Files.SecrecyHeaders.VaultHeader;
+import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Util;
 import com.google.protobuf.ByteString;
 
@@ -353,5 +357,18 @@ abstract class AES_Crypter implements Crypter {
 
         headerFileNew.delete();
         return true;
+    }
+
+    @Override
+    public void deleteFile(EncryptedFile file){
+        Storage.purgeFile(new File(file.getFile().getParent() +
+                FILE_HEADER_PREFIX + file.getFile().getName()));
+        try {
+            Storage.purgeFile(new File(file.getEncryptedThumbnail().getFile().getParent()
+                    + FILE_HEADER_PREFIX + file.getEncryptedThumbnail().getFile().getName()));
+        } catch (SecrecyFileException e) {
+            Util.log("Thumbnail header file not found!");
+        }
+        file.delete();
     }
 }

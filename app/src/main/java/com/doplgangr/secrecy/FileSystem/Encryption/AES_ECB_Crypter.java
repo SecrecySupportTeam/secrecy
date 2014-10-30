@@ -23,6 +23,8 @@ import android.webkit.MimeTypeMap;
 
 import com.doplgangr.secrecy.Exceptions.SecrecyCipherStreamException;
 import com.doplgangr.secrecy.FileSystem.Base64Coder;
+import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
+import com.doplgangr.secrecy.FileSystem.Files.SecrecyFile;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -131,5 +133,11 @@ class AES_ECB_Crypter implements Crypter {
 
     public byte[] getKey() {
         return key;
+    }
+
+
+    @Override
+    public void deleteFile(EncryptedFile file) {
+        file.delete();
     }
 }

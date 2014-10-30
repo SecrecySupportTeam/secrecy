@@ -20,6 +20,7 @@
 package com.doplgangr.secrecy.FileSystem.Encryption;
 
 import com.doplgangr.secrecy.Exceptions.SecrecyCipherStreamException;
+import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,5 +33,6 @@ public interface Crypter {
     public CipherOutputStream getCipherOutputStream(File file, String outputFileName) throws SecrecyCipherStreamException, FileNotFoundException;
     public CipherInputStream getCipherInputStream(File encryptedFile) throws SecrecyCipherStreamException, FileNotFoundException;
     public String getDecryptedFileName(File file) throws SecrecyCipherStreamException, FileNotFoundException;
+    public void deleteFile(EncryptedFile file);
     public boolean changePassphrase(String oldPassphrase, String newPassphrase);
 }
