@@ -145,6 +145,7 @@ public class FilesListFragment extends FileViewer {
     @Override
     void onCreate() {
         context = (ActionBarActivity) getActivity();
+        context.getSupportActionBar().setTitle(vault);
         if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
         CustomApp.jobManager.addJobInBackground(new InitializeVaultJob(vault, password));
