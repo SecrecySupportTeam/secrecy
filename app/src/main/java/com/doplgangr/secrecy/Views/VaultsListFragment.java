@@ -206,6 +206,8 @@ public class VaultsListFragment extends Fragment {
                         if (!password.equals(Confirmpassword) || "".equals(password))
                             passwordWrong();
                         else if (directory.mkdirs()) {
+                            // Create vault to initialize the vault header
+                            Vault vault = new Vault(name, password);
                             try {
                                 File file = new File(directory +  "/.nomedia");
                                 file.delete();
