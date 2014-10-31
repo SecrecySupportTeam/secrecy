@@ -66,8 +66,6 @@ public class VaultsListFragment extends Fragment {
     LinearLayout mLinearView;
     @ViewById(R.id.scrollView)
     ScrollView mScrollView;
-    @ViewById(R.id.header)
-    View mHeader;
     @ViewById(R.id.nothing)
     View nothing;
     @DrawableRes(R.drawable.file_selector)
