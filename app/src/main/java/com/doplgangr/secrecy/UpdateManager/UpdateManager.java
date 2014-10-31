@@ -30,7 +30,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.doplgangr.secrecy.FileSystem.Base64Coder;
-import com.doplgangr.secrecy.FileSystem.storage;
+import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.Prefs_;
 import com.doplgangr.secrecy.Util;
@@ -196,7 +196,7 @@ public class UpdateManager extends Fragment {
     void version32to40() {
         //walks the whole file tree, find out files that do not have encoded file names
         //and encode them.
-        Collection files = FileUtils.listFiles(storage.getRoot(), TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+        Collection files = FileUtils.listFiles(Storage.getRoot(), TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
         for (Object file : files) {
             File realFile = (File) file;
             String fileName = FilenameUtils.removeExtension(realFile.getName());
@@ -311,13 +311,13 @@ public class UpdateManager extends Fragment {
     @Background
     void version8to9() {
         // Changes filebase path to new format.
-        if (!Util.canWrite(storage.getRoot())) {
+        if (!Util.canWrite(Storage.getRoot())) {
             //Append with sdcard link
             appendlog("\nOld sdCard format. Changing to new format.");
             String newRoot = Environment.getExternalStorageDirectory()
                     .getAbsoluteFile()
-                    + "/" + storage.getRoot().getAbsolutePath();
-            storage.setRoot(newRoot);
+                    + "/" + Storage.getRoot().getAbsolutePath();
+            Storage.setRoot(newRoot);
         }
         version9to10();
     }
@@ -332,7 +332,7 @@ public class UpdateManager extends Fragment {
     void version6to7() {
         // Fix a bug in version 6 that corrupts the vault if user tries to move it elsewhere
 
-        if (!storage.getRoot().getName().equals("SECRECYFILES")) {
+        if (!Storage.getRoot().getName().equals("SECRECYFILES")) {
             appendlog("\nUser have used v6 and moved vaults elsewhere");
             Util.alert(context,
                     "Upgrading from alpha 0.6 to 0.7",
@@ -344,7 +344,7 @@ public class UpdateManager extends Fragment {
             );
             appendlog("\nTrying to move again...");
             try {
-                org.apache.commons.io.FileUtils.copyDirectory(getRoot(), storage.getRoot());
+                org.apache.commons.io.FileUtils.copyDirectory(getRoot(), Storage.getRoot());
                 appendlog("\nFinish re-moving vaults");
                 FileUtils.deleteDirectory(getRoot());
             } catch (IOException E) {
@@ -382,13 +382,13 @@ public class UpdateManager extends Fragment {
     @Background
     void version1to2() {
         // remove the temp folder, we do not use it anymore.
-        java.io.File root = storage.getRoot();
+        java.io.File root = Storage.getRoot();
         if (Util.canWrite(root)) {
             java.io.File[] files = root.listFiles();
             for (java.io.File inFile : files)
                 if (inFile.isDirectory())
                     if ("TEMP".equals(inFile.getName()))
-                        storage.DeleteRecursive(inFile);
+                        Storage.DeleteRecursive(inFile);
             appendlog(getString(R.string.Updater__one_to_two));
         }
         version2to3();

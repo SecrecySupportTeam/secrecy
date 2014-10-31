@@ -19,13 +19,14 @@ import android.widget.RelativeLayout;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
-import com.doplgangr.secrecy.FileSystem.File;
-import com.doplgangr.secrecy.FileSystem.Vault;
+import com.doplgangr.secrecy.Events.ImageLoadDoneEvent;
+import com.doplgangr.secrecy.Exceptions.SecrecyFileException;
+import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
+import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.Jobs.ImageLoadJob;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 import com.doplgangr.secrecy.Views.DummyViews.HackyViewPager;
-import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -64,7 +65,7 @@ public class FilePhotoFragment extends FragmentActivity {
         Vault secret = new Vault(vault, password);
         Vault.onFileFoundListener mListener = new Vault.onFileFoundListener() {
             @Override
-            public void dothis(File file) {
+            public void dothis(EncryptedFile file) {
                 adapter.add(file);
             }
         };
@@ -79,7 +80,7 @@ public class FilePhotoFragment extends FragmentActivity {
         EventBus.getDefault().unregister(this);
     }
 
-    public void onEventMainThread(ImageLoadJob.ImageLoadDoneEvent event) {
+    public void onEventMainThread(ImageLoadDoneEvent event) {
         Util.log("Recieving imageview and bm");
         if (event.bitmap == null && event.progressBar == null && event.imageView == null) {
             Util.alert(context,
@@ -121,25 +122,25 @@ public class FilePhotoFragment extends FragmentActivity {
 
     static class SamplePagerAdapter extends FragmentPagerAdapter {
 
-        private static ArrayList<File> files;
+        private static ArrayList<EncryptedFile> encryptedFiles;
 
         public SamplePagerAdapter(FragmentManager fm) {
             super(fm);
-            files = new ArrayList<File>();
+            encryptedFiles = new ArrayList<EncryptedFile>();
         }
 
-        public void add(File file) {
-            String mimeType = FileUtils.getMimeType(file.getFile());
+        public void add(EncryptedFile encryptedFile) {
+            String mimeType = Util.getFileTypeFromExtension(encryptedFile.getFileExtension());
             if (mimeType != null)
                 if (!mimeType.contains("image"))
                     return; //abort if not images.
-            files.add(file);
+            encryptedFiles.add(encryptedFile);
             notifyDataSetChanged();
         }
 
         @Override
         public int getCount() {
-            return files.size();
+            return encryptedFiles.size();
         }
 
         @Override
@@ -188,17 +189,21 @@ public class FilePhotoFragment extends FragmentActivity {
                                      Bundle savedInstanceState) {
                 Util.log("onCreateView!!");
                 final RelativeLayout relativeLayout = new RelativeLayout(container.getContext());
-                final File file = files.get(mNum);
+                final EncryptedFile encryptedFile = encryptedFiles.get(mNum);
                 final PhotoView photoView = new PhotoView(container.getContext());
                 this.photoView = photoView;
                 relativeLayout.addView(photoView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                photoView.setImageBitmap(file.getThumb(150));
+                try {
+                    photoView.setImageBitmap(encryptedFile.getEncryptedThumbnail().getThumb(150));
+                } catch (SecrecyFileException e) {
+                    Util.log("No bitmap available!");
+                }
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
                 final ProgressBar pBar = new ProgressBar(container.getContext());
                 pBar.setIndeterminate(false);
                 relativeLayout.addView(pBar, layoutParams);
-                CustomApp.jobManager.addJobInBackground(new ImageLoadJob(mNum, file, photoView, pBar));
+                CustomApp.jobManager.addJobInBackground(new ImageLoadJob(mNum, encryptedFile, photoView, pBar));
                 return relativeLayout;
             }
 

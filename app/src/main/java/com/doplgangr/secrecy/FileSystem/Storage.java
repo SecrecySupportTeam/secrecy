@@ -19,15 +19,12 @@
 
 package com.doplgangr.secrecy.FileSystem;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.provider.MediaStore;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
@@ -39,20 +36,16 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.crypto.CipherInputStream;
 
-import static com.ipaulpro.afilechooser.utils.FileUtils.getPath;
+public class Storage {
 
-public class storage {
-
-    public static void DeleteRecursive(java.io.File directory) {
+    public static void DeleteRecursive(File directory) {
         try {
             Collection files = FileUtils.listFiles(directory, null, true);
             for (Object file : files)
@@ -67,11 +60,11 @@ public class storage {
         }
     }
 
-    public static void purgeFile(java.io.File file) {
+    public static void purgeFile(File file) {
         purgeFile(file, null);
     }
 
-    public static void purgeFile(java.io.File file, Uri uri) {        //Starts a job to do the real
+    public static void purgeFile(File file, Uri uri) {        //Starts a job to do the real
         DeleteFileJob job = new DeleteFileJob(file);
         job.addURI(uri);
         CustomApp.jobManager.addJobInBackground(job); // deletion in background
@@ -81,8 +74,8 @@ public class storage {
         CustomApp.jobManager.addJobInBackground(new ShredFileJob(fileOS, size, file));
     }
 
-    public static java.io.File getTempFolder() {
-        java.io.File tempDir = CustomApp.context.getExternalCacheDir();
+    public static File getTempFolder() {
+        File tempDir = CustomApp.context.getExternalCacheDir();
         if (tempDir == null)                                                // when all else fails
             tempDir = CustomApp.context.getFilesDir();
         try {
@@ -105,7 +98,7 @@ public class storage {
     }
 
     public static java.io.File getRoot() {
-        java.io.File tempDir = new java.io.File(ROOT());
+        File tempDir = new File(ROOT());
         try {
             FileUtils.forceMkdir(tempDir);
         } catch (Exception e) {
@@ -114,10 +107,10 @@ public class storage {
         return tempDir;
     }
 
-    public static ArrayList<java.io.File> getDirectories(File folder) {
+    public static ArrayList<File> getDirectories(File folder) {
         File[] subfiles = folder.listFiles();
         ArrayList<File> subfolders = new ArrayList<File>();
-        for (java.io.File subfolder : subfiles)
+        for (File subfolder : subfiles)
             if (subfolder.isDirectory())
                 subfolders.add(subfolder);
         return subfolders;
@@ -135,52 +128,17 @@ public class storage {
         DeleteRecursive(CustomApp.context.getCacheDir());           //Delete App cache
         DeleteRecursive(CustomApp.context.getExternalCacheDir());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-            for (java.io.File externalCacheDir : CustomApp.context.getExternalCacheDirs())
+            for (File externalCacheDir : CustomApp.context.getExternalCacheDirs())
                 DeleteRecursive(externalCacheDir);                      //Just to be sure
     }
 
-    public static Uri saveThumbnail(Context context, Uri uri, String filename) {
-        InputStream stream = null;
-        try {
-            stream = context.getContentResolver().openInputStream(uri);
-            java.io.File thumbpath = new java.io.File(getAbsTempFolder() + "/" + "_thumb" + filename);
-            if (thumbpath.exists())
-                storage.purgeFile(thumbpath);
-            thumbpath.createNewFile();
-            FileOutputStream out = new FileOutputStream(thumbpath);
-            Bitmap bitmap = decodeSampledBitmapFromPath(getPath(context, uri), 150, 150);
-            if (bitmap == null) {   //If photo fails, try Video
-                Util.log(getPath(context, uri));
-                bitmap = ThumbnailUtils.createVideoThumbnail(
-                        getPath(context, uri), MediaStore.Video.Thumbnails.MICRO_KIND);
-            }
-            if (bitmap == null) {
-                out.close();
-                storage.purgeFile(thumbpath);
-                return null;
-            }
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
-            out.close();
-            return Uri.fromFile(thumbpath);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (stream != null)
-                try {
-                    stream.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-        }
-        return null;
-    }
-
-    public static Bitmap getThumbnailfromStream(CipherInputStream streamThumb, int size) {
+       public static Bitmap getThumbnailfromStream(CipherInputStream streamThumb, int size) {
         if (streamThumb != null) {
             try {
                 byte[] bytes = IOUtils.toByteArray(streamThumb);
                 return decodeSampledBitmapFromByte(bytes, size, size);
             } catch (IOException e) {
+                Util.log("Error reading thumbnail!");
             }
         }
         return null;
@@ -215,7 +173,6 @@ public class storage {
         options.inJustDecodeBounds = false;
         return BitmapFactory.decodeByteArray(stream, 0, stream.length, options);
     }
-
 
     public static int calculateInSampleSize(BitmapFactory.Options options,
                                             int reqWidth, int reqHeight) {

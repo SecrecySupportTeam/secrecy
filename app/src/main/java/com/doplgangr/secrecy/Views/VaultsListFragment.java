@@ -22,16 +22,12 @@ package com.doplgangr.secrecy.Views;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.text.InputType;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -39,13 +35,12 @@ import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.CustomApp;
-import com.doplgangr.secrecy.FileSystem.Vault;
-import com.doplgangr.secrecy.FileSystem.storage;
+import com.doplgangr.secrecy.FileSystem.Storage;
+import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.Prefs_;
 import com.doplgangr.secrecy.Settings.SettingsFragment_;
 import com.doplgangr.secrecy.Util;
-import com.nineoldandroids.view.ViewHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
@@ -106,7 +101,7 @@ public class VaultsListFragment extends Fragment {
             mLinearView.removeAllViews();
         context.getSupportActionBar().setTitle("");
         mActionBarTitle.setText(R.string.App__name);
-        java.io.File root = storage.getRoot();
+        java.io.File root = Storage.getRoot();
         if (!Util.canWrite(root)) {
             Util.alert(CustomApp.context,
                     CustomApp.context.getString(R.string.Error__root_IOException),
@@ -122,7 +117,7 @@ public class VaultsListFragment extends Fragment {
             return;
         }
         adapter = new VaultsAdapter(context, null);
-        ArrayList<File> files = storage.getDirectories(root);
+        ArrayList<File> files = Storage.getDirectories(root);
         for (int i = 0; i < files.size(); i++) {
             adapter.add(files.get(i).getName());
             final View mView = adapter.getView(i, mLinearView); //inject vaults into list
@@ -136,24 +131,6 @@ public class VaultsListFragment extends Fragment {
             nothing.setVisibility(View.GONE);
             mLinearView.setVisibility(View.VISIBLE);
         }
-        mScrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-
-            @Override
-            public void onScrollChanged() {
-                int scrollY = mScrollView.getScrollY(); //for verticalScrollViewint scrollY = getScrollY();
-                //sticky actionbar
-                Resources res = CustomApp.context.getResources();
-                int mHeaderTextHeight = res.getDimensionPixelSize(R.dimen.header_text_height);
-                int mActionBarHeight = res.getDimensionPixelSize(R.dimen.action_bar_height);
-                int translationY = Math.max(-scrollY, -mHeaderTextHeight);
-                ViewHelper.setTranslationY(mHeader, translationY);
-
-                ViewGroup.LayoutParams params = mActionBarTitle.getLayoutParams();
-                params.height = scrollY > mActionBarHeight ? mActionBarHeight : mHeaderTextHeight;
-                mActionBarTitle.setLayoutParams(params);
-
-            }
-        });
         showTutorial();
     }
 
@@ -225,21 +202,19 @@ public class VaultsListFragment extends Fragment {
                         String name = ((EditText) dialogView.findViewById(R.id.newName)).getText().toString();
                         String password = ((EditText) dialogView.findViewById(R.id.stealth_keycode)).getText().toString();
                         String Confirmpassword = ((EditText) dialogView.findViewById(R.id.confirmPassword)).getText().toString();
-                        File directory = new File(storage.getRoot().getAbsolutePath() + "/" + name);
+                        File directory = new File(Storage.getRoot().getAbsolutePath() + "/" + name);
                         if (!password.equals(Confirmpassword) || "".equals(password))
                             passwordWrong();
                         else if (directory.mkdirs()) {
+                            // Create vault to initialize the vault header
+                            Vault vault = new Vault(name, password);
                             try {
-                                File file = new File(storage.getTempFolder(), ".nomedia");
+                                File file = new File(directory +  "/.nomedia");
                                 file.delete();
                                 file.createNewFile();
                                 FileOutputStream outputStream = new FileOutputStream(file);
                                 outputStream.write(name.getBytes());
                                 outputStream.close();
-                                Uri nomediaURI = Uri.fromFile(file);
-                                Vault newVault = new Vault(name, password, true);
-                                newVault.addFile(CustomApp.context, nomediaURI);
-                                file.delete();
                                 oncreate();
                             } catch (IOException e) {
                                 e.printStackTrace();

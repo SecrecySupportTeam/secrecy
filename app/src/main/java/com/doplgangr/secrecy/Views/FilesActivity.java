@@ -11,7 +11,7 @@ import android.support.v7.app.ActionBarActivity;
 import com.balysv.materialmenu.MaterialMenuDrawable;
 import com.balysv.materialmenu.extras.abc.MaterialMenuIconCompat;
 import com.doplgangr.secrecy.Config;
-import com.doplgangr.secrecy.FileSystem.storage;
+import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.R;
 
 import org.androidannotations.annotations.AfterViews;
@@ -83,7 +83,7 @@ public class FilesActivity extends ActionBarActivity
 
     @Override
     public void onDestroy() {
-        storage.deleteTemp(); //Cleanup every time
+        Storage.deleteTemp(); //Cleanup every time
         EventBus.getDefault().post(new shouldRefresh());
         super.onDestroy();
     }

@@ -48,4 +48,20 @@
     <string name="Dialog__purchase_message">Vielen Dank für den Erwerb des Unterstützerpakets!</string>
     <string name="Error__cannot_set_up_IAP">Problem beim Einrichten des In-App-Kaufes. Bitte überprüfen Sie Ihren Play Store.</string>
     <string name="App__slogan">Be safe around geeks™</string>
+    <string name="Vault__old_passphrase">Alte Passphrase</string>
+    <string name="Vault__new_passphrase">Neue Passphrase</string>
+    <string name="Vault__confirm_new_passphrase">Passphrase bestätigen</string>
+    <string name="Vault__change_passphrase">Passphrase ändern</string>
+    <string name="Error__passphrase_no_match_message">Die eingegeben Passphrasen stimmen nicht überein!</string>
+    <string name="Error__change_passphrase_failed">Ändern fehlgeschlagen</string>
+    <string name="Error__change_passphrase_failed_message">Ändern der Passphrase fehlgeschlagen! Eventuell war die alte Passphrase nicht korrekt.</string>
+    <string name="Vault__change_passphrase_ok">Passphrase wurde geändert</string>
+    <string name="Vault__change_passphrase_ok_message">Die Passphrase für Ihren Tresor wurde geändert! Bitte öffnen Sie ihren Tresor nun mit ihrer neuen Passphrase.</string>
+    <string name="Error__passphrase_empty_message">Passphrase darf nicht leer sein!</string>
+    <string name="Error__old_vault_format_message">Ihr Tresor muss auf das neue Verschlüsselungsverfahren aktualisiert werden. Dieser Vorgang wird eine Weile dauern. Bitte beenden Sie Secrecy in dieser Zeit nicht!</string>
+    <string name="Error__old_vault_format">Tresor muss aktualisiert werden</string>
+    <string name="Error__updating_vault">Aktualisierungsfehler</string>
+    <string name="Error__updating_vault_message">Haben Sie eventuell eine falsche Passphrase eingegeben?</string>
+    <string name="Error__vault_updated">Tresor aktualisiert</string>
+    <string name="Error__vault_updated_message">Ihr Tresor wurde erfolgreich auf das neue Verschlüsselungsverfahren aktualisiert.</string>
 </resources>

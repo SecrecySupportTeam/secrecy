@@ -40,6 +40,7 @@
     <string name="action__decrypt">Decrypt</string>
     <string name="action__delete">Delete</string>
     <string name="action__add_file">Add file</string>
+    <string name="action__change_passphrase">Change vault passphrase</string>
     <string name="File__open">Opening Encrypted File</string>
     <string name="File__open_message">Please enter password to open this file</string>
 </resources>

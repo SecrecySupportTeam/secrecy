@@ -3,7 +3,7 @@ package com.doplgangr.secrecy.Jobs;
 import android.os.ParcelFileDescriptor;
 import android.os.SystemClock;
 
-import com.doplgangr.secrecy.FileSystem.storage;
+import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Util;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
@@ -111,7 +111,7 @@ public class ObserveFileJob extends Job {
             if (pfd != null) {
                 Util.log(pfd.getFileDescriptor().toString());
                 OutputStream fileOutputStream = new FileOutputStream(pfd.getFileDescriptor());
-                storage.shredFile(fileOutputStream, size, file);
+                Storage.shredFile(fileOutputStream, size, file);
             }
         }
     }
