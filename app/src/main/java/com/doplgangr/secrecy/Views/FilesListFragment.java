@@ -364,7 +364,7 @@ public class FilesListFragment extends FileViewer {
     @OptionsItem(R.id.action_switch_interface)
     void switchInterface() {
         isGallery = !isGallery;
-        onCreate();
+        onEventMainThread(secret);
     }
 
     @OptionsItem(R.id.action_change_passphrase)
