@@ -58,4 +58,10 @@
     <string name="Vault__change_passphrase_ok">Passphrase wurde geändert</string>
     <string name="Vault__change_passphrase_ok_message">Die Passphrase für Ihren Tresor wurde geändert! Bitte öffnen Sie ihren Tresor nun mit ihrer neuen Passphrase.</string>
     <string name="Error__passphrase_empty_message">Passphrase darf nicht leer sein!</string>
+    <string name="Error__old_vault_format_message">Ihr Tresor muss auf das neue Verschlüsselungsverfahren aktualisiert werden. Dieser Vorgang wird eine Weile dauern. Bitte beenden Sie Secrecy in dieser Zeit nicht!</string>
+    <string name="Error__old_vault_format">Tresor muss aktualisiert werden</string>
+    <string name="Error__updating_vault">Aktualisierungsfehler</string>
+    <string name="Error__updating_vault_message">Haben Sie eventuell eine falsche Passphrase eingegeben?</string>
+    <string name="Error__vault_updated">Tresor aktualisiert</string>
+    <string name="Error__vault_updated_message">Ihr Tresor wurde erfolgreich auf das neue Verschlüsselungsverfahren aktualisiert.</string>
 </resources>

@@ -187,6 +187,66 @@ public class FilesListFragment extends FileViewer {
         //The vault finishes initializing, is prepared to be populated.
 
         secret = vault;
+
+        if (secret.isEcbVault()) {
+            Util.alert(
+                    context,
+                    getString(R.string.Error__old_vault_format),
+                    getString(R.string.Error__old_vault_format_message),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            try {
+                                if (secret.updateFromECBVault(password)) {
+                                    Util.alert(
+                                            context,
+                                            getString(R.string.Error__vault_updated),
+                                            getString(R.string.Error__vault_updated_message),
+                                            new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int whichButton) {
+                                                    finish(); //Done for now -_-'
+                                                }
+                                            },
+                                            null
+                                    );
+                                } else {
+                                    secret.ecbUpdateFailed();
+                                    Util.alert(
+                                            context,
+                                            getString(R.string.Error__updating_vault),
+                                            getString(R.string.Error__updating_vault_message),
+                                            new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int whichButton) {
+                                                    finish(); //Done for now -_-'
+                                                }
+                                            },
+                                            null
+                                    );
+                                }
+                            } catch (Exception e) {
+                                secret.ecbUpdateFailed();
+                                Util.alert(
+                                        context,
+                                        getString(R.string.Error__updating_vault),
+                                        getString(R.string.Error__updating_vault_message),
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                finish(); //Done for now -_-'
+                                            }
+                                        },
+                                        null
+                                );
+                            }
+                        }
+                    },
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            finish(); //Done for now -_-'
+                        }
+                    }
+            );
+            return;
+        }
+
         if (secret.wrongPass) {
             Util.alert(
                     context,
@@ -201,6 +261,7 @@ public class FilesListFragment extends FileViewer {
             );
             return;
         }
+
         addFiles();
         mActionBarTitle.setText(secret.getName());
         adapter = new FilesListAdapter(context,

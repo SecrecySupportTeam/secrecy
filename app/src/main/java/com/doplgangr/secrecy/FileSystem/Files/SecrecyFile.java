@@ -24,6 +24,9 @@ import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.Encryption.Crypter;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Util;
+
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -97,10 +100,7 @@ public class SecrecyFile implements Serializable {
         OutputStream out = null;
         File outputFile = null;
         try {
-            outputFile = File.createTempFile("tmp" + decryptedFileName, "." +
-                    fileExtension, Storage.getTempFolder());
-            outputFile.mkdirs();
-            outputFile.createNewFile();
+            outputFile = new File(Storage.getTempFolder() + "/" +  decryptedFileName);
             is = crypter.getCipherInputStream(getFile());
             listener.setMax((int) file.length());
             ReadableByteChannel inChannel = Channels.newChannel(is);

@@ -23,6 +23,7 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.doplgangr.secrecy.Exceptions.SecrecyFileException;
+import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFileFactory;
 import com.doplgangr.secrecy.FileSystem.Storage;
@@ -53,6 +54,12 @@ public class Vault implements Serializable {
         this.name = name;
         this.passphrase = passphrase;
         path = Storage.getRoot().getAbsolutePath() + "/" + name;
+
+        // Dont load Crypter if vault is ECB vault
+        if (isEcbVault()){
+            return;
+        }
+
         try {
             crypter = new AES_CTR_Crypter(path, passphrase);
         } catch (InvalidKeyException e) {
@@ -65,6 +72,12 @@ public class Vault implements Serializable {
         this.passphrase = passphrase;
         this.name = name;
         path = Storage.getRoot().getAbsolutePath() + "/" + name;
+
+        // Dont load Crypter if vault is ECB vault
+        if (isEcbVault()){
+            return;
+        }
+
         try {
             crypter = new AES_CTR_Crypter(path, passphrase);
         } catch (InvalidKeyException e) {
@@ -74,12 +87,61 @@ public class Vault implements Serializable {
         //do not initialize now coz this is temp
     }
 
+    public boolean isEcbVault(){
+        File nomedia = new File(path + "/.nomedia");
+        File newVaultHeader = new File(path + "/.vault");
+
+        return (nomedia.exists() && !newVaultHeader.exists());
+    }
+
+    public boolean updateFromECBVault(String passphrase) throws FileNotFoundException, InvalidKeyException, SecrecyFileException {
+        AES_ECB_Crypter ecb_crypter = new AES_ECB_Crypter(path, passphrase);
+        Crypter newCrypter = new AES_CTR_Crypter(path, passphrase);
+
+        List<File> files = getFileList();
+        for (File file : files){
+            EncryptedFile oldEncryptedFile =
+                    EncryptedFileFactory.getInstance().loadEncryptedFile(file, ecb_crypter);
+            CryptStateListener listener = new CryptStateListener() {
+                @Override
+                public void updateProgress(int progress) {
+                }
+
+                @Override
+                public void setMax(int max) {
+                }
+
+                @Override
+                public void onFailed(int statCode) {
+                }
+
+                @Override
+                public void Finished() {
+                }
+            };
+            File tempFile = oldEncryptedFile.readFile(listener);
+            EncryptedFileFactory.getInstance().createNewEncryptedFile(tempFile, newCrypter, this);
+
+            File oldThumbnail = new File(path + "/_thumb" + file.getName());
+            oldThumbnail.delete();
+
+            file.delete();
+            tempFile.delete();
+        }
+        return true;
+    }
+
+    public void ecbUpdateFailed(){
+        File vaultHeader = new File(path + "/.vault");
+        vaultHeader.delete();
+    }
+
     public String getPath() {
         return path;
     }
 
     private static boolean fileFilter(java.io.File file) {
-        String regex = "^((?!.thumb|.nomedia|.vault|.header).)*$";   //Filter out .nomedia, .thumb and .header
+        String regex = "^((?!_thumb|.thumb|.nomedia|.vault|.header).)*$";   //Filter out .nomedia, .thumb and .header
         String name = file.getName();
         final Pattern p = Pattern.compile(regex);
         p.matcher(name).matches();
