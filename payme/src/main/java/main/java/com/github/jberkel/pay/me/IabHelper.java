@@ -22,11 +22,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.android.vending.billing.IInAppBillingService;
 import com.github.jberkel.pay.me.listener.OnConsumeFinishedListener;
 import com.github.jberkel.pay.me.listener.OnConsumeMultiFinishedListener;
@@ -39,6 +42,7 @@ import com.github.jberkel.pay.me.model.Purchase;
 import com.github.jberkel.pay.me.model.SkuDetails;
 import com.github.jberkel.pay.me.validator.DefaultSignatureValidator;
 import com.github.jberkel.pay.me.validator.SignatureValidator;
+
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -47,8 +51,31 @@ import java.util.List;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
-import static com.github.jberkel.pay.me.IabConsts.*;
-import static com.github.jberkel.pay.me.Response.*;
+import static com.github.jberkel.pay.me.IabConsts.API_VERSION;
+import static com.github.jberkel.pay.me.IabConsts.GET_SKU_DETAILS_ITEM_LIST;
+import static com.github.jberkel.pay.me.IabConsts.INAPP_CONTINUATION_TOKEN;
+import static com.github.jberkel.pay.me.IabConsts.RESPONSE_BUY_INTENT;
+import static com.github.jberkel.pay.me.IabConsts.RESPONSE_CODE;
+import static com.github.jberkel.pay.me.IabConsts.RESPONSE_GET_SKU_DETAILS_LIST;
+import static com.github.jberkel.pay.me.IabConsts.RESPONSE_INAPP_ITEM_LIST;
+import static com.github.jberkel.pay.me.IabConsts.RESPONSE_INAPP_PURCHASE_DATA;
+import static com.github.jberkel.pay.me.IabConsts.RESPONSE_INAPP_PURCHASE_DATA_LIST;
+import static com.github.jberkel.pay.me.IabConsts.RESPONSE_INAPP_SIGNATURE;
+import static com.github.jberkel.pay.me.IabConsts.RESPONSE_INAPP_SIGNATURE_LIST;
+import static com.github.jberkel.pay.me.Response.BILLING_UNAVAILABLE;
+import static com.github.jberkel.pay.me.Response.ERROR;
+import static com.github.jberkel.pay.me.Response.IABHELPER_BAD_RESPONSE;
+import static com.github.jberkel.pay.me.Response.IABHELPER_DISPOSED;
+import static com.github.jberkel.pay.me.Response.IABHELPER_INVALID_CONSUMPTION;
+import static com.github.jberkel.pay.me.Response.IABHELPER_MISSING_TOKEN;
+import static com.github.jberkel.pay.me.Response.IABHELPER_REMOTE_EXCEPTION;
+import static com.github.jberkel.pay.me.Response.IABHELPER_SEND_INTENT_FAILED;
+import static com.github.jberkel.pay.me.Response.IABHELPER_SUBSCRIPTIONS_NOT_AVAILABLE;
+import static com.github.jberkel.pay.me.Response.IABHELPER_UNKNOWN_ERROR;
+import static com.github.jberkel.pay.me.Response.IABHELPER_UNKNOWN_PURCHASE_RESPONSE;
+import static com.github.jberkel.pay.me.Response.IABHELPER_VERIFICATION_FAILED;
+import static com.github.jberkel.pay.me.Response.OK;
+import static com.github.jberkel.pay.me.Response.getDescription;
 import static com.github.jberkel.pay.me.model.ItemType.INAPP;
 import static com.github.jberkel.pay.me.model.ItemType.SUBS;
 
@@ -85,7 +112,6 @@ import static com.github.jberkel.pay.me.model.ItemType.SUBS;
  * @author Jan Berkel
  */
 public class IabHelper {
-    /* package */ static final Intent BIND_BILLING_SERVICE = new Intent("com.android.vending.billing.InAppBillingService.BIND");
 
     private Context mContext;
     private IInAppBillingService mService;
@@ -146,10 +172,10 @@ public class IabHelper {
         if (mSetupDone) throw new IllegalStateException("IAB helper is already set up.");
         logDebug("Starting in-app billing setup.");
 
-        if (!mContext.getPackageManager().queryIntentServices(BIND_BILLING_SERVICE, 0).isEmpty()) {
+        if (!mContext.getPackageManager().queryIntentServices(getExplicitIapIntent(), 0).isEmpty()) {
             // service available to handle that Intent
             mServiceConn = new BillingServiceConnection(listener);
-            if (!mContext.bindService(BIND_BILLING_SERVICE, mServiceConn, Context.BIND_AUTO_CREATE)) {
+            if (!mContext.bindService(getExplicitIapIntent(), mServiceConn, Context.BIND_AUTO_CREATE)) {
                 logWarn("Could not bind to service");
             }
         } else {
@@ -707,6 +733,25 @@ public class IabHelper {
     // for testing
     /* package */ IInAppBillingService getInAppBillingService(IBinder service) {
         return IInAppBillingService.Stub.asInterface(service);
+    }
+
+    private Intent getExplicitIapIntent() {
+        PackageManager pm = mContext.getPackageManager();
+        Intent implicitIntent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
+        List<ResolveInfo> resolveInfos = pm.queryIntentServices(implicitIntent, 0);
+
+        // Is somebody else trying to intercept our IAP call?
+        if (resolveInfos == null || resolveInfos.size() != 1) {
+            return null;
+        }
+
+        ResolveInfo serviceInfo = resolveInfos.get(0);
+        String packageName = serviceInfo.serviceInfo.packageName;
+        String className = serviceInfo.serviceInfo.name;
+        ComponentName component = new ComponentName(packageName, className);
+        Intent iapIntent = new Intent();
+        iapIntent.setComponent(component);
+        return iapIntent;
     }
 
     private class BillingServiceConnection implements ServiceConnection {
