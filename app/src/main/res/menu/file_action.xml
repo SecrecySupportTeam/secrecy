@@ -23,7 +23,7 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/action_select_all"
-        android:icon="@drawable/ic_list"
+        android:icon="@drawable/ic_action_select_all"
         android:orderInCategory="2"
         android:title="@string/action_select_all"
         app:showAsAction="always" />
