@@ -64,4 +64,5 @@
     <string name="Error__updating_vault_message">Haben Sie eventuell eine falsche Passphrase eingegeben?</string>
     <string name="Error__vault_updated">Tresor aktualisiert</string>
     <string name="Error__vault_updated_message">Ihr Tresor wurde erfolgreich auf das neue Verschlüsselungsverfahren aktualisiert.</string>
+    <string name="action_select_all">Alle auswählen</string>
 </resources>

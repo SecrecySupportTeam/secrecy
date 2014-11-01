@@ -560,6 +560,21 @@ public class FilesListFragment extends FileViewer {
         mActionMode.endActionMode();
     }
 
+    @OptionsItem(R.id.action_select_all)
+    void selectAll() {
+        adapter.clearSelected();
+        for (int i = 0; i < mListView.getAdapter().getCount(); i++) {
+            // Reuse old View if possible. Otherwise decryption status is not shown
+            if (mListView.getChildAt(i) != null) {
+                mActionMode.select(i, mListView.getAdapter().getView(
+                        i, mListView.getChildAt(i), mListView));
+            } else {
+                mActionMode.select(i, mListView.getAdapter().getView(i, null, mListView));
+            }
+        }
+        adapter.notifyDataSetChanged();
+    }
+
     @OptionsItem(R.id.action_delete)
     void deleteCurrentItem() {
         final ArrayList<FilesListAdapter.ViewNIndex> adapterSelected =
