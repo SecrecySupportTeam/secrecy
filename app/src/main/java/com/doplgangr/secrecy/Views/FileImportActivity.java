@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
+import com.doplgangr.secrecy.FileSystem.Encryption.VaultHolder;
 import com.doplgangr.secrecy.Jobs.AddFileJob;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
@@ -50,7 +51,7 @@ public class FileImportActivity extends ActionBarActivity
 
     @Override
     public void onVaultSelected(String vault, String passphrase) {
-        secret = new Vault(vault, passphrase);
+        secret = VaultHolder.getInstance().createOrRetrieveVault(vault, passphrase);
         if (secret.wrongPass) {
             Util.alert(
                     this,

@@ -50,7 +50,7 @@ public class Vault implements Serializable {
 
     public Boolean wrongPass = false;
 
-    public Vault(String name, String passphrase) {
+    Vault(String name, String passphrase) {
         this.name = name;
         this.passphrase = passphrase;
         path = Storage.getRoot().getAbsolutePath() + "/" + name;
@@ -68,7 +68,7 @@ public class Vault implements Serializable {
         }
     }
 
-    public Vault(String name, String passphrase, Boolean istemp) {
+    Vault(String name, String passphrase, Boolean istemp) {
         this.passphrase = passphrase;
         this.name = name;
         path = Storage.getRoot().getAbsolutePath() + "/" + name;
@@ -237,7 +237,7 @@ public class Vault implements Serializable {
         } catch (IOException ignored) {
             //ignored
         }
-        return new Vault(name, passphrase);
+        return VaultHolder.getInstance().createOrRetrieveVault(name, passphrase);
     }
 
     public void startWatching(final Listeners.FileObserverEventListener mListener) {
