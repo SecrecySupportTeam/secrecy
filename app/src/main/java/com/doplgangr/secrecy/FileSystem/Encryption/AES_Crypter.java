@@ -19,6 +19,7 @@
 
 package com.doplgangr.secrecy.FileSystem.Encryption;
 
+import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.Exceptions.SecrecyCipherStreamException;
 import com.doplgangr.secrecy.Exceptions.SecrecyFileException;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
@@ -28,6 +29,8 @@ import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Util;
 import com.google.protobuf.ByteString;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -208,7 +211,11 @@ abstract class AES_Crypter implements Crypter {
         } catch (InvalidAlgorithmParameterException e) {
             throw new SecrecyCipherStreamException("Invalid algorithm parameter!");
         }
-        return new CipherOutputStream(new FileOutputStream(outputFile), c);
+
+        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
+                new FileOutputStream(outputFile), Config.blockSize);
+
+        return new CipherOutputStream(bufferedOutputStream, c);
     }
 
     @Override
@@ -245,7 +252,10 @@ abstract class AES_Crypter implements Crypter {
             throw new SecrecyCipherStreamException("Invalid algorithm parameter!");
         }
 
-        return new CipherInputStream(new FileInputStream(encryptedFile), c);
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(
+                new FileInputStream(encryptedFile), Config.blockSize);
+
+        return new CipherInputStream(bufferedInputStream, c);
     }
 
     public String getDecryptedFileName(File file) throws SecrecyCipherStreamException,

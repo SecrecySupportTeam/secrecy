@@ -20,7 +20,8 @@
 package com.doplgangr.secrecy;
 
 public class Config {
-    public static final int bufferSize = 2097152;
+    public static final int bufferSize = 4096 * 1024;
+    public static final int blockSize = 4096 *1024;
     public static final String file_extra = "FILE";
     public static final String vault_extra = "VAULT";
     public static final String password_extra = "PASS";
