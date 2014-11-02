@@ -25,22 +25,17 @@ import com.doplgangr.secrecy.FileSystem.Encryption.Crypter;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Util;
 
-import org.apache.commons.io.FilenameUtils;
-
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
-import java.nio.channels.ReadableByteChannel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import javax.crypto.CipherInputStream;
 
 public class SecrecyFile implements Serializable {
@@ -48,14 +43,8 @@ public class SecrecyFile implements Serializable {
     protected String decryptedFileName;
     protected String fileSize;
     protected Date timestamp;
-
-    public String getFileExtension() {
-        return fileExtension;
-    }
-
     protected String fileExtension;
     protected File file;
-
     protected Boolean isDecrypting = false;
     protected Crypter crypter;
 
@@ -65,6 +54,10 @@ public class SecrecyFile implements Serializable {
         int exp = (int) (Math.log(bytes) / Math.log(unit));
         char pre = ("KMGTPE").charAt(exp - 1);
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+    }
+
+    public String getFileExtension() {
+        return fileExtension;
     }
 
     public String getDecryptedFileName() {
@@ -97,23 +90,22 @@ public class SecrecyFile implements Serializable {
     public File readFile(CryptStateListener listener) {
         isDecrypting = true;
         InputStream is = null;
-        OutputStream out = null;
         File outputFile = null;
+        BufferedOutputStream out = null;
         try {
-            outputFile = new File(Storage.getTempFolder() + "/" +  decryptedFileName);
+            outputFile = new File(Storage.getTempFolder() + "/" + decryptedFileName);
+            out = new BufferedOutputStream(new FileOutputStream(outputFile), Config.blockSize);
             is = crypter.getCipherInputStream(getFile());
             listener.setMax((int) file.length());
-            ReadableByteChannel inChannel = Channels.newChannel(is);
-            FileChannel outChannel = new FileOutputStream(outputFile).getChannel();
-            ByteBuffer byteBuffer = ByteBuffer.allocate(Config.bufferSize);
-            while (inChannel.read(byteBuffer) >= 0 || byteBuffer.position() > 0) {
-                byteBuffer.flip();
-                outChannel.write(byteBuffer);
-                byteBuffer.compact();
-                listener.updateProgress((int) outChannel.size());
+
+            int readBytes;
+            int readTotal = 0;
+            byte[] buf = new byte[Config.bufferSize];
+            while ((readBytes = is.read(buf)) > 0) {
+                out.write(buf, 0, readBytes);
+                readTotal += readBytes;
+                listener.updateProgress(readTotal);
             }
-            inChannel.close();
-            outChannel.close();
             Util.log(outputFile.getName(), outputFile.length());
             return outputFile;
         } catch (FileNotFoundException e) {
