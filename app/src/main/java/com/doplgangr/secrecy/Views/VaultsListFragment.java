@@ -209,7 +209,7 @@ public class VaultsListFragment extends Fragment {
                             passwordWrong();
                         else if (directory.mkdirs()) {
                             // Create vault to initialize the vault header
-                            VaultHolder.getInstance().createOrRetrieveVault(name, password);
+                            VaultHolder.getInstance().createAndRetrieveVault(name, password);
                             try {
                                 File file = new File(directory +  "/.nomedia");
                                 file.delete();
@@ -276,7 +276,7 @@ public class VaultsListFragment extends Fragment {
     }
 
     void rename(final int position, final String newName, final String password) {
-        Vault newVault = VaultHolder.getInstance().createOrRetrieveVault(
+        Vault newVault = VaultHolder.getInstance().createAndRetrieveVault(
                 adapter.getItem(position), password)
                 .rename(newName);
         if (newVault == null)

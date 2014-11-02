@@ -47,10 +47,6 @@ import uk.co.senab.photoview.PhotoView;
 public class FilePhotoFragment extends FragmentActivity {
 
     static Activity context;
-    @Extra(Config.vault_extra)
-    String vault;
-    @Extra(Config.password_extra)
-    String password;
     @Extra(Config.gallery_item_extra)
     Integer itemNo;
     @ViewById(R.id.view_pager)
@@ -63,7 +59,7 @@ public class FilePhotoFragment extends FragmentActivity {
             EventBus.getDefault().register(this);
         final SamplePagerAdapter adapter = new SamplePagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(adapter);
-        Vault secret = VaultHolder.getInstance().createOrRetrieveVault(vault, password);
+        Vault secret = VaultHolder.getInstance().retrieveVault();
         Vault.onFileFoundListener mListener = new Vault.onFileFoundListener() {
             @Override
             public void dothis(EncryptedFile file) {

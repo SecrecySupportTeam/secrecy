@@ -51,7 +51,7 @@ public class FileImportActivity extends ActionBarActivity
 
     @Override
     public void onVaultSelected(String vault, String passphrase) {
-        secret = VaultHolder.getInstance().createOrRetrieveVault(vault, passphrase);
+        secret = VaultHolder.getInstance().createAndRetrieveVault(vault, passphrase);
         if (secret.wrongPass) {
             Util.alert(
                     this,

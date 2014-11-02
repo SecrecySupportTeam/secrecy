@@ -26,7 +26,7 @@ public class InitializeVaultJob extends Job {
 
     @Override
     public void onRun() throws Throwable {
-        EventBus.getDefault().post(VaultHolder.getInstance().createOrRetrieveVault(vault, key));
+        EventBus.getDefault().post(VaultHolder.getInstance().createAndRetrieveVault(vault, key));
     }
 
     @Override

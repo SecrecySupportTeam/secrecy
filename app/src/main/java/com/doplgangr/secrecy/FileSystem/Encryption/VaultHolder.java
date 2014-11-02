@@ -21,33 +21,31 @@ package com.doplgangr.secrecy.FileSystem.Encryption;
 
 import com.doplgangr.secrecy.Util;
 
-import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Map;
-
 public class VaultHolder {
 
     private final static VaultHolder INSTANCE = new VaultHolder();
-    Map<String, WeakReference<Vault>> vaults = new HashMap<String, WeakReference<Vault>>();
+    private Vault vault;
 
     public static VaultHolder getInstance() {
         return VaultHolder.INSTANCE;
     }
 
-    public Vault createOrRetrieveVault(String name, String password) {
-        if (vaults.get(name) == null) {
-            Vault vault = new Vault(name, password);
-            if (vault.wrongPass) {
-                return vault;
-            }
-            vaults.put(name, new WeakReference<Vault>(vault));
+    public Vault createAndRetrieveVault(String name, String password) {
+        Vault newVault = new Vault(name, password);
+        if (newVault.wrongPass) {
+            return newVault;
         }
-        WeakReference<Vault> vaultWeakReference = vaults.get(name);
-        return vaultWeakReference.get();
+        clear();
+        vault = newVault;
+        return vault;
     }
 
-    public void clear(){
+    public Vault retrieveVault() {
+        return vault;
+    }
+
+    public void clear() {
         Util.log("VaultHolder cleared!");
-        vaults.clear();
+        vault = null;
     }
 }
