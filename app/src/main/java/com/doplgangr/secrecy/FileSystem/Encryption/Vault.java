@@ -46,9 +46,8 @@ public class Vault implements Serializable {
     private final String name;
     private final String path;
     private final String passphrase;
-    private Crypter crypter;
-
     public Boolean wrongPass = false;
+    private Crypter crypter;
 
     Vault(String name, String passphrase) {
         this.name = name;
@@ -87,6 +86,14 @@ public class Vault implements Serializable {
         //do not initialize now coz this is temp
     }
 
+    private static boolean fileFilter(java.io.File file) {
+        String regex = "^((?!_thumb|.thumb|.nomedia|.vault|.header).)*$";   //Filter out .nomedia, .thumb and .header
+        String name = file.getName();
+        final Pattern p = Pattern.compile(regex);
+        p.matcher(name).matches();
+        return p.matcher(name).matches();
+    }
+
     public boolean isEcbVault(){
         File nomedia = new File(path + "/.nomedia");
         File newVaultHeader = new File(path + "/.vault");
@@ -99,7 +106,7 @@ public class Vault implements Serializable {
         Crypter newCrypter = new AES_CTR_Crypter(path, passphrase);
 
         List<File> files = getFileList();
-        for (File file : files){
+        for (File file : files) {
             EncryptedFile oldEncryptedFile =
                     EncryptedFileFactory.getInstance().loadEncryptedFile(file, ecb_crypter);
             CryptStateListener listener = new CryptStateListener() {
@@ -131,21 +138,13 @@ public class Vault implements Serializable {
         return true;
     }
 
-    public void ecbUpdateFailed(){
+    public void ecbUpdateFailed() {
         File vaultHeader = new File(path + "/.vault");
         vaultHeader.delete();
     }
 
     public String getPath() {
         return path;
-    }
-
-    private static boolean fileFilter(java.io.File file) {
-        String regex = "^((?!_thumb|.thumb|.nomedia|.vault|.header).)*$";   //Filter out .nomedia, .thumb and .header
-        String name = file.getName();
-        final Pattern p = Pattern.compile(regex);
-        p.matcher(name).matches();
-        return p.matcher(name).matches();
     }
 
     public String getName() {
@@ -247,11 +246,11 @@ public class Vault implements Serializable {
         observer.startWatching(); //START OBSERVING
     }
 
-    public interface onFileFoundListener {
-        void dothis(EncryptedFile encryptedFile);
+    public boolean changePassphrase(String oldPassphrase, String newPassphrase) {
+        return crypter.changePassphrase(oldPassphrase, newPassphrase);
     }
 
-    public boolean changePassphrase(String oldPassphrase, String newPassphrase){
-        return crypter.changePassphrase(oldPassphrase, newPassphrase);
+    public interface onFileFoundListener {
+        void dothis(EncryptedFile encryptedFile);
     }
 }
