@@ -25,19 +25,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
-import com.balysv.materialmenu.MaterialMenuDrawable;
-import com.balysv.materialmenu.extras.abc.MaterialMenuIconCompat;
 import com.crashlytics.android.Crashlytics;
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
@@ -85,8 +83,10 @@ public class MainActivity
     View mDrawer;
     @ViewById(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
+    @ViewById(R.id.toolbar)
+    Toolbar mToolbar;
     FragmentManager fragmentManager;
-    MaterialMenuIconCompat materialMenu;
+    private ActionBarDrawerToggle mDrawerToggle;
 
     @AfterViews
     public void onCreate() {
@@ -95,7 +95,7 @@ public class MainActivity
         VaultHolder.getInstance().clear();
         fragmentManager = getSupportFragmentManager();
         switchFragment(0);
-
+        setSupportActionBar(mToolbar);
         if (Prefs.stealthMode().get() == -1) {
             //if this is the first time, display a dialog to inform successful trial
             onFirstLaunch();
@@ -112,8 +112,6 @@ public class MainActivity
             if (pInfo.versionCode != version.no().get())
                 addFragment(new UpdateManager_(), R.anim.slide_in_right, R.anim.fadeout);
         }
-        materialMenu = new MaterialMenuIconCompat(this, Color.WHITE, MaterialMenuDrawable.Stroke.THIN);
-        materialMenu.animateState(MaterialMenuDrawable.IconState.BURGER);
         mNavigation.addNavigationItem(
                 CustomApp.context.getString(R.string.Page_header__vaults),
                 R.drawable.ic_vault,
@@ -140,15 +138,14 @@ public class MainActivity
             }
         });
 
-        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                R.drawable.ic_launcher, 0, 0) {
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+                mToolbar, 0, 0) {
 
             /**
              * Called when a drawer has settled in a completely closed state.
              */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
-                materialMenu.animateState(MaterialMenuDrawable.IconState.BURGER);
                 supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
@@ -157,13 +154,21 @@ public class MainActivity
              */
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                materialMenu.animateState(MaterialMenuDrawable.IconState.X);
                 supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
+        mDrawerToggle.setDrawerIndicatorEnabled(true);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         showHelpDeskTutorial();
     }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (mDrawerToggle != null)
+            mDrawerToggle.syncState();
+    }
+
 
     private void showHelpDeskTutorial() {
         if (Prefs.showHelpDeskTutorial().get())
@@ -242,7 +247,7 @@ public class MainActivity
     void homePressed() {
         if (mDrawerLayout.isDrawerOpen(mDrawer)) {
             mDrawerLayout.closeDrawer(mDrawer);
-        }else {
+        } else {
             mDrawerLayout.openDrawer(mDrawer);
         }
     }
@@ -310,8 +315,8 @@ public class MainActivity
         return super.onPrepareOptionsMenu(menu);
     }
 
-    private void hideMenuItems(Menu menu, boolean visible){
-        for(int i = 0; i < menu.size(); i++)
+    private void hideMenuItems(Menu menu, boolean visible) {
+        for (int i = 0; i < menu.size(); i++)
             menu.getItem(i).setVisible(visible);
     }
 }

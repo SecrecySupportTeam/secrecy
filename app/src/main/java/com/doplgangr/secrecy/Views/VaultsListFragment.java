@@ -35,9 +35,9 @@ import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.CustomApp;
+import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.FileSystem.Encryption.VaultHolder;
 import com.doplgangr.secrecy.FileSystem.Storage;
-import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.Prefs_;
 import com.doplgangr.secrecy.Settings.SettingsFragment_;
@@ -64,12 +64,8 @@ import de.greenrobot.event.EventBus;
 public class VaultsListFragment extends Fragment {
     @ViewById(R.id.list)
     LinearLayout mLinearView;
-    @ViewById(R.id.actionBarTitle)
-    TextView mActionBarTitle;
     @ViewById(R.id.scrollView)
     ScrollView mScrollView;
-    @ViewById(R.id.header)
-    View mHeader;
     @ViewById(R.id.nothing)
     View nothing;
     @DrawableRes(R.drawable.file_selector)
@@ -101,8 +97,7 @@ public class VaultsListFragment extends Fragment {
         VaultHolder.getInstance().clear();
         if (mLinearView != null)
             mLinearView.removeAllViews();
-        context.getSupportActionBar().setTitle("");
-        mActionBarTitle.setText(R.string.App__name);
+        context.getSupportActionBar().setTitle(R.string.App__name);
         java.io.File root = Storage.getRoot();
         if (!Util.canWrite(root)) {
             Util.alert(CustomApp.context,

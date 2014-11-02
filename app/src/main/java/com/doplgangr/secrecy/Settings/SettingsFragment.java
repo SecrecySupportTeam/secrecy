@@ -33,6 +33,7 @@ import android.preference.Preference;
 import android.preference.PreferenceGroup;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.preference.PreferenceFragment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,7 +74,7 @@ public class SettingsFragment extends PreferenceFragment
     private static final int REQUEST_CODE = 6384; // onActivityResult request code
     private static final int REQUEST_CODE_2 = 2058; // onActivityResult request code
     private static final ArrayList<String> INCLUDE_EXTENSIONS_LIST = new ArrayList<String>();
-    Activity context = null;
+    ActionBarActivity context = null;
     @StringRes(R.string.Settings__stealth_mode_message)
     String stealth_mode_message;
     @StringArrayRes(R.array.Contributor__names)
@@ -114,7 +115,8 @@ public class SettingsFragment extends PreferenceFragment
     void onCreate() {
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
-        context = getActivity();
+        context = (ActionBarActivity) getActivity();
+        context.getSupportActionBar().setTitle(R.string.Page_header__settings);
         update();
     }
 

@@ -24,31 +24,9 @@
     android:background="@color/activity_bg"
     tools:context="com.doplgangr.secrecy.UpdateManager.UpdateManager">
 
-
-    <FrameLayout
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/action_bar_height"
-        android:layout_alignParentTop="true"
-        android:background="@color/primary">
-
-        <TextView
-            android:id="@+id/actionBarTitle"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/action_bar_height"
-            android:layout_gravity="bottom"
-            android:layout_marginLeft="@dimen/text_from_margin"
-            android:layout_marginStart="@dimen/text_from_margin"
-            android:gravity="center_vertical"
-            android:text="@string/App__name"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_title_size" />
-    </FrameLayout>
-
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@id/header">
+        android:layout_height="fill_parent">
 
     <TextView
         android:id="@+id/textView2"

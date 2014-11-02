@@ -15,10 +15,10 @@
 
 package com.doplgangr.secrecy.Premium;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -52,7 +52,7 @@ public class PremiumFragment extends Fragment {
     // SKUs for our products: the premium upgrade (non-consumable) and gas (consumable)
     @ViewById(R.id.Premium__progress_bar)
     ProgressBar mProgressBar;
-    private Activity context;
+    private ActionBarActivity context;
     //static final String SKU_PREMIUM = "android.test.purchased";
     // Does the user have the premium upgrade?
     private boolean mIsPremium = false;
@@ -131,7 +131,8 @@ public class PremiumFragment extends Fragment {
 
     @AfterViews
     void onCreate() {
-        context = getActivity();
+        context = (ActionBarActivity) getActivity();
+        context.getSupportActionBar().setTitle(R.string.Page_header__donation);
         loadData();
 
         /* base64EncodedPublicKey should be YOUR APPLICATION'S PUBLIC KEY
