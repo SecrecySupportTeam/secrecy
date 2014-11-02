@@ -21,11 +21,14 @@ package com.doplgangr.secrecy.Views;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.text.InputType;
 import android.view.Menu;
@@ -45,9 +48,13 @@ import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
+import com.doplgangr.secrecy.Events.BackUpDoneEvent;
+import com.doplgangr.secrecy.Events.BackingUpFileEvent;
 import com.doplgangr.secrecy.Events.NewFileEvent;
 import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
+import com.doplgangr.secrecy.FileSystem.Storage;
+import com.doplgangr.secrecy.Jobs.BackupJob;
 import com.doplgangr.secrecy.Jobs.InitializeVaultJob;
 import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
@@ -65,7 +72,9 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.DrawableRes;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import de.greenrobot.event.EventBus;
 
@@ -75,6 +84,7 @@ import de.greenrobot.event.EventBus;
 public class FilesListFragment extends FileViewer {
     private static final int REQUEST_CODE = 6384; // onActivityResult request code
     private static final ArrayList<String> INCLUDE_EXTENSIONS_LIST = new ArrayList<String>();
+    private static final int NotificationID = 1820;
     @ViewById(android.R.id.list)
     ListView listView = null;
     @ViewById(R.id.gridView)
@@ -83,7 +93,6 @@ public class FilesListFragment extends FileViewer {
     View nothing;
     @ViewById(R.id.progressBar)
     ProgressBar addFilepBar;
-
     @ViewById(R.id.tag)
     TextView mTag;
     @OptionsMenuItem(R.id.action_switch_interface)
@@ -101,6 +110,9 @@ public class FilesListFragment extends FileViewer {
     private boolean attached = false;
     private AbsListView mListView;
     private CustomActionMode mActionMode;
+    //Notifications
+    private NotificationManager mNotifyManager;
+    private NotificationCompat.Builder mBuilder;
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
@@ -420,6 +432,42 @@ public class FilesListFragment extends FileViewer {
                 })
                 .setNegativeButton(R.string.CANCEL, Util.emptyClickListener)
                 .show();
+    }
+
+    @OptionsItem(R.id.action_backup)
+    void backUp() {
+        mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        mBuilder = new NotificationCompat.Builder(context);
+        mBuilder.setContentTitle(CustomApp.context.getString(R.string.Backup__title))
+                .setContentText(CustomApp.context.getString(R.string.Backup__in_progress))
+                .setSmallIcon(R.drawable.ic_stat_alert)
+                .setOngoing(true);
+        mBuilder.setProgress(0, 0, true);
+        mNotifyManager.notify(NotificationID, mBuilder.build());
+        File backupFile = new File(Storage.getRoot(), secret.getName() + new Date().getTime() + ".zip");
+        try {
+            backupFile.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        CustomApp.jobManager.addJobInBackground(new BackupJob(context, new File(secret.getPath()), backupFile));
+    }
+
+    public void onEventMainThread(BackUpDoneEvent event) {
+        if (!event.backupPath.getAbsolutePath().equals(secret.getPath()))
+            return;
+        mBuilder.setProgress(0, 0, false)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(    //For long long text
+                        String.format(CustomApp.context.getString(R.string.Backup__finish), event.backupFile)))
+                .setOngoing(false);
+        mNotifyManager.notify(NotificationID, mBuilder.build());
+    }
+
+    public void onEventMainThread(BackingUpFileEvent event) {
+        if (!event.folderToBackup.equals(secret.getPath()))
+            return;
+        mBuilder.setContentText(event.fileInBackup);
+        mNotifyManager.notify(NotificationID, mBuilder.build());
     }
 
     @OptionsItem(R.id.action_delete_vault)

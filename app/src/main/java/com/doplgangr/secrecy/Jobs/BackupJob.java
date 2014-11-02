@@ -29,7 +29,7 @@ public class BackupJob extends Job {
     private File backupFile; //Path of backupFile
     private Context context;
 
-    protected BackupJob(Context context, File backupPath, File backupFile) {
+    public BackupJob(Context context, File backupPath, File backupFile) {
         super(new Params(PRIORITY)
                 .groupBy(backupPath.getAbsolutePath()));
         this.context = context;
