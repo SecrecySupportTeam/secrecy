@@ -222,22 +222,11 @@ public class Vault implements Serializable {
         if (folder.getAbsolutePath().equals(newFolder.getAbsolutePath()))
             return this; //same name, bye
         try {
-            org.apache.commons.io.FileUtils.copyDirectory(folder, newFolder);
+            org.apache.commons.io.FileUtils.moveDirectory(folder, newFolder);
         } catch (IOException e) {
-            // New Folder should be cleared. Only preserver old folder
-            try {
-                org.apache.commons.io.FileUtils.deleteDirectory(newFolder);
-            } catch (IOException ignored) {
-                //ignore
-            }
-            return null;
+              return null;
         }
-        try {
-            org.apache.commons.io.FileUtils.deleteDirectory(folder);
-        } catch (IOException ignored) {
-            //ignored
-        }
-        return VaultHolder.getInstance().createOrRetrieveVault(name, passphrase);
+        return VaultHolder.getInstance().createAndRetrieveVault(name, passphrase);
     }
 
     public void startWatching(final Listeners.FileObserverEventListener mListener) {
