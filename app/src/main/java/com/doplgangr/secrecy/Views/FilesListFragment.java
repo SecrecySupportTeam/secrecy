@@ -303,8 +303,6 @@ public class FilesListFragment extends FileViewer {
                 if (isGallery) {
 
                     Intent intent = new Intent(context, FilePhotoFragment_.class);
-                    intent.putExtra(Config.vault_extra, vault);
-                    intent.putExtra(Config.password_extra, password);
                     intent.putExtra(Config.gallery_item_extra, i);
                     onPauseDecision.startActivity();
                     startActivity(intent);

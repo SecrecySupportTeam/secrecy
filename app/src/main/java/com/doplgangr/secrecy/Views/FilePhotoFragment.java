@@ -21,6 +21,7 @@ import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.Events.ImageLoadDoneEvent;
 import com.doplgangr.secrecy.Exceptions.SecrecyFileException;
+import com.doplgangr.secrecy.FileSystem.Encryption.VaultHolder;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.Jobs.ImageLoadJob;
@@ -46,10 +47,6 @@ import uk.co.senab.photoview.PhotoView;
 public class FilePhotoFragment extends FragmentActivity {
 
     static Activity context;
-    @Extra(Config.vault_extra)
-    String vault;
-    @Extra(Config.password_extra)
-    String password;
     @Extra(Config.gallery_item_extra)
     Integer itemNo;
     @ViewById(R.id.view_pager)
@@ -62,7 +59,7 @@ public class FilePhotoFragment extends FragmentActivity {
             EventBus.getDefault().register(this);
         final SamplePagerAdapter adapter = new SamplePagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(adapter);
-        Vault secret = new Vault(vault, password);
+        Vault secret = VaultHolder.getInstance().retrieveVault();
         Vault.onFileFoundListener mListener = new Vault.onFileFoundListener() {
             @Override
             public void dothis(EncryptedFile file) {

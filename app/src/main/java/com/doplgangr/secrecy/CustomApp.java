@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
+import com.doplgangr.secrecy.FileSystem.Encryption.VaultHolder;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
@@ -50,6 +51,7 @@ public class CustomApp extends Application {
             e.printStackTrace();
         }
         Storage.deleteTemp(); //Start clean every time!!
+        VaultHolder.getInstance().clear();
 
         jobManager = new JobManager(this);
     }

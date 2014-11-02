@@ -35,6 +35,7 @@ import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.CustomApp;
+import com.doplgangr.secrecy.FileSystem.Encryption.VaultHolder;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.R;
@@ -97,6 +98,7 @@ public class VaultsListFragment extends Fragment {
         if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
         context = (ActionBarActivity) getActivity();
+        VaultHolder.getInstance().clear();
         if (mLinearView != null)
             mLinearView.removeAllViews();
         context.getSupportActionBar().setTitle("");
@@ -207,7 +209,7 @@ public class VaultsListFragment extends Fragment {
                             passwordWrong();
                         else if (directory.mkdirs()) {
                             // Create vault to initialize the vault header
-                            Vault vault = new Vault(name, password);
+                            VaultHolder.getInstance().createAndRetrieveVault(name, password);
                             try {
                                 File file = new File(directory +  "/.nomedia");
                                 file.delete();
@@ -274,7 +276,9 @@ public class VaultsListFragment extends Fragment {
     }
 
     void rename(final int position, final String newName, final String password) {
-        Vault newVault = new Vault(adapter.getItem(position), password).rename(newName);
+        Vault newVault = VaultHolder.getInstance().createAndRetrieveVault(
+                adapter.getItem(position), password)
+                .rename(newName);
         if (newVault == null)
             Util.alert(context,
                     getString(R.string.Error__rename_password_incorrect),
