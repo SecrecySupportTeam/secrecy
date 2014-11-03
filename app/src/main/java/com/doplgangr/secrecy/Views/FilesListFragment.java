@@ -164,6 +164,7 @@ public class FilesListFragment extends FileViewer {
         mInitializeDialog = new ProgressDialog(context);
         mInitializeDialog.setIndeterminate(true);
         mInitializeDialog.setMessage(context.getString(R.string.Vault__initializing));
+        mInitializeDialog.setCancelable(false);
         mInitializeDialog.show();
         if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
@@ -209,16 +210,34 @@ public class FilesListFragment extends FileViewer {
                     getString(R.string.Error__old_vault_format_message),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            ProgressDialog progress = new ProgressDialog(context);
-                            progress.setMessage(getString(R.string.Error__old_vault_format_message));
-                            progress.setIndeterminate(true);
-                            progress.show();
-                            updateVaultInBackground(progress, dialog);
+                            Util.alert(
+                                    context,
+                                    getString(R.string.Upgrade__backup_beforehand),
+                                    getString(R.string.Upgrade__backup_beforehand_message),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            backUp();
+                                            finish();
+                                        }
+                                    },
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            ProgressDialog progress = new ProgressDialog(context);
+                                            progress.setMessage(getString(R.string.Vault_updating));
+                                            progress.setIndeterminate(true);
+                                            progress.setCancelable(false);
+                                            progress.show();
+                                            updateVaultInBackground(progress);
+                                        }
+                                    }
+                            );
                         }
                     },
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            finish(); //Done for now -_-'
+                            finish();
                         }
                     }
             );
@@ -232,7 +251,7 @@ public class FilesListFragment extends FileViewer {
                     getString(R.string.Error__open_vault_message),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            finish(); //Done for now -_-'
+                            finish();
                         }
                     },
                     null
@@ -249,17 +268,16 @@ public class FilesListFragment extends FileViewer {
     }
 
     @Background
-    void updateVaultInBackground(ProgressDialog progress, DialogInterface dialog) {
-
+    void updateVaultInBackground(ProgressDialog progress) {
         try {
             if (secret.updateFromECBVault(password)) {
                 Util.alert(
                         context,
-                        getString(R.string.Error__vault_updated),
-                        getString(R.string.Error__vault_updated_message),
+                        getString(R.string.Vault__vault_updated),
+                        getString(R.string.Vault__vault_updated_message),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                finish(); //Done for now -_-'
+                                finish();
                             }
                         },
                         null
@@ -272,7 +290,7 @@ public class FilesListFragment extends FileViewer {
                         getString(R.string.Error__updating_vault_message),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                finish(); //Done for now -_-'
+                                finish();
                             }
                         },
                         null
@@ -286,14 +304,13 @@ public class FilesListFragment extends FileViewer {
                     getString(R.string.Error__updating_vault_message),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            finish(); //Done for now -_-'
+                            finish();
                         }
                     },
                     null
             );
         }
         progress.dismiss();
-        dialog.dismiss();
     }
 
     public void onEventMainThread(FilesActivity.OnBackPressedEvent onBackPressedEvent) {
@@ -412,8 +429,9 @@ public class FilesListFragment extends FileViewer {
                         String confirmNewPassphrase = ((EditText) dialogView.findViewById(R.id.confirmPassphrase)).getText().toString();
 
                         ProgressDialog progressDialog = new ProgressDialog(context);
-                        progressDialog.setMessage(CustomApp.context.getString(R.string.Vault__initializing));
+                        progressDialog.setMessage(CustomApp.context.getString(R.string.Vault__changing_passphrase));
                         progressDialog.setIndeterminate(true);
+                        progressDialog.setCancelable(false);
                         progressDialog.show();
                         changePassphraseInBackground(oldPassphrase, newPassphrase, confirmNewPassphrase, progressDialog);
                     }
@@ -425,6 +443,7 @@ public class FilesListFragment extends FileViewer {
     @Background
     void changePassphraseInBackground(String oldPassphrase, String newPassphrase, String confirmNewPassphrase, ProgressDialog progressDialog) {
         if (newPassphrase.length() == 0) {
+            progressDialog.dismiss();
             Util.alert(context,
                     CustomApp.context.getString(R.string.Error__change_passphrase_failed),
                     CustomApp.context.getString(R.string.Error__passphrase_empty_message),
@@ -434,6 +453,7 @@ public class FilesListFragment extends FileViewer {
             return;
         }
         if (!newPassphrase.equals(confirmNewPassphrase)) {
+            progressDialog.dismiss();
             Util.alert(context,
                     CustomApp.context.getString(R.string.Error__change_passphrase_failed),
                     CustomApp.context.getString(R.string.Error__passphrase_no_match_message),
@@ -443,6 +463,7 @@ public class FilesListFragment extends FileViewer {
             return;
         }
         if (!secret.changePassphrase(oldPassphrase, newPassphrase)) {
+            progressDialog.dismiss();
             Util.alert(context,
                     CustomApp.context.getString(R.string.Error__change_passphrase_failed),
                     CustomApp.context.getString(R.string.Error__change_passphrase_failed_message),
@@ -462,6 +483,35 @@ public class FilesListFragment extends FileViewer {
             );
         }
         progressDialog.dismiss();
+    }
+
+    @OptionsItem(R.id.action_backup)
+    void backUp() {
+        mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        mBuilder = new NotificationCompat.Builder(context);
+        mBuilder.setContentTitle(CustomApp.context.getString(R.string.Backup__title))
+                .setContentText(CustomApp.context.getString(R.string.Backup__in_progress))
+                .setSmallIcon(R.drawable.ic_stat_alert)
+                .setOngoing(true);
+        mBuilder.setProgress(0, 0, true);
+        mNotifyManager.notify(NotificationID, mBuilder.build());
+        File backupFile = new File(Storage.getRoot(), secret.getName() + new Date().getTime() + ".zip");
+        try {
+            backupFile.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        CustomApp.jobManager.addJobInBackground(new BackupJob(context, new File(secret.getPath()), backupFile));
+    }
+
+    public void onEventMainThread(BackUpDoneEvent event) {
+        if (!event.backupPath.getAbsolutePath().equals(secret.getPath()))
+            return;
+        mBuilder.setProgress(0, 0, false)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(    //For long long text
+                        String.format(CustomApp.context.getString(R.string.Backup__finish), event.backupFile)))
+                .setOngoing(false);
+        mNotifyManager.notify(NotificationID, mBuilder.build());
     }
 
     @OptionsItem(R.id.action_delete_vault)

@@ -224,6 +224,7 @@ public class VaultsListFragment extends Fragment {
                             ProgressDialog progress = new ProgressDialog(context);
                             progress.setIndeterminate(true);
                             progress.setMessage(getString(R.string.Vault__initializing));
+                            progress.setCancelable(false);
                             progress.show();
                             createVaultInBackground(name, password, directory, dialog, progress);
                         } else
