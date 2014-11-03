@@ -10,6 +10,8 @@ import com.path.android.jobqueue.Params;
 
 import org.apache.commons.io.FileUtils;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -48,7 +50,7 @@ public class BackupJob extends Job {
     @Override
     public void onRun() throws Throwable {
         FileOutputStream fos = new FileOutputStream(backupFile);
-        ZipOutputStream zos = new ZipOutputStream(fos);
+        ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(fos));
         byte[] buffer = new byte[Config.bufferSize];
 
         Iterator it = FileUtils.iterateFiles(backupPath, null, true);
@@ -58,8 +60,8 @@ public class BackupJob extends Job {
             ZipEntry newEntry = new ZipEntry(fileToBackup.getAbsolutePath());
             zos.putNextEntry(newEntry);
 
-            FileInputStream in =
-                    new FileInputStream(fileToBackup);
+            BufferedInputStream in =
+                    new BufferedInputStream(new FileInputStream(fileToBackup));
 
             int len;
             while ((len = in.read(buffer)) > 0) {
