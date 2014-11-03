@@ -63,9 +63,19 @@
     <string name="Error__updating_vault">Aktualisierungsfehler</string>
     <string name="Error__updating_vault_message">Haben Sie eventuell eine falsche Passphrase eingegeben?</string>
     <string name="Vault__vault_updated">Tresor aktualisiert</string>
-    <string name="vault__vault_updated_message">Ihr Tresor wurde erfolgreich aktualisiert.</string>
     <string name="action_select_all">Alle auswählen</string>
     <string name="Vault__initializing">Initialisiere Tresor...</string>
     <string name="Vault_updating">Tresor wird aktualisiert...</string>
     <string name="Vault__changing_passphrase">Passphrase wird geändert...</string>
+    <string name="Restore__title">Wiederherstellen</string>
+    <string name="Restore__in_progress">Wiederherstellen läuft</string>
+    <string name="Restore__finish">Wiederherstellen abgeschlossen. %s wurde wiederhergestellt</string>
+    <string name="Upgrade__backup_beforehand">Backup erstellen?</string>
+    <string name="Upgrade__backup_beforehand_message">Möchten Sie ein Backup dieses Tresors erstellen? Abbrechen drücken um ohne Backup fortzufahren. </string>
+    <string name="Vault__vault_updated_message">Ihr Tresor wurde erfolgreich aktualisiert.</string>
+    <string name="action__backup">Tresor Backup erstellen</string>
+    <string name="action__restore_vault">Tresor Backup wiederherstellen</string>
+    <string name="Backup__finish">Backup wurde abgeschlossen. Ihr Backup finden Sie unter %s.</string>
+    <string name="Backup__title">Tresor Backup</string>
+    <string name="Backup__in_progress">Backup wird erstellt</string>
 </resources>
