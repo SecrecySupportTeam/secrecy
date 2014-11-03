@@ -244,9 +244,6 @@ public class VaultsListFragment extends Fragment {
             File file = new File(directory + "/.nomedia");
             file.delete();
             file.createNewFile();
-            FileOutputStream outputStream = new FileOutputStream(file);
-            outputStream.write(name.getBytes());
-            outputStream.close();
             oncreate();
         } catch (IOException e) {
             e.printStackTrace();
