@@ -21,6 +21,7 @@ package com.doplgangr.secrecy.Views;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -102,6 +103,8 @@ public class FilesListFragment extends FileViewer {
     private AbsListView mListView;
     private CustomActionMode mActionMode;
 
+    private ProgressDialog mInitializeDialog;
+
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
@@ -141,11 +144,15 @@ public class FilesListFragment extends FileViewer {
         attached = false;
     }
 
-    @Background
+    @UiThread
     @Override
     void onCreate() {
         context = (ActionBarActivity) getActivity();
         context.getSupportActionBar().setTitle(vault);
+        mInitializeDialog = new ProgressDialog(context);
+        mInitializeDialog.setIndeterminate(true);
+        mInitializeDialog.setMessage(context.getString(R.string.Vault__initializing));
+        mInitializeDialog.show();
         if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
         CustomApp.jobManager.addJobInBackground(new InitializeVaultJob(vault, password));
@@ -190,47 +197,11 @@ public class FilesListFragment extends FileViewer {
                     getString(R.string.Error__old_vault_format_message),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            try {
-                                if (secret.updateFromECBVault(password)) {
-                                    Util.alert(
-                                            context,
-                                            getString(R.string.Error__vault_updated),
-                                            getString(R.string.Error__vault_updated_message),
-                                            new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int whichButton) {
-                                                    finish(); //Done for now -_-'
-                                                }
-                                            },
-                                            null
-                                    );
-                                } else {
-                                    secret.ecbUpdateFailed();
-                                    Util.alert(
-                                            context,
-                                            getString(R.string.Error__updating_vault),
-                                            getString(R.string.Error__updating_vault_message),
-                                            new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int whichButton) {
-                                                    finish(); //Done for now -_-'
-                                                }
-                                            },
-                                            null
-                                    );
-                                }
-                            } catch (Exception e) {
-                                secret.ecbUpdateFailed();
-                                Util.alert(
-                                        context,
-                                        getString(R.string.Error__updating_vault),
-                                        getString(R.string.Error__updating_vault_message),
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-                                                finish(); //Done for now -_-'
-                                            }
-                                        },
-                                        null
-                                );
-                            }
+                            ProgressDialog progress = new ProgressDialog(context);
+                            progress.setMessage(getString(R.string.Error__old_vault_format_message));
+                            progress.setIndeterminate(true);
+                            progress.show();
+                            updateVaultInBackground(progress, dialog);
                         }
                     },
                     new DialogInterface.OnClickListener() {
@@ -261,7 +232,56 @@ public class FilesListFragment extends FileViewer {
         context.setTitle(secret.getName());
         adapter = new FilesListAdapter(context,
                 isGallery ? R.layout.gallery_item : R.layout.file_item);
+        mInitializeDialog.dismiss();
         setupViews();
+    }
+
+    @Background
+    void updateVaultInBackground(ProgressDialog progress, DialogInterface dialog) {
+
+        try {
+            if (secret.updateFromECBVault(password)) {
+                Util.alert(
+                        context,
+                        getString(R.string.Error__vault_updated),
+                        getString(R.string.Error__vault_updated_message),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                finish(); //Done for now -_-'
+                            }
+                        },
+                        null
+                );
+            } else {
+                secret.ecbUpdateFailed();
+                Util.alert(
+                        context,
+                        getString(R.string.Error__updating_vault),
+                        getString(R.string.Error__updating_vault_message),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                finish(); //Done for now -_-'
+                            }
+                        },
+                        null
+                );
+            }
+        } catch (Exception e) {
+            secret.ecbUpdateFailed();
+            Util.alert(
+                    context,
+                    getString(R.string.Error__updating_vault),
+                    getString(R.string.Error__updating_vault_message),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            finish(); //Done for now -_-'
+                        }
+                    },
+                    null
+            );
+        }
+        progress.dismiss();
+        dialog.dismiss();
     }
 
     public void onEventMainThread(FilesActivity.OnBackPressedEvent onBackPressedEvent) {
@@ -379,47 +399,57 @@ public class FilesListFragment extends FileViewer {
                         String newPassphrase = ((EditText) dialogView.findViewById(R.id.newPassphrase)).getText().toString();
                         String confirmNewPassphrase = ((EditText) dialogView.findViewById(R.id.confirmPassphrase)).getText().toString();
 
-                        if (newPassphrase.length() == 0) {
-                            Util.alert(context,
-                                    CustomApp.context.getString(R.string.Error__change_passphrase_failed),
-                                    CustomApp.context.getString(R.string.Error__passphrase_empty_message),
-                                    Util.emptyClickListener,
-                                    null
-                            );
-                            return;
-                        }
-                        if (!newPassphrase.equals(confirmNewPassphrase)) {
-                            Util.alert(context,
-                                    CustomApp.context.getString(R.string.Error__change_passphrase_failed),
-                                    CustomApp.context.getString(R.string.Error__passphrase_no_match_message),
-                                    Util.emptyClickListener,
-                                    null
-                            );
-                            return;
-                        }
-                        if (!secret.changePassphrase(oldPassphrase, newPassphrase)) {
-                            Util.alert(context,
-                                    CustomApp.context.getString(R.string.Error__change_passphrase_failed),
-                                    CustomApp.context.getString(R.string.Error__change_passphrase_failed_message),
-                                    Util.emptyClickListener,
-                                    null
-                            );
-                        } else {
-                            Util.alert(context,
-                                    CustomApp.context.getString(R.string.Vault__change_passphrase_ok),
-                                    CustomApp.context.getString(R.string.Vault__change_passphrase_ok_message),
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            context.finish();
-                                        }
-                                    }
-                            );
-                        }
+                        ProgressDialog progressDialog = new ProgressDialog(context);
+                        progressDialog.setMessage(CustomApp.context.getString(R.string.Vault__initializing));
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.show();
+                        changePassphraseInBackground(oldPassphrase, newPassphrase, confirmNewPassphrase, progressDialog);
                     }
                 })
                 .setNegativeButton(R.string.CANCEL, Util.emptyClickListener)
                 .show();
+    }
+
+    @Background
+    void changePassphraseInBackground(String oldPassphrase, String newPassphrase, String confirmNewPassphrase, ProgressDialog progressDialog) {
+        if (newPassphrase.length() == 0) {
+            Util.alert(context,
+                    CustomApp.context.getString(R.string.Error__change_passphrase_failed),
+                    CustomApp.context.getString(R.string.Error__passphrase_empty_message),
+                    Util.emptyClickListener,
+                    null
+            );
+            return;
+        }
+        if (!newPassphrase.equals(confirmNewPassphrase)) {
+            Util.alert(context,
+                    CustomApp.context.getString(R.string.Error__change_passphrase_failed),
+                    CustomApp.context.getString(R.string.Error__passphrase_no_match_message),
+                    Util.emptyClickListener,
+                    null
+            );
+            return;
+        }
+        if (!secret.changePassphrase(oldPassphrase, newPassphrase)) {
+            Util.alert(context,
+                    CustomApp.context.getString(R.string.Error__change_passphrase_failed),
+                    CustomApp.context.getString(R.string.Error__change_passphrase_failed_message),
+                    Util.emptyClickListener,
+                    null
+            );
+        } else {
+            Util.alert(context,
+                    CustomApp.context.getString(R.string.Vault__change_passphrase_ok),
+                    CustomApp.context.getString(R.string.Vault__change_passphrase_ok_message),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            context.finish();
+                        }
+                    }
+            );
+        }
+        progressDialog.dismiss();
     }
 
     @OptionsItem(R.id.action_delete_vault)

@@ -21,6 +21,7 @@ package com.doplgangr.secrecy.Views;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -44,6 +45,7 @@ import com.doplgangr.secrecy.Settings.SettingsFragment_;
 import com.doplgangr.secrecy.Util;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
@@ -89,6 +91,7 @@ public class VaultsListFragment extends Fragment {
         }
     }
 
+    @UiThread
     @AfterViews
     void oncreate() {
         if (!EventBus.getDefault().isRegistered(this))
@@ -204,18 +207,11 @@ public class VaultsListFragment extends Fragment {
                             passwordWrong();
                         else if (directory.mkdirs()) {
                             // Create vault to initialize the vault header
-                            VaultHolder.getInstance().createAndRetrieveVault(name, password);
-                            try {
-                                File file = new File(directory +  "/.nomedia");
-                                file.delete();
-                                file.createNewFile();
-                                FileOutputStream outputStream = new FileOutputStream(file);
-                                outputStream.write(name.getBytes());
-                                outputStream.close();
-                                oncreate();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            ProgressDialog progress = new ProgressDialog(context);
+                            progress.setIndeterminate(true);
+                            progress.setMessage(getString(R.string.Vault__initializing));
+                            progress.show();
+                            createVaultInBackground(name, password, directory, dialog, progress);
                         } else
                             failedtocreate();
 
@@ -227,6 +223,25 @@ public class VaultsListFragment extends Fragment {
         }).show();
     }
 
+    @Background
+    void createVaultInBackground(String name, String password, File directory, DialogInterface dialog, ProgressDialog progressDialog) {
+        VaultHolder.getInstance().createAndRetrieveVault(name, password);
+        try {
+            File file = new File(directory + "/.nomedia");
+            file.delete();
+            file.createNewFile();
+            FileOutputStream outputStream = new FileOutputStream(file);
+            outputStream.write(name.getBytes());
+            outputStream.close();
+            oncreate();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        dialog.dismiss();
+        progressDialog.dismiss();
+    }
+
+    @UiThread
     void passwordWrong() {
         new AlertDialog.Builder(context)
                 .setTitle(getString(R.string.Error__wrong_password_confirmation))
@@ -237,6 +252,7 @@ public class VaultsListFragment extends Fragment {
                 }).show();
     }
 
+    @UiThread
     void failedtocreate() {
         new AlertDialog.Builder(context)
                 .setTitle(getString(R.string.Error__cannot_create_vault))
