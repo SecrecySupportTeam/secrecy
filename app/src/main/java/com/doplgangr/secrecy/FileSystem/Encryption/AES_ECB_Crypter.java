@@ -18,12 +18,15 @@
 */
 package com.doplgangr.secrecy.FileSystem.Encryption;
 
+import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.Exceptions.SecrecyCipherStreamException;
 import com.doplgangr.secrecy.FileSystem.Base64Coder;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 
 import org.apache.commons.io.FilenameUtils;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -86,7 +89,10 @@ class AES_ECB_Crypter implements Crypter {
                 + "." + FilenameUtils.getExtension(file.getName());
         File outputFile = new File(vaultPath + "/" + filename);
 
-        return new CipherOutputStream(new FileOutputStream(outputFile), c);
+        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
+                new FileOutputStream(outputFile), Config.blockSize);
+
+        return new CipherOutputStream(bufferedOutputStream, c);
     }
 
     @Override
@@ -106,7 +112,10 @@ class AES_ECB_Crypter implements Crypter {
             throw new SecrecyCipherStreamException("Invalid encryption key!");
         }
 
-        return new CipherInputStream(new FileInputStream(encryptedFile), c);
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(
+                new FileInputStream(encryptedFile), Config.blockSize);
+
+        return new CipherInputStream(bufferedInputStream, c);
     }
 
     @Override
