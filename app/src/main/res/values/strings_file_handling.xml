@@ -47,4 +47,7 @@
     <string name="Backup__title">Backing Up</string>
     <string name="Backup__in_progress">Backup in Progress</string>
     <string name="Backup__finish">Backup Finished. Your backup file is %s.</string>
+    <string name="Restore__title">Restoring</string>
+    <string name="Restore__in_progress">Restore in Progress</string>
+    <string name="Restore__finish">Restore Finished. %s has been restored.</string>
 </resources>

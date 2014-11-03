@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
     <string name="action__add_vault">Add vault</string>
+    <string name="action__restore_vault">Restore backup</string>
     <string name="action__donate">Donate</string>
     <string name="action__support">Help Desk</string>
     <string name="action__switch_interface">Switch Interface</string>

@@ -21,10 +21,15 @@ package com.doplgangr.secrecy.Views;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.text.InputType;
 import android.view.View;
@@ -35,13 +40,18 @@ import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.CustomApp;
+import com.doplgangr.secrecy.Events.RestoreDoneEvent;
+import com.doplgangr.secrecy.Events.RestoringFileEvent;
 import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.FileSystem.Encryption.VaultHolder;
 import com.doplgangr.secrecy.FileSystem.Storage;
+import com.doplgangr.secrecy.Jobs.RestoreJob;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.Prefs_;
 import com.doplgangr.secrecy.Settings.SettingsFragment_;
 import com.doplgangr.secrecy.Util;
+import com.ipaulpro.afilechooser.FileChooserActivity;
+import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
@@ -62,6 +72,8 @@ import de.greenrobot.event.EventBus;
 @EFragment(R.layout.activity_list_vault)
 @OptionsMenu(R.menu.list_vault)
 public class VaultsListFragment extends Fragment {
+    //Vault restore module
+    private static final int REQUESTCODE = 1203; //Arbitrary
     @ViewById(R.id.list)
     LinearLayout mLinearView;
     @ViewById(R.id.scrollView)
@@ -77,6 +89,8 @@ public class VaultsListFragment extends Fragment {
     OnVaultSelectedListener mOnVaultSelected;
     OnFragmentFinishListener mFinishListener;
     private boolean isPaused = false;
+    private NotificationManager mNotifyManager;
+    private NotificationCompat.Builder mBuilder;
 
     @Override
     public void onAttach(Activity activity) {
@@ -245,6 +259,60 @@ public class VaultsListFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int whichButton) {
                     }
                 }).show();
+    }
+
+    @OptionsItem(R.id.action_restore)
+    void restore() {
+        ArrayList<String> INCLUDE_EXTENSIONS_LIST = new ArrayList<String>();
+        INCLUDE_EXTENSIONS_LIST.add(".zip");
+
+        Intent intent = new Intent(context, FileChooserActivity.class);
+
+        intent.putStringArrayListExtra(
+                FileChooserActivity.EXTRA_FILTER_INCLUDE_EXTENSIONS,
+                INCLUDE_EXTENSIONS_LIST);
+        intent.putExtra(FileChooserActivity.PATH, Storage.getRoot().getAbsolutePath());
+        startActivityForResult(intent, REQUESTCODE);
+    }
+
+    @Override
+    @UiThread
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUESTCODE:
+                // If the file selection was successful
+                if (resultCode == Activity.RESULT_OK) {
+                    if (data != null) {
+                        // Get the URI of the selected file
+                        final Uri uri = data.getData();
+                        final String path = FileUtils.getPath(context, uri);
+                        mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                        mBuilder = new NotificationCompat.Builder(context);
+                        mBuilder.setContentTitle(CustomApp.context.getString(R.string.Restore__title))
+                                .setContentText(CustomApp.context.getString(R.string.Restore__in_progress))
+                                .setSmallIcon(R.drawable.ic_stat_alert)
+                                .setOngoing(true);
+                        mBuilder.setProgress(0, 0, true);
+                        mNotifyManager.notify(REQUESTCODE, mBuilder.build());
+                        CustomApp.jobManager.addJobInBackground(new RestoreJob(context, new File(path)));
+                    }
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void onEventMainThread(RestoreDoneEvent event) {
+        mBuilder.setProgress(0, 0, false)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(    //For long long text
+                        String.format(CustomApp.context.getString(R.string.Restore__finish), event.backupFile)))
+                .setOngoing(false);
+        mNotifyManager.notify(REQUESTCODE, mBuilder.build());
+    }
+
+    public void onEventMainThread(RestoringFileEvent event) {
+        mBuilder.setContentText(event.restoredFile.getAbsolutePath());
+        mNotifyManager.notify(REQUESTCODE, mBuilder.build());
     }
 
     void open(final String vault, final View mView, final int i) {
