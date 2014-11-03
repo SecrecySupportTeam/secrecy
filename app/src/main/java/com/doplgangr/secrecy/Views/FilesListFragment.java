@@ -202,47 +202,24 @@ public class FilesListFragment extends FileViewer {
                     getString(R.string.Error__old_vault_format_message),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            try {
-                                if (secret.updateFromECBVault(password)) {
-                                    Util.alert(
-                                            context,
-                                            getString(R.string.Error__vault_updated),
-                                            getString(R.string.Error__vault_updated_message),
-                                            new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int whichButton) {
-                                                    finish(); //Done for now -_-'
-                                                }
-                                            },
-                                            null
-                                    );
-                                } else {
-                                    secret.ecbUpdateFailed();
-                                    Util.alert(
-                                            context,
-                                            getString(R.string.Error__updating_vault),
-                                            getString(R.string.Error__updating_vault_message),
-                                            new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int whichButton) {
-                                                    finish(); //Done for now -_-'
-                                                }
-                                            },
-                                            null
-                                    );
-                                }
-                            } catch (Exception e) {
-                                secret.ecbUpdateFailed();
-                                Util.alert(
-                                        context,
-                                        getString(R.string.Error__updating_vault),
-                                        getString(R.string.Error__updating_vault_message),
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-                                                finish(); //Done for now -_-'
-                                            }
-                                        },
-                                        null
-                                );
-                            }
+                            Util.alert(
+                                    context,
+                                    getString(R.string.Upgrade__backup_beforehand),
+                                    getString(R.string.Upgrade__backup_beforehand_message),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            backUp();
+                                        }
+                                    },
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            doUpgradeFromECB();
+                                        }
+                                    }
+                            );
+
                         }
                     },
                     new DialogInterface.OnClickListener() {
@@ -274,6 +251,50 @@ public class FilesListFragment extends FileViewer {
         adapter = new FilesListAdapter(context,
                 isGallery ? R.layout.gallery_item : R.layout.file_item);
         setupViews();
+    }
+
+    void doUpgradeFromECB() {
+        try {
+            if (secret.updateFromECBVault(password)) {
+                Util.alert(
+                        context,
+                        getString(R.string.Error__vault_updated),
+                        getString(R.string.Error__vault_updated_message),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                finish(); //Done for now -_-'
+                            }
+                        },
+                        null
+                );
+            } else {
+                secret.ecbUpdateFailed();
+                Util.alert(
+                        context,
+                        getString(R.string.Error__updating_vault),
+                        getString(R.string.Error__updating_vault_message),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                finish(); //Done for now -_-'
+                            }
+                        },
+                        null
+                );
+            }
+        } catch (Exception e) {
+            secret.ecbUpdateFailed();
+            Util.alert(
+                    context,
+                    getString(R.string.Error__updating_vault),
+                    getString(R.string.Error__updating_vault_message),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            finish(); //Done for now -_-'
+                        }
+                    },
+                    null
+            );
+        }
     }
 
     public void onEventMainThread(FilesActivity.OnBackPressedEvent onBackPressedEvent) {
