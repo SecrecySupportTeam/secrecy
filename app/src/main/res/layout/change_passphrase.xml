@@ -22,29 +22,48 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="@dimen/dialog_padding">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:hint="@string/Vault__old_passphrase"
+        android:minHeight="36dp" />
 
     <EditText
         android:id="@+id/oldPassphrase"
-        android:layout_width="match_parent"
+    android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="@string/Vault__old_passphrase"
         android:inputType="textPassword" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:hint="@string/Vault__new_passphrase"
+        android:minHeight="36dp" />
 
     <EditText
         android:id="@+id/newPassphrase"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="@string/Vault__new_passphrase"
         android:inputType="textPassword" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:hint="@string/Vault__confirm_new_passphrase"
+        android:minHeight="36dp" />
 
     <EditText
         android:id="@+id/confirmPassphrase"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="@string/Vault__confirm_new_passphrase"
         android:inputType="textPassword" />
 </LinearLayout>
