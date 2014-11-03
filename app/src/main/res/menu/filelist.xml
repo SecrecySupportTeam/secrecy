@@ -27,4 +27,9 @@
         android:orderInCategory="3"
         android:title="@string/action__change_passphrase"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_backup"
+        android:orderInCategory="99"
+        android:title="@string/action__backup"
+        app:showAsAction="never" />
 </menu>
