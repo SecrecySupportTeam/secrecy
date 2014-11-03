@@ -68,4 +68,5 @@
     <string name="Error__vault_updated">Vault updated</string>
     <string name="Error__vault_updated_message">Your vault has been updated to the new format.</string>
     <string name="action_select_all">Select all</string>
+    <string name="Vault__initializing">Initializing Vault...</string>
 </resources>
