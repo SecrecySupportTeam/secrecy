@@ -50,7 +50,7 @@ public class BackupJob extends Job {
     @Override
     public void onRun() throws Throwable {
         FileOutputStream fos = new FileOutputStream(backupFile);
-        ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(fos));
+        ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(fos, Config.blockSize));
         byte[] buffer = new byte[Config.bufferSize];
 
         Iterator it = FileUtils.iterateFiles(backupPath, null, true);
@@ -61,7 +61,7 @@ public class BackupJob extends Job {
             zos.putNextEntry(newEntry);
 
             BufferedInputStream in =
-                    new BufferedInputStream(new FileInputStream(fileToBackup));
+                    new BufferedInputStream(new FileInputStream(fileToBackup), Config.blockSize);
 
             int len;
             while ((len = in.read(buffer)) > 0) {
