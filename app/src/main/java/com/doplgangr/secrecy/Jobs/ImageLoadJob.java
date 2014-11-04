@@ -7,10 +7,13 @@ import android.widget.ProgressBar;
 import com.doplgangr.secrecy.Events.ImageLoadDoneEvent;
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
+import com.doplgangr.secrecy.Util;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
 import org.apache.commons.io.IOUtils;
+
+import java.util.Queue;
 
 import javax.crypto.CipherInputStream;
 
@@ -23,6 +26,7 @@ public class ImageLoadJob extends Job {
     private final EncryptedFile encryptedFile;
     private final ProgressBar pBar;
     private final Integer mNum;
+    private boolean isObsolet = false;
 
     public ImageLoadJob(Integer mNum, EncryptedFile encryptedFile, PhotoView imageView, ProgressBar pBar) {
         super(new Params(PRIORITY));
@@ -32,6 +36,10 @@ public class ImageLoadJob extends Job {
         this.pBar = pBar;
     }
 
+    public void setObsolet(boolean isObsolet) {
+        this.isObsolet = isObsolet;
+    }
+
     @Override
     public void onAdded() {
 
@@ -39,6 +47,9 @@ public class ImageLoadJob extends Job {
 
     @Override
     public void onRun() throws Throwable {
+        if (isObsolet){
+            return;
+        }
         CipherInputStream imageStream =
                 encryptedFile.readStream(new CryptStateListener() {
                     @Override

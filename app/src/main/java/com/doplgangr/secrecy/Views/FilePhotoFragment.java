@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -117,7 +118,7 @@ public class FilePhotoFragment extends FragmentActivity {
         event.progressBar.setVisibility(View.GONE);
     }
 
-    static class SamplePagerAdapter extends FragmentPagerAdapter {
+    static class SamplePagerAdapter extends FragmentStatePagerAdapter {
 
         private static ArrayList<EncryptedFile> encryptedFiles;
 
@@ -145,20 +146,11 @@ public class FilePhotoFragment extends FragmentActivity {
             return PhotoFragment.newInstance(position);
         }
 
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            if (position >= getCount()) {
-                ((Fragment) object).onDestroy();
-                FragmentManager manager = ((Fragment) object).getFragmentManager();
-                FragmentTransaction trans = manager.beginTransaction();
-                trans.remove((Fragment) object);
-                trans.commit();
-            }
-        }
 
         public static class PhotoFragment extends Fragment {
             int mNum;
             PhotoView photoView;
+            private ImageLoadJob imageLoadJob = null;
 
             static PhotoFragment newInstance(int num) {
                 PhotoFragment f = new PhotoFragment();
@@ -200,18 +192,21 @@ public class FilePhotoFragment extends FragmentActivity {
                 final ProgressBar pBar = new ProgressBar(container.getContext());
                 pBar.setIndeterminate(false);
                 relativeLayout.addView(pBar, layoutParams);
-                CustomApp.jobManager.addJobInBackground(new ImageLoadJob(mNum, encryptedFile, photoView, pBar));
+                imageLoadJob = new ImageLoadJob(mNum, encryptedFile, photoView, pBar);
+                CustomApp.jobManager.addJobInBackground(imageLoadJob);
                 return relativeLayout;
             }
 
             @Override
-            public void onDestroy() {
-                Util.log("onDestroy!!");
-                if (photoView != null) {
-                    BitmapDrawable bd = (BitmapDrawable) photoView.getDrawable();
-                    bd.getBitmap().recycle();
-                }
+            public void onPause(){
+                super.onPause();
+                imageLoadJob.setObsolet(true);
+            }
+
+            @Override
+            public void onDestroy(){
                 super.onDestroy();
+                imageLoadJob.setObsolet(true);
             }
 
         }
