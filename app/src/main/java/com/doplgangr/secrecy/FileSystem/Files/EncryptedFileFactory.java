@@ -31,6 +31,7 @@ import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Util;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -74,11 +75,12 @@ public class EncryptedFileFactory {
             outputFile = new File(vault.getPath() + "/" + outputFileName);
         }
 
-        FileInputStream is;
+        BufferedInputStream bufferedInputStream;
         CipherOutputStream out;
 
         try {
-            is = new FileInputStream(unencryptedFile);
+            bufferedInputStream = new BufferedInputStream(
+                    new FileInputStream(unencryptedFile), Config.blockSize);
             out = crypter.getCipherOutputStream(unencryptedFile, outputFileName);
         } catch (FileNotFoundException e) {
             Util.log(this.getClass().getName() + ": File not found!");
@@ -92,7 +94,7 @@ public class EncryptedFileFactory {
             if (out != null) {
                 byte buffer[] = new byte[Config.bufferSize];
                 int count;
-                while ((count = is.read(buffer)) != -1) {
+                while ((count = bufferedInputStream.read(buffer)) != -1) {
                     out.write(buffer, 0, count);
                 }
             }
@@ -101,7 +103,7 @@ public class EncryptedFileFactory {
             throw new SecrecyFileException("IOException while encrypting file!");
         } finally {
             try {
-                is.close();
+                bufferedInputStream.close();
                 if (out != null) {
                     out.close();
                 }
