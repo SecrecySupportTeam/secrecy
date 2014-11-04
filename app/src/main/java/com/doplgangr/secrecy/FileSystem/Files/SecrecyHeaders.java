@@ -41,13 +41,23 @@ public final class SecrecyHeaders {
      */
     com.google.protobuf.ByteString getSalt();
 
-    // required bytes encryptedAesKey = 4;
+    // required int32 pbkdf2Iterations = 4;
     /**
-     * <code>required bytes encryptedAesKey = 4;</code>
+     * <code>required int32 pbkdf2Iterations = 4;</code>
+     */
+    boolean hasPbkdf2Iterations();
+    /**
+     * <code>required int32 pbkdf2Iterations = 4;</code>
+     */
+    int getPbkdf2Iterations();
+
+    // required bytes encryptedAesKey = 5;
+    /**
+     * <code>required bytes encryptedAesKey = 5;</code>
      */
     boolean hasEncryptedAesKey();
     /**
-     * <code>required bytes encryptedAesKey = 4;</code>
+     * <code>required bytes encryptedAesKey = 5;</code>
      */
     com.google.protobuf.ByteString getEncryptedAesKey();
   }
@@ -117,8 +127,13 @@ public final class SecrecyHeaders {
               salt_ = input.readBytes();
               break;
             }
-            case 34: {
+            case 32: {
               bitField0_ |= 0x00000008;
+              pbkdf2Iterations_ = input.readInt32();
+              break;
+            }
+            case 42: {
+              bitField0_ |= 0x00000010;
               encryptedAesKey_ = input.readBytes();
               break;
             }
@@ -210,17 +225,33 @@ public final class SecrecyHeaders {
       return salt_;
     }
 
-    // required bytes encryptedAesKey = 4;
-    public static final int ENCRYPTEDAESKEY_FIELD_NUMBER = 4;
-    private com.google.protobuf.ByteString encryptedAesKey_;
+    // required int32 pbkdf2Iterations = 4;
+    public static final int PBKDF2ITERATIONS_FIELD_NUMBER = 4;
+    private int pbkdf2Iterations_;
     /**
-     * <code>required bytes encryptedAesKey = 4;</code>
+     * <code>required int32 pbkdf2Iterations = 4;</code>
      */
-    public boolean hasEncryptedAesKey() {
+    public boolean hasPbkdf2Iterations() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>required bytes encryptedAesKey = 4;</code>
+     * <code>required int32 pbkdf2Iterations = 4;</code>
+     */
+    public int getPbkdf2Iterations() {
+      return pbkdf2Iterations_;
+    }
+
+    // required bytes encryptedAesKey = 5;
+    public static final int ENCRYPTEDAESKEY_FIELD_NUMBER = 5;
+    private com.google.protobuf.ByteString encryptedAesKey_;
+    /**
+     * <code>required bytes encryptedAesKey = 5;</code>
+     */
+    public boolean hasEncryptedAesKey() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>required bytes encryptedAesKey = 5;</code>
      */
     public com.google.protobuf.ByteString getEncryptedAesKey() {
       return encryptedAesKey_;
@@ -230,6 +261,7 @@ public final class SecrecyHeaders {
       version_ = 0;
       vaultIV_ = com.google.protobuf.ByteString.EMPTY;
       salt_ = com.google.protobuf.ByteString.EMPTY;
+      pbkdf2Iterations_ = 0;
       encryptedAesKey_ = com.google.protobuf.ByteString.EMPTY;
     }
     private byte memoizedIsInitialized = -1;
@@ -246,6 +278,10 @@ public final class SecrecyHeaders {
         return false;
       }
       if (!hasSalt()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasPbkdf2Iterations()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -270,7 +306,10 @@ public final class SecrecyHeaders {
         output.writeBytes(3, salt_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeBytes(4, encryptedAesKey_);
+        output.writeInt32(4, pbkdf2Iterations_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        output.writeBytes(5, encryptedAesKey_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -295,7 +334,11 @@ public final class SecrecyHeaders {
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(4, encryptedAesKey_);
+          .computeInt32Size(4, pbkdf2Iterations_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(5, encryptedAesKey_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -419,8 +462,10 @@ public final class SecrecyHeaders {
         bitField0_ = (bitField0_ & ~0x00000002);
         salt_ = com.google.protobuf.ByteString.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000004);
-        encryptedAesKey_ = com.google.protobuf.ByteString.EMPTY;
+        pbkdf2Iterations_ = 0;
         bitField0_ = (bitField0_ & ~0x00000008);
+        encryptedAesKey_ = com.google.protobuf.ByteString.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
 
@@ -464,6 +509,10 @@ public final class SecrecyHeaders {
         if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
           to_bitField0_ |= 0x00000008;
         }
+        result.pbkdf2Iterations_ = pbkdf2Iterations_;
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000010;
+        }
         result.encryptedAesKey_ = encryptedAesKey_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -490,6 +539,9 @@ public final class SecrecyHeaders {
         if (other.hasSalt()) {
           setSalt(other.getSalt());
         }
+        if (other.hasPbkdf2Iterations()) {
+          setPbkdf2Iterations(other.getPbkdf2Iterations());
+        }
         if (other.hasEncryptedAesKey()) {
           setEncryptedAesKey(other.getEncryptedAesKey());
         }
@@ -507,6 +559,10 @@ public final class SecrecyHeaders {
           return false;
         }
         if (!hasSalt()) {
+          
+          return false;
+        }
+        if (!hasPbkdf2Iterations()) {
           
           return false;
         }
@@ -641,37 +697,70 @@ public final class SecrecyHeaders {
         return this;
       }
 
-      // required bytes encryptedAesKey = 4;
-      private com.google.protobuf.ByteString encryptedAesKey_ = com.google.protobuf.ByteString.EMPTY;
+      // required int32 pbkdf2Iterations = 4;
+      private int pbkdf2Iterations_ ;
       /**
-       * <code>required bytes encryptedAesKey = 4;</code>
+       * <code>required int32 pbkdf2Iterations = 4;</code>
        */
-      public boolean hasEncryptedAesKey() {
+      public boolean hasPbkdf2Iterations() {
         return ((bitField0_ & 0x00000008) == 0x00000008);
       }
       /**
-       * <code>required bytes encryptedAesKey = 4;</code>
+       * <code>required int32 pbkdf2Iterations = 4;</code>
+       */
+      public int getPbkdf2Iterations() {
+        return pbkdf2Iterations_;
+      }
+      /**
+       * <code>required int32 pbkdf2Iterations = 4;</code>
+       */
+      public Builder setPbkdf2Iterations(int value) {
+        bitField0_ |= 0x00000008;
+        pbkdf2Iterations_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required int32 pbkdf2Iterations = 4;</code>
+       */
+      public Builder clearPbkdf2Iterations() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        pbkdf2Iterations_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // required bytes encryptedAesKey = 5;
+      private com.google.protobuf.ByteString encryptedAesKey_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>required bytes encryptedAesKey = 5;</code>
+       */
+      public boolean hasEncryptedAesKey() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      /**
+       * <code>required bytes encryptedAesKey = 5;</code>
        */
       public com.google.protobuf.ByteString getEncryptedAesKey() {
         return encryptedAesKey_;
       }
       /**
-       * <code>required bytes encryptedAesKey = 4;</code>
+       * <code>required bytes encryptedAesKey = 5;</code>
        */
       public Builder setEncryptedAesKey(com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000008;
+  bitField0_ |= 0x00000010;
         encryptedAesKey_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>required bytes encryptedAesKey = 4;</code>
+       * <code>required bytes encryptedAesKey = 5;</code>
        */
       public Builder clearEncryptedAesKey() {
-        bitField0_ = (bitField0_ & ~0x00000008);
+        bitField0_ = (bitField0_ & ~0x00000010);
         encryptedAesKey_ = getDefaultInstance().getEncryptedAesKey();
         onChanged();
         return this;
@@ -1388,12 +1477,12 @@ public final class SecrecyHeaders {
   static {
     java.lang.String[] descriptorData = {
       "\n\024SecrecyHeaders.proto\022&com.doplgangr.se" +
-      "crecy.FileSystem.Files\"V\n\013VaultHeader\022\017\n" +
+      "crecy.FileSystem.Files\"p\n\013VaultHeader\022\017\n" +
       "\007version\030\001 \002(\005\022\017\n\007vaultIV\030\002 \002(\014\022\014\n\004salt\030" +
-      "\003 \002(\014\022\027\n\017encryptedAesKey\030\004 \002(\014\"\\\n\nFileHe" +
-      "ader\022\017\n\007version\030\001 \002(\005\022\016\n\006fileIV\030\002 \002(\014\022\022\n" +
-      "\nfileNameIV\030\003 \002(\014\022\031\n\021encryptedFileName\030\006" +
-      " \002(\014"
+      "\003 \002(\014\022\030\n\020pbkdf2Iterations\030\004 \002(\005\022\027\n\017encry" +
+      "ptedAesKey\030\005 \002(\014\"\\\n\nFileHeader\022\017\n\007versio" +
+      "n\030\001 \002(\005\022\016\n\006fileIV\030\002 \002(\014\022\022\n\nfileNameIV\030\003 " +
+      "\002(\014\022\031\n\021encryptedFileName\030\006 \002(\014"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -1405,7 +1494,7 @@ public final class SecrecyHeaders {
           internal_static_com_doplgangr_secrecy_FileSystem_Files_VaultHeader_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_com_doplgangr_secrecy_FileSystem_Files_VaultHeader_descriptor,
-              new java.lang.String[] { "Version", "VaultIV", "Salt", "EncryptedAesKey", });
+              new java.lang.String[] { "Version", "VaultIV", "Salt", "Pbkdf2Iterations", "EncryptedAesKey", });
           internal_static_com_doplgangr_secrecy_FileSystem_Files_FileHeader_descriptor =
             getDescriptor().getMessageTypes().get(1);
           internal_static_com_doplgangr_secrecy_FileSystem_Files_FileHeader_fieldAccessorTable = new

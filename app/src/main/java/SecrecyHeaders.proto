@@ -3,8 +3,9 @@ package com.doplgangr.secrecy.FileSystem.Files;
 message VaultHeader {
 	required int32 version = 1;
 	required bytes vaultIV = 2;
-  required bytes salt = 3;
-	required bytes encryptedAesKey = 4;
+	required bytes salt = 3;
+	required int32 pbkdf2Iterations = 4;
+	required bytes encryptedAesKey = 5;
 }
 
 message FileHeader {

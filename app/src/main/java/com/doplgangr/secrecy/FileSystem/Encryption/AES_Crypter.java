@@ -63,8 +63,7 @@ abstract class AES_Crypter implements Crypter {
     private static final int NONCE_LENGTH_BYTE = 16;
     private static final int AES_KEY_SIZE_BIT = 256;
     private static final int AES_KEY_SIZE_BYTE = AES_KEY_SIZE_BIT / 8;
-    private static final int PBKDF2_ITERATION_COUNT = 65536;
-    private final static int SALT_SIZE_BYTE = 16;
+    private static final int SALT_SIZE_BYTE = 16;
     private static final int VAULT_HEADER_VERSION = 1;
     private static final int FILE_HEADER_VERSION = 1;
 
@@ -91,12 +90,14 @@ abstract class AES_Crypter implements Crypter {
                 secureRandom.nextBytes(aesKey);
                 secureRandom.nextBytes(salt);
 
+                int pbkdf2Iterations = generatePBKDF2IterationCount(passphrase, salt);
+
                 SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance(SECRET_KEY_ALGORITHM);
                 SecretKey keyFromPassphrase = secretKeyFactory.generateSecret(
                         new PBEKeySpec(passphrase.toCharArray(), salt,
-                                PBKDF2_ITERATION_COUNT, AES_KEY_SIZE_BIT));
+                                pbkdf2Iterations, AES_KEY_SIZE_BIT));
 
-                writeVaultHeader(headerFile, vaultNonce, aesKey, salt, keyFromPassphrase);
+                writeVaultHeader(headerFile, vaultNonce, salt, pbkdf2Iterations, aesKey, keyFromPassphrase);
             } catch (Exception e) {
                 Util.log("Cannot create vault header!");
                 e.printStackTrace();
@@ -115,7 +116,7 @@ abstract class AES_Crypter implements Crypter {
             SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance(SECRET_KEY_ALGORITHM);
             SecretKey keyFromPassphrase = secretKeyFactory.generateSecret(
                     new PBEKeySpec(passphrase.toCharArray(), vaultHeader.getSalt().toByteArray(),
-                            PBKDF2_ITERATION_COUNT, AES_KEY_SIZE_BIT));
+                            vaultHeader.getPbkdf2Iterations(), AES_KEY_SIZE_BIT));
             Cipher c = Cipher.getInstance(HEADER_ENCRYPTION_MODE);
             c.init(Cipher.DECRYPT_MODE, keyFromPassphrase, new IvParameterSpec(
                     vaultHeader.getVaultIV().toByteArray()));
@@ -135,7 +136,33 @@ abstract class AES_Crypter implements Crypter {
         }
     }
 
-    private void writeVaultHeader(File headerFile, byte[] vaultNonce, byte[] aesKey, byte[] salt,
+    private static int generatePBKDF2IterationCount(String passphrase, byte[] salt) {
+        int calculatedIterations = 0;
+        try {
+            PBEKeySpec pbeKeySpec = new PBEKeySpec(passphrase.toCharArray(),
+                    salt, Config.PBKDF2_ITERATIONS_BENCHMARK, AES_KEY_SIZE_BIT);
+            SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance(SECRET_KEY_ALGORITHM);
+
+            long startTime = System.currentTimeMillis();
+            secretKeyFactory.generateSecret(pbeKeySpec);
+            long finishTime = System.currentTimeMillis();
+
+            calculatedIterations = (int) ((Config.PBKDF2_ITERATIONS_BENCHMARK / (double) (finishTime - startTime))
+                    * Config.PBKDF2_CREATION_TARGET_MS);
+        } catch (Exception e) {
+            Util.log("Cannot benchmark PBKDF2!");
+        }
+
+        if (calculatedIterations > Config.PBKDF2_ITERATIONS_MIN) {
+            Util.log("Using " + calculatedIterations + " PBKDF2 iterations");
+            return calculatedIterations;
+        }
+        Util.log("Using " + Config.PBKDF2_ITERATIONS_MIN + " PBKDF2 iterations");
+        return Config.PBKDF2_ITERATIONS_MIN;
+    }
+
+    private void writeVaultHeader(File headerFile, byte[] vaultNonce, byte[] salt,
+                                  int pbkdf2Iterations, byte[] aesKey,
                                   SecretKey keyFromPassphrase) throws Exception {
         Cipher c = Cipher.getInstance(HEADER_ENCRYPTION_MODE);
         FileOutputStream headerOutputStream = new FileOutputStream(headerFile);
@@ -147,6 +174,7 @@ abstract class AES_Crypter implements Crypter {
         vaultHeaderBuilder.setVersion(VAULT_HEADER_VERSION);
         vaultHeaderBuilder.setSalt(ByteString.copyFrom(salt));
         vaultHeaderBuilder.setVaultIV(ByteString.copyFrom(vaultNonce));
+        vaultHeaderBuilder.setPbkdf2Iterations(pbkdf2Iterations);
         vaultHeaderBuilder.setEncryptedAesKey(ByteString.copyFrom(encryptedAesKey));
         vaultHeaderBuilder.build().writeTo(headerOutputStream);
         headerOutputStream.close();
@@ -312,7 +340,7 @@ abstract class AES_Crypter implements Crypter {
                 secretKeyFactory = SecretKeyFactory.getInstance(SECRET_KEY_ALGORITHM);
                 SecretKey oldKeyFromPassphrase = secretKeyFactory.generateSecret(
                         new PBEKeySpec(oldPassphrase.toCharArray(), vaultHeader.getSalt().toByteArray(),
-                                PBKDF2_ITERATION_COUNT, AES_KEY_SIZE_BIT));
+                                vaultHeader.getPbkdf2Iterations(), AES_KEY_SIZE_BIT));
                 Cipher c = Cipher.getInstance(HEADER_ENCRYPTION_MODE);
                 c.init(Cipher.DECRYPT_MODE, oldKeyFromPassphrase, new IvParameterSpec(
                         vaultHeader.getVaultIV().toByteArray()));
@@ -324,12 +352,15 @@ abstract class AES_Crypter implements Crypter {
                 secureRandom.nextBytes(vaultNonce);
                 secureRandom.nextBytes(salt);
 
+                int pbkdf2Iterations = generatePBKDF2IterationCount(newPassphrase, salt);
+
                 // Create new key for AES key encryption
                 SecretKey newKeyFromPassphrase = secretKeyFactory.generateSecret(
                         new PBEKeySpec(newPassphrase.toCharArray(), salt,
-                                PBKDF2_ITERATION_COUNT, AES_KEY_SIZE_BIT));
+                                pbkdf2Iterations, AES_KEY_SIZE_BIT));
 
-                writeVaultHeader(headerFileNew, vaultNonce, decryptedKey, salt, newKeyFromPassphrase);
+                writeVaultHeader(headerFileNew, vaultNonce, salt, pbkdf2Iterations,
+                        decryptedKey, newKeyFromPassphrase);
 
             } catch (Exception e) {
                 Util.log("Error while reading or creating new vault header!");
@@ -351,7 +382,7 @@ abstract class AES_Crypter implements Crypter {
         }
 
         // Delete old header file and replace with new header file
-        if (!headerFileOld.delete()){
+        if (!headerFileOld.delete()) {
             headerFileNew.delete();
             Util.log("Cannot delete old vault header!");
             return false;
@@ -368,7 +399,7 @@ abstract class AES_Crypter implements Crypter {
     }
 
     @Override
-    public void deleteFile(EncryptedFile file){
+    public void deleteFile(EncryptedFile file) {
         Storage.purgeFile(new File(file.getFile().getParent() +
                 FILE_HEADER_PREFIX + file.getFile().getName()));
         try {
