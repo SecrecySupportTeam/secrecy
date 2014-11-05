@@ -44,8 +44,8 @@ public class RestoreJob extends Job {
     @Override
     public void onRun() throws Throwable {
         FileInputStream fis = new FileInputStream(backupFile);
-        ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis, Config.blockSize));
-        byte[] buffer = new byte[Config.bufferSize];
+        ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis, Config.BLOCK_SIZE));
+        byte[] buffer = new byte[Config.BUFFER_SIZE];
 
         ZipEntry ze = zis.getNextEntry();
         while (ze != null) {
@@ -60,7 +60,7 @@ public class RestoreJob extends Job {
                 throw new SecrecyRestoreException("New File cannot be created at" +
                         fileToRestore.getAbsolutePath() + ". Is the restore path valid?");
 
-            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(fileToRestore), Config.blockSize);
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(fileToRestore), Config.BLOCK_SIZE);
             int len;
             while ((len = zis.read(buffer)) > 0) {
                 bos.write(buffer, 0, len);

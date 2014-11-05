@@ -44,8 +44,8 @@ public class SecrecyCipherInputStream extends FilterInputStream {
         super(is);
         this.cipher = cipher;
 
-        buf = new byte[cipher.getOutputSize(Config.bufferSize)];
-        inBuf = new byte[Config.bufferSize];
+        buf = new byte[cipher.getOutputSize(Config.BUFFER_SIZE)];
+        inBuf = new byte[Config.BUFFER_SIZE];
     }
 
     private int nextChunk() throws IOException {

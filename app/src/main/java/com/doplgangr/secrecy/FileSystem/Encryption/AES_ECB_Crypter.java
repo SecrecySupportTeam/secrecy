@@ -88,7 +88,7 @@ class AES_ECB_Crypter implements Crypter {
         File outputFile = new File(vaultPath + "/" + filename);
 
         BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
-                new FileOutputStream(outputFile), Config.blockSize);
+                new FileOutputStream(outputFile), Config.BLOCK_SIZE);
 
         return new CipherOutputStream(bufferedOutputStream, c);
     }

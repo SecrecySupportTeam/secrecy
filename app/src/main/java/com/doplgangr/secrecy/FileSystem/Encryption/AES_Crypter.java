@@ -239,7 +239,7 @@ abstract class AES_Crypter implements Crypter {
         }
 
         BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
-                new FileOutputStream(outputFile), Config.blockSize);
+                new FileOutputStream(outputFile), Config.BLOCK_SIZE);
 
         return new CipherOutputStream(bufferedOutputStream, c);
     }

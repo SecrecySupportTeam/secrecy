@@ -20,8 +20,8 @@
 package com.doplgangr.secrecy;
 
 public class Config {
-    public static final int blockSize = 4096;
-    public static final int bufferSize = blockSize * 10;
+    public static final int BLOCK_SIZE = 4096;
+    public static final int BUFFER_SIZE = BLOCK_SIZE * 10;
     public static final int PBKDF2_CREATION_TARGET_MS = 1000;
     public static final int PBKDF2_ITERATIONS_MIN = 4096;
     public static final int PBKDF2_ITERATIONS_BENCHMARK = 20000;
