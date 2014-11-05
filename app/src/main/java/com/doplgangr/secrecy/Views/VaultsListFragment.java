@@ -22,8 +22,8 @@ package com.doplgangr.secrecy.Views;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
-import android.content.Context;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -65,7 +65,6 @@ import org.androidannotations.annotations.res.DrawableRes;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -291,24 +290,36 @@ public class VaultsListFragment extends Fragment {
 
     @Override
     @UiThread
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         switch (requestCode) {
             case REQUESTCODE:
                 // If the file selection was successful
                 if (resultCode == Activity.RESULT_OK) {
                     if (data != null) {
                         // Get the URI of the selected file
-                        final Uri uri = data.getData();
-                        final String path = FileUtils.getPath(context, uri);
-                        mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-                        mBuilder = new NotificationCompat.Builder(context);
-                        mBuilder.setContentTitle(CustomApp.context.getString(R.string.Restore__title))
-                                .setContentText(CustomApp.context.getString(R.string.Restore__in_progress))
-                                .setSmallIcon(R.drawable.ic_stat_alert)
-                                .setOngoing(true);
-                        mBuilder.setProgress(0, 0, true);
-                        mNotifyManager.notify(REQUESTCODE, mBuilder.build());
-                        CustomApp.jobManager.addJobInBackground(new RestoreJob(context, new File(path)));
+                        Util.alert(
+                                context,
+                                null,
+                                CustomApp.context.getString(R.string.Restore__overwrite_alert),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        final Uri uri = data.getData();
+                                        final String path = FileUtils.getPath(context, uri);
+                                        mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                                        mBuilder = new NotificationCompat.Builder(context);
+                                        mBuilder.setContentTitle(CustomApp.context.getString(R.string.Restore__title))
+                                                .setContentText(CustomApp.context.getString(R.string.Restore__in_progress))
+                                                .setSmallIcon(R.drawable.ic_stat_alert)
+                                                .setOngoing(true);
+                                        mBuilder.setProgress(0, 0, true);
+                                        mNotifyManager.notify(REQUESTCODE, mBuilder.build());
+                                        CustomApp.jobManager.addJobInBackground(new RestoreJob(context, new File(path)));
+
+                                    }
+                                },
+                                Util.emptyClickListener
+                        );
                     }
                 }
                 break;
