@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.doplgangr.secrecy.CustomApp;
@@ -20,6 +21,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 
@@ -29,13 +31,16 @@ public class FileImportActivity extends ActionBarActivity
         VaultsListFragment.OnVaultSelectedListener,
         VaultsListFragment.OnFragmentFinishListener {
     Vault secret;
+    @ViewById(R.id.toolbar)
+    Toolbar mToolbar;
 
     @AfterViews
     void afterViews() {
+        setSupportActionBar(mToolbar);
         FileImportFragment_ fragment = new FileImportFragment_();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(android.R.id.content, fragment, "mainactivitycontent")
+                .replace(R.id.drawer_layout, fragment, "mainactivitycontent")   //Replace the whole drawer layout
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .commit();
     }

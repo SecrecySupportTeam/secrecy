@@ -506,14 +506,15 @@ public class FilesListFragment extends FileViewer {
     public void onEventMainThread(BackUpDoneEvent event) {
         if (!event.backupPath.getAbsolutePath().equals(secret.getPath()))
             return;
-        mBuilder.setProgress(0, 0, false)
-                .setContentText(String.format(CustomApp.context.getString(R.string.Backup__finish), event.backupFile))
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(    //For long long text
-                        String.format(CustomApp.context.getString(R.string.Backup__finish), event.backupFile)))
-                .setOngoing(false);
-        mNotifyManager.notify(NotificationID, mBuilder.build());
+        if (mBuilder != null) {
+            mBuilder.setProgress(0, 0, false)
+                    .setContentText(String.format(CustomApp.context.getString(R.string.Backup__finish), event.backupFile))
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(    //For long long text
+                            String.format(CustomApp.context.getString(R.string.Backup__finish), event.backupFile)))
+                    .setOngoing(false);
+            mNotifyManager.notify(NotificationID, mBuilder.build());
+        }
     }
-
     @OptionsItem(R.id.action_delete_vault)
     void deleteVault() {
         final EditText passwordView = new EditText(context);
