@@ -9,6 +9,8 @@ import com.doplgangr.secrecy.Exceptions.SecrecyRestoreException;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -48,11 +50,15 @@ public class RestoreJob extends Job {
         byte[] buffer = new byte[Config.bufferSize];
 
         ZipEntry ze = zis.getNextEntry();
+        File tempFile = new File(ze.getName());
+        if (tempFile.getParentFile().exists())
+            FileUtils.cleanDirectory(tempFile.getParentFile());
+
         while (ze != null) {
             File fileToRestore = new File(ze.getName());
             EventBus.getDefault().post(new RestoringFileEvent(backupFile, fileToRestore));
             //Initialize folders
-            new File(fileToRestore.getParent()).mkdirs();
+            fileToRestore.getParentFile().mkdirs();
             if (fileToRestore.exists())
                 if (!fileToRestore.delete())
                     throw new SecrecyRestoreException("Existing File cannot be deleted.");
