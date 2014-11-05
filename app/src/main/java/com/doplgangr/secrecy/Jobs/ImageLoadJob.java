@@ -6,16 +6,12 @@ import android.widget.ProgressBar;
 
 import com.doplgangr.secrecy.Events.ImageLoadDoneEvent;
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
+import com.doplgangr.secrecy.FileSystem.Encryption.SecrecyCipherInputStream;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
-import com.doplgangr.secrecy.Util;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
 import org.apache.commons.io.IOUtils;
-
-import java.util.Queue;
-
-import javax.crypto.CipherInputStream;
 
 import de.greenrobot.event.EventBus;
 import uk.co.senab.photoview.PhotoView;
@@ -50,7 +46,7 @@ public class ImageLoadJob extends Job {
         if (isObsolet){
             return;
         }
-        CipherInputStream imageStream =
+        SecrecyCipherInputStream imageStream =
                 encryptedFile.readStream(new CryptStateListener() {
                     @Override
                     public void updateProgress(int progress) {

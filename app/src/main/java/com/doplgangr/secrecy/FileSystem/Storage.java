@@ -28,6 +28,7 @@ import android.os.Environment;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
+import com.doplgangr.secrecy.FileSystem.Encryption.SecrecyCipherInputStream;
 import com.doplgangr.secrecy.Jobs.DeleteFileJob;
 import com.doplgangr.secrecy.Jobs.ShredFileJob;
 import com.doplgangr.secrecy.Util;
@@ -40,8 +41,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import javax.crypto.CipherInputStream;
 
 public class Storage {
 
@@ -132,7 +131,7 @@ public class Storage {
                 DeleteRecursive(externalCacheDir);                      //Just to be sure
     }
 
-       public static Bitmap getThumbnailfromStream(CipherInputStream streamThumb, int size) {
+       public static Bitmap getThumbnailfromStream(SecrecyCipherInputStream streamThumb, int size) {
         if (streamThumb != null) {
             try {
                 byte[] bytes = IOUtils.toByteArray(streamThumb);
