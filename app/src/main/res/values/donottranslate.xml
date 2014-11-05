@@ -28,14 +28,17 @@
     <string-array name="Credits__names">
         <item>Doplgangr</item>
         <item>L-Henke</item>
+        <item>Join us!</item>
     </string-array>
     <string-array name="Credits__description">
         <item>Main developer</item>
         <item>Developer</item>
+        <item>Join the Secrecy team!</item>
     </string-array>
     <string-array name="Credits__links">
         <item>https://github.com/Doplgangr/</item>
         <item>https://github.com/L-Henke</item>
+        <item>http://forum.xda-developers.com/showpost.php?p=51604656&amp;postcount=2</item>
     </string-array>
 
     <string name="Settings__libraries_message">
