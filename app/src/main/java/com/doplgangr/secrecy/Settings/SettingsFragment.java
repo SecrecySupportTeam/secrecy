@@ -77,6 +77,12 @@ public class SettingsFragment extends PreferenceFragment
     ActionBarActivity context = null;
     @StringRes(R.string.Settings__stealth_mode_message)
     String stealth_mode_message;
+    @StringArrayRes(R.array.Credits__names)
+    String[] creditsNames;
+    @StringArrayRes(R.array.Credits__description)
+    String[] creditsDescription;
+    @StringArrayRes(R.array.Credits__links)
+    String[] creditsLinks;
     @StringArrayRes(R.array.Contributor__names)
     String[] contributorNames;
     @StringArrayRes(R.array.Contributor__description)
@@ -158,6 +164,24 @@ public class SettingsFragment extends PreferenceFragment
                 return true;
             }
         });
+        PreferenceGroup creditsList = (PreferenceGroup) findPreference("credits_list");
+        for (int i = 0; i < creditsNames.length; i++) {
+            Preference newPreference = new Preference(getActivity());
+            newPreference.setTitle(creditsNames[i]);
+            newPreference.setSummary(creditsDescription[i]);
+            final int finali = i;
+            newPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Uri uri = Uri.parse(creditsLinks[finali]);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                    return true;
+                }
+            });
+            creditsList.addPreference(newPreference);
+        }
+
         PreferenceGroup translatorList = (PreferenceGroup) findPreference("translators_list");
         for (int i = 0; i < contributorNames.length; i++) {
             Preference newPreference = new Preference(getActivity());

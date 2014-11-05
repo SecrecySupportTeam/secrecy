@@ -38,6 +38,12 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:key="credits_list"
+        android:title="@string/Settings__credits">
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:key="translators_list"
         android:title="@string/Settings__translators">
 
