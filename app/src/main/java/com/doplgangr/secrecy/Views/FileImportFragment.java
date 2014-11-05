@@ -19,6 +19,8 @@
 
 package com.doplgangr.secrecy.Views;
 
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -36,7 +38,9 @@ public class FileImportFragment extends VaultsListFragment {
     @AfterViews
     void afterViews() {
         super.oncreate();
-        mActionBarTitle.setText(R.string.Dialog_header__import_files);
+        ActionBar ab = ((ActionBarActivity) getActivity()).getSupportActionBar();
+        if (ab != null)
+            ab.setTitle(R.string.Dialog_header__import_files);
     }
 
 

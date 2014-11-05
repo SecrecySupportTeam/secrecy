@@ -21,17 +21,19 @@ package com.doplgangr.secrecy.Views;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.res.Resources;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.text.InputType;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -39,15 +41,21 @@ import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.CustomApp;
-import com.doplgangr.secrecy.FileSystem.Vault;
-import com.doplgangr.secrecy.FileSystem.storage;
+import com.doplgangr.secrecy.Events.RestoreDoneEvent;
+import com.doplgangr.secrecy.Events.RestoringFileEvent;
+import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
+import com.doplgangr.secrecy.FileSystem.Encryption.VaultHolder;
+import com.doplgangr.secrecy.FileSystem.Storage;
+import com.doplgangr.secrecy.Jobs.RestoreJob;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.Prefs_;
 import com.doplgangr.secrecy.Settings.SettingsFragment_;
 import com.doplgangr.secrecy.Util;
-import com.nineoldandroids.view.ViewHelper;
+import com.ipaulpro.afilechooser.FileChooserActivity;
+import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
@@ -66,14 +74,12 @@ import de.greenrobot.event.EventBus;
 @EFragment(R.layout.activity_list_vault)
 @OptionsMenu(R.menu.list_vault)
 public class VaultsListFragment extends Fragment {
+    //Vault restore module
+    private static final int REQUESTCODE = 1203; //Arbitrary
     @ViewById(R.id.list)
     LinearLayout mLinearView;
-    @ViewById(R.id.actionBarTitle)
-    TextView mActionBarTitle;
     @ViewById(R.id.scrollView)
     ScrollView mScrollView;
-    @ViewById(R.id.header)
-    View mHeader;
     @ViewById(R.id.nothing)
     View nothing;
     @DrawableRes(R.drawable.file_selector)
@@ -85,6 +91,8 @@ public class VaultsListFragment extends Fragment {
     OnVaultSelectedListener mOnVaultSelected;
     OnFragmentFinishListener mFinishListener;
     private boolean isPaused = false;
+    private NotificationManager mNotifyManager;
+    private NotificationCompat.Builder mBuilder;
 
     @Override
     public void onAttach(Activity activity) {
@@ -97,16 +105,17 @@ public class VaultsListFragment extends Fragment {
         }
     }
 
+    @UiThread
     @AfterViews
     void oncreate() {
         if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
         context = (ActionBarActivity) getActivity();
+        VaultHolder.getInstance().clear();
         if (mLinearView != null)
             mLinearView.removeAllViews();
-        context.getSupportActionBar().setTitle("");
-        mActionBarTitle.setText(R.string.App__name);
-        java.io.File root = storage.getRoot();
+        context.getSupportActionBar().setTitle(R.string.App__name);
+        java.io.File root = Storage.getRoot();
         if (!Util.canWrite(root)) {
             Util.alert(CustomApp.context,
                     CustomApp.context.getString(R.string.Error__root_IOException),
@@ -122,7 +131,7 @@ public class VaultsListFragment extends Fragment {
             return;
         }
         adapter = new VaultsAdapter(context, null);
-        ArrayList<File> files = storage.getDirectories(root);
+        ArrayList<File> files = Storage.getDirectories(root);
         for (int i = 0; i < files.size(); i++) {
             adapter.add(files.get(i).getName());
             final View mView = adapter.getView(i, mLinearView); //inject vaults into list
@@ -136,24 +145,6 @@ public class VaultsListFragment extends Fragment {
             nothing.setVisibility(View.GONE);
             mLinearView.setVisibility(View.VISIBLE);
         }
-        mScrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-
-            @Override
-            public void onScrollChanged() {
-                int scrollY = mScrollView.getScrollY(); //for verticalScrollViewint scrollY = getScrollY();
-                //sticky actionbar
-                Resources res = CustomApp.context.getResources();
-                int mHeaderTextHeight = res.getDimensionPixelSize(R.dimen.header_text_height);
-                int mActionBarHeight = res.getDimensionPixelSize(R.dimen.action_bar_height);
-                int translationY = Math.max(-scrollY, -mHeaderTextHeight);
-                ViewHelper.setTranslationY(mHeader, translationY);
-
-                ViewGroup.LayoutParams params = mActionBarTitle.getLayoutParams();
-                params.height = scrollY > mActionBarHeight ? mActionBarHeight : mHeaderTextHeight;
-                mActionBarTitle.setLayoutParams(params);
-
-            }
-        });
         showTutorial();
     }
 
@@ -225,25 +216,17 @@ public class VaultsListFragment extends Fragment {
                         String name = ((EditText) dialogView.findViewById(R.id.newName)).getText().toString();
                         String password = ((EditText) dialogView.findViewById(R.id.stealth_keycode)).getText().toString();
                         String Confirmpassword = ((EditText) dialogView.findViewById(R.id.confirmPassword)).getText().toString();
-                        File directory = new File(storage.getRoot().getAbsolutePath() + "/" + name);
+                        File directory = new File(Storage.getRoot().getAbsolutePath() + "/" + name);
                         if (!password.equals(Confirmpassword) || "".equals(password))
                             passwordWrong();
                         else if (directory.mkdirs()) {
-                            try {
-                                File file = new File(storage.getTempFolder(), ".nomedia");
-                                file.delete();
-                                file.createNewFile();
-                                FileOutputStream outputStream = new FileOutputStream(file);
-                                outputStream.write(name.getBytes());
-                                outputStream.close();
-                                Uri nomediaURI = Uri.fromFile(file);
-                                Vault newVault = new Vault(name, password, true);
-                                newVault.addFile(CustomApp.context, nomediaURI);
-                                file.delete();
-                                oncreate();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            // Create vault to initialize the vault header
+                            ProgressDialog progress = new ProgressDialog(context);
+                            progress.setIndeterminate(true);
+                            progress.setMessage(getString(R.string.Vault__initializing));
+                            progress.setCancelable(false);
+                            progress.show();
+                            createVaultInBackground(name, password, directory, dialog, progress);
                         } else
                             failedtocreate();
 
@@ -255,6 +238,22 @@ public class VaultsListFragment extends Fragment {
         }).show();
     }
 
+    @Background
+    void createVaultInBackground(String name, String password, File directory, DialogInterface dialog, ProgressDialog progressDialog) {
+        VaultHolder.getInstance().createAndRetrieveVault(name, password);
+        try {
+            File file = new File(directory + "/.nomedia");
+            file.delete();
+            file.createNewFile();
+            oncreate();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        dialog.dismiss();
+        progressDialog.dismiss();
+    }
+
+    @UiThread
     void passwordWrong() {
         new AlertDialog.Builder(context)
                 .setTitle(getString(R.string.Error__wrong_password_confirmation))
@@ -265,6 +264,7 @@ public class VaultsListFragment extends Fragment {
                 }).show();
     }
 
+    @UiThread
     void failedtocreate() {
         new AlertDialog.Builder(context)
                 .setTitle(getString(R.string.Error__cannot_create_vault))
@@ -273,6 +273,60 @@ public class VaultsListFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int whichButton) {
                     }
                 }).show();
+    }
+
+    @OptionsItem(R.id.action_restore)
+    void restore() {
+        ArrayList<String> INCLUDE_EXTENSIONS_LIST = new ArrayList<String>();
+        INCLUDE_EXTENSIONS_LIST.add(".zip");
+
+        Intent intent = new Intent(context, FileChooserActivity.class);
+
+        intent.putStringArrayListExtra(
+                FileChooserActivity.EXTRA_FILTER_INCLUDE_EXTENSIONS,
+                INCLUDE_EXTENSIONS_LIST);
+        intent.putExtra(FileChooserActivity.PATH, Storage.getRoot().getAbsolutePath());
+        startActivityForResult(intent, REQUESTCODE);
+    }
+
+    @Override
+    @UiThread
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUESTCODE:
+                // If the file selection was successful
+                if (resultCode == Activity.RESULT_OK) {
+                    if (data != null) {
+                        // Get the URI of the selected file
+                        final Uri uri = data.getData();
+                        final String path = FileUtils.getPath(context, uri);
+                        mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                        mBuilder = new NotificationCompat.Builder(context);
+                        mBuilder.setContentTitle(CustomApp.context.getString(R.string.Restore__title))
+                                .setContentText(CustomApp.context.getString(R.string.Restore__in_progress))
+                                .setSmallIcon(R.drawable.ic_stat_alert)
+                                .setOngoing(true);
+                        mBuilder.setProgress(0, 0, true);
+                        mNotifyManager.notify(REQUESTCODE, mBuilder.build());
+                        CustomApp.jobManager.addJobInBackground(new RestoreJob(context, new File(path)));
+                    }
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void onEventMainThread(RestoreDoneEvent event) {
+        mBuilder.setProgress(0, 0, false)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(    //For long long text
+                        String.format(CustomApp.context.getString(R.string.Restore__finish), event.backupFile)))
+                .setOngoing(false);
+        mNotifyManager.notify(REQUESTCODE, mBuilder.build());
+    }
+
+    public void onEventMainThread(RestoringFileEvent event) {
+        mBuilder.setContentText(event.restoredFile.getAbsolutePath());
+        mNotifyManager.notify(REQUESTCODE, mBuilder.build());
     }
 
     void open(final String vault, final View mView, final int i) {
@@ -299,7 +353,9 @@ public class VaultsListFragment extends Fragment {
     }
 
     void rename(final int position, final String newName, final String password) {
-        Vault newVault = new Vault(adapter.getItem(position), password).rename(newName);
+        Vault newVault = VaultHolder.getInstance().createAndRetrieveVault(
+                adapter.getItem(position), password)
+                .rename(newName);
         if (newVault == null)
             Util.alert(context,
                     getString(R.string.Error__rename_password_incorrect),

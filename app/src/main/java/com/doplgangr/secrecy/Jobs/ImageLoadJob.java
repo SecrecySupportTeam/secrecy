@@ -4,12 +4,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.ProgressBar;
 
+import com.doplgangr.secrecy.Events.ImageLoadDoneEvent;
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
-import com.doplgangr.secrecy.FileSystem.File;
+import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
+import com.doplgangr.secrecy.Util;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
 import org.apache.commons.io.IOUtils;
+
+import java.util.Queue;
 
 import javax.crypto.CipherInputStream;
 
@@ -19,16 +23,21 @@ import uk.co.senab.photoview.PhotoView;
 public class ImageLoadJob extends Job {
     public static final int PRIORITY = 10;
     private final PhotoView imageView;
-    private final File file;
+    private final EncryptedFile encryptedFile;
     private final ProgressBar pBar;
     private final Integer mNum;
+    private boolean isObsolet = false;
 
-    public ImageLoadJob(Integer mNum, File file, PhotoView imageView, ProgressBar pBar) {
+    public ImageLoadJob(Integer mNum, EncryptedFile encryptedFile, PhotoView imageView, ProgressBar pBar) {
         super(new Params(PRIORITY));
         this.mNum = mNum;
-        this.file = file;
+        this.encryptedFile = encryptedFile;
         this.imageView = imageView;
         this.pBar = pBar;
+    }
+
+    public void setObsolet(boolean isObsolet) {
+        this.isObsolet = isObsolet;
     }
 
     @Override
@@ -38,8 +47,11 @@ public class ImageLoadJob extends Job {
 
     @Override
     public void onRun() throws Throwable {
+        if (isObsolet){
+            return;
+        }
         CipherInputStream imageStream =
-                file.readStream(new CryptStateListener() {
+                encryptedFile.readStream(new CryptStateListener() {
                     @Override
                     public void updateProgress(int progress) {
                     }
@@ -80,19 +92,4 @@ public class ImageLoadJob extends Job {
         throwable.printStackTrace();
         return false;
     }
-
-    public class ImageLoadDoneEvent {
-        public Integer mNum;
-        public PhotoView imageView;
-        public Bitmap bitmap;
-        public ProgressBar progressBar;
-
-        public ImageLoadDoneEvent(Integer mNum, PhotoView imageView, Bitmap bitmap, ProgressBar progressBar) {
-            this.mNum = mNum;
-            this.imageView = imageView;
-            this.bitmap = bitmap;
-            this.progressBar = progressBar;
-        }
-    }
-
 }

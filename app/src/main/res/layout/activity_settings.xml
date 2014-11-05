@@ -24,32 +24,10 @@
     android:background="@drawable/bg_paper"
     android:gravity="center">
 
-
-    <FrameLayout
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/action_bar_height"
-        android:layout_alignParentTop="true"
-        android:background="@color/primary">
-
-        <TextView
-            android:id="@+id/actionBarTitle"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/action_bar_height"
-            android:layout_gravity="bottom"
-            android:layout_marginLeft="@dimen/text_from_margin"
-            android:layout_marginStart="@dimen/text_from_margin"
-            android:gravity="center_vertical"
-            android:text="@string/Page_header__settings"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_title_size" />
-    </FrameLayout>
-
     <ListView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/header"
         android:layout_marginEnd="@dimen/margin_from_edge"
         android:layout_marginLeft="@dimen/margin_from_edge"
         android:layout_marginRight="@dimen/margin_from_edge"

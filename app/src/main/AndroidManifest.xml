@@ -34,8 +34,7 @@
         <activity
             android:name="com.ipaulpro.afilechooser.FileChooserActivity"
             android:icon="@drawable/ic_launcher"
-            android:label="@string/Dialog_header__pick_file"
-            android:theme="@style/NormalActionBarTheme" />/>
+            android:label="@string/Dialog_header__pick_file" />
         <activity
             android:name=".Views.MainActivity_"
             android:clearTaskOnLaunch="true"
@@ -62,8 +61,7 @@
         </activity>
         <activity
             android:name=".Views.ChooseFolder"
-            android:label="@string/Page_header__choose_folder"
-            android:theme="@style/NormalActionBarTheme" />
+            android:label="@string/Page_header__choose_folder" />
         <activity
             android:name=".Settings.SettingsActivity_"
             android:label="" />

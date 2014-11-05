@@ -29,6 +29,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
@@ -65,6 +66,28 @@ public class Util {
                     a.setPositiveButton(context.getString(R.string.OK), positive);
                 if (negative != null)
                     a.setNegativeButton(context.getString(R.string.CANCEL), negative);
+                a.setCancelable(false);
+                a.show();
+            }
+
+        });
+    }
+
+    public static void alert(final Context context,
+                             final String title, final String message,
+                             final DialogInterface.OnClickListener ok) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+
+            @Override
+            public void run() {
+                AlertDialog.Builder a = new AlertDialog.Builder(context);
+                if (title != null)
+                    a.setTitle(title);
+                if (message != null)
+                    a.setMessage(message);
+                if (ok != null)
+                    a.setPositiveButton(context.getString(R.string.OK), ok);
                 a.setCancelable(false);
                 a.show();
             }
@@ -191,5 +214,12 @@ public class Util {
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         CustomApp.context.startActivity(i);
 
+    }
+
+    public static String getFileTypeFromExtension(String extension){
+        if (extension.length() > 0) {
+            return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        }
+        return "application/octet-stream";
     }
 }

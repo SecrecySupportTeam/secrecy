@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
     <string name="action__add_vault">Add vault</string>
+    <string name="action__restore_vault">Restore backup</string>
     <string name="action__donate">Donate</string>
     <string name="action__support">Help Desk</string>
     <string name="action__switch_interface">Switch Interface</string>
@@ -48,4 +49,26 @@
     <string name="Dialog__purchase_message">Thank you for purchasing the Donation Package!</string>
     <string name="Error__cannot_set_up_IAP">Problem setting up in-app billing. Please check your Play store.</string>
     <string name="App__slogan">Be safe around geeks™</string>
+    <string name="Vault__old_passphrase">Old passphrase</string>
+    <string name="Vault__new_passphrase">New passphrase</string>
+    <string name="Vault__confirm_new_passphrase">Confirm new passphrase</string>
+    <string name="Vault__change_passphrase">Change passphrase</string>
+    <string name="Error__passphrase_no_match_message">The passphrases you have entered does not match!</string>
+    <string name="Error__change_passphrase_failed">Error changing passphrase</string>
+    <string name="Error__change_passphrase_failed_message">Changing the passphrase has failed! Maybe the old passphrase was wrong.</string>
+    <string name="Vault__change_passphrase_ok">Passphrase changed</string>
+    <string name="Vault__change_passphrase_ok_message">The passphrase for your vault has been changed! Please login to your vault with your new passphrase.</string>
+    <string name="Error__passphrase_empty_message">Passphrase must not be empty!</string>
+    <string name="Error__old_vault_format_message">Vault needs to be updated to the new encryption format!</string>
+    <string name="Error__old_vault_format">Vault update required</string>
+    <string name="Upgrade__backup_beforehand_message">Would you like to create a backup of your vault? Click cancel do continue the update without a backup!</string>
+    <string name="Upgrade__backup_beforehand">Backup beforehand?</string>
+    <string name="Error__updating_vault">Update error</string>
+    <string name="Error__updating_vault_message">Maybe you entered the wrong password?</string>
+    <string name="Vault__vault_updated">Vault updated</string>
+    <string name="Vault__vault_updated_message">Your vault has been updated to the new format.</string>
+    <string name="action_select_all">Select all</string>
+    <string name="Vault__initializing">Initializing Vault...</string>
+    <string name="Vault_updating">Vault is updating...</string>
+    <string name="Vault__changing_passphrase">Changing passphrase...</string>
 </resources>

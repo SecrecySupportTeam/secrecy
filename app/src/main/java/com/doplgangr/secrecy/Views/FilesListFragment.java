@@ -21,11 +21,15 @@ package com.doplgangr.secrecy.Views;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.text.InputType;
 import android.view.Menu;
@@ -45,14 +49,18 @@ import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
-import com.doplgangr.secrecy.FileSystem.Vault;
-import com.doplgangr.secrecy.Jobs.AddFileJob;
+import com.doplgangr.secrecy.Events.BackUpDoneEvent;
+import com.doplgangr.secrecy.Events.BackingUpFileEvent;
+import com.doplgangr.secrecy.Events.NewFileEvent;
+import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
+import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
+import com.doplgangr.secrecy.FileSystem.Storage;
+import com.doplgangr.secrecy.Jobs.BackupJob;
 import com.doplgangr.secrecy.Jobs.InitializeVaultJob;
 import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 import com.ipaulpro.afilechooser.FileChooserActivity;
-import com.nineoldandroids.view.ViewHelper;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EFragment;
@@ -65,7 +73,9 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.DrawableRes;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import de.greenrobot.event.EventBus;
 
@@ -75,6 +85,7 @@ import de.greenrobot.event.EventBus;
 public class FilesListFragment extends FileViewer {
     private static final int REQUEST_CODE = 6384; // onActivityResult request code
     private static final ArrayList<String> INCLUDE_EXTENSIONS_LIST = new ArrayList<String>();
+    private static final int NotificationID = 1820;
     @ViewById(android.R.id.list)
     ListView listView = null;
     @ViewById(R.id.gridView)
@@ -83,12 +94,6 @@ public class FilesListFragment extends FileViewer {
     View nothing;
     @ViewById(R.id.progressBar)
     ProgressBar addFilepBar;
-
-    @ViewById(R.id.actionBarTitle)
-    TextView mActionBarTitle;
-    @ViewById(R.id.header)
-    View mHeader;
-
     @ViewById(R.id.tag)
     TextView mTag;
     @OptionsMenuItem(R.id.action_switch_interface)
@@ -106,6 +111,11 @@ public class FilesListFragment extends FileViewer {
     private boolean attached = false;
     private AbsListView mListView;
     private CustomActionMode mActionMode;
+    //Notifications
+    private NotificationManager mNotifyManager;
+    private NotificationCompat.Builder mBuilder;
+
+    private ProgressDialog mInitializeDialog;
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
@@ -146,10 +156,16 @@ public class FilesListFragment extends FileViewer {
         attached = false;
     }
 
-    @Background
+    @UiThread
     @Override
     void onCreate() {
         context = (ActionBarActivity) getActivity();
+        context.getSupportActionBar().setTitle(vault);
+        mInitializeDialog = new ProgressDialog(context);
+        mInitializeDialog.setIndeterminate(true);
+        mInitializeDialog.setMessage(context.getString(R.string.Vault__initializing));
+        mInitializeDialog.setCancelable(false);
+        mInitializeDialog.show();
         if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
         CustomApp.jobManager.addJobInBackground(new InitializeVaultJob(vault, password));
@@ -160,13 +176,13 @@ public class FilesListFragment extends FileViewer {
         secret.iterateAllFiles(
                 new Vault.onFileFoundListener() {
                     @Override
-                    public void dothis(com.doplgangr.secrecy.FileSystem.File file) {
-                        addToList(file);
+                    public void dothis(EncryptedFile encryptedFile) {
+                        addToList(encryptedFile);
                     }
                 });
     }
 
-    public void onEventMainThread(AddFileJob.NewFileEvent event) {
+    public void onEventMainThread(NewFileEvent event) {
         // Add new file to the list, sort it to its alphabetical position, and highlight
         // it with smooth scrolling.
 
@@ -174,9 +190,9 @@ public class FilesListFragment extends FileViewer {
             Util.toast(context,
                     CustomApp.context.getString(R.string.Files__add_successful),
                     Toast.LENGTH_SHORT);
-            addToList(event.file);
+            addToList(event.encryptedFile);
             adapter.sort();
-            int index = adapter.getItemId(event.file);
+            int index = adapter.getItemId(event.encryptedFile);
             if (index != -1)
                 listView.smoothScrollToPosition(index);
         }
@@ -186,6 +202,48 @@ public class FilesListFragment extends FileViewer {
         //The vault finishes initializing, is prepared to be populated.
 
         secret = vault;
+
+        if (secret.isEcbVault()) {
+            Util.alert(
+                    context,
+                    getString(R.string.Error__old_vault_format),
+                    getString(R.string.Error__old_vault_format_message),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            Util.alert(
+                                    context,
+                                    getString(R.string.Upgrade__backup_beforehand),
+                                    getString(R.string.Upgrade__backup_beforehand_message),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            backUp();
+                                            finish();
+                                        }
+                                    },
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            ProgressDialog progress = new ProgressDialog(context);
+                                            progress.setMessage(getString(R.string.Vault_updating));
+                                            progress.setIndeterminate(true);
+                                            progress.setCancelable(false);
+                                            progress.show();
+                                            updateVaultInBackground(progress);
+                                        }
+                                    }
+                            );
+                        }
+                    },
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            finish();
+                        }
+                    }
+            );
+            return;
+        }
+
         if (secret.wrongPass) {
             Util.alert(
                     context,
@@ -193,18 +251,66 @@ public class FilesListFragment extends FileViewer {
                     getString(R.string.Error__open_vault_message),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            finish(); //Done for now -_-'
+                            finish();
                         }
                     },
                     null
             );
             return;
         }
+
         addFiles();
-        mActionBarTitle.setText(secret.getName());
+        context.setTitle(secret.getName());
         adapter = new FilesListAdapter(context,
                 isGallery ? R.layout.gallery_item : R.layout.file_item);
+        mInitializeDialog.dismiss();
         setupViews();
+    }
+
+    @Background
+    void updateVaultInBackground(ProgressDialog progress) {
+        try {
+            if (secret.updateFromECBVault(password)) {
+                Util.alert(
+                        context,
+                        getString(R.string.Vault__vault_updated),
+                        getString(R.string.Vault__vault_updated_message),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                finish();
+                            }
+                        },
+                        null
+                );
+            } else {
+                secret.ecbUpdateFailed();
+                Util.alert(
+                        context,
+                        getString(R.string.Error__updating_vault),
+                        getString(R.string.Error__updating_vault_message),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                finish();
+                            }
+                        },
+                        null
+                );
+            }
+        } catch (Exception e) {
+            secret.ecbUpdateFailed();
+            Util.alert(
+                    context,
+                    getString(R.string.Error__updating_vault),
+                    getString(R.string.Error__updating_vault_message),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            finish();
+                        }
+                    },
+                    null
+            );
+        }
+        progress.dismiss();
     }
 
     public void onEventMainThread(FilesActivity.OnBackPressedEvent onBackPressedEvent) {
@@ -228,7 +334,6 @@ public class FilesListFragment extends FileViewer {
         gridView.setVisibility(View.GONE);
         mListView.setVisibility(View.VISIBLE);
         context.supportInvalidateOptionsMenu();
-        context.getSupportActionBar().setTitle("");
         mListView.setEmptyView(nothing);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -241,16 +346,14 @@ public class FilesListFragment extends FileViewer {
                 if (isGallery) {
 
                     Intent intent = new Intent(context, FilePhotoFragment_.class);
-                    intent.putExtra(Config.vault_extra, vault);
-                    intent.putExtra(Config.password_extra, password);
                     intent.putExtra(Config.gallery_item_extra, i);
                     onPauseDecision.startActivity();
                     startActivity(intent);
                 } else {
 
-                    com.doplgangr.secrecy.FileSystem.File file = adapter.getItem(i);
+                    EncryptedFile encryptedFile = adapter.getItem(i);
 
-                    if (!file.decrypting) {
+                    if (!encryptedFile.getIsDecrypting()) {
                         ProgressBar pBar = (ProgressBar) view.findViewById(R.id.progressBar);
                         switchView(view, R.id.DecryptLayout);
                         Listeners.EmptyListener onFinish = new Listeners.EmptyListener() {
@@ -259,7 +362,7 @@ public class FilesListFragment extends FileViewer {
                                 switchView(view, R.id.dataLayout);
                             }
                         };
-                        decrypt(file, pBar, onFinish);
+                        decrypt(encryptedFile, pBar, onFinish);
                     } else
                         Util.toast(context, getString(R.string.Error__already_decrypting), Toast.LENGTH_SHORT);
                 }
@@ -278,25 +381,23 @@ public class FilesListFragment extends FileViewer {
                 return true;
             }
         });
-
-        mListView.setOnScrollListener(new MaterialScroll().listener);
     }
 
     @UiThread
-    void addToList(com.doplgangr.secrecy.FileSystem.File file) {
-        adapter.add(file);
+    void addToList(EncryptedFile encryptedFile) {
+        adapter.add(encryptedFile);
     }
 
     @Background(id = Config.cancellable_task)
     @Override
-    void decrypt(com.doplgangr.secrecy.FileSystem.File file, final ProgressBar pBar, Listeners.EmptyListener onFinish) {
-        super.decrypt(file, pBar, onFinish);
+    void decrypt(EncryptedFile encryptedFile, final ProgressBar pBar, Listeners.EmptyListener onFinish) {
+        super.decrypt(encryptedFile, pBar, onFinish);
     }
 
     @Background(id = Config.cancellable_task)
-    void decrypt_and_save(com.doplgangr.secrecy.FileSystem.File file, final ProgressBar pBar, final Listeners.EmptyListener onFinish) {
-        File tempFile = super.getFile(file, pBar, onFinish);
-        File storedFile = new File(Environment.getExternalStorageDirectory(), file.getName() + "." + file.getType());
+    void decrypt_and_save(EncryptedFile encryptedFile, final ProgressBar pBar, final Listeners.EmptyListener onFinish) {
+        File tempFile = super.getFile(encryptedFile, pBar, onFinish);
+        File storedFile = new File(Environment.getExternalStorageDirectory(), encryptedFile.getDecryptedFileName());
         if (tempFile == null) {
             Util.alert(context,
                     CustomApp.context.getString(R.string.Error__decrypting_file),
@@ -312,7 +413,105 @@ public class FilesListFragment extends FileViewer {
     @OptionsItem(R.id.action_switch_interface)
     void switchInterface() {
         isGallery = !isGallery;
-        onCreate();
+        onEventMainThread(secret);
+    }
+
+    @OptionsItem(R.id.action_change_passphrase)
+    void changePassphrase() {
+        final View dialogView = View.inflate(context, R.layout.change_passphrase, null);
+        new AlertDialog.Builder(context)
+                .setTitle(getString(R.string.Vault__change_passphrase))
+                .setView(dialogView)
+                .setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String oldPassphrase = ((EditText) dialogView.findViewById(R.id.oldPassphrase)).getText().toString();
+                        String newPassphrase = ((EditText) dialogView.findViewById(R.id.newPassphrase)).getText().toString();
+                        String confirmNewPassphrase = ((EditText) dialogView.findViewById(R.id.confirmPassphrase)).getText().toString();
+
+                        ProgressDialog progressDialog = new ProgressDialog(context);
+                        progressDialog.setMessage(CustomApp.context.getString(R.string.Vault__changing_passphrase));
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
+                        changePassphraseInBackground(oldPassphrase, newPassphrase, confirmNewPassphrase, progressDialog);
+                    }
+                })
+                .setNegativeButton(R.string.CANCEL, Util.emptyClickListener)
+                .show();
+    }
+
+    @Background
+    void changePassphraseInBackground(String oldPassphrase, String newPassphrase, String confirmNewPassphrase, ProgressDialog progressDialog) {
+        if (newPassphrase.length() == 0) {
+            progressDialog.dismiss();
+            Util.alert(context,
+                    CustomApp.context.getString(R.string.Error__change_passphrase_failed),
+                    CustomApp.context.getString(R.string.Error__passphrase_empty_message),
+                    Util.emptyClickListener,
+                    null
+            );
+            return;
+        }
+        if (!newPassphrase.equals(confirmNewPassphrase)) {
+            progressDialog.dismiss();
+            Util.alert(context,
+                    CustomApp.context.getString(R.string.Error__change_passphrase_failed),
+                    CustomApp.context.getString(R.string.Error__passphrase_no_match_message),
+                    Util.emptyClickListener,
+                    null
+            );
+            return;
+        }
+        if (!secret.changePassphrase(oldPassphrase, newPassphrase)) {
+            progressDialog.dismiss();
+            Util.alert(context,
+                    CustomApp.context.getString(R.string.Error__change_passphrase_failed),
+                    CustomApp.context.getString(R.string.Error__change_passphrase_failed_message),
+                    Util.emptyClickListener,
+                    null
+            );
+        } else {
+            Util.alert(context,
+                    CustomApp.context.getString(R.string.Vault__change_passphrase_ok),
+                    CustomApp.context.getString(R.string.Vault__change_passphrase_ok_message),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            context.finish();
+                        }
+                    }
+            );
+        }
+        progressDialog.dismiss();
+    }
+
+    @OptionsItem(R.id.action_backup)
+    void backUp() {
+        mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        mBuilder = new NotificationCompat.Builder(context);
+        mBuilder.setContentTitle(CustomApp.context.getString(R.string.Backup__title))
+                .setContentText(CustomApp.context.getString(R.string.Backup__in_progress))
+                .setSmallIcon(R.drawable.ic_stat_alert)
+                .setOngoing(true);
+        mBuilder.setProgress(0, 0, true);
+        mNotifyManager.notify(NotificationID, mBuilder.build());
+        File backupFile = new File(Storage.getRoot(), secret.getName() + new Date().getTime() + ".zip");
+        try {
+            backupFile.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        CustomApp.jobManager.addJobInBackground(new BackupJob(context, new File(secret.getPath()), backupFile));
+    }
+
+    public void onEventMainThread(BackUpDoneEvent event) {
+        if (!event.backupPath.getAbsolutePath().equals(secret.getPath()))
+            return;
+        mBuilder.setProgress(0, 0, false)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(    //For long long text
+                        String.format(CustomApp.context.getString(R.string.Backup__finish), event.backupFile)))
+                .setOngoing(false);
+        mNotifyManager.notify(NotificationID, mBuilder.build());
     }
 
     @OptionsItem(R.id.action_delete_vault)
@@ -382,12 +581,12 @@ public class FilesListFragment extends FileViewer {
         for (final FilesListAdapter.ViewNIndex object : adapterSelected) {
             int position = object.index;
             if (adapter.hasIndex(position)) {
-                com.doplgangr.secrecy.FileSystem.File file = adapter.getItem(position);
+                EncryptedFile encryptedFile = adapter.getItem(position);
                 final View mView =
                         ((FilesListAdapter.ViewHolder) object.view.getTag()).selected ?
                                 object.view :
                                 null;
-                if (!file.decrypting) {
+                if (!encryptedFile.getIsDecrypting()) {
                     decryptCounter++;
                     switchView(mView, R.id.DecryptLayout);
                     ProgressBar pBar =
@@ -404,7 +603,7 @@ public class FilesListFragment extends FileViewer {
                         }
                     };
                     if (attached)
-                        decrypt_and_save(file, pBar, onFinish);
+                        decrypt_and_save(encryptedFile, pBar, onFinish);
                 } else if (attached)
                     Util.toast(context, getString(R.string.Error__already_decrypting), Toast.LENGTH_SHORT);
             }
@@ -418,11 +617,11 @@ public class FilesListFragment extends FileViewer {
         for (FilesListAdapter.ViewNIndex object : adapter.getSelected()) {
             int position = object.index;
             if (adapter.hasIndex(position)) {
-                com.doplgangr.secrecy.FileSystem.File file = adapter.getItem(position);
+                EncryptedFile encryptedFile = adapter.getItem(position);
                 final View mView = ((FilesListAdapter.ViewHolder) object.view.getTag()).selected ?
                         object.view :
                         null;
-                if (!file.decrypting) {
+                if (!encryptedFile.getIsDecrypting()) {
                     switchView(mView, R.id.DecryptLayout);
                     ProgressBar pBar = mView != null ?
                             (ProgressBar) mView.findViewById(R.id.progressBar) :
@@ -433,7 +632,7 @@ public class FilesListFragment extends FileViewer {
                             switchView(mView, R.id.dataLayout);
                         }
                     };
-                    Args.add(new DecryptArgHolder(file, pBar, onFinish));
+                    Args.add(new DecryptArgHolder(encryptedFile, pBar, onFinish));
                 } else if (attached)
                     Util.toast(context, getString(R.string.Error__already_decrypting), Toast.LENGTH_SHORT);
             }
@@ -441,6 +640,21 @@ public class FilesListFragment extends FileViewer {
         if (attached)
             sendMultiple(Args);
         mActionMode.endActionMode();
+    }
+
+    @OptionsItem(R.id.action_select_all)
+    void selectAll() {
+        adapter.clearSelected();
+        for (int i = 0; i < mListView.getAdapter().getCount(); i++) {
+            // Reuse old View if possible. Otherwise decryption status is not shown
+            if (mListView.getChildAt(i) != null) {
+                mActionMode.select(i, mListView.getAdapter().getView(
+                        i, mListView.getChildAt(i), mListView));
+            } else {
+                mActionMode.select(i, mListView.getAdapter().getView(i, null, mListView));
+            }
+        }
+        adapter.notifyDataSetChanged();
     }
 
     @OptionsItem(R.id.action_delete)
@@ -453,8 +667,8 @@ public class FilesListFragment extends FileViewer {
                 for (FilesListAdapter.ViewNIndex object : adapterSelected) {
                     int position = object.index;
                     if (adapter.hasIndex(object.index))
-                        if (!adapter.getItem(position).decrypting) {
-                            adapter.getItem(position).delete();
+                        if (!adapter.getItem(position).getIsDecrypting()) {
+                            secret.deleteFile(adapter.getItem(position));
                             adapter.remove(position);
                         } else if (attached)
                             Util.toast(context, getString(R.string.Error__already_decrypting_delete), Toast.LENGTH_SHORT);
@@ -464,7 +678,7 @@ public class FilesListFragment extends FileViewer {
         String FilesToDelete = "\n";
         for (FilesListAdapter.ViewNIndex object : adapterSelected)
             if (adapter.hasIndex(object.index))
-                FilesToDelete += "- " + adapter.getItem(object.index).getName() + "\n";
+                FilesToDelete += "- " + adapter.getItem(object.index).getDecryptedFileName() + "\n";
         DialogInterface.OnClickListener negative = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -496,12 +710,12 @@ public class FilesListFragment extends FileViewer {
     }
 
     class DecryptArgHolder {
-        public com.doplgangr.secrecy.FileSystem.File file;
+        public EncryptedFile encryptedFile;
         public ProgressBar pBar;
         public Listeners.EmptyListener onFinish;
 
-        public DecryptArgHolder(com.doplgangr.secrecy.FileSystem.File file, ProgressBar pBar, Listeners.EmptyListener onFinish) {
-            this.file = file;
+        public DecryptArgHolder(EncryptedFile encryptedFile, ProgressBar pBar, Listeners.EmptyListener onFinish) {
+            this.encryptedFile = encryptedFile;
             this.pBar = pBar;
             this.onFinish = onFinish;
         }
@@ -524,7 +738,6 @@ public class FilesListFragment extends FileViewer {
             }
             adapter.clearSelected();
             isActionMode = false;
-            new MaterialScroll().listener.onScroll(null, 0, 0, 0); //reset everything
             context.supportInvalidateOptionsMenu();
         }
 
@@ -536,61 +749,12 @@ public class FilesListFragment extends FileViewer {
                     .setForeground(viewHolder.selected ?
                             selector :
                             null);
-            new MaterialScroll().setTitle(
+            context.setTitle(
                     String.format(getString(R.string.Files__number_selected),
                             adapter.getSelected().size()));
             if (adapter.getSelected().size() == 0)
                 endActionMode();
         }
-
-    }
-
-    class MaterialScroll {
-
-        public int getScrollY() {
-            View c = mListView.getChildAt(0);
-            if (c == null) {
-                return 0;
-            }
-
-            int firstVisiblePosition = mListView.getFirstVisiblePosition();
-            int top = c.getTop();
-
-            int headerHeight = mHeader.getHeight() + mTag.getHeight();
-            if (firstVisiblePosition >= 1) {
-                headerHeight = mTag.getHeight();
-            }
-
-            return -top + firstVisiblePosition * c.getHeight() + headerHeight;
-        }
-
-        public void setTitle(CharSequence chars) {
-            context.getSupportActionBar().setTitle(chars);
-        }
-
-        public AbsListView.OnScrollListener listener = new AbsListView.OnScrollListener() {
-            int mHeaderTextHeight = context.getResources().getDimensionPixelSize(R.dimen.header_text_height);
-            int mActionBarHeight = context.getResources().getDimensionPixelSize(R.dimen.action_bar_height);
-
-            @Override
-            public void onScrollStateChanged(AbsListView absListView, int i) {
-                onScroll(absListView, i, 0, 0);
-            }
-
-            @Override
-            public void onScroll(AbsListView absListView, int i, int i2, int i3) {
-                int scrollY = getScrollY();
-                //sticky actionbar
-                if (scrollY >= 0) {
-                    if (!(mActionMode != null && mActionMode.isActionMode))
-                        setTitle(getScrollY() > mActionBarHeight ? secret.getName() : "");
-                    ViewHelper.setTranslationY(mHeader, Math.max(-scrollY, -mHeaderTextHeight));
-                    mActionBarTitle.setVisibility(scrollY > mActionBarHeight ? View.GONE : View.VISIBLE);
-                    ViewHelper.setTranslationY(mTag, -scrollY);
-                }
-            }
-        };
-
 
     }
 

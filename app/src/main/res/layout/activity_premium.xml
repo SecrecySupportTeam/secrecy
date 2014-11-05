@@ -24,27 +24,6 @@
     android:background="@color/activity_bg"
     android:gravity="center">
 
-
-    <FrameLayout
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/action_bar_height"
-        android:layout_alignParentTop="true"
-        android:background="@color/primary">
-
-        <TextView
-            android:id="@+id/actionBarTitle"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/action_bar_height"
-            android:layout_gravity="bottom"
-            android:layout_marginLeft="@dimen/text_from_margin"
-            android:layout_marginStart="@dimen/text_from_margin"
-            android:gravity="center_vertical"
-            android:text="@string/Page_header__donation"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_title_size" />
-    </FrameLayout>
-
     <Button
         android:id="@+id/Premium__upgrade_button"
         style="@style/Widget.TextButton"
@@ -65,7 +44,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@id/header"
         android:background="@drawable/bg_paper"
         android:fillViewport="true"
         android:paddingBottom="@dimen/margin_text_top"

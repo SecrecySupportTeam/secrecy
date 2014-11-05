@@ -26,5 +26,6 @@
 
     <dimen name="text_title_size">20sp</dimen>
     <dimen name="drawer_right_margin">56dp</dimen>
+    <dimen name="dialog_padding">24dp</dimen>
 
 </resources>

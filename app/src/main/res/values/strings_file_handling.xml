@@ -40,6 +40,14 @@
     <string name="action__decrypt">Decrypt</string>
     <string name="action__delete">Delete</string>
     <string name="action__add_file">Add file</string>
+    <string name="action__change_passphrase">Change vault passphrase</string>
+    <string name="action__backup">Backup this vault</string>
     <string name="File__open">Opening Encrypted File</string>
     <string name="File__open_message">Please enter password to open this file</string>
+    <string name="Backup__title">Backing Up</string>
+    <string name="Backup__in_progress">Backup in Progress</string>
+    <string name="Backup__finish">Backup Finished. Your backup file is %s.</string>
+    <string name="Restore__title">Restoring</string>
+    <string name="Restore__in_progress">Restore in Progress</string>
+    <string name="Restore__finish">Restore Finished. %s has been restored.</string>
 </resources>

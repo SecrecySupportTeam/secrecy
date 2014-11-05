@@ -33,6 +33,7 @@ import android.preference.Preference;
 import android.preference.PreferenceGroup;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.preference.PreferenceFragment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,12 +44,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.doplgangr.secrecy.CustomApp_;
-import com.doplgangr.secrecy.FileSystem.storage;
+import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Premium.PremiumFragment_;
 import com.doplgangr.secrecy.Premium.PremiumStateHelper;
 import com.doplgangr.secrecy.Premium.StealthMode;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.Views.VaultsListFragment;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
@@ -72,7 +74,7 @@ public class SettingsFragment extends PreferenceFragment
     private static final int REQUEST_CODE = 6384; // onActivityResult request code
     private static final int REQUEST_CODE_2 = 2058; // onActivityResult request code
     private static final ArrayList<String> INCLUDE_EXTENSIONS_LIST = new ArrayList<String>();
-    Activity context = null;
+    ActionBarActivity context = null;
     @StringRes(R.string.Settings__stealth_mode_message)
     String stealth_mode_message;
     @StringArrayRes(R.array.Contributor__names)
@@ -92,17 +94,29 @@ public class SettingsFragment extends PreferenceFragment
     String libraries;
     @Pref
     Prefs_ Prefs;
+    VaultsListFragment.OnFragmentFinishListener mFinishListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.activity_settings, container, false);
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mFinishListener = (VaultsListFragment.OnFragmentFinishListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement Listener");
+        }
+    }
+
     @AfterViews
     void onCreate() {
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
-        context = getActivity();
+        context = (ActionBarActivity) getActivity();
+        context.getSupportActionBar().setTitle(R.string.Page_header__settings);
         update();
     }
 
@@ -125,7 +139,7 @@ public class SettingsFragment extends PreferenceFragment
         });
 
         Preference vault_root = findPreference("vault_root");
-        vault_root.setSummary(storage.getRoot().getAbsolutePath());
+        vault_root.setSummary(Storage.getRoot().getAbsolutePath());
         vault_root.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -261,7 +275,7 @@ public class SettingsFragment extends PreferenceFragment
                 stealth_mode_password.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        startActivity(new Intent(context, PremiumFragment_.class));
+                        mFinishListener.onNew(null, new PremiumFragment_());    //Switch fragment to donation
                         return true;
                     }
                 });
@@ -312,7 +326,7 @@ public class SettingsFragment extends PreferenceFragment
                         try {
                             // Get the file path from the URI
                             final String path = FileUtils.getPath(context, uri);
-                            storage.setRoot(path);
+                            Storage.setRoot(path);
                         } catch (Exception e) {
                             Log.e("FileSelectorTestActivity", "File select error", e);
                         }
@@ -329,7 +343,7 @@ public class SettingsFragment extends PreferenceFragment
                         try {
                             // Get the file path from the URI
                             final String path = FileUtils.getPath(context, uri);
-                            if (path.contains(storage.getRoot().getAbsolutePath())) {
+                            if (path.contains(Storage.getRoot().getAbsolutePath())) {
                                 Util.alert(context,
                                         getString(R.string.Settings__cannot_move_vault),
                                         getString(R.string.Settings__cannot_move_vault_message),
@@ -339,7 +353,7 @@ public class SettingsFragment extends PreferenceFragment
                             }
                             Util.alert(context,
                                     getString(R.string.Settings__move_vault),
-                                    String.format(getString(R.string.move_message), storage.getRoot().getAbsolutePath(), path),
+                                    String.format(getString(R.string.move_message), Storage.getRoot().getAbsolutePath(), path),
                                     new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -372,10 +386,10 @@ public class SettingsFragment extends PreferenceFragment
 
     @Background
     void move(String path, ProgressDialog progressDialog) {
-        File oldRoot = storage.getRoot();
+        File oldRoot = Storage.getRoot();
         try {
             org.apache.commons.io.FileUtils.copyDirectory(oldRoot, new File(path));
-            storage.setRoot(path);
+            Storage.setRoot(path);
             Util.toast(context,
                     String.format(getString(R.string.Settings__moved_vault), path), Toast.LENGTH_LONG);
             update();

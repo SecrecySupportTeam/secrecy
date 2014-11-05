@@ -24,7 +24,8 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
-import com.doplgangr.secrecy.FileSystem.storage;
+import com.doplgangr.secrecy.FileSystem.Encryption.VaultHolder;
+import com.doplgangr.secrecy.FileSystem.Storage;
 import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
 import com.path.android.jobqueue.log.CustomLogger;
@@ -49,47 +50,23 @@ public class CustomApp extends Application {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        storage.deleteTemp(); //Start clean every time!!
+        Storage.deleteTemp(); //Start clean every time!!
+        VaultHolder.getInstance().clear();
 
-        jobManager = new JobManager(this);
+
+        Configuration configuration = new Configuration.Builder(this)
+                .minConsumerCount(1)//always keep at least one consumer alive
+                .maxConsumerCount(2)//up to 2 consumers at a time
+                .loadFactor(1)//1 jobs per consumer
+                .build();
+
+        jobManager = new JobManager(this, configuration);
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
         EventBus.getDefault().post(new LowMemoryEvent());
-    }
-
-    void generateJobManager() {
-        Configuration configuration = new Configuration.Builder(this)
-                .customLogger(new CustomLogger() {
-                    private static final String TAG = "JOBS";
-
-                    @Override
-                    public boolean isDebugEnabled() {
-                        return true;
-                    }
-
-                    @Override
-                    public void d(String text, Object... args) {
-                        Util.log(TAG, String.format(text, args));
-                    }
-
-                    @Override
-                    public void e(Throwable t, String text, Object... args) {
-                        Util.log(TAG, String.format(text, args), t);
-                    }
-
-                    @Override
-                    public void e(String text, Object... args) {
-                        Util.log(TAG, String.format(text, args));
-                    }
-                })
-                .minConsumerCount(1)//always keep at least one consumer alive
-                .maxConsumerCount(10)//up to 10 consumers at a time
-                .loadFactor(2)//2 jobs per consumer
-                .build();
-        jobManager = new JobManager(this, configuration);
     }
 
     public class LowMemoryEvent {

@@ -7,7 +7,7 @@ import android.os.Build;
 import android.provider.DocumentsContract;
 
 import com.doplgangr.secrecy.CustomApp;
-import com.doplgangr.secrecy.FileSystem.storage;
+import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Util;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
@@ -55,7 +55,7 @@ public class DeleteFileJob extends Job {
             context.getContentResolver().delete(uri, null, null); //Try to delete under content resolver
         }
         new SingleMediaScanner(context, file); //Rescan and remove from gallery
-        storage.shredFile(os, size, file);
+        Storage.shredFile(os, size, file);
         ignored = file.delete();
         FileUtils.forceDelete(file);
     }
@@ -64,7 +64,7 @@ public class DeleteFileJob extends Job {
     protected void onCancel() {
         //Rarhhh go die.
         new SingleMediaScanner(context, file); //Rescan and remove from gallery
-        storage.shredFile(os, size, file);
+        Storage.shredFile(os, size, file);
     }
 
     @Override

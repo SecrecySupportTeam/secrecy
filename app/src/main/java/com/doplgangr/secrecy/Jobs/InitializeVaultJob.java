@@ -1,6 +1,8 @@
 package com.doplgangr.secrecy.Jobs;
 
-import com.doplgangr.secrecy.FileSystem.Vault;
+import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
+import com.doplgangr.secrecy.FileSystem.Encryption.VaultHolder;
+import com.doplgangr.secrecy.Util;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
@@ -24,7 +26,7 @@ public class InitializeVaultJob extends Job {
 
     @Override
     public void onRun() throws Throwable {
-        EventBus.getDefault().post(new Vault(vault, key));
+        EventBus.getDefault().post(VaultHolder.getInstance().createAndRetrieveVault(vault, key));
     }
 
     @Override
