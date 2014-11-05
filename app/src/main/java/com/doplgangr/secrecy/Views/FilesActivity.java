@@ -1,6 +1,5 @@
 package com.doplgangr.secrecy.Views;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,7 +14,6 @@ import com.doplgangr.secrecy.R;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 
 import de.greenrobot.event.EventBus;
@@ -33,8 +31,6 @@ public class FilesActivity extends ActionBarActivity
 
     @AfterViews
     void onCreate() {
-        if (!EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().register(this);
         overridePendingTransition(R.anim.slide_in_right, R.anim.fadeout);
         fragmentManager = getSupportFragmentManager();
         FilesListFragment_ fragment = new FilesListFragment_();
@@ -83,37 +79,6 @@ public class FilesActivity extends ActionBarActivity
         Storage.deleteTemp(); //Cleanup every time
         EventBus.getDefault().post(new shouldRefresh());
         super.onDestroy();
-    }
-
-    @Override
-    public void onBackPressed() {
-        EventBus.getDefault().post(new OnBackPressedEvent(this));
-    }
-
-
-    public void onEventMainThread(FilesListFragment.OnBackPressedUnhandledEvent event) {
-        //Back is pressed. should continue with default activity.
-        if (event.activity == this)
-            super.onBackPressed();
-    }
-
-    @OptionsItem(R.id.home)
-    void supporthomePressed() {
-        onBackPressed();
-    }
-
-    @OptionsItem(android.R.id.home)
-    void homePressed() {
-        onBackPressed();
-    }
-
-
-    public class OnBackPressedEvent {
-        public Activity activity;
-
-        public OnBackPressedEvent(Activity activity) {
-            this.activity = activity;
-        }
     }
 
     public class shouldRefresh {

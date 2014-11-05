@@ -31,6 +31,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -111,12 +112,69 @@ public class FilesListFragment extends FileViewer {
     private boolean isGallery = false;
     private boolean attached = false;
     private AbsListView mListView;
-    private CustomActionMode mActionMode;
     //Notifications
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
 
     private ProgressDialog mInitializeDialog;
+
+
+    private ActionMode mActionMode;
+    private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+
+        // Called when the action mode is created; startActionMode() was called
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            // Inflate a menu resource providing context menu items
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.file_action, menu);
+            return true;
+        }
+
+        // Called each time the action mode is shown. Always called after onCreateActionMode, but
+        // may be called multiple times if the mode is invalidated.
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false; // Return false if nothing is done
+        }
+
+        // Called when the user selects a contextual menu item
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_send:
+                    sendRawSelectedItems();
+                    mode.finish();
+                    return true;
+                case R.id.action_decrypt:
+                    decrpytSelectedItems();
+                    mode.finish();
+                    return true;
+                case R.id.action_delete:
+                    deleteSelectedItems();
+                    mode.finish();
+                    return true;
+                case R.id.action_select_all:
+                    selectAll();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        // Called when the user exits the action mode
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mActionMode = null;
+            adapter.notifyDataSetChanged();
+            for (int i = 0; i < mListView.getChildCount(); i++) {
+                View child = mListView.getChildAt(i);
+                ((FrameLayout) child.findViewById(R.id.frame))
+                        .setForeground(null);
+            }
+            adapter.clearSelected();
+        }
+    };
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
@@ -314,15 +372,6 @@ public class FilesListFragment extends FileViewer {
         progress.dismiss();
     }
 
-    public void onEventMainThread(FilesActivity.OnBackPressedEvent onBackPressedEvent) {
-        //Back is pressed. End action mode if it is started.
-
-        if (onBackPressedEvent.activity == context && mActionMode != null && mActionMode.isActionMode)
-            mActionMode.endActionMode();
-        else
-            EventBus.getDefault().post(new OnBackPressedUnhandledEvent(onBackPressedEvent.activity));
-    }
-
     @UiThread
     void setupViews() {
         mTag.setText(isGallery ? R.string.Page_header__gallery : R.string.Page_header__files);
@@ -341,7 +390,7 @@ public class FilesListFragment extends FileViewer {
             @Override
             public void onItemClick(AdapterView<?> adapterView, final View view, int i, long l) {
                 if (mActionMode != null) {
-                    mActionMode.select(i, view);
+                    select(i, view);
                     return;
                 }
                 if (isGallery) {
@@ -373,10 +422,9 @@ public class FilesListFragment extends FileViewer {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (mActionMode == null)
-                    mActionMode = new CustomActionMode();
-                mActionMode.startActionMode();
+                    mActionMode = context.startSupportActionMode(mActionModeCallback);
                 // Start the CAB using the ActionMode.Callback defined above
-                mActionMode.select(i, view);
+                select(i, view);
                 //switchView(view, R.id.file_actions_layout);
                 //mListView.setOnClickListener(null);
                 return true;
@@ -517,6 +565,7 @@ public class FilesListFragment extends FileViewer {
             mNotifyManager.notify(NotificationID, mBuilder.build());
         }
     }
+
     @OptionsItem(R.id.action_delete_vault)
     void deleteVault() {
         final EditText passwordView = new EditText(context);
@@ -606,8 +655,7 @@ public class FilesListFragment extends FileViewer {
         }
     }
 
-    @OptionsItem(R.id.action_decrypt)
-    void decryptCurrentItem() {
+    void decrpytSelectedItems() {
         final ArrayList<FilesListAdapter.ViewNIndex> adapterSelected =
                 new ArrayList<FilesListAdapter.ViewNIndex>(adapter.getSelected());
         for (final FilesListAdapter.ViewNIndex object : adapterSelected) {
@@ -640,11 +688,9 @@ public class FilesListFragment extends FileViewer {
                     Util.toast(context, getString(R.string.Error__already_decrypting), Toast.LENGTH_SHORT);
             }
         }
-        mActionMode.endActionMode();
     }
 
-    @OptionsItem(R.id.action_send)
-    void sendRaw() {
+    void sendRawSelectedItems() {
         ArrayList<DecryptArgHolder> Args = new ArrayList<DecryptArgHolder>();
         for (FilesListAdapter.ViewNIndex object : adapter.getSelected()) {
             int position = object.index;
@@ -671,26 +717,23 @@ public class FilesListFragment extends FileViewer {
         }
         if (attached)
             sendMultiple(Args);
-        mActionMode.endActionMode();
     }
 
-    @OptionsItem(R.id.action_select_all)
     void selectAll() {
         adapter.clearSelected();
         for (int i = 0; i < mListView.getAdapter().getCount(); i++) {
             // Reuse old View if possible. Otherwise decryption status is not shown
             if (mListView.getChildAt(i) != null) {
-                mActionMode.select(i, mListView.getAdapter().getView(
+                select(i, mListView.getAdapter().getView(
                         i, mListView.getChildAt(i), mListView));
             } else {
-                mActionMode.select(i, mListView.getAdapter().getView(i, null, mListView));
+                select(i, mListView.getAdapter().getView(i, null, mListView));
             }
         }
         adapter.notifyDataSetChanged();
     }
 
-    @OptionsItem(R.id.action_delete)
-    void deleteCurrentItem() {
+    void deleteSelectedItems() {
         final ArrayList<FilesListAdapter.ViewNIndex> adapterSelected =
                 new ArrayList<FilesListAdapter.ViewNIndex>(adapter.getSelected());
         DialogInterface.OnClickListener positive = new DialogInterface.OnClickListener() {
@@ -722,7 +765,6 @@ public class FilesListFragment extends FileViewer {
                 positive,
                 negative
         );
-        mActionMode.endActionMode();
     }
 
     @Override
@@ -731,14 +773,20 @@ public class FilesListFragment extends FileViewer {
             super.afterDecrypt(newIntent, altIntent);       // check if fragment is attached.
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.clear();
-        if (mActionMode != null && mActionMode.isActionMode)
-            inflater.inflate(R.menu.file_action, menu);
-        else
-            inflater.inflate(R.menu.filelist, menu);
-        super.onCreateOptionsMenu(menu, inflater);
+    void select(int position, View mView) {
+        FilesListAdapter.ViewHolder viewHolder = (FilesListAdapter.ViewHolder) mView.getTag();
+        viewHolder.selected = adapter.select(position, mView);
+        mView.setTag(viewHolder);
+        ((FrameLayout) mView.findViewById(R.id.frame))
+                .setForeground(viewHolder.selected ?
+                        selector :
+                        null);
+        if (context.getSupportActionBar() != null)
+            context.getSupportActionBar().setTitle(
+                    String.format(getString(R.string.Files__number_selected),
+                            adapter.getSelected().size()));
+        if ((adapter.getSelected().size() == 0) && mActionMode != null)
+            mActionMode.finish();
     }
 
     class DecryptArgHolder {
@@ -751,43 +799,6 @@ public class FilesListFragment extends FileViewer {
             this.pBar = pBar;
             this.onFinish = onFinish;
         }
-    }
-
-    class CustomActionMode {
-        public boolean isActionMode = false;
-
-        void startActionMode() {
-            isActionMode = true;
-            context.supportInvalidateOptionsMenu();
-        }
-
-        void endActionMode() {
-            adapter.notifyDataSetChanged();
-            for (int i = 0; i < mListView.getChildCount(); i++) {
-                View child = mListView.getChildAt(i);
-                ((FrameLayout) child.findViewById(R.id.frame))
-                        .setForeground(null);
-            }
-            adapter.clearSelected();
-            isActionMode = false;
-            context.supportInvalidateOptionsMenu();
-        }
-
-        void select(int position, View mView) {
-            FilesListAdapter.ViewHolder viewHolder = (FilesListAdapter.ViewHolder) mView.getTag();
-            viewHolder.selected = adapter.select(position, mView);
-            mView.setTag(viewHolder);
-            ((FrameLayout) mView.findViewById(R.id.frame))
-                    .setForeground(viewHolder.selected ?
-                            selector :
-                            null);
-            context.setTitle(
-                    String.format(getString(R.string.Files__number_selected),
-                            adapter.getSelected().size()));
-            if (adapter.getSelected().size() == 0)
-                endActionMode();
-        }
-
     }
 
     public class OnBackPressedUnhandledEvent {
