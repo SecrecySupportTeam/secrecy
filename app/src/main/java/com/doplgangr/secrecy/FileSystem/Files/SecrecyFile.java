@@ -22,6 +22,7 @@ package com.doplgangr.secrecy.FileSystem.Files;
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.Encryption.Crypter;
+import com.doplgangr.secrecy.FileSystem.Encryption.SecrecyCipherInputStream;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Util;
 
@@ -35,8 +36,6 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import javax.crypto.CipherInputStream;
 
 public class SecrecyFile implements Serializable {
 
@@ -94,13 +93,13 @@ public class SecrecyFile implements Serializable {
         BufferedOutputStream out = null;
         try {
             outputFile = new File(Storage.getTempFolder() + "/" + decryptedFileName);
-            out = new BufferedOutputStream(new FileOutputStream(outputFile), Config.blockSize);
+            out = new BufferedOutputStream(new FileOutputStream(outputFile), Config.BLOCK_SIZE);
             is = crypter.getCipherInputStream(getFile());
             listener.setMax((int) file.length());
 
             int readBytes;
             int readTotal = 0;
-            byte[] buf = new byte[Config.bufferSize];
+            byte[] buf = new byte[Config.BUFFER_SIZE];
             while ((readBytes = is.read(buf)) > 0) {
                 out.write(buf, 0, readBytes);
                 readTotal += readBytes;
@@ -139,7 +138,7 @@ public class SecrecyFile implements Serializable {
         return null;
     }
 
-    public CipherInputStream readStream(CryptStateListener listener) {
+    public SecrecyCipherInputStream readStream(CryptStateListener listener) {
         try {
             return crypter.getCipherInputStream(getFile());
         } catch (Exception e) {

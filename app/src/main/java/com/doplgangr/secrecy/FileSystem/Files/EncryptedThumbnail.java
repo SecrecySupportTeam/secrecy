@@ -23,12 +23,10 @@ import android.graphics.Bitmap;
 
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.Encryption.Crypter;
+import com.doplgangr.secrecy.FileSystem.Encryption.SecrecyCipherInputStream;
 import com.doplgangr.secrecy.FileSystem.Storage;
 
 import java.io.File;
-
-import javax.crypto.CipherInputStream;
-
 
 public class EncryptedThumbnail extends SecrecyFile {
 
@@ -46,7 +44,7 @@ public class EncryptedThumbnail extends SecrecyFile {
 
     public Bitmap getThumb(int thumbnailSize) {
         if ((!thumbnailCreated) && (thumbBitmap == null)) {
-            CipherInputStream streamThumb = readStream(new CryptStateListener() {
+            SecrecyCipherInputStream streamThumb = readStream(new CryptStateListener() {
                 @Override
                 public void updateProgress(int progress) {
                 }

@@ -29,7 +29,6 @@ import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Util;
 import com.google.protobuf.ByteString;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,7 +42,6 @@ import java.security.SecureRandom;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -241,13 +239,13 @@ abstract class AES_Crypter implements Crypter {
         }
 
         BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
-                new FileOutputStream(outputFile), Config.blockSize);
+                new FileOutputStream(outputFile), Config.BLOCK_SIZE);
 
         return new CipherOutputStream(bufferedOutputStream, c);
     }
 
     @Override
-    public CipherInputStream getCipherInputStream(File encryptedFile)
+    public SecrecyCipherInputStream getCipherInputStream(File encryptedFile)
             throws SecrecyCipherStreamException, FileNotFoundException {
         Cipher c;
         try {
@@ -280,10 +278,7 @@ abstract class AES_Crypter implements Crypter {
             throw new SecrecyCipherStreamException("Invalid algorithm parameter!");
         }
 
-        BufferedInputStream bufferedInputStream = new BufferedInputStream(
-                new FileInputStream(encryptedFile), Config.blockSize);
-
-        return new CipherInputStream(bufferedInputStream, c);
+        return new SecrecyCipherInputStream(new FileInputStream(encryptedFile), c);
     }
 
     public String getDecryptedFileName(File file) throws SecrecyCipherStreamException,

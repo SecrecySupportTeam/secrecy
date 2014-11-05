@@ -80,7 +80,7 @@ public class EncryptedFileFactory {
 
         try {
             bufferedInputStream = new BufferedInputStream(
-                    new FileInputStream(unencryptedFile), Config.blockSize);
+                    new FileInputStream(unencryptedFile), Config.BLOCK_SIZE);
             out = crypter.getCipherOutputStream(unencryptedFile, outputFileName);
         } catch (FileNotFoundException e) {
             Util.log(this.getClass().getName() + ": File not found!");
@@ -92,7 +92,7 @@ public class EncryptedFileFactory {
 
         try {
             if (out != null) {
-                byte buffer[] = new byte[Config.bufferSize];
+                byte buffer[] = new byte[Config.BUFFER_SIZE];
                 int count;
                 while ((count = bufferedInputStream.read(buffer)) != -1) {
                     out.write(buffer, 0, count);
