@@ -51,6 +51,7 @@ dependencies {
     compile project(':payme')
     compile 'com.crashlytics.android:crashlytics:1.+'
     compile 'com.google.protobuf:protobuf-java:2.6.0'
+    compile 'com.madgag.spongycastle:prov:1.51.0.0'
 }
 
 android {
