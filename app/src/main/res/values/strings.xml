@@ -71,4 +71,5 @@
     <string name="Vault__initializing">Initializing Vault...</string>
     <string name="Vault_updating">Vault is updating...</string>
     <string name="Vault__changing_passphrase">Changing passphrase...</string>
+    <string name="Restore__overwrite_alert">Restoring a vault would delete the existing version. Continue?</string>
 </resources>
