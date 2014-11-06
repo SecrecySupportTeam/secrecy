@@ -781,8 +781,8 @@ public class FilesListFragment extends FileViewer {
                 .setForeground(viewHolder.selected ?
                         selector :
                         null);
-        if (context.getSupportActionBar() != null)
-            context.getSupportActionBar().setTitle(
+        if (mActionMode != null)
+            mActionMode.setTitle(
                     String.format(getString(R.string.Files__number_selected),
                             adapter.getSelected().size()));
         if ((adapter.getSelected().size() == 0) && mActionMode != null)
