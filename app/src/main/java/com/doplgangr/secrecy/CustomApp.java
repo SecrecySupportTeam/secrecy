@@ -32,6 +32,8 @@ import com.path.android.jobqueue.log.CustomLogger;
 
 import org.androidannotations.annotations.EApplication;
 
+import java.security.Security;
+
 import de.greenrobot.event.EventBus;
 
 @EApplication
@@ -39,6 +41,11 @@ public class CustomApp extends Application {
     public static Context context;
     public static String VERSIONNAME = "";
     public static JobManager jobManager;
+
+    static{
+        Security.insertProviderAt(
+                new org.spongycastle.jce.provider.BouncyCastleProvider(), 1);
+    }
 
     @Override
     public void onCreate() {
