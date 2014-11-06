@@ -14,12 +14,10 @@ import com.doplgangr.secrecy.R;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.OptionsMenu;
 
 import de.greenrobot.event.EventBus;
 
 @EActivity(R.layout.activity_files)
-@OptionsMenu(R.menu.main)
 public class FilesActivity extends ActionBarActivity
         implements
         VaultsListFragment.OnFragmentFinishListener {
