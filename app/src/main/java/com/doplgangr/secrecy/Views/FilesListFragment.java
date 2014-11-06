@@ -568,6 +568,15 @@ public class FilesListFragment extends FileViewer {
         onPauseDecision.finishActivity();
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE && data.getData() != null) {
             Util.log("intent received=", data.getData().toString(), data.getData().getLastPathSegment());
+
+            mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            mBuilder = new NotificationCompat.Builder(context);
+            mBuilder.setContentTitle(CustomApp.context.getString(R.string.Files__adding))
+                    .setSmallIcon(R.drawable.ic_stat_alert)
+                    .setOngoing(true);
+            mBuilder.setProgress(0, 0, true);
+            mNotifyManager.notify(NotificationID, mBuilder.build());
+
             addFile(secret, data.getData());
             super.onActivityResult(requestCode, resultCode, data);
         } else {
