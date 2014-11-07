@@ -219,6 +219,8 @@ public class FilesListFragment extends FileViewer {
     @Override
     void onCreate() {
         context = (ActionBarActivity) getActivity();
+        if (context == null)
+            return;
         context.getSupportActionBar().setTitle(vault);
         mInitializeDialog = new ProgressDialog(context);
         mInitializeDialog.setIndeterminate(true);
