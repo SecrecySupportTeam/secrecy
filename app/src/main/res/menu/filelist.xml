@@ -29,7 +29,8 @@
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_backup"
+        android:icon="@drawable/ic_action_backup"
         android:orderInCategory="99"
         android:title="@string/action__backup"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 </menu>

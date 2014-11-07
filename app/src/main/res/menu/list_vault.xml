@@ -11,7 +11,8 @@
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_restore"
+        android:icon="@drawable/ic_action_restore"
         android:orderInCategory="99"
         android:title="@string/action__restore_vault"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 </menu>
