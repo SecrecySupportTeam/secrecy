@@ -110,6 +110,8 @@ public class VaultsListFragment extends Fragment {
         if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
         context = (ActionBarActivity) getActivity();
+        if (context == null)
+            return; //Wait. What??
         VaultHolder.getInstance().clear();
         if (mLinearView != null)
             mLinearView.removeAllViews();
