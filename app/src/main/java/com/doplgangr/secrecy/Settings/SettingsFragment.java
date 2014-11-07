@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceGroup;
+import android.preference.PreferenceScreen;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.preference.PreferenceFragment;
 import android.support.v7.app.ActionBarActivity;
@@ -119,6 +120,11 @@ public class SettingsFragment extends PreferenceFragment
 
     @AfterViews
     void onCreate() {
+        //Sanitize screen
+        PreferenceScreen preferenceScreen = getPreferenceScreen();
+        if (preferenceScreen != null)
+            preferenceScreen.removeAll();
+
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
         context = (ActionBarActivity) getActivity();
