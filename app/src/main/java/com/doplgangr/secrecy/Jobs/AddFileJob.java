@@ -3,10 +3,12 @@ package com.doplgangr.secrecy.Jobs;
 import android.content.Context;
 import android.net.Uri;
 
+import com.doplgangr.secrecy.Events.AddingFileDoneEvent;
+import com.doplgangr.secrecy.Events.AddingFileEvent;
 import com.doplgangr.secrecy.Events.NewFileEvent;
+import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.FileSystem.Storage;
-import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.Util;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
@@ -39,9 +41,12 @@ public class AddFileJob extends Job {
 
     @Override
     public void onRun() throws Throwable {
+        EventBus.getDefault().post(new AddingFileEvent(vault, uri.toString()));
         Util.log("Adding file: ", uri);
         EncryptedFile returnedEncryptedFile = vault.addFile(context, uri);
         EventBus.getDefault().post(new NewFileEvent(returnedEncryptedFile));
+
+        EventBus.getDefault().post(new AddingFileDoneEvent(vault));
         File actualFile = new File(getPath(context, uri));
         Storage.purgeFile(actualFile, uri); //Try to delete original file.
     }

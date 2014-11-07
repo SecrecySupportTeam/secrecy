@@ -49,6 +49,8 @@ import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
+import com.doplgangr.secrecy.Events.AddingFileDoneEvent;
+import com.doplgangr.secrecy.Events.AddingFileEvent;
 import com.doplgangr.secrecy.Events.BackUpDoneEvent;
 import com.doplgangr.secrecy.Events.NewFileEvent;
 import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
@@ -568,10 +570,39 @@ public class FilesListFragment extends FileViewer {
         onPauseDecision.finishActivity();
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE && data.getData() != null) {
             Util.log("intent received=", data.getData().toString(), data.getData().getLastPathSegment());
+
+            mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            mBuilder = new NotificationCompat.Builder(context);
+            mBuilder.setContentTitle(CustomApp.context.getString(R.string.Files__adding))
+                    .setSmallIcon(R.drawable.ic_stat_alert)
+                    .setOngoing(true);
+            mBuilder.setProgress(0, 0, true);
+            mNotifyManager.notify(NotificationID, mBuilder.build());
+
             addFile(secret, data.getData());
             super.onActivityResult(requestCode, resultCode, data);
         } else {
             Util.toast(context, getString(R.string.Error__no_file_selected), 4000);
+        }
+    }
+
+    public void onEventMainThread(AddingFileEvent event) {
+        if (event.vaultToAdd != secret)
+            return;
+        if (mBuilder != null) {
+            mBuilder.setContentText(event.fileToAdd);
+            mNotifyManager.notify(NotificationID, mBuilder.build());
+        }
+    }
+
+    public void onEventMainThread(AddingFileDoneEvent event) {
+        if (event.vault != secret)
+            return;
+        if (mBuilder != null) {
+            mBuilder.setProgress(0, 0, false)
+                    .setContentText(CustomApp.context.getString(R.string.Files__adding_finish))
+                    .setOngoing(false);
+            mNotifyManager.notify(NotificationID, mBuilder.build());
         }
     }
 
