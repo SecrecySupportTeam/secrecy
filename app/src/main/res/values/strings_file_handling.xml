@@ -16,6 +16,7 @@
     <string name="Files__add_successful">File successfully added</string>
     <string name="Files__add_successful_message">Would you like to delete the original file?</string>
     <string name="Files__adding">Adding files</string>
+    <string name="Files__adding_finish">Finish adding files to secrecy.</string>
     <string name="Error__already_decrypting_delete">Cannot delete decrypting files</string>
     <string name="Files__delete">Delete Files</string>
     <string name="Files__delete_message">Are you sure to delete the following file(s)? %s</string>

@@ -1,16 +1,21 @@
 package com.doplgangr.secrecy.Views;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.doplgangr.secrecy.CustomApp;
+import com.doplgangr.secrecy.Events.AddingFileDoneEvent;
+import com.doplgangr.secrecy.Events.AddingFileEvent;
 import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.FileSystem.Encryption.VaultHolder;
 import com.doplgangr.secrecy.Jobs.AddFileJob;
@@ -25,17 +30,25 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 
+import de.greenrobot.event.EventBus;
+
 @EActivity(R.layout.activity_main)
 public class FileImportActivity extends ActionBarActivity
         implements
         VaultsListFragment.OnVaultSelectedListener,
         VaultsListFragment.OnFragmentFinishListener {
+    private static final int NotificationID = 1011;
     Vault secret;
     @ViewById(R.id.toolbar)
     Toolbar mToolbar;
+    //Notifications
+    private NotificationManager mNotifyManager;
+    private NotificationCompat.Builder mBuilder;
 
     @AfterViews
     void afterViews() {
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
         setSupportActionBar(mToolbar);
         FileImportFragment_ fragment = new FileImportFragment_();
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -70,6 +83,14 @@ public class FileImportActivity extends ActionBarActivity
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
+
+        mNotifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mBuilder = new NotificationCompat.Builder(this);
+        mBuilder.setContentTitle(CustomApp.context.getString(R.string.Files__adding))
+                .setSmallIcon(R.drawable.ic_stat_alert)
+                .setOngoing(true);
+        mBuilder.setProgress(0, 0, true);
+        mNotifyManager.notify(NotificationID, mBuilder.build());
         if (Intent.ACTION_SEND.equals(action) && type != null)
             handleSend(intent);
         else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null)
@@ -96,6 +117,26 @@ public class FileImportActivity extends ActionBarActivity
     @Background
     void handleData(final Uri data) {
         CustomApp.jobManager.addJobInBackground(new AddFileJob(this, secret, data));
+    }
+
+    public void onEventMainThread(AddingFileEvent event) {
+        if (event.vaultToAdd != secret)
+            return;
+        if (mBuilder != null) {
+            mBuilder.setContentText(event.fileToAdd);
+            mNotifyManager.notify(NotificationID, mBuilder.build());
+        }
+    }
+
+    public void onEventMainThread(AddingFileDoneEvent event) {
+        if (event.vault != secret)
+            return;
+        if (mBuilder != null) {
+            mBuilder.setProgress(0, 0, false)
+                    .setContentText(CustomApp.context.getString(R.string.Files__adding_finish))
+                    .setOngoing(false);
+            mNotifyManager.notify(NotificationID, mBuilder.build());
+        }
     }
 
     @UiThread
