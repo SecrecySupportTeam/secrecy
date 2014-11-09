@@ -63,7 +63,7 @@ public class CustomApp extends Application {
 
         Configuration configuration = new Configuration.Builder(this)
                 .minConsumerCount(1)//always keep at least one consumer alive
-                .maxConsumerCount(2)//up to 2 consumers at a time
+                .maxConsumerCount(1)//up to 1 consumers at a time
                 .loadFactor(1)//1 jobs per consumer
                 .build();
 
