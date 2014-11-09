@@ -19,7 +19,6 @@
 
 package com.doplgangr.secrecy.Views;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
@@ -27,16 +26,14 @@ import android.net.Uri;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.text.InputType;
 import android.webkit.MimeTypeMap;
-import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
+import com.doplgangr.secrecy.FileSystem.Files.SecrecyFile;
 import com.doplgangr.secrecy.FileSystem.OurFileProvider;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
@@ -45,7 +42,6 @@ import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
@@ -61,7 +57,7 @@ import java.util.List;
 import java.util.Set;
 
 @EFragment(R.layout.activity_file_viewer)
-public class FileViewer extends Fragment {
+public abstract class FileViewer extends Fragment {
 
     ActionBarActivity context;
 
@@ -72,8 +68,8 @@ public class FileViewer extends Fragment {
 
 
     @Background
-    void decrypt(EncryptedFile encryptedFile, final ProgressBar pBar, final Listeners.EmptyListener onFinish) {
-        File tempFile = getFile(encryptedFile, pBar, onFinish);
+    void decrypt(EncryptedFile encryptedFile, final Listeners.EmptyListener onFinish) {
+        File tempFile = getFile(encryptedFile, onFinish);
         //File specified is not invalid
         if (tempFile != null) {
             if (tempFile.getParentFile().equals(Storage.getTempFolder())) {
@@ -101,7 +97,7 @@ public class FileViewer extends Fragment {
         Set<String> mimes = new HashSet<String>();
         MimeTypeMap myMime = MimeTypeMap.getSingleton();
         for (FilesListFragment.DecryptArgHolder arg : args) {
-            java.io.File tempFile = getFile(arg.encryptedFile, arg.pBar, arg.onFinish);
+            File tempFile = getFile(arg.encryptedFile, arg.onFinish);
             //File specified is not invalid
             if (tempFile != null) {
                 if (tempFile.getParentFile().equals(Storage.getTempFolder()))
@@ -137,16 +133,16 @@ public class FileViewer extends Fragment {
         }
     }
 
-    File getFile(final EncryptedFile encryptedFile, final ProgressBar pBar, final Listeners.EmptyListener onfinish) {
+    File getFile(final EncryptedFile encryptedFile, final Listeners.EmptyListener onfinish) {
         CryptStateListener listener = new CryptStateListener() {
             @Override
             public void updateProgress(int progress) {
-                updatePBar(pBar, progress);
+                updatePBar(encryptedFile, progress);
             }
 
             @Override
             public void setMax(int max) {
-                maxPBar(pBar, max);
+                maxPBar(encryptedFile, max);
             }
 
             @Override
@@ -167,6 +163,7 @@ public class FileViewer extends Fragment {
 
             @Override
             public void Finished() {
+
                 onfinish.run();
             }
         };
@@ -203,15 +200,15 @@ public class FileViewer extends Fragment {
     }
 
     @UiThread
-    void updatePBar(ProgressBar pBar, int progress) {
-        if (pBar != null)
-            pBar.setProgress(progress);
+    void updatePBar(SecrecyFile file, int progress) {
+        if (file.getProgressBar() != null)
+            file.getProgressBar().setProgress(progress);
     }
 
     @UiThread
-    void maxPBar(ProgressBar pBar, int max) {
-        if (pBar != null)
-            pBar.setMax(max);
+    void maxPBar(EncryptedFile file, int max) {
+        if (file.getProgressBar() != null)
+            file.getProgressBar().setMax(max);
     }
 
     @Override

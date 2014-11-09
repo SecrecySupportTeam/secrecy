@@ -19,6 +19,8 @@
 
 package com.doplgangr.secrecy.FileSystem.Files;
 
+import android.widget.ProgressBar;
+
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.Encryption.Crypter;
@@ -37,7 +39,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class SecrecyFile implements Serializable {
+public abstract class SecrecyFile implements Serializable {
 
     protected String decryptedFileName;
     protected String fileSize;
@@ -46,6 +48,7 @@ public class SecrecyFile implements Serializable {
     protected File file;
     protected Boolean isDecrypting = false;
     protected Crypter crypter;
+    protected ProgressBar progressBar;
 
     protected static String humanReadableByteCount(long bytes) {
         int unit = 1024;
@@ -53,6 +56,18 @@ public class SecrecyFile implements Serializable {
         int exp = (int) (Math.log(bytes) / Math.log(unit));
         char pre = ("KMGTPE").charAt(exp - 1);
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+    }
+
+    public void setIsDecrypting(Boolean isDecrypting) {
+        this.isDecrypting = isDecrypting;
+    }
+
+    public ProgressBar getProgressBar() {
+        return progressBar;
+    }
+
+    public void setProgressBar(ProgressBar progressBar) {
+        this.progressBar = progressBar;
     }
 
     public String getFileExtension() {
