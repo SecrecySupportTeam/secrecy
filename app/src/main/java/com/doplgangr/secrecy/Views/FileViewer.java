@@ -65,33 +65,6 @@ public class FileViewer extends Fragment {
 
     ActionBarActivity context;
 
-    @AfterInject
-    void onCreate() {
-        context = (ActionBarActivity) getActivity();
-        if (context.getSupportActionBar() != null)
-            context.getSupportActionBar().setSubtitle(Storage.getRoot().getAbsolutePath());
-        final EditText input = new EditText(context);
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        new AlertDialog.Builder(context)
-                .setTitle(getString(R.string.File__open))
-                .setMessage(getString(R.string.File__open_message))
-                .setView(input)
-                .setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String password = input.getText().toString();
-                        Uri file = context.getIntent().getData();
-                      //TODO:  Cannot load file with only the password anymore.
-                      // Is this methods currently used=
-                      // decrypt(EncryptedFileFactory.getInstance().loadEncryptedFile(new File(file.getPath()), password), null, null);
-                    }
-                }).setNegativeButton(getString(R.string.CANCEL), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                finish();
-            }
-        }).show();
-    }
-
-
     @Background
     void addFile(Vault secret, final Uri data) {
         CustomApp.jobManager.addJobInBackground(new AddFileJob(context, secret, data));
