@@ -1,26 +1,29 @@
+
 <!--
-  ~ Licensed to the Apache Software Foundation (ASF) under one
-  ~ or more contributor license agreements.  See the NOTICE file
-  ~ distributed with this work for additional information
-  ~ regarding copyright ownership.  The ASF licenses this file
-  ~ to you under the Apache License, Version 2.0 (the
-  ~ "License"); you may not use this file except in compliance
-  ~ with the License.  You may obtain a copy of the License at
-  ~
-  ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing,
-  ~ software distributed under the License is distributed on an
-  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-  ~ KIND, either express or implied.  See the License for the
-  ~ specific language governing permissions and limitations
-  ~ under the License.
-  -->
+~ Licensed to the Apache Software Foundation (ASF) under one
+~ or more contributor license agreements.  See the NOTICE file
+~ distributed with this work for additional information
+~ regarding copyright ownership.  The ASF licenses this file
+~ to you under the Apache License, Version 2.0 (the
+~ "License"); you may not use this file except in compliance
+~ with the License.  You may obtain a copy of the License at
+~
+~   http://www.apache.org/licenses/LICENSE-2.0
+~
+~ Unless required by applicable law or agreed to in writing,
+~ software distributed under the License is distributed on an
+~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~ KIND, either express or implied.  See the License for the
+~ specific language governing permissions and limitations
+~ under the License.
+-->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_paper">
+    android:background="@drawable/bg_paper"
+    >
 
     <RelativeLayout
         android:id="@+id/content"
@@ -38,61 +41,13 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/text_secondary" />
 
-        <ListView
-            android:id="@android:id/list"
-            android:layout_width="fill_parent"
+        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/file_list_recycler_view"
+            android:paddingTop="@dimen/divider_height"
+            android:layout_width="match_parent"
             android:layout_height="fill_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_below="@id/tag"
-            android:animateLayoutChanges="true"
-            android:choiceMode="multipleChoice"
-            android:clipToPadding="false"
-            android:divider="@android:color/transparent"
-            android:drawSelectorOnTop="true"
-            android:layoutMode="clipBounds" />
-
-
-        <GridView
-            android:id="@+id/gridView"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_below="@id/tag"
-            android:animateLayoutChanges="true"
-            android:choiceMode="multipleChoice"
-            android:clipToPadding="false"
-            android:columnWidth="120dp"
-            android:divider="@android:color/transparent"
-            android:drawSelectorOnTop="true"
-            android:horizontalSpacing="0dp"
-            android:layoutMode="clipBounds"
-            android:numColumns="auto_fit"
-            android:stretchMode="columnWidth"
-            android:verticalSpacing="0dp" />
-
-        <LinearLayout
-            android:id="@+id/nothing"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/Vault__nothing_here"
-                android:textColor="@color/primary"
-                android:textSize="24sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/File__nothing_here_message"
-                android:textColor="@color/accent_light"
-                android:textSize="18sp" />
-        </LinearLayout>
-
+            android:scrollbars="vertical"
+            />
 
     </RelativeLayout>
 

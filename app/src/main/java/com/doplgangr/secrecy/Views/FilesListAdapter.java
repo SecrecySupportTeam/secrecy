@@ -22,12 +22,13 @@ package com.doplgangr.secrecy.Views;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
@@ -39,27 +40,40 @@ import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import de.greenrobot.event.EventBus;
 
-class FilesListAdapter extends ArrayAdapter<EncryptedFile> {
-    // store the context (as an inflated layout)
-    private final LayoutInflater inflater;
-    // store the resource (typically file_item.xml)
-    private final int resource;
-    private final ArrayList<ViewNIndex> checked = new ArrayList<ViewNIndex>();
-    private boolean isGallery;
-    // store (a reference to) the data
-    private ArrayList<EncryptedFile> data = new ArrayList<EncryptedFile>();
+public class FilesListAdapter extends RecyclerView.Adapter<FilesListAdapter.ViewHolder> {
 
-    public FilesListAdapter(Context context, int layout) {
-        super(context, layout, new ArrayList<EncryptedFile>());
-        this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.resource = layout;
-        this.isGallery = (layout == R.layout.gallery_item);
+    private Context context;
+    private boolean isGallery;
+    private int layout;
+    // store (a reference to) the data
+    private List<EncryptedFile> data = new ArrayList<EncryptedFile>();
+    private final Set<Integer> selectedItems = new HashSet<Integer>();
+    private OnItemClickListener onItemClickListener;
+    private OnItemLongClickListener onLongClickListener;
+
+    public FilesListAdapter(Context context, boolean isGallery) {
+        this.isGallery = false;
+        this.context = context;
+        this.isGallery = isGallery;
+        layout = isGallery ? R.layout.gallery_item : R.layout.file_item;
         if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
+    public void setOnLongClickListener(OnItemLongClickListener onLongClickListener) {
+        this.onLongClickListener = onLongClickListener;
     }
 
     /**
@@ -74,11 +88,12 @@ class FilesListAdapter extends ArrayAdapter<EncryptedFile> {
             String mimeType = Util.getFileTypeFromExtension(encryptedFile.getFileExtension());
             if (mimeType != null)
                 if (!mimeType.contains("image"))
-                    return; //abort if not images.
+                    return;
         }
-        if (!data.contains(encryptedFile))
+        if (!data.contains(encryptedFile)) {
             data.add(encryptedFile);
-        notifyDataSetChanged();
+        }
+        notifyItemInserted(data.size() - 1);
     }
 
     /**
@@ -86,13 +101,14 @@ class FilesListAdapter extends ArrayAdapter<EncryptedFile> {
      */
     public void remove(int position) {
         data.remove(position);
-        notifyDataSetChanged();
+        notifyItemRemoved(position);
     }
 
     /**
      * Return the size of the data set.
      */
-    public int getCount() {
+    @Override
+    public int getItemCount() {
         return this.data.size();
     }
 
@@ -117,86 +133,105 @@ class FilesListAdapter extends ArrayAdapter<EncryptedFile> {
         return data.indexOf(encryptedFile);
     }
 
-    /**
-     * Return a generated view for a position.
-     */
-    public void update(ArrayList<EncryptedFile> data) {
-        this.data = data;
-        checked.clear();
-    }
-
-    public View getView(EncryptedFile encryptedFile, View convertView, ViewGroup parent) {
-        int position = data.indexOf(encryptedFile);
-        return getView(position, convertView, parent);
-    }
-
-    public View getView(int position, View convertView, ViewGroup parent) {
-        // reuse a given view, or inflate a new one from the xml
-        View view;
-
-        if (convertView == null) {
-            view = this.inflater.inflate(resource, parent, false);
-            ViewHolder viewHolder = new ViewHolder();
-            viewHolder.name = (TextView) view.findViewById(R.id.name);
-            viewHolder.type = (TextView) view.findViewById(R.id.type);
-            viewHolder.size = (TextView) view.findViewById(R.id.size);
-            viewHolder.date = (TextView) view.findViewById(R.id.date);
-            viewHolder.thumbnail = (ImageView) view.findViewById(R.id.thumbNail);
-            viewHolder.frame = (FrameLayout) view.findViewById(R.id.frame);
-            viewHolder.animator = (ViewAnimator) view.findViewById(R.id.viewAnimator);
-            viewHolder.selected = false;
-            viewHolder.page = 0;
-            view.setTag(viewHolder);
-        } else {
-            view = convertView;
-            ViewHolder viewHolder = (ViewHolder) view.getTag();
-            viewHolder.selected = false;
-            for (ViewNIndex obj : checked)
-                if (obj.index == position)
-                    viewHolder.selected = true;
+    public void onEventMainThread(ThumbLoadDoneEvent event) {
+        try {
+            String name = (String) event.imageView.getTag();
+            if (name.equals(event.encryptedFile.getDecryptedFileName()) && (event.bitmap != null) && (event.imageView != null)) {
+                event.imageView.setImageBitmap(event.bitmap);   // bind thumbnail in UI thread
+                event.imageView.setVisibility(View.VISIBLE);
+            }
+        } catch (OutOfMemoryError ignored) {
         }
-
-        // bind the data to the view object
-        return this.bindData(view, position);
     }
 
-    /**
-     * Bind the provided data to the view.
-     * This is the only method not required by base adapter.
-     */
-    View bindData(final View view, int position) {
-        final ViewHolder viewHolder = (ViewHolder) view.getTag();
-        // make sure it's worth drawing the view
-        if (position >= this.data.size())  // To prevent out of bound exception
-            return view;
-        if (this.data.get(position) == null)
-            return view;
+    public boolean isSelected(int position){
+        return selectedItems.contains(position);
+    }
 
-        // pull out the object
+    public boolean select(int position) {
+        if (isSelected(position)){
+            selectedItems.remove(position);
+            return false;
+        }
+        selectedItems.add(position);
+        return true;
+    }
+
+    public Set<Integer> getSelected() {
+        return selectedItems;
+    }
+
+    public void clearSelected() {
+        selectedItems.clear();
+        notifyDataSetChanged();
+    }
+
+    public void clear() {
+        data.clear();
+        selectedItems.clear();
+    }
+
+    public void sort() {
+        Collections.sort(data, new Comparator<EncryptedFile>() {
+            @Override
+            public int compare(EncryptedFile encryptedFile, EncryptedFile encryptedFile2) {
+                return encryptedFile.getDecryptedFileName().compareTo(encryptedFile2.getDecryptedFileName());
+            }
+        });
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(layout, viewGroup, false);
+        return new ViewHolder(v);
+    }
+
+    @Override
+    public void onBindViewHolder(final ViewHolder viewHolder, int position) {
         final EncryptedFile encryptedFile = this.data.get(position);
-        if (viewHolder.name != null)
+
+        if (viewHolder.name != null){
             viewHolder.name.setText(encryptedFile.getDecryptedFileName());
-
-        if (viewHolder.type != null)
+        }
+        if (viewHolder.type != null) {
             viewHolder.type.setText(encryptedFile.getType());
-
-        if (viewHolder.size != null)
+        }
+        if (viewHolder.size != null) {
             viewHolder.size.setText(encryptedFile.getFileSize());
-
-        if (viewHolder.date != null)
+        }
+        if (viewHolder.date != null) {
             viewHolder.date.setText(encryptedFile.getTimestamp());
-
+        }
         if (viewHolder.thumbnail != null) {
             viewHolder.thumbnail.setVisibility(View.GONE);
             viewHolder.thumbnail.setTag(encryptedFile.getDecryptedFileName());
         }
-        if (viewHolder.frame != null)
-            viewHolder.frame.setForeground(
-                    viewHolder.selected ?
-                            getContext().getResources().getDrawable(R.drawable.file_selector) :
+        if (viewHolder.frame != null) {
+            viewHolder.frame.setForeground(isSelected(position) ?
+                            context.getResources().getDrawable(R.drawable.file_selector) :
                             null);
-        if (viewHolder.animator != null)
+        }
+
+        if (viewHolder.progressBar != null){
+            encryptedFile.setProgressBar(viewHolder.progressBar);
+            encryptedFile.getProgressBar().setMax((int) encryptedFile.getFile().length());
+        }
+
+        if (viewHolder.animator != null) {
             viewHolder.animator.setDisplayedChild(viewHolder.page);
+
+            int viewIndex;
+            if (data.get(position).getIsDecrypting()){
+                viewHolder.animator.setInAnimation(context, R.anim.slide_down);
+                viewIndex = 1;
+            } else {
+                viewHolder.animator.setInAnimation(null);
+                viewIndex = 0;
+            }
+            viewHolder.animator.setDisplayedChild(viewIndex);
+        }
+
         final int avatar_size = (int) CustomApp.context.getResources().getDimension(R.dimen.list_item_avatar_size);
 
         // This class is for binding thumbnail to UI
@@ -226,78 +261,57 @@ class FilesListAdapter extends ArrayAdapter<EncryptedFile> {
             }
         }
         new BindImageTask().execute(encryptedFile);
-
-        // return the final view object
-        return view;
     }
 
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
-    public void onEventMainThread(ThumbLoadDoneEvent event) {
-        try {
-            String name = (String) event.imageView.getTag();
-            if (name.equals(event.encryptedFile.getDecryptedFileName()) && (event.bitmap != null) && (event.imageView != null)) {
-                event.imageView.setImageBitmap(event.bitmap);   // bind thumbnail in UI thread
-                event.imageView.setVisibility(View.VISIBLE);
-            }
-        } catch (OutOfMemoryError ignored) {
-        }
-    }
-
-    public Boolean select(int position, View view) {
-        ViewNIndex object = new ViewNIndex(position, view);
-        for (ViewNIndex obj : checked)
-            if (position == obj.index) {
-                checked.remove(checked.indexOf(obj));
-                return false;
-            }
-        checked.add(object);
-        return true;
-    }
-
-    public ArrayList<ViewNIndex> getSelected() {
-        return checked;
-    }
-
-    public void clearSelected() {
-        checked.clear();
-    }
-
-    public void clear() {
-        data.clear();
-    }
-
-    public void sort() {
-        this.sort(new Comparator<EncryptedFile>() {
-            @Override
-            public int compare(EncryptedFile encryptedFile, EncryptedFile encryptedFile2) {
-                return encryptedFile.getDecryptedFileName().compareTo(encryptedFile2.getDecryptedFileName());
-            }
-        });
-        notifyDataSetChanged();
-    }
-
-    static class ViewHolder {
         public TextView name;
         public TextView type;
         public TextView size;
         public TextView date;
         public ImageView thumbnail;
         public FrameLayout frame;
-        public Boolean selected;
         public ViewAnimator animator;
+        public ProgressBar progressBar;
         public int page;
-    }
 
-    static class ViewNIndex {
-        public Integer index;
-        public View view;
-
-        public ViewNIndex(Integer index, View view) {
-            this.index = index;
-            this.view = view;
+        public ViewHolder(View itemView) {
+            super(itemView);
+            name = (TextView) itemView.findViewById(R.id.name);
+            type = (TextView) itemView.findViewById(R.id.type);
+            size = (TextView) itemView.findViewById(R.id.size);
+            date = (TextView) itemView.findViewById(R.id.date);
+            thumbnail = (ImageView) itemView.findViewById(R.id.thumbNail);
+            frame = (FrameLayout) itemView.findViewById(R.id.frame);
+            frame.setTag(this);
+            animator = (ViewAnimator) itemView.findViewById(R.id.viewAnimator);
+            progressBar = (ProgressBar) itemView.findViewById(R.id.progressBar);
+            frame.setOnClickListener(this);
+            frame.setOnLongClickListener(this);
         }
 
+        @Override
+        public void onClick(View view) {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(view, getPosition());
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View view) {
+            if (onLongClickListener != null){
+                onLongClickListener.onItemLongClick(view, getPosition());
+                return true;
+            }
+            return false;
+        }
     }
 
+    public interface OnItemClickListener {
+        public void onItemClick(View view , int position);
+    }
+    public interface OnItemLongClickListener {
+        public boolean onItemLongClick(View view , int position);
+    }
 
 }

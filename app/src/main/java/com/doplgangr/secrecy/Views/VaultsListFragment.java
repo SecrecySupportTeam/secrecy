@@ -150,6 +150,12 @@ public class VaultsListFragment extends Fragment {
         showTutorial();
     }
 
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
     public void onEventMainThread(FilesActivity.shouldRefresh ignored) {
         oncreate();
     }
