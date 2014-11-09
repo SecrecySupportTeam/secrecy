@@ -44,6 +44,7 @@ public class EncryptedFileFactory {
 
     private final static EncryptedFileFactory INSTANCE = new EncryptedFileFactory();
     private final static String THUMBNAIL_PREFIX = "/.thumb_";
+    private static final String FILE_HEADER_PREFIX = "/.header_";
 
     public static EncryptedFileFactory getInstance() {
         return EncryptedFileFactory.INSTANCE;
@@ -54,6 +55,12 @@ public class EncryptedFileFactory {
 
         File thumbnail = new File(encryptedFile.getParent() +
                 THUMBNAIL_PREFIX + encryptedFile.getName());
+        File fileHeader = new File(encryptedFile.getParent() +
+                FILE_HEADER_PREFIX + encryptedFile.getName());
+        if (!fileHeader.exists()){
+            throw new FileNotFoundException("File header not found!");
+        }
+
         if (thumbnail.exists()) {
             EncryptedThumbnail encryptedThumbnail = new EncryptedThumbnail(
                     thumbnail, crypter);
