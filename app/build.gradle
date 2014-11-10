@@ -20,8 +20,8 @@ android {
         applicationId "com.doplgangr.secrecy"
         minSdkVersion 10
         targetSdkVersion 21
-        versionCode 41
-        versionName "alpha-4.1"
+        versionCode 50
+        versionName "0.5.0"
     }
     buildTypes {
         release {
