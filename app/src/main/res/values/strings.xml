@@ -61,7 +61,7 @@
     <string name="Error__passphrase_empty_message">Passphrase must not be empty!</string>
     <string name="Error__old_vault_format_message">Vault needs to be updated to the new encryption format!</string>
     <string name="Error__old_vault_format">Vault update required</string>
-    <string name="Upgrade__backup_beforehand_message">Would you like to create a backup of your vault? Click cancel do continue the update without a backup!</string>
+    <string name="Upgrade__backup_beforehand_message">Would you like to create a backup of your vault? Click cancel to continue the update without a backup!</string>
     <string name="Upgrade__backup_beforehand">Backup beforehand?</string>
     <string name="Error__updating_vault">Update error</string>
     <string name="Error__updating_vault_message">Maybe you entered the wrong password?</string>
