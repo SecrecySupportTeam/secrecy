@@ -2,7 +2,6 @@ package com.doplgangr.secrecy.Jobs;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
 import android.widget.ProgressBar;
 
 import com.doplgangr.secrecy.Config;
