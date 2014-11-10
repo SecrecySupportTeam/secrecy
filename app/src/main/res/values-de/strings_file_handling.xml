@@ -32,7 +32,7 @@
     <string name="Error__decrypting_file">Fehler beim Entschlüsseln der Datei.</string>
     <string name="Error__decrypting_file_message">Bitte versuchen Sie es später erneut.</string>
     <string name="Error__out_of_memory">Nicht genügend Speicher!</string>
-    <string name="Error__out_of_memory_message">Das Gerät verfügt scheinbar nicht über die Leistung, so viele Informationen zu verarbeiten. Bitte versuchen Sie es erneut.</string>
+    <string name="Error__out_of_memory_message">Das Gerät verfügt scheinbar nicht über die Leistung, so viele Informationen zu verarbeiten. Bitte wählen Sie eine kleinere maximale Bildgröße in den Einstellungen.</string>
     <string name="Error__root_IOException">Kein Schreibzugriff auf Speicherort des Tresors!</string>
     <string name="Error__root_IOException_message">Auf den gewählten Speicherort des Tresors kann nicht zugegriffen werden. Bitte versuchen Sie es erneut oder wählen SIe einen anderen Speicherort.</string>
     <string name="File__decrypting">Wird entschlüsselt&#8230;</string>
