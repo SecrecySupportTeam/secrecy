@@ -42,7 +42,7 @@ public class ImageLoadJob extends Job {
 
         Util.log("Image input size:" + options.outHeight, options.outWidth,
                 "(", ((double) pixel / 1000 / 1000), ") megapixel");
-        while ((pixel / inSampleSize) > Config.MAX_PIXEL) {
+        while ((pixel / inSampleSize) > Config.selectedImageSize) {
             inSampleSize *= 2;
         }
         Util.log("Image scaled to:", ((double) pixel / 1000 / 1000 / inSampleSize), "megapixel");

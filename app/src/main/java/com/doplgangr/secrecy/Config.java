@@ -25,7 +25,10 @@ public class Config {
     public static final int PBKDF2_CREATION_TARGET_MS = 1000;
     public static final int PBKDF2_ITERATIONS_MIN = 4096;
     public static final int PBKDF2_ITERATIONS_BENCHMARK = 20000;
-    public static final int MAX_PIXEL = 8 * 1000 * 1000; // Resulting image size: 4 > X > 8
+    public static final int IMAGE_SIZE_SMALL = 4 * 1000 * 1000; // Resulting image size: 2 > X > 4
+    public static final int IMAGE_SIZE_MEDIUM = 8 * 1000 * 1000; // Resulting image size: 4 > X > 8
+    public static final int IMAGE_SIZE_LARGE = 16 * 1000 * 1000; // Resulting image size: 8 > X > 16
+    public static int selectedImageSize = 0;
     public static final String file_extra = "FILE";
     public static final String vault_extra = "VAULT";
     public static final String password_extra = "PASS";

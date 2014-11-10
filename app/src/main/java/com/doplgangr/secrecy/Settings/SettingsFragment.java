@@ -29,6 +29,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
@@ -51,6 +52,7 @@ import com.doplgangr.secrecy.Premium.PremiumStateHelper;
 import com.doplgangr.secrecy.Premium.StealthMode;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.Views.MainActivity;
 import com.doplgangr.secrecy.Views.VaultsListFragment;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 import com.ipaulpro.afilechooser.utils.FileUtils;
@@ -149,7 +151,20 @@ public class SettingsFragment extends PreferenceFragment
                 return true;
             }
         });
-
+        final ListPreference image_size = (ListPreference) findPreference("image_size");
+        image_size.setValueIndex(Prefs.maxImageSize().get());
+        image_size.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                int value = Integer.parseInt(o.toString());
+                Prefs.edit()
+                        .maxImageSize()
+                        .put(value)
+                        .apply();
+                MainActivity.loadSelectedImageSize(value);
+                return true;
+            }
+        });
         Preference vault_root = findPreference("vault_root");
         vault_root.setSummary(Storage.getRoot().getAbsolutePath());
         vault_root.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
