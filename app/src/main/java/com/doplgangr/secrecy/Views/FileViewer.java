@@ -32,11 +32,11 @@ import android.widget.Toast;
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
+import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.FileSystem.Files.SecrecyFile;
 import com.doplgangr.secrecy.FileSystem.OurFileProvider;
 import com.doplgangr.secrecy.FileSystem.Storage;
-import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.Jobs.AddFileJob;
 import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
@@ -126,10 +126,10 @@ public abstract class FileViewer extends Fragment {
         Intent chooserIntent = generateCustomChooserIntent(newIntent, uris);
         try {
             startActivity(Intent.createChooser(chooserIntent, CustomApp.context.getString(R.string.Dialog__send_file)));
-            onPauseDecision.startActivity();
+            FilesActivity.onPauseDecision.startActivity();
         } catch (android.content.ActivityNotFoundException e) {
             Util.toast(context, CustomApp.context.getString(R.string.Error__no_activity_view), Toast.LENGTH_LONG);
-            onPauseDecision.finishActivity();
+            FilesActivity.onPauseDecision.finishActivity();
         }
     }
 
@@ -174,18 +174,18 @@ public abstract class FileViewer extends Fragment {
     void afterDecrypt(Intent newIntent, Intent altIntent) {
         try {
             startActivity(newIntent);
-            onPauseDecision.startActivity();
+            FilesActivity.onPauseDecision.startActivity();
         } catch (android.content.ActivityNotFoundException e) {
             try {
                 startActivity(altIntent);
-                onPauseDecision.startActivity();
+                FilesActivity.onPauseDecision.startActivity();
             } catch (android.content.ActivityNotFoundException e2) {
                 Util.toast(context, getString(R.string.Error__no_activity_view), Toast.LENGTH_LONG);
-                onPauseDecision.finishActivity();
+                FilesActivity.onPauseDecision.finishActivity();
             }
         } catch (IllegalStateException e) {
             //duh why you leave so early
-            onPauseDecision.finishActivity();
+            FilesActivity.onPauseDecision.finishActivity();
         }
     }
 
@@ -211,23 +211,7 @@ public abstract class FileViewer extends Fragment {
             file.getProgressBar().setMax(max);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (onPauseDecision.shouldFinish())
-            finish();
-    }
 
-    void finish() {
-        BackgroundExecutor.cancelAll(Config.cancellable_task, false);
-        getActivity().finish();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        onPauseDecision.finishActivity();
-    }
 
     @Override
     public void onDestroy() {
@@ -283,21 +267,7 @@ public abstract class FileViewer extends Fragment {
         return new Intent(Intent.ACTION_SEND);  //Unable to do anything. Duh.
     }
 
-    static class onPauseDecision {
-        static Boolean pause = true;
-
-        // An activity is started, should not pause and kill this fragment.
-        static void startActivity() {
-            pause = false;
-        }
-
-        // Fragment returns to top, allow it to be paused and killed.
-        static void finishActivity() {
-            pause = true;
-        }
-
-        static Boolean shouldFinish() {
-            return pause;
-        }
+    void finish() {
+        getActivity().finish();
     }
 }
