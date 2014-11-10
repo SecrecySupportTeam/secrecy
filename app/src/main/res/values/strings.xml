@@ -68,9 +68,9 @@
     <string name="Vault__vault_updated">Vault updated</string>
     <string name="Vault__vault_updated_message">Your vault has been updated to the new format.</string>
     <string name="action_select_all">Select all</string>
-    <string name="Vault__initializing">Initializing Vault...</string>
-    <string name="Vault_updating">Vault is updating...</string>
-    <string name="Vault__changing_passphrase">Changing passphrase...</string>
+    <string name="Vault__initializing">Initializing Vault…</string>
+    <string name="Vault_updating">Vault is updating…</string>
+    <string name="Vault__changing_passphrase">Changing passphrase…</string>
     <string name="Restore__overwrite_alert">Restoring a vault would delete the existing version. Continue?</string>
     <string name="Settings_max_image_size">Maximal image size</string>
     <string name="Settings__performance">Performance</string>
