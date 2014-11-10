@@ -21,12 +21,12 @@ package com.doplgangr.secrecy.FileSystem.Encryption;
 
 import java.security.InvalidKeyException;
 
-class AES_CTR_Crypter extends AES_Crypter  {
+class AES_CTR_Crypter extends AES_Crypter {
 
     private static final String ENCRYPTION_MODE = "AES/CTR/NoPadding";
 
-    public AES_CTR_Crypter(String vaultPath, String passphrase)
+    public AES_CTR_Crypter(String vaultPath, String password)
             throws InvalidKeyException {
-        super(vaultPath, passphrase, ENCRYPTION_MODE);
+        super(vaultPath, password, ENCRYPTION_MODE);
     }
 }

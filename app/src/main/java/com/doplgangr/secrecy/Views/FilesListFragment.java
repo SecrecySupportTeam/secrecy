@@ -486,24 +486,24 @@ public class FilesListFragment extends FileViewer {
         recyclerView.setAdapter(mAdapter);
     }
 
-    @OptionsItem(R.id.action_change_passphrase)
-    void changePassphrase() {
-        final View dialogView = View.inflate(context, R.layout.change_passphrase, null);
+    @OptionsItem(R.id.action_change_password)
+    void changePassword() {
+        final View dialogView = View.inflate(context, R.layout.change_password, null);
         new AlertDialog.Builder(context)
-                .setTitle(getString(R.string.Vault__change_passphrase))
+                .setTitle(getString(R.string.Vault__change_password))
                 .setView(dialogView)
                 .setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        String oldPassphrase = ((EditText) dialogView.findViewById(R.id.oldPassphrase)).getText().toString();
-                        String newPassphrase = ((EditText) dialogView.findViewById(R.id.newPassphrase)).getText().toString();
-                        String confirmNewPassphrase = ((EditText) dialogView.findViewById(R.id.confirmPassphrase)).getText().toString();
+                        String oldPassword = ((EditText) dialogView.findViewById(R.id.oldPassword)).getText().toString();
+                        String newPassword = ((EditText) dialogView.findViewById(R.id.newPassword)).getText().toString();
+                        String confirmNewPassword = ((EditText) dialogView.findViewById(R.id.confirmPassword)).getText().toString();
 
                         ProgressDialog progressDialog = new ProgressDialog(context);
-                        progressDialog.setMessage(CustomApp.context.getString(R.string.Vault__changing_passphrase));
+                        progressDialog.setMessage(CustomApp.context.getString(R.string.Vault__changing_password));
                         progressDialog.setIndeterminate(true);
                         progressDialog.setCancelable(false);
                         progressDialog.show();
-                        changePassphraseInBackground(oldPassphrase, newPassphrase, confirmNewPassphrase, progressDialog);
+                        changePasswordInBackground(oldPassword, newPassword, confirmNewPassword, progressDialog);
                     }
                 })
                 .setNegativeButton(R.string.CANCEL, Util.emptyClickListener)
@@ -511,39 +511,39 @@ public class FilesListFragment extends FileViewer {
     }
 
     @Background
-    void changePassphraseInBackground(String oldPassphrase, String newPassphrase, String confirmNewPassphrase, ProgressDialog progressDialog) {
-        if (newPassphrase.length() == 0) {
+    void changePasswordInBackground(String oldPassword, String newPassword, String confirmNewPassword, ProgressDialog progressDialog) {
+        if (newPassword.length() == 0) {
             progressDialog.dismiss();
             Util.alert(context,
-                    CustomApp.context.getString(R.string.Error__change_passphrase_failed),
-                    CustomApp.context.getString(R.string.Error__passphrase_empty_message),
+                    CustomApp.context.getString(R.string.Error__change_password_failed),
+                    CustomApp.context.getString(R.string.Error__password_empty_message),
                     Util.emptyClickListener,
                     null
             );
             return;
         }
-        if (!newPassphrase.equals(confirmNewPassphrase)) {
+        if (!newPassword.equals(confirmNewPassword)) {
             progressDialog.dismiss();
             Util.alert(context,
-                    CustomApp.context.getString(R.string.Error__change_passphrase_failed),
-                    CustomApp.context.getString(R.string.Error__passphrase_no_match_message),
+                    CustomApp.context.getString(R.string.Error__change_password_failed),
+                    CustomApp.context.getString(R.string.Error__password_no_match_message),
                     Util.emptyClickListener,
                     null
             );
             return;
         }
-        if (!secret.changePassphrase(oldPassphrase, newPassphrase)) {
+        if (!secret.changePassword(oldPassword, newPassword)) {
             progressDialog.dismiss();
             Util.alert(context,
-                    CustomApp.context.getString(R.string.Error__change_passphrase_failed),
-                    CustomApp.context.getString(R.string.Error__change_passphrase_failed_message),
+                    CustomApp.context.getString(R.string.Error__change_password_failed),
+                    CustomApp.context.getString(R.string.Error__change_password_failed_message),
                     Util.emptyClickListener,
                     null
             );
         } else {
             Util.alert(context,
-                    CustomApp.context.getString(R.string.Vault__change_passphrase_ok),
-                    CustomApp.context.getString(R.string.Vault__change_passphrase_ok_message),
+                    CustomApp.context.getString(R.string.Vault__change_password_ok),
+                    CustomApp.context.getString(R.string.Vault__change_password_ok_message),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {

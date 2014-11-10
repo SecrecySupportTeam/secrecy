@@ -21,12 +21,12 @@ package com.doplgangr.secrecy.FileSystem.Encryption;
 
 import java.security.InvalidKeyException;
 
-class AES_CBC_Crypter extends AES_Crypter  {
+class AES_CBC_Crypter extends AES_Crypter {
 
     private static final String ENCRYPTION_MODE = "AES/CBC/PKCS7Padding";
 
-    public AES_CBC_Crypter(String vaultPath, String passphrase)
+    public AES_CBC_Crypter(String vaultPath, String password)
             throws InvalidKeyException {
-        super(vaultPath, passphrase, ENCRYPTION_MODE);
+        super(vaultPath, password, ENCRYPTION_MODE);
     }
 }
