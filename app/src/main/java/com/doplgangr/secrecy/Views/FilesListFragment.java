@@ -223,6 +223,7 @@ public class FilesListFragment extends FileViewer {
     public void onCreate() {
         if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
+        setRetainInstance(true);
 
         context = (ActionBarActivity) getActivity();
         if (context == null)
@@ -402,7 +403,7 @@ public class FilesListFragment extends FileViewer {
                 if (isGallery) {
                     Intent intent = new Intent(context, FilePhotoFragment_.class);
                     intent.putExtra(Config.gallery_item_extra, position);
-                    onPauseDecision.startActivity();
+                    FilesActivity.onPauseDecision.startActivity();
                     startActivity(intent);
                 } else {
                     EncryptedFile encryptedFile = mAdapter.getItem(position);
@@ -623,7 +624,7 @@ public class FilesListFragment extends FileViewer {
                 target, getString(R.string.Dialog_header__pick_file));
         try {
             startActivityForResult(intent, REQUEST_CODE);
-            onPauseDecision.startActivity();
+            FilesActivity.onPauseDecision.startActivity();
         } catch (ActivityNotFoundException e) {
             intent = new Intent(context, FileChooserActivity.class);
             intent.putStringArrayListExtra(
@@ -631,12 +632,12 @@ public class FilesListFragment extends FileViewer {
                     INCLUDE_EXTENSIONS_LIST);
             intent.putExtra(FileChooserActivity.EXTRA_SELECT_FOLDER, false);
             startActivityForResult(intent, REQUEST_CODE);
-            onPauseDecision.startActivity();
+            FilesActivity.onPauseDecision.startActivity();
         }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        onPauseDecision.finishActivity();
+        FilesActivity.onPauseDecision.finishActivity();
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE && data.getData() != null) {
             Util.log("intent received=", data.getData().toString(), data.getData().getLastPathSegment());
 
