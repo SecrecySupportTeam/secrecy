@@ -78,4 +78,11 @@
     <string name="Backup__finish">Backup wurde abgeschlossen. Ihr Backup finden Sie unter %s.</string>
     <string name="Backup__title">Tresor Backup</string>
     <string name="Backup__in_progress">Backup wird erstellt</string>
+    <string name="Settings_max_image_size">Maximale Bildgröße</string>
+    <string name="Settings__performance">Leistung</string>
+    <string-array name="array_image_size_entries">
+        <item>Klein</item>
+        <item>Mittel</item>
+        <item>Groß</item>
+    </string-array>
 </resources>

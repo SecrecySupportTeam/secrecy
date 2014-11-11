@@ -72,4 +72,11 @@
     <string name="Vault_updating">Vault is updating...</string>
     <string name="Vault__changing_passphrase">Changing passphrase...</string>
     <string name="Restore__overwrite_alert">Restoring a vault would delete the existing version. Continue?</string>
+    <string name="Settings_max_image_size">Maximal image size</string>
+    <string name="Settings__performance">Performance</string>
+    <string-array name="array_image_size_entries">
+        <item>Small</item>
+        <item>Medium</item>
+        <item>Large</item>
+    </string-array>
 </resources>

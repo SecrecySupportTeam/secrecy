@@ -34,7 +34,7 @@
     <string name="Error__decrypting_file">Error decrypting file.</string>
     <string name="Error__decrypting_file_message">Please try again later.</string>
     <string name="Error__out_of_memory">Out of memory!</string>
-    <string name="Error__out_of_memory_message">Seems like your device does not have enough power to house that much info. Please try again.</string>
+    <string name="Error__out_of_memory_message">Seems like your device does not have enough power to house that much info. Please select a smaller maximal image size in the settings.</string>
 
     <string name="Error__root_IOException">Vault location not writable!</string>
     <string name="Error__root_IOException_message">We cannot access the vault location you have set. Please try again later, or set another vault location.</string>
