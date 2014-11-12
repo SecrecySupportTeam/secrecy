@@ -134,8 +134,11 @@ public class VaultsListFragment extends Fragment {
         }
         adapter = new VaultsAdapter(context, null);
         ArrayList<File> files = Storage.getDirectories(root);
-        for (int i = 0; i < files.size(); i++) {
-            adapter.add(files.get(i).getName());
+        for (File file : files) {
+            adapter.add(file.getName());
+        }
+        adapter.sort();
+        for (int i = 0; i < files.size(); i++){
             final View mView = adapter.getView(i, mLinearView); //inject vaults into list
             mLinearView.addView(mView, i);
             setClickListener(mView, i);
