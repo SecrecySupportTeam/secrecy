@@ -16,6 +16,8 @@
   <string name="Files__add_successful">File aggiunto correttamente
 </string>
     <string name="Files__add_successful_message">Vuoi eliminare il file originale?</string>
+    <string name="Files__adding">Sto aggiungendo i files</string>
+    <string name="Files__adding_finish">Finendo di aggiungere i file a Secrecy.</string>
     <string name="Error__already_decrypting_delete">Non è possibile terminare la decriptazione dei file</string>
     <string name="Files__delete">Elimina file</string>
     <string name="Files__delete_message">Sei sicuro di voler eliminare i file seguenti? %s</string>
@@ -41,6 +43,14 @@
     <string name="action__decrypt">Decripta</string>
     <string name="action__delete">Elimina</string>
     <string name="action__add_file">Aggiungi file</string>
+    <string name="action__change_passphrase">Cambia la password della cassaforte</string>
+    <string name="action__backup">Fai un backup di questa cassaforte</string>
     <string name="File__open">Apertura dei file crittografati</string>
     <string name="File__open_message">Per favore inserisci la password per aprire questo file</string>
+    <string name="Backup__title">Facendo il back up</string>
+    <string name="Backup__in_progress">Backup in corso</string>
+    <string name="Backup__finish">Backup terminato. Il tuo file di backup è il %s.</string>
+    <string name="Restore__title">Ripristinando</string>
+    <string name="Restore__in_progress">Ripristino in corso</string>
+    <string name="Restore__finish">Ripristino terminato. Il %s è stato ripristinato.</string>
 </resources>

@@ -15,6 +15,8 @@
     <string name="Error__no_file_selected">Es wurde keine Datei ausgewählt.</string>
     <string name="Files__add_successful">Datei erfolgreich hinzugefügt</string>
     <string name="Files__add_successful_message">Soll die Originaldatei gelöscht werden?</string>
+    <string name="Files__adding">Dateien werden hinzugefügt</string>
+    <string name="Files__adding_finish">Die Dateien wurden erfolgreich zu Secrecy hinzugefügt.</string>
     <string name="Error__already_decrypting_delete">Die Datei kann während dem Entschlüsseln nicht gelöscht werden</string>
     <string name="Files__delete">Dateien löschen</string>
     <string name="Files__delete_message">Sollen die folgenden Dateien wirklich gelöscht werden? %s</string>
@@ -32,14 +34,21 @@
     <string name="Error__decrypting_file">Fehler beim Entschlüsseln der Datei.</string>
     <string name="Error__decrypting_file_message">Bitte versuchen Sie es später erneut.</string>
     <string name="Error__out_of_memory">Nicht genügend Speicher!</string>
-    <string name="Error__out_of_memory_message">Das Gerät verfügt scheinbar nicht über die Leistung, so viele Informationen zu verarbeiten. Bitte wählen Sie eine kleinere maximale Bildgröße in den Einstellungen.</string>
+    <string name="Error__out_of_memory_message">Das Gerät verfügt scheinbar nicht über die Leistung, so viele Informationen zu verarbeiten. Bitte versuchen Sie es erneut.</string>
     <string name="Error__root_IOException">Kein Schreibzugriff auf Speicherort des Tresors!</string>
     <string name="Error__root_IOException_message">Auf den gewählten Speicherort des Tresors kann nicht zugegriffen werden. Bitte versuchen Sie es erneut oder wählen SIe einen anderen Speicherort.</string>
     <string name="File__decrypting">Wird entschlüsselt&#8230;</string>
     <string name="action__decrypt">Entschlüsseln</string>
     <string name="action__delete">Löschen</string>
     <string name="action__add_file">Datei hinzufügen</string>
-    <string name="action__change_password">Password ändern</string>
+    <string name="action__change_passphrase">Tresorpasswort ändern</string>
+    <string name="action__backup">Tresor Sicherung erstellen</string>
     <string name="File__open">Verschlüsselte Datei wird geöffnet</string>
     <string name="File__open_message">Bitte Passwort eingeben, um diese Datei zu öffnen</string>
+    <string name="Backup__title">Sichern</string>
+    <string name="Backup__in_progress">Sicherungskopie wird erstellt</string>
+    <string name="Backup__finish">Sichern wurde abgeschlossen. Ihre Sicherungskopie finden Sie unter %s.</string>
+    <string name="Restore__title">Wiederherstellen</string>
+    <string name="Restore__in_progress">Sicherungskopie wird wiederhergestellt</string>
+    <string name="Restore__finish">Wiederherstellung abgeschlossen. %s wurde wiederhergestellt.</string>
 </resources>

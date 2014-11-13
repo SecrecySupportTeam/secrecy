@@ -15,6 +15,8 @@
     <string name="Error__no_file_selected">Geen bestand geselecteerd.</string>
     <string name="Files__add_successful">Bestand succesvol  toegevoegd</string>
     <string name="Files__add_successful_message">Wilt u het oorspronkelijke bestand verwijderd?</string>
+    <string name="Files__adding">Bestanden toevoegen</string>
+    <string name="Files__adding_finish">Toevoegen van bestanden aan Secrecy gereed.</string>
     <string name="Error__already_decrypting_delete">Kan geen gedecodeerde bestanden verwijderen</string>
     <string name="Files__delete">Verwijder Bestanden</string>
     <string name="Files__delete_message">Weet u zeker dat u de volgende bestand(en) wilt verwijderen? %s</string>
@@ -32,13 +34,21 @@
     <string name="Error__decrypting_file">Decoderen bestand fout.</string>
     <string name="Error__decrypting_file_message">Probeer het later nog eens.</string>
     <string name="Error__out_of_memory">Onvoldoende geheugen!</string>
-    <string name="Error__out_of_memory_message">Het lijkt er op dat uw apparaat niet krachtig genoeg is om zoveel info te behouden. Probeer het opnieuw.</string>
+    <string name="Error__out_of_memory_message">Het lijkt er op dat uw apparaat niet krachtig genoeg is om zoveel info te behouden. Selecteer een kleinere maximale afbeeldingsgrootte in instellingen.</string>
     <string name="Error__root_IOException">Kluis locatie niet beschrijfbaar!</string>
     <string name="Error__root_IOException_message">We krijgen geen toegang tot de kluis locatie die is ingesteld, Probeer het later opnieuw of stel een andere kluis locatie in.</string>
     <string name="File__decrypting">Decoderen&#8230;</string>
     <string name="action__decrypt">Decodeer</string>
     <string name="action__delete">Verwijderen</string>
     <string name="action__add_file">Bestand toevoegen</string>
+    <string name="action__change_passphrase">Verander kluis wachtwoord zin</string>
+    <string name="action__backup">Backup deze kluis</string>
     <string name="File__open">gecodeerde bestand openen</string>
     <string name="File__open_message">Geef wachtwoord om dit bestand te openen</string>
+    <string name="Backup__title">Backing Up</string>
+    <string name="Backup__in_progress">Bezig met backup</string>
+    <string name="Backup__finish">Backup voltooid. Ub backup bestand is %s.</string>
+    <string name="Restore__title">Herstellen</string>
+    <string name="Restore__in_progress">Bezig met herstellen</string>
+    <string name="Restore__finish">Herstellen voltooid. %s is hersteld.</string>
 </resources>
