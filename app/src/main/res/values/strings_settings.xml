@@ -32,7 +32,7 @@
     <string name="Settings__stealth_explanation">In stealth mode, the app icon is hidden from the app launcher. The only way to enter the app is through dialing your secret code from the dialer. Please choose a secret code easy to remember:</string>
     <string name="Settings__only_permium"> Only available to donate users</string>
     <string name="Settings__try_once_before_hide"> Before we go on and hide the app icon, we need to make sure you can launch it in stealth mode. Please go to the dialer and dial the secret code:</string>
-    <string name="Settings__moving_vault">Moving. Please wait....</string>
+    <string name="Settings__moving_vault">Moving. Please wait…</string>
     <string name="Error__moving_vault">Error moving vaults</string>
     <string name="Error__moving_vault_message">We encountered an error. Please try again later.</string>
     <string name="Settings__select_storage_title">Select Storage:</string>

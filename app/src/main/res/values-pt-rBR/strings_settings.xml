@@ -2,19 +2,6 @@
 <resources>
     <string name="Settings__changed_alert">As configurações terão efeito assim que reiniciar o aplicativo</string>
     <string name="Settings_libraries">Bibliotecas usadas para o Secrecy</string>
-  <string name="Settings__libraries_message">
-        AndroidAnnotations (Apache 2.0),
-        \n
-        android-support-v4-preferencefragment (Apache 2.0),
-        \n
-        aFileChooser (Apache 2.0),
-        \n
-        pay-me (Apache 2.0),
-        \n
-        photoView (Apache 2.0),
-        \n
-        NineoldAndroids (Apache 2.0)
-    </string>
     <string name="Settings__credits">Créditos</string>
     <string name="Settings__translators">Tradutores</string>
     <string name="Settings__cannot_move_vault">Não é possível mover os cofres</string>
