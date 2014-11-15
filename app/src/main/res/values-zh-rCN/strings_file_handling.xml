@@ -15,6 +15,8 @@
     <string name="Error__no_file_selected">没有选择文件</string>
     <string name="Files__add_successful">文件成功添加</string>
     <string name="Files__add_successful_message">是否删除原始文件？</string>
+    <string name="Files__adding">正在添加文件</string>
+    <string name="Files__adding_finish">添加文件至Secrecy完成</string>
     <string name="Error__already_decrypting_delete">无法删除解密中的文件</string>
     <string name="Files__delete">删除文件</string>
     <string name="Files__delete_message">您是否确定删除以下文件？ %s</string>
@@ -39,6 +41,14 @@
     <string name="action__decrypt">解密</string>
     <string name="action__delete">删除</string>
     <string name="action__add_file">添加文件</string>
+    <string name="action__change_passphrase">更改私密匣密码</string>
+    <string name="action__backup">备份私密匣</string>
     <string name="File__open">打开加密文件</string>
     <string name="File__open_message">请输入密码以打开此文件</string>
+    <string name="Backup__title">正在备份</string>
+    <string name="Backup__in_progress">正在进行备份</string>
+    <string name="Backup__finish">备份完成。您的备份文件是 %s。</string>
+    <string name="Restore__title">正在还原</string>
+    <string name="Restore__in_progress">正在还原</string>
+    <string name="Restore__finish">还原完成。 %s 已还原。</string>
 </resources>
