@@ -43,11 +43,11 @@ import javax.crypto.spec.SecretKeySpec;
 class AES_ECB_Crypter implements Crypter {
 
     private final String mode = "AES/ECB/PKCS5Padding";
-    private final String vaultPath;
     private SecretKeySpec aesKey;
+    private final String vaultPath;
     private byte[] key;
 
-    public AES_ECB_Crypter(String vaultPath, String password) throws InvalidKeyException {
+    public AES_ECB_Crypter(String vaultPath, String password) throws InvalidKeyException{
         this.vaultPath = vaultPath;
         try {
             byte[] bytes = password.getBytes("UTF-8");
@@ -127,7 +127,7 @@ class AES_ECB_Crypter implements Crypter {
     }
 
     @Override
-    public boolean changePassword(String oldPassword, String newPassword) {
+    public boolean changePassphrase(String oldPassphrase, String newPassphrase) {
         return false;
     }
 

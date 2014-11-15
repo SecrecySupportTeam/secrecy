@@ -22,10 +22,10 @@
         android:title="@string/action__switch_interface"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_change_password"
+        android:id="@+id/action_change_passphrase"
         android:icon="@drawable/ic_action_edit"
         android:orderInCategory="3"
-        android:title="@string/action__change_password"
+        android:title="@string/action__change_passphrase"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_backup"

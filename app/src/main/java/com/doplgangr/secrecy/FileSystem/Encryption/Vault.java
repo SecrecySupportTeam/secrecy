@@ -45,68 +45,61 @@ import java.util.regex.Pattern;
 public class Vault implements Serializable {
     private final String name;
     private final String path;
-    private final String password;
-    public Boolean wrongPass = false;
+    private final String passphrase;
     private Crypter crypter;
 
-    Vault(String name, String password) {
+    public Boolean wrongPass = false;
+
+    Vault(String name, String passphrase) {
         this.name = name;
-        this.password = password;
+        this.passphrase = passphrase;
         path = Storage.getRoot().getAbsolutePath() + "/" + name;
 
         // Dont load Crypter if vault is ECB vault
-        if (isEcbVault()) {
+        if (isEcbVault()){
             return;
         }
 
         try {
-            crypter = new AES_CTR_Crypter(path, password);
+            crypter = new AES_CTR_Crypter(path, passphrase);
         } catch (InvalidKeyException e) {
-            Util.log("Password is wrong");
+            Util.log("Passphrase is wrong");
             wrongPass = true;
         }
     }
 
-    Vault(String name, String password, Boolean istemp) {
-        this.password = password;
+    Vault(String name, String passphrase, Boolean istemp) {
+        this.passphrase = passphrase;
         this.name = name;
         path = Storage.getRoot().getAbsolutePath() + "/" + name;
 
         // Dont load Crypter if vault is ECB vault
-        if (isEcbVault()) {
+        if (isEcbVault()){
             return;
         }
 
         try {
-            crypter = new AES_CTR_Crypter(path, password);
+            crypter = new AES_CTR_Crypter(path, passphrase);
         } catch (InvalidKeyException e) {
-            Util.log("Password is wrong");
+            Util.log("Passphrase is wrong");
             wrongPass = true;
         }
         //do not initialize now coz this is temp
     }
 
-    private static boolean fileFilter(java.io.File file) {
-        String regex = "^((?!_thumb|.thumb|.nomedia|.vault|.header).)*$";   //Filter out .nomedia, .thumb and .header
-        String name = file.getName();
-        final Pattern p = Pattern.compile(regex);
-        p.matcher(name).matches();
-        return p.matcher(name).matches();
-    }
-
-    public boolean isEcbVault() {
+    public boolean isEcbVault(){
         File nomedia = new File(path + "/.nomedia");
         File newVaultHeader = new File(path + "/.vault");
 
         return (nomedia.exists() && !newVaultHeader.exists());
     }
 
-    public boolean updateFromECBVault(String password) throws FileNotFoundException, InvalidKeyException, SecrecyFileException {
-        AES_ECB_Crypter ecb_crypter = new AES_ECB_Crypter(path, password);
-        Crypter newCrypter = new AES_CTR_Crypter(path, password);
+    public boolean updateFromECBVault(String passphrase) throws FileNotFoundException, InvalidKeyException, SecrecyFileException {
+        AES_ECB_Crypter ecb_crypter = new AES_ECB_Crypter(path, passphrase);
+        Crypter newCrypter = new AES_CTR_Crypter(path, passphrase);
 
         List<File> files = getFileList();
-        for (File file : files) {
+        for (File file : files){
             EncryptedFile oldEncryptedFile =
                     EncryptedFileFactory.getInstance().loadEncryptedFile(file, ecb_crypter);
             CryptStateListener listener = new CryptStateListener() {
@@ -138,13 +131,21 @@ public class Vault implements Serializable {
         return true;
     }
 
-    public void ecbUpdateFailed() {
+    public void ecbUpdateFailed(){
         File vaultHeader = new File(path + "/.vault");
         vaultHeader.delete();
     }
 
     public String getPath() {
         return path;
+    }
+
+    private static boolean fileFilter(java.io.File file) {
+        String regex = "^((?!_thumb|.thumb|.nomedia|.vault|.header).)*$";   //Filter out .nomedia, .thumb and .header
+        String name = file.getName();
+        final Pattern p = Pattern.compile(regex);
+        p.matcher(name).matches();
+        return p.matcher(name).matches();
     }
 
     public String getName() {
@@ -167,7 +168,7 @@ public class Vault implements Serializable {
         return getFileList().size();
     }
 
-    public EncryptedFile addFile(final Context context, final Uri uri) throws SecrecyFileException {
+    public EncryptedFile addFile(final Context context, final Uri uri) throws SecrecyFileException{
         Util.log("Vault: adding file ", uri);
         return EncryptedFileFactory.getInstance().createNewEncryptedFile(
                 (new File(FileUtils.getPath(context, uri))), crypter, this);
@@ -177,9 +178,9 @@ public class Vault implements Serializable {
         File requestedFile = new File(path, name);
         EncryptedFile encryptedFile = null;
         try {
-            encryptedFile = EncryptedFileFactory.getInstance().loadEncryptedFile(requestedFile,
-                    crypter);
-        } catch (FileNotFoundException e) {
+           encryptedFile = EncryptedFileFactory.getInstance().loadEncryptedFile(requestedFile,
+                   crypter);
+        } catch (FileNotFoundException e){
             Util.log("File not found: " + requestedFile.getAbsolutePath());
         }
         return encryptedFile;
@@ -195,7 +196,7 @@ public class Vault implements Serializable {
         return !wrongPass;
     }
 
-    public void deleteFile(EncryptedFile file) {
+    public void deleteFile(EncryptedFile file){
         crypter.deleteFile(file);
     }
 
@@ -223,9 +224,9 @@ public class Vault implements Serializable {
         try {
             org.apache.commons.io.FileUtils.moveDirectory(folder, newFolder);
         } catch (IOException e) {
-            return null;
+              return null;
         }
-        return VaultHolder.getInstance().createAndRetrieveVault(name, password);
+        return VaultHolder.getInstance().createAndRetrieveVault(name, passphrase);
     }
 
     public void startWatching(final Listeners.FileObserverEventListener mListener) {
@@ -246,11 +247,11 @@ public class Vault implements Serializable {
         observer.startWatching(); //START OBSERVING
     }
 
-    public boolean changePassword(String oldPassword, String newPassword) {
-        return crypter.changePassword(oldPassword, newPassword);
-    }
-
     public interface onFileFoundListener {
         void dothis(EncryptedFile encryptedFile);
+    }
+
+    public boolean changePassphrase(String oldPassphrase, String newPassphrase){
+        return crypter.changePassphrase(oldPassphrase, newPassphrase);
     }
 }

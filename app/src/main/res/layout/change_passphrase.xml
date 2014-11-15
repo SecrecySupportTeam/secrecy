@@ -29,11 +29,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="bottom"
-        android:hint="@string/Vault__old_password"
+        android:hint="@string/Vault__old_passphrase"
         android:minHeight="36dp" />
 
     <EditText
-        android:id="@+id/oldPassword"
+        android:id="@+id/oldPassphrase"
+    android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPassword" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:hint="@string/Vault__new_passphrase"
+        android:minHeight="36dp" />
+
+    <EditText
+        android:id="@+id/newPassphrase"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -43,25 +57,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="bottom"
-        android:hint="@string/Vault__new_password"
+        android:hint="@string/Vault__confirm_new_passphrase"
         android:minHeight="36dp" />
 
     <EditText
-        android:id="@+id/newPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPassword" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="bottom"
-        android:hint="@string/Vault__confirm_new_password"
-        android:minHeight="36dp" />
-
-    <EditText
-        android:id="@+id/confirmPassword"
+        android:id="@+id/confirmPassphrase"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"

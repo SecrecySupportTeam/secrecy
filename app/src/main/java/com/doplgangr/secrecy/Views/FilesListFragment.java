@@ -486,24 +486,24 @@ public class FilesListFragment extends FileViewer {
         recyclerView.setAdapter(mAdapter);
     }
 
-    @OptionsItem(R.id.action_change_password)
-    void changePassword() {
-        final View dialogView = View.inflate(context, R.layout.change_password, null);
+    @OptionsItem(R.id.action_change_passphrase)
+    void changePassphrase() {
+        final View dialogView = View.inflate(context, R.layout.change_passphrase, null);
         new AlertDialog.Builder(context)
                 .setTitle(getString(R.string.Vault__change_password))
                 .setView(dialogView)
                 .setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        String oldPassword = ((EditText) dialogView.findViewById(R.id.oldPassword)).getText().toString();
-                        String newPassword = ((EditText) dialogView.findViewById(R.id.newPassword)).getText().toString();
-                        String confirmNewPassword = ((EditText) dialogView.findViewById(R.id.confirmPassword)).getText().toString();
+                        String oldPassphrase = ((EditText) dialogView.findViewById(R.id.oldPassphrase)).getText().toString();
+                        String newPassphrase = ((EditText) dialogView.findViewById(R.id.newPassphrase)).getText().toString();
+                        String confirmNewPassphrase = ((EditText) dialogView.findViewById(R.id.confirmPassphrase)).getText().toString();
 
                         ProgressDialog progressDialog = new ProgressDialog(context);
                         progressDialog.setMessage(CustomApp.context.getString(R.string.Vault__changing_password));
                         progressDialog.setIndeterminate(true);
                         progressDialog.setCancelable(false);
                         progressDialog.show();
-                        changePasswordInBackground(oldPassword, newPassword, confirmNewPassword, progressDialog);
+                        changePassphraseInBackground(oldPassphrase, newPassphrase, confirmNewPassphrase, progressDialog);
                     }
                 })
                 .setNegativeButton(R.string.CANCEL, Util.emptyClickListener)
@@ -511,8 +511,8 @@ public class FilesListFragment extends FileViewer {
     }
 
     @Background
-    void changePasswordInBackground(String oldPassword, String newPassword, String confirmNewPassword, ProgressDialog progressDialog) {
-        if (newPassword.length() == 0) {
+    void changePassphraseInBackground(String oldPassphrase, String newPassphrase, String confirmNewPassphrase, ProgressDialog progressDialog) {
+        if (newPassphrase.length() == 0) {
             progressDialog.dismiss();
             Util.alert(context,
                     CustomApp.context.getString(R.string.Error__change_password_failed),
@@ -522,7 +522,7 @@ public class FilesListFragment extends FileViewer {
             );
             return;
         }
-        if (!newPassword.equals(confirmNewPassword)) {
+        if (!newPassphrase.equals(confirmNewPassphrase)) {
             progressDialog.dismiss();
             Util.alert(context,
                     CustomApp.context.getString(R.string.Error__change_password_failed),
@@ -532,7 +532,7 @@ public class FilesListFragment extends FileViewer {
             );
             return;
         }
-        if (!secret.changePassword(oldPassword, newPassword)) {
+        if (!secret.changePassphrase(oldPassphrase, newPassphrase)) {
             progressDialog.dismiss();
             Util.alert(context,
                     CustomApp.context.getString(R.string.Error__change_password_failed),
