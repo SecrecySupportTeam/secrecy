@@ -29,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="bottom"
-        android:hint="@string/Vault__old_passphrase"
+        android:hint="@string/Vault__old_password"
         android:minHeight="36dp" />
 
     <EditText
@@ -43,7 +43,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="bottom"
-        android:hint="@string/Vault__new_passphrase"
+        android:hint="@string/Vault__new_password"
         android:minHeight="36dp" />
 
     <EditText
@@ -57,7 +57,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="bottom"
-        android:hint="@string/Vault__confirm_new_passphrase"
+        android:hint="@string/Vault__confirm_new_password"
         android:minHeight="36dp" />
 
     <EditText
