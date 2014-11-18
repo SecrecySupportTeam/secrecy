@@ -101,7 +101,7 @@ public class Vault implements Serializable {
         List<File> files = getFileList();
         for (File file : files){
             EncryptedFile oldEncryptedFile =
-                    EncryptedFileFactory.getInstance().loadEncryptedFile(file, ecb_crypter);
+                    EncryptedFileFactory.getInstance().loadEncryptedFile(file, ecb_crypter, true);
             CryptStateListener listener = new CryptStateListener() {
                 @Override
                 public void updateProgress(int progress) {
@@ -157,7 +157,7 @@ public class Vault implements Serializable {
         for (File file : files) {
             try {
                 listener.dothis(EncryptedFileFactory.getInstance().loadEncryptedFile(file,
-                        crypter));
+                        crypter, false));
             } catch (FileNotFoundException e) {
                 //Ignore
             }
@@ -179,7 +179,7 @@ public class Vault implements Serializable {
         EncryptedFile encryptedFile = null;
         try {
            encryptedFile = EncryptedFileFactory.getInstance().loadEncryptedFile(requestedFile,
-                   crypter);
+                   crypter, false);
         } catch (FileNotFoundException e){
             Util.log("File not found: " + requestedFile.getAbsolutePath());
         }
