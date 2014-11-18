@@ -15,6 +15,8 @@
     <string name="Error__no_file_selected">Aucun fichier n\'a été sélectionné.</string>
     <string name="Files__add_successful">Fichier ajouté avec succès</string>
     <string name="Files__add_successful_message">Souhaitez-vous supprimer le fichier original ?</string>
+    <string name="Files__adding">Ajout de fichiers</string>
+    <string name="Files__adding_finish">Finissez d\'ajouter des fichiers à Secrecy.</string>
     <string name="Error__already_decrypting_delete">Impossible de supprimer pendant le déchiffrement des fichiers</string>
     <string name="Files__delete">Supprimer les fichiers</string>
     <string name="Files__delete_message">Êtes-vous sûr de vouloir supprimer les fichiers suivants ? %s</string>
@@ -32,13 +34,21 @@
     <string name="Error__decrypting_file">Erreur lors du déchiffrement du fichier.</string>
     <string name="Error__decrypting_file_message">Veuillez réessayer plus tard.</string>
     <string name="Error__out_of_memory">Mémoire insuffisante!</string>
-    <string name="Error__out_of_memory_message">Il semblerait que votre appareil n\'a pas assez de puissance pour abriter beaucoup d\'informations. Veuillez réessayer.</string>
+    <string name="Error__out_of_memory_message">Il semblerait que votre appareil ne soit pas assez puissant pour contenir autant d\'informations, veuillez choisir une taille maximale d\'image inférieure dans les paramètres.</string>
     <string name="Error__root_IOException">L\'emplacement du coffre-fort n\'est pas modifiable !</string>
     <string name="Error__root_IOException_message">Impossible d\'accéder à l\'emplacement du coffre-fort que vous avez défini. Veuillez réessayer ultérieurement, ou définir un autre endroit pour votre coffre.</string>
     <string name="File__decrypting">Déchiffrement&#8230;</string>
     <string name="action__decrypt">Déchiffrer</string>
     <string name="action__delete">Supprimer</string>
     <string name="action__add_file">Ajouter un fichier</string>
+    <string name="action__change_passphrase">Changer le mot de passe du coffre-fort</string>
+    <string name="action__backup">Sauvegarder ce coffre-fort</string>
     <string name="File__open">Ouverture du fichier chiffré</string>
     <string name="File__open_message">Veuillez entrer le mot de passe pour ouvrir ce fichier</string>
+    <string name="Backup__title">Sauvegarde en cours</string>
+    <string name="Backup__in_progress">Sauvegarde en cours</string>
+    <string name="Backup__finish">Sauvegarde terminée. Votre fichier de sauvegarde est %s.</string>
+    <string name="Restore__title">Restauration en cours</string>
+    <string name="Restore__in_progress">Restauration en cours</string>
+    <string name="Restore__finish">Restauration terminée. %s a été restauré.</string>
 </resources>

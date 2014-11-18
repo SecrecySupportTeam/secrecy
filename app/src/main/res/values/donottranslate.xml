@@ -7,6 +7,8 @@
         <item>wimaen</item>
         <item>jorge705</item>
         <item>ediazrod</item>
+        <item>Jrs418</item>
+        <item>franovantOtto</item>
     </string-array>
     <string-array name="Contributor__description">
         <item>Supportive user and active translator</item>
@@ -15,6 +17,8 @@
         <item>Professional translator and moderator for Clean Master and various projects</item>
         <item>Kindly brings you the Spanish translation</item>
         <item>Member on xda-Developers forum</item>
+        <item>AKA T.Shehab</item>
+        <item>Italian translator</item>
     </string-array>
     <string-array name="Contributor__links">
         <item>https://play.google.com/store/apps/developer?id=LeanWeb</item>
@@ -23,6 +27,8 @@
         <item>https://plus.google.com/+WimN_023/about</item>
         <item>https://crowdin.com/profile/jorge705</item>
         <item>http://forum.xda-developers.com/member.php?u=1265890</item>
+        <item>http://forum.xda-developers.com/member.php?u=3585003</item>
+        <item>http://forum.xda-developers.com/member.php?u=5885862</item>
     </string-array>
 
     <string-array name="Credits__names">
