@@ -34,7 +34,7 @@
 -keep public class android.net.http.** {*;}
 -keep class android.net.http.** {*;}
 -keep class org.apache.** { *; }
--keep class org.spongycastle.** { *; }
+-keep class org.spongycastle.**
 
 -keepclassmembers class ** {
     public void onEvent*(**);
