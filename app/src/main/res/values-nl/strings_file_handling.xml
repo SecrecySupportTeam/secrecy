@@ -41,7 +41,7 @@
     <string name="action__decrypt">Decodeer</string>
     <string name="action__delete">Verwijderen</string>
     <string name="action__add_file">Bestand toevoegen</string>
-    <string name="action__change_passphrase">Verander kluis wachtwoord zin</string>
+    <string name="action__change_password">Verander kluis wachtwoord zin</string>
     <string name="action__backup">Backup deze kluis</string>
     <string name="File__open">gecodeerde bestand openen</string>
     <string name="File__open_message">Geef wachtwoord om dit bestand te openen</string>

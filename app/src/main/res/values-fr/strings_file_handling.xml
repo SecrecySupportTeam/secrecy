@@ -41,7 +41,7 @@
     <string name="action__decrypt">Déchiffrer</string>
     <string name="action__delete">Supprimer</string>
     <string name="action__add_file">Ajouter un fichier</string>
-    <string name="action__change_passphrase">Changer le mot de passe du coffre-fort</string>
+    <string name="action__change_password">Changer le mot de passe du coffre-fort</string>
     <string name="action__backup">Sauvegarder ce coffre-fort</string>
     <string name="File__open">Ouverture du fichier chiffré</string>
     <string name="File__open_message">Veuillez entrer le mot de passe pour ouvrir ce fichier</string>

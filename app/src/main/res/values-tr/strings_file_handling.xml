@@ -41,7 +41,7 @@
     <string name="action__decrypt">Şifre çöz</string>
     <string name="action__delete">Sil</string>
     <string name="action__add_file">Dosya Ekle</string>
-    <string name="action__change_passphrase">Kasa parolası değiştir</string>
+    <string name="action__change_password">Kasa parolası değiştir</string>
     <string name="action__backup">Bu kasayı yedekle</string>
     <string name="File__open">Şifreli Dosya Açılıyor</string>
     <string name="File__open_message">Lütfen bu dosyayı açmak için parola girin</string>

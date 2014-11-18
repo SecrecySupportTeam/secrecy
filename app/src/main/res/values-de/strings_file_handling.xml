@@ -41,7 +41,7 @@
     <string name="action__decrypt">Entschlüsseln</string>
     <string name="action__delete">Löschen</string>
     <string name="action__add_file">Datei hinzufügen</string>
-    <string name="action__change_passphrase">Tresorpasswort ändern</string>
+    <string name="action__change_password">Tresorpasswort ändern</string>
     <string name="action__backup">Tresor Sicherung erstellen</string>
     <string name="File__open">Verschlüsselte Datei wird geöffnet</string>
     <string name="File__open_message">Bitte Passwort eingeben, um diese Datei zu öffnen</string>
