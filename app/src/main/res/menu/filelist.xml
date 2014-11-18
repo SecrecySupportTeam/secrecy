@@ -25,7 +25,7 @@
         android:id="@+id/action_change_passphrase"
         android:icon="@drawable/ic_action_edit"
         android:orderInCategory="3"
-        android:title="@string/action__change_passphrase"
+        android:title="@string/action__change_password"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_backup"

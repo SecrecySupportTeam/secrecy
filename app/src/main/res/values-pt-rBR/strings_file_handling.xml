@@ -41,7 +41,7 @@
     <string name="action__decrypt">Decriptar</string>
     <string name="action__delete">Excluir</string>
     <string name="action__add_file">Adicionar arquivo</string>
-    <string name="action__change_passphrase">Alterar frase-passe do cofre</string>
+    <string name="action__change_password">Alterar frase-passe do cofre</string>
     <string name="action__backup">Fazer Backup deste Cofre</string>
     <string name="File__open">Abrir arquivo criptografado</string>
     <string name="File__open_message">Por favor digite a senha para abrir este arquivo</string>

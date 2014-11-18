@@ -43,7 +43,7 @@
     <string name="action__decrypt">Decripta</string>
     <string name="action__delete">Elimina</string>
     <string name="action__add_file">Aggiungi file</string>
-    <string name="action__change_passphrase">Cambia la password della cassaforte</string>
+    <string name="action__change_password">Cambia la password della cassaforte</string>
     <string name="action__backup">Fai un backup di questa cassaforte</string>
     <string name="File__open">Apertura dei file crittografati</string>
     <string name="File__open_message">Per favore inserisci la password per aprire questo file</string>

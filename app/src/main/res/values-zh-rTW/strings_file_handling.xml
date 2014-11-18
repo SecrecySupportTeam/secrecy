@@ -41,7 +41,7 @@
     <string name="action__decrypt">解密</string>
     <string name="action__delete">删除</string>
     <string name="action__add_file">添加檔案</string>
-    <string name="action__change_passphrase">更改私密匣密碼</string>
+    <string name="action__change_password">更改私密匣密碼</string>
     <string name="action__backup">備份私密匣</string>
     <string name="File__open">打開加密檔案</string>
     <string name="File__open_message">請輸入密碼開啟此檔案。</string>
