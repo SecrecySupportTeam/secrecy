@@ -50,14 +50,14 @@ public class EncryptedFileFactory {
         return EncryptedFileFactory.INSTANCE;
     }
 
-    public EncryptedFile loadEncryptedFile(File encryptedFile, Crypter crypter)
+    public EncryptedFile loadEncryptedFile(File encryptedFile, Crypter crypter, boolean isEcbVault)
             throws FileNotFoundException {
 
         File thumbnail = new File(encryptedFile.getParent() +
                 THUMBNAIL_PREFIX + encryptedFile.getName());
         File fileHeader = new File(encryptedFile.getParent() +
                 FILE_HEADER_PREFIX + encryptedFile.getName());
-        if (!fileHeader.exists()){
+        if (!isEcbVault && !fileHeader.exists()){
             throw new FileNotFoundException("File header not found!");
         }
 
