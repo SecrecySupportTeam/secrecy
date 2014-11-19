@@ -46,6 +46,7 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
 import java.io.File;
@@ -194,21 +195,30 @@ public class UpdateManager extends Fragment {
 
     @Background
     void version32to40() {
-        //walks the whole file tree, find out files that do not have encoded file names
-        //and encode them.
-        Collection files = FileUtils.listFiles(Storage.getRoot(), TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
-        for (Object file : files) {
-            File realFile = (File) file;
-            String fileName = FilenameUtils.removeExtension(realFile.getName());
-            fileName = fileName.replace("_thumb", "");
-            if (".nomedia".equals(fileName))
-                continue;
-            try {
-                Base64Coder.decodeString(fileName);
-            } catch (IllegalArgumentException e) {
-                String encodedFileName = Base64Coder.encodeString(fileName);
-                fileName = realFile.getAbsolutePath().replace(fileName, encodedFileName);
-                Boolean ignored = realFile.renameTo(new File(fileName));
+        Collection folders = FileUtils.listFilesAndDirs(Storage.getRoot(), FalseFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+        for (Object folderObject : folders) { //Search for dirs in root
+            File folder = (File) folderObject;
+            if (new File(folder, ".vault").exists() || !new File(folder, ".nomedia").exists()) {
+                appendlog("\n" + folder.getAbsolutePath() + " is 5.x or not a vault, skip");
+                continue; //The whole thing should be skipped because vault is in 5.x standard.
+            }
+            appendlog("\n" + folder.getAbsolutePath() + " is pre-5.x");
+            Collection files = FileUtils.listFiles(folder, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+            //walks the whole file tree, find out files that do not have encoded file names
+            //and encode them.
+            for (Object file : files) {
+                File realFile = (File) file;
+                if (".nomedia".equals(realFile.getName()))
+                    continue;
+                String fileName = FilenameUtils.removeExtension(realFile.getName());
+                fileName = fileName.replace("_thumb", "");
+                try {
+                    Base64Coder.decodeString(fileName);
+                } catch (IllegalArgumentException e) {
+                    String encodedFileName = Base64Coder.encodeString(fileName);
+                    fileName = realFile.getAbsolutePath().replace(fileName, encodedFileName);
+                    Boolean ignored = realFile.renameTo(new File(fileName));
+                }
             }
         }
         onFinishAllUpgrade();
