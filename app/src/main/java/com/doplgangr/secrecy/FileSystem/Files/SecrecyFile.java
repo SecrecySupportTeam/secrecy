@@ -168,7 +168,5 @@ public abstract class SecrecyFile implements Serializable {
         return null;
     }
 
-    public void delete() {
-        Storage.purgeFile(file);
-    }
+    public abstract void delete();
 }

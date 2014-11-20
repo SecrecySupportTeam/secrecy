@@ -70,8 +70,8 @@ public class EncryptedFile extends SecrecyFile {
 
     @Override
     public void delete() {
-        if (encryptedThumbnail.getFile() != null) {
-            Storage.purgeFile(encryptedThumbnail.getFile());
+        if (encryptedThumbnail != null) {
+            encryptedThumbnail.delete();
         }
         Storage.purgeFile(file);
     }

@@ -60,6 +60,9 @@ public class Storage {
     }
 
     public static void purgeFile(File file) {
+        if (file == null){
+            return;
+        }
         purgeFile(file, null);
     }
 

@@ -44,4 +44,9 @@ public class EncryptedThumbnail extends SecrecyFile {
         }
         return thumbBitmap;
     }
+
+    @Override
+    public void delete() {
+        Storage.purgeFile(file);
+    }
 }
