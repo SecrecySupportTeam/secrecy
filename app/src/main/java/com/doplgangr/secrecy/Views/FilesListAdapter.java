@@ -144,7 +144,7 @@ public class FilesListAdapter extends RecyclerView.Adapter<FilesListAdapter.View
         }
     }
 
-    public boolean isSelected(int position){
+    boolean isSelected(int position){
         return selectedItems.contains(position);
     }
 

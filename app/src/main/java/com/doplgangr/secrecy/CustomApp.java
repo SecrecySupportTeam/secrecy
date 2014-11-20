@@ -76,7 +76,7 @@ public class CustomApp extends Application {
         EventBus.getDefault().post(new LowMemoryEvent());
     }
 
-    public class LowMemoryEvent {
+    private class LowMemoryEvent {
     }
 
 }

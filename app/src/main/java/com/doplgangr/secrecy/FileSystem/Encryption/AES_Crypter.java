@@ -72,7 +72,7 @@ abstract class AES_Crypter implements Crypter {
     private SecretKey vaultFileEncryptionKey;
     private VaultHeader vaultHeader;
 
-    protected AES_Crypter(String vaultPath, String passphrase, String encryptionMode)
+    AES_Crypter(String vaultPath, String passphrase, String encryptionMode)
             throws InvalidKeyException {
         secureRandom = new SecureRandom();
         this.vaultPath = vaultPath;

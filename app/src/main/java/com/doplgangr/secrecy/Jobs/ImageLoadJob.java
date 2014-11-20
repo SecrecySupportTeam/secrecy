@@ -35,7 +35,7 @@ public class ImageLoadJob extends Job {
         options = new BitmapFactory.Options();
     }
 
-    public static int calculateInSampleSize(
+    private static int calculateInSampleSize(
             BitmapFactory.Options options) {
         int pixel = options.outHeight * options.outWidth;
         int inSampleSize = 1;

@@ -158,8 +158,8 @@ public class Storage {
         return BitmapFactory.decodeFile(path, options);
     }
 
-    public static Bitmap decodeSampledBitmapFromByte(byte[] stream, int reqWidth,
-                                                     int reqHeight) {
+    private static Bitmap decodeSampledBitmapFromByte(byte[] stream, int reqWidth,
+                                                      int reqHeight) {
 
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -173,8 +173,8 @@ public class Storage {
         return BitmapFactory.decodeByteArray(stream, 0, stream.length, options);
     }
 
-    public static int calculateInSampleSize(BitmapFactory.Options options,
-                                            int reqWidth, int reqHeight) {
+    private static int calculateInSampleSize(BitmapFactory.Options options,
+                                             int reqWidth, int reqHeight) {
 
         final int height = options.outHeight;
         final int width = options.outWidth;

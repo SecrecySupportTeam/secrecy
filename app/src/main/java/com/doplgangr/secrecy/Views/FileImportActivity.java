@@ -140,7 +140,7 @@ public class FileImportActivity extends ActionBarActivity
     }
 
     @UiThread
-    public void done() {
+    void done() {
         //Intent intent = new Intent(context, ListFileActivity_.class);
         //intent.putExtra(Config.vault_extra, secret.name);
         //intent.putExtra(Config.password_extra, password);

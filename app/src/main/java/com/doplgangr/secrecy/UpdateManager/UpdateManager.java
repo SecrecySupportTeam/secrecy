@@ -426,7 +426,7 @@ public class UpdateManager extends Fragment {
     }
 
     @Click(R.id.continueButton)
-    public void Continue() {
+    void Continue() {
         // When user presses the continue button, alert if app is still in beta.
 
         //Define 100 as initial beta code

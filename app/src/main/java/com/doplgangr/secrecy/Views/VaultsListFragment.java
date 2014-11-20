@@ -168,7 +168,7 @@ public class VaultsListFragment extends Fragment {
         oncreate();
     }
 
-    public void setClickListener(final View mView, final int i) {
+    void setClickListener(final View mView, final int i) {
 
         mView.setOnClickListener(new View.OnClickListener() {
             @Override

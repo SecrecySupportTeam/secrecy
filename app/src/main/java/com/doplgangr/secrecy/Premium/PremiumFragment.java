@@ -181,7 +181,7 @@ public class PremiumFragment extends Fragment {
 
     // User clicked the "Upgrade to Premium" button.
     @Click(R.id.Premium__upgrade_button)
-    public void onUpgradeAppButtonClicked() {
+    void onUpgradeAppButtonClicked() {
         Util.log("Upgrade button clicked; launching purchase flow for upgrade.");
         setWaitScreen(true);
 
