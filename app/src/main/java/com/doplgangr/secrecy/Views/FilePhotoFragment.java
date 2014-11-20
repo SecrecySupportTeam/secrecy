@@ -47,7 +47,7 @@ public class FilePhotoFragment extends FragmentActivity {
     @Extra(Config.gallery_item_extra)
     Integer itemNo;
     @ViewById(R.id.view_pager)
-    HackyViewPager mViewPager;
+    ViewPager mViewPager;
 
     @AfterViews
     void onCreate() {
