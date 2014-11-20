@@ -27,7 +27,6 @@ import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFileFactory;
 import com.doplgangr.secrecy.FileSystem.Storage;
-import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.Util;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 

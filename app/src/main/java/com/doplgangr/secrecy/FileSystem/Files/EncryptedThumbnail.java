@@ -21,7 +21,6 @@ package com.doplgangr.secrecy.FileSystem.Files;
 
 import android.graphics.Bitmap;
 
-import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.Encryption.Crypter;
 import com.doplgangr.secrecy.FileSystem.Encryption.SecrecyCipherInputStream;
 import com.doplgangr.secrecy.FileSystem.Storage;

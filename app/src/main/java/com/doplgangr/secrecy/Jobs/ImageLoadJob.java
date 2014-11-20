@@ -6,7 +6,6 @@ import android.widget.ProgressBar;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.Events.ImageLoadDoneEvent;
-import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.Encryption.SecrecyCipherInputStream;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.Util;
