@@ -157,11 +157,6 @@ public class SecrecyCipherInputStream extends FilterInputStream {
     }
 
     @Override
-    public void close() throws IOException {
-        super.close();
-    }
-
-    @Override
     public boolean markSupported() {
         return false;
     }

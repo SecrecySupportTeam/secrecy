@@ -31,15 +31,10 @@ import java.io.File;
 public class EncryptedThumbnail extends SecrecyFile {
 
     private Bitmap thumbBitmap = null;
-    private final boolean thumbnailCreated = false;
 
     EncryptedThumbnail(File file, Crypter crypter) {
         this.crypter = crypter;
         this.file = file;
-    }
-
-    public boolean isThumbnailCreated() {
-        return thumbnailCreated;
     }
 
     public Bitmap getThumb(int thumbnailSize) {
