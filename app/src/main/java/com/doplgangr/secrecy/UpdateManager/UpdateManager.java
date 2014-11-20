@@ -217,7 +217,7 @@ public class UpdateManager extends Fragment {
                 } catch (IllegalArgumentException e) {
                     String encodedFileName = Base64Coder.encodeString(fileName);
                     fileName = realFile.getAbsolutePath().replace(fileName, encodedFileName);
-                    Boolean ignored = realFile.renameTo(new File(fileName));
+                    realFile.renameTo(new File(fileName));
                 }
             }
         }

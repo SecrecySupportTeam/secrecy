@@ -47,7 +47,7 @@ public class DeleteFileJob extends Job {
         if (file != null)
             size = file.length();
         Util.log("Delete ", file);
-        Boolean ignored = file.delete();
+        file.delete();
         FileUtils.forceDelete(file);
         if (uri != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
@@ -56,7 +56,7 @@ public class DeleteFileJob extends Job {
         }
         new SingleMediaScanner(context, file); //Rescan and remove from gallery
         Storage.shredFile(os, size, file);
-        ignored = file.delete();
+        file.delete();
         FileUtils.forceDelete(file);
     }
 
