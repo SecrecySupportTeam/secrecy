@@ -1,8 +1,6 @@
 package com.doplgangr.secrecy.Jobs;
 
-import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.FileSystem.Encryption.VaultHolder;
-import com.doplgangr.secrecy.Util;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
