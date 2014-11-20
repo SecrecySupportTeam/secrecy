@@ -24,7 +24,7 @@ package com.doplgangr.secrecy.Events;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 
 public class NewFileEvent {
-    public EncryptedFile encryptedFile;
+    public final EncryptedFile encryptedFile;
 
     public NewFileEvent(EncryptedFile encryptedFile) {
         this.encryptedFile = encryptedFile;

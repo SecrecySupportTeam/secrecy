@@ -75,7 +75,7 @@ public class UpdateManager extends Fragment {
     AppVersion_ version;
     @Pref
     Prefs_ Prefs;
-    VaultsListFragment.OnFragmentFinishListener mFinishListener;
+    private VaultsListFragment.OnFragmentFinishListener mFinishListener;
     //Current version
     private Integer versionnow;
     private String versionnow_name;

@@ -43,7 +43,7 @@ import uk.co.senab.photoview.PhotoView;
 @EActivity(R.layout.activity_view_pager)
 public class FilePhotoFragment extends FragmentActivity {
 
-    static Activity context;
+    private static Activity context;
     @Extra(Config.gallery_item_extra)
     Integer itemNo;
     @ViewById(R.id.view_pager)

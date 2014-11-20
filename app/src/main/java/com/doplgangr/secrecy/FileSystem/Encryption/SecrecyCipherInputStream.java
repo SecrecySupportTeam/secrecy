@@ -33,9 +33,9 @@ import javax.crypto.Cipher;
  * CipherInputStream.
  */
 public class SecrecyCipherInputStream extends FilterInputStream {
-    private Cipher cipher;
-    private byte[] buf;
-    private byte[] inBuf;
+    private final Cipher cipher;
+    private final byte[] buf;
+    private final byte[] inBuf;
     private int bufOff;
     private int maxBuf;
     private boolean finalized;

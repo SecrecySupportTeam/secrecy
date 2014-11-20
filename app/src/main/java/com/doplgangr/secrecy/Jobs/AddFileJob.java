@@ -22,9 +22,9 @@ import static com.ipaulpro.afilechooser.utils.FileUtils.getPath;
 public class AddFileJob extends Job {
     private static final int PRIORITY = 9;   //High. Lower than UI jobs
     private static final int RETRY_LIMIT = 5; //Shouldn't try too much.
-    private Vault vault;
-    private Uri uri;
-    private Context context;
+    private final Vault vault;
+    private final Uri uri;
+    private final Context context;
 
     public AddFileJob(Context context, Vault vault, Uri uri) {
         super(new Params(PRIORITY)

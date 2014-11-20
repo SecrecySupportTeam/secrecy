@@ -27,9 +27,9 @@ import de.greenrobot.event.EventBus;
 public class BackupJob extends Job {
     private static final int PRIORITY = 10;   //High. Same as UI jobs
     private static final int RETRY_LIMIT = 5; //Shouldn't try too much.
-    private File backupPath;    //Path of the folder to backup
-    private File backupFile; //Path of backupFile
-    private Context context;
+    private final File backupPath;    //Path of the folder to backup
+    private final File backupFile; //Path of backupFile
+    private final Context context;
 
     public BackupJob(Context context, File backupPath, File backupFile) {
         super(new Params(PRIORITY)

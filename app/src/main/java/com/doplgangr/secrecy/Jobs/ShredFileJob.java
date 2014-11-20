@@ -13,8 +13,8 @@ import java.io.OutputStream;
 public class ShredFileJob extends Job {
     public static final int PRIORITY = 1;
     private OutputStream fileOs = null;
-    private long size;
-    private File file;
+    private final long size;
+    private final File file;
 
     public ShredFileJob(OutputStream os, long size, File file) {
         super(new Params(PRIORITY));

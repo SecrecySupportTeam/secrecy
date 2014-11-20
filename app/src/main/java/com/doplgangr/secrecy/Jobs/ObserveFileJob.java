@@ -16,8 +16,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class ObserveFileJob extends Job {
-    public static final int PRIORITY = 5;   //relatively high
-    private File file;
+    private static final int PRIORITY = 5;   //relatively high
+    private final File file;
     private MyFileObserver fileOb;
 
     public ObserveFileJob(File file) {

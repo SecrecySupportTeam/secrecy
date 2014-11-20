@@ -23,7 +23,7 @@ public class ImageLoadJob extends Job {
     private final ProgressBar pBar;
     private final Integer mNum;
     private boolean isObsolet = false;
-    private BitmapFactory.Options options;
+    private final BitmapFactory.Options options;
 
     public ImageLoadJob(Integer mNum, EncryptedFile encryptedFile, PhotoView imageView,
                         ProgressBar pBar) {

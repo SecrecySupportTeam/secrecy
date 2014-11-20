@@ -77,7 +77,7 @@ public class SettingsFragment extends PreferenceFragment
     private static final int REQUEST_CODE = 6384; // onActivityResult request code
     private static final int REQUEST_CODE_2 = 2058; // onActivityResult request code
     private static final ArrayList<String> INCLUDE_EXTENSIONS_LIST = new ArrayList<String>();
-    ActionBarActivity context = null;
+    private ActionBarActivity context = null;
     @StringRes(R.string.Settings__stealth_mode_message)
     String stealth_mode_message;
     @StringArrayRes(R.array.Credits__names)
@@ -103,7 +103,7 @@ public class SettingsFragment extends PreferenceFragment
     String libraries;
     @Pref
     Prefs_ Prefs;
-    VaultsListFragment.OnFragmentFinishListener mFinishListener;
+    private VaultsListFragment.OnFragmentFinishListener mFinishListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

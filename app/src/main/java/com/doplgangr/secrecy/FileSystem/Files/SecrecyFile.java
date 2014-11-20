@@ -42,14 +42,14 @@ import java.util.Date;
 
 public abstract class SecrecyFile implements Serializable {
 
-    protected String decryptedFileName;
-    protected String fileSize;
-    protected Date timestamp;
-    protected String fileExtension;
-    protected File file;
-    protected Boolean isDecrypting = false;
-    protected Crypter crypter;
-    protected ProgressBar progressBar;
+    String decryptedFileName;
+    String fileSize;
+    Date timestamp;
+    String fileExtension;
+    File file;
+    Crypter crypter;
+    private Boolean isDecrypting = false;
+    private ProgressBar progressBar;
 
     protected static String humanReadableByteCount(long bytes) {
         int unit = 1024;

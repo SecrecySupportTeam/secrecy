@@ -845,9 +845,9 @@ public class FilesListFragment extends FileViewer {
     }
 
     class DecryptArgHolder {
-        public EncryptedFile encryptedFile;
-        public ProgressBar pBar;
-        public Listeners.EmptyListener onFinish;
+        public final EncryptedFile encryptedFile;
+        public final ProgressBar pBar;
+        public final Listeners.EmptyListener onFinish;
 
         public DecryptArgHolder(EncryptedFile encryptedFile, ProgressBar pBar, Listeners.EmptyListener onFinish) {
             this.encryptedFile = encryptedFile;
@@ -857,7 +857,7 @@ public class FilesListFragment extends FileViewer {
     }
 
     public class OnBackPressedUnhandledEvent {
-        public Activity activity;
+        public final Activity activity;
 
         public OnBackPressedUnhandledEvent(Activity activity) {
             this.activity = activity;
