@@ -94,7 +94,7 @@ public class Vault implements Serializable {
     }
 
     public boolean updateFromECBVault(String passphrase) throws FileNotFoundException, InvalidKeyException, SecrecyFileException {
-        AES_ECB_Crypter ecb_crypter = new AES_ECB_Crypter(path, passphrase);
+        @SuppressWarnings("deprecation") AES_ECB_Crypter ecb_crypter = new AES_ECB_Crypter(path, passphrase);
         Crypter newCrypter = new AES_CTR_Crypter(path, passphrase);
 
         List<File> files = getFileList();
