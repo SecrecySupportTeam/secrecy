@@ -159,7 +159,7 @@ public abstract class SecrecyFile implements Serializable {
         decryptedFileName = newName;
     }
 
-    public SecrecyCipherInputStream readStream(CryptStateListener listener) {
+    public SecrecyCipherInputStream readStream() {
         try {
             return crypter.getCipherInputStream(getFile());
         } catch (Exception e) {

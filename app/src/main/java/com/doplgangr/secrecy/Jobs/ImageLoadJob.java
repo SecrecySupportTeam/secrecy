@@ -63,24 +63,7 @@ public class ImageLoadJob extends Job {
         if (isObsolet) {
             return;
         }
-        SecrecyCipherInputStream imageStream =
-                encryptedFile.readStream(new CryptStateListener() {
-                    @Override
-                    public void updateProgress(int progress) {
-                    }
-
-                    @Override
-                    public void setMax(int max) {
-                    }
-
-                    @Override
-                    public void onFailed(int statCode) {
-                    }
-
-                    @Override
-                    public void Finished() {
-                    }
-                });
+        SecrecyCipherInputStream imageStream = encryptedFile.readStream();
         //File specified is not invalid
         if (imageStream != null) {
             //Decode image size
@@ -90,24 +73,7 @@ public class ImageLoadJob extends Job {
                 options.inSampleSize = calculateInSampleSize(options);
                 options.inJustDecodeBounds = false;
 
-                imageStream =
-                        encryptedFile.readStream(new CryptStateListener() {
-                            @Override
-                            public void updateProgress(int progress) {
-                            }
-
-                            @Override
-                            public void setMax(int max) {
-                            }
-
-                            @Override
-                            public void onFailed(int statCode) {
-                            }
-
-                            @Override
-                            public void Finished() {
-                            }
-                        });
+                imageStream = encryptedFile.readStream();
 
                 if (!isObsolet) {
                     Bitmap bitmap = BitmapFactory.decodeStream(imageStream, null, options);

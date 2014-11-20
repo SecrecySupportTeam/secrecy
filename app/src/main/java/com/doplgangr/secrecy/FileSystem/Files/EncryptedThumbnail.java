@@ -38,24 +38,8 @@ public class EncryptedThumbnail extends SecrecyFile {
     }
 
     public Bitmap getThumb(int thumbnailSize) {
-        if ((!thumbnailCreated) && (thumbBitmap == null)) {
-            SecrecyCipherInputStream streamThumb = readStream(new CryptStateListener() {
-                @Override
-                public void updateProgress(int progress) {
-                }
-
-                @Override
-                public void setMax(int max) {
-                }
-
-                @Override
-                public void onFailed(int statCode) {
-                }
-
-                @Override
-                public void Finished() {
-                }
-            });
+        if ((thumbBitmap == null)) {
+            SecrecyCipherInputStream streamThumb = readStream();
             this.thumbBitmap = Storage.getThumbnailfromStream(streamThumb, thumbnailSize);
         }
         return thumbBitmap;
