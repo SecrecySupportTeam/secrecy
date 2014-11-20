@@ -53,7 +53,7 @@ public class Vault implements Serializable {
     Vault(String name, String passphrase) {
         this.name = name;
         this.passphrase = passphrase;
-        path = Storage.getRoot().getAbsolutePath() + "/" + name;
+        path = Storage.getRoot().getAbsolutePath() + '/' + name;
 
         // Dont load Crypter if vault is ECB vault
         if (isEcbVault()){
@@ -71,7 +71,7 @@ public class Vault implements Serializable {
     Vault(String name, String passphrase, Boolean istemp) {
         this.passphrase = passphrase;
         this.name = name;
-        path = Storage.getRoot().getAbsolutePath() + "/" + name;
+        path = Storage.getRoot().getAbsolutePath() + '/' + name;
 
         // Dont load Crypter if vault is ECB vault
         if (isEcbVault()){
