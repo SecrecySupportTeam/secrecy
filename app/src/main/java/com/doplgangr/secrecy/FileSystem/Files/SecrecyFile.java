@@ -19,9 +19,12 @@
 
 package com.doplgangr.secrecy.FileSystem.Files;
 
+import android.widget.ProgressBar;
+
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.Encryption.Crypter;
+import com.doplgangr.secrecy.FileSystem.Encryption.SecrecyCipherInputStream;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Util;
 
@@ -36,9 +39,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.crypto.CipherInputStream;
-
-public class SecrecyFile implements Serializable {
+public abstract class SecrecyFile implements Serializable {
 
     protected String decryptedFileName;
     protected String fileSize;
@@ -47,6 +48,7 @@ public class SecrecyFile implements Serializable {
     protected File file;
     protected Boolean isDecrypting = false;
     protected Crypter crypter;
+    protected ProgressBar progressBar;
 
     protected static String humanReadableByteCount(long bytes) {
         int unit = 1024;
@@ -54,6 +56,18 @@ public class SecrecyFile implements Serializable {
         int exp = (int) (Math.log(bytes) / Math.log(unit));
         char pre = ("KMGTPE").charAt(exp - 1);
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+    }
+
+    public void setIsDecrypting(Boolean isDecrypting) {
+        this.isDecrypting = isDecrypting;
+    }
+
+    public ProgressBar getProgressBar() {
+        return progressBar;
+    }
+
+    public void setProgressBar(ProgressBar progressBar) {
+        this.progressBar = progressBar;
     }
 
     public String getFileExtension() {
@@ -94,13 +108,13 @@ public class SecrecyFile implements Serializable {
         BufferedOutputStream out = null;
         try {
             outputFile = new File(Storage.getTempFolder() + "/" + decryptedFileName);
-            out = new BufferedOutputStream(new FileOutputStream(outputFile), Config.blockSize);
+            out = new BufferedOutputStream(new FileOutputStream(outputFile), Config.BLOCK_SIZE);
             is = crypter.getCipherInputStream(getFile());
             listener.setMax((int) file.length());
 
             int readBytes;
             int readTotal = 0;
-            byte[] buf = new byte[Config.bufferSize];
+            byte[] buf = new byte[Config.BUFFER_SIZE];
             while ((readBytes = is.read(buf)) > 0) {
                 out.write(buf, 0, readBytes);
                 readTotal += readBytes;
@@ -139,7 +153,7 @@ public class SecrecyFile implements Serializable {
         return null;
     }
 
-    public CipherInputStream readStream(CryptStateListener listener) {
+    public SecrecyCipherInputStream readStream(CryptStateListener listener) {
         try {
             return crypter.getCipherInputStream(getFile());
         } catch (Exception e) {

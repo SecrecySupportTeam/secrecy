@@ -1,6 +1,5 @@
 package com.doplgangr.secrecy.Views;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,13 +14,11 @@ import com.doplgangr.secrecy.R;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.api.BackgroundExecutor;
 
 import de.greenrobot.event.EventBus;
 
 @EActivity(R.layout.activity_files)
-@OptionsMenu(R.menu.main)
 public class FilesActivity extends ActionBarActivity
         implements
         VaultsListFragment.OnFragmentFinishListener {
@@ -30,30 +27,41 @@ public class FilesActivity extends ActionBarActivity
     String vault;
     @Extra(Config.password_extra)
     String password;
+    Boolean isConfigChange;
 
     @AfterViews
     void onCreate() {
-        if (!EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().register(this);
         overridePendingTransition(R.anim.slide_in_right, R.anim.fadeout);
         fragmentManager = getSupportFragmentManager();
-        FilesListFragment_ fragment = new FilesListFragment_();
-        Bundle bundle = new Bundle();
-        bundle.putString(Config.vault_extra, vault);
-        bundle.putString(Config.password_extra, password);
-        fragment.setArguments(bundle);
-        fragmentManager.beginTransaction()
-                .replace(R.id.content, fragment)
-                .commit();
+        if (fragmentManager.findFragmentByTag(FilesListFragment.class.getName()) == null) {
+            FilesListFragment_ fragment = new FilesListFragment_();
+            Bundle bundle = new Bundle();
+            bundle.putString(Config.vault_extra, vault);
+            bundle.putString(Config.password_extra, password);
+            fragment.setArguments(bundle);
+            fragmentManager.beginTransaction()
+                    .replace(R.id.content, fragment, FilesListFragment.class.getName())
+                    .commit();
+        }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
-    public void onPause() {
-        overridePendingTransition(R.anim.fadein, R.anim.slide_out_right);
-        super.onPause();
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        isConfigChange = true;
+    }
+
+    // http://steveliles.github.io/porting_ischangingconfigurations_to_api_levels_below_11.html
+
+    @Override
+    public boolean isChangingConfigurations() {
+        if (android.os.Build.VERSION.SDK_INT >= 11)
+            return super.isChangingConfigurations();
+        else
+            return isConfigChange;
     }
 
     @Override
@@ -61,7 +69,6 @@ public class FilesActivity extends ActionBarActivity
         fragmentManager.beginTransaction()
                 .remove(fragment)
                 .commit();
-
     }
 
     @Override
@@ -79,40 +86,49 @@ public class FilesActivity extends ActionBarActivity
     }
 
     @Override
+    public void onPause() {
+        overridePendingTransition(R.anim.fadein, R.anim.slide_out_right);
+        super.onPause();
+        if (isChangingConfigurations())
+            onPauseDecision.startActivity();
+        if (onPauseDecision.shouldFinish())
+            finish();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        onPauseDecision.finishActivity();
+    }
+
+    @Override
+    public void finish() {
+        BackgroundExecutor.cancelAll(Config.cancellable_task, false);
+        super.finish();
+    }
+
+    @Override
     public void onDestroy() {
         Storage.deleteTemp(); //Cleanup every time
         EventBus.getDefault().post(new shouldRefresh());
         super.onDestroy();
     }
 
-    @Override
-    public void onBackPressed() {
-        EventBus.getDefault().post(new OnBackPressedEvent(this));
-    }
+    public static class onPauseDecision {
+        static Boolean pause = true;
 
+        // An activity is started, should not pause and kill this fragment.
+        static void startActivity() {
+            pause = false;
+        }
 
-    public void onEventMainThread(FilesListFragment.OnBackPressedUnhandledEvent event) {
-        //Back is pressed. should continue with default activity.
-        if (event.activity == this)
-            super.onBackPressed();
-    }
+        // Fragment returns to top, allow it to be paused and killed.
+        static void finishActivity() {
+            pause = true;
+        }
 
-    @OptionsItem(R.id.home)
-    void supporthomePressed() {
-        onBackPressed();
-    }
-
-    @OptionsItem(android.R.id.home)
-    void homePressed() {
-        onBackPressed();
-    }
-
-
-    public class OnBackPressedEvent {
-        public Activity activity;
-
-        public OnBackPressedEvent(Activity activity) {
-            this.activity = activity;
+        static Boolean shouldFinish() {
+            return pause;
         }
     }
 

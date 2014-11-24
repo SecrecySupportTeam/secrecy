@@ -28,6 +28,8 @@ public interface Prefs {
 
     int stealthMode();
 
+    int maxImageSize();
+
     @DefaultBoolean(true)
     boolean analytics();
 

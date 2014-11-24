@@ -29,6 +29,7 @@ import android.widget.TextView;
 import com.doplgangr.secrecy.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 class VaultsAdapter extends BaseAdapter {
     // store the context (as an inflated layout)
@@ -76,6 +77,10 @@ class VaultsAdapter extends BaseAdapter {
      */
     public void update(ArrayList<String> data) {
         this.data = data;
+    }
+
+    public void sort(){
+        Collections.sort(data);
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {

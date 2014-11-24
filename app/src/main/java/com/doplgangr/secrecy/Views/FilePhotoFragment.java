@@ -2,15 +2,11 @@ package com.doplgangr.secrecy.Views;
 
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,7 +76,7 @@ public class FilePhotoFragment extends FragmentActivity {
 
     public void onEventMainThread(ImageLoadDoneEvent event) {
         Util.log("Recieving imageview and bm");
-        if (event.bitmap == null && event.progressBar == null && event.imageView == null) {
+        if (event.bitmap == null) {
             Util.alert(context,
                     context.getString(R.string.Error__out_of_memory),
                     context.getString(R.string.Error__out_of_memory_message),
@@ -94,15 +90,7 @@ public class FilePhotoFragment extends FragmentActivity {
             return;
         }
         try {
-            int vHeight = event.imageView.getHeight();
-            int vWidth = event.imageView.getWidth();
-            int bHeight = event.bitmap.getHeight();
-            int bWidth = event.bitmap.getWidth();
-            float ratio = vHeight / bHeight < vWidth / bWidth ? (float) vHeight / bHeight : (float) vWidth / bWidth;
-            Util.log(vHeight, vWidth, bHeight, bWidth);
-            Util.log(ratio);
-            event.imageView.setImageBitmap(Bitmap.createScaledBitmap(event.bitmap, (int) (ratio * bWidth)
-                    , (int) (ratio * bHeight), false));
+            event.imageView.setImageBitmap(event.bitmap);
         } catch (OutOfMemoryError e) {
             Util.alert(context,
                     context.getString(R.string.Error__out_of_memory),
@@ -146,10 +134,8 @@ public class FilePhotoFragment extends FragmentActivity {
             return PhotoFragment.newInstance(position);
         }
 
-
         public static class PhotoFragment extends Fragment {
             int mNum;
-            PhotoView photoView;
             private ImageLoadJob imageLoadJob = null;
 
             static PhotoFragment newInstance(int num) {
@@ -161,7 +147,6 @@ public class FilePhotoFragment extends FragmentActivity {
 
                 return f;
             }
-
 
             @Override
             public void onCreate(Bundle savedInstanceState) {
@@ -180,7 +165,6 @@ public class FilePhotoFragment extends FragmentActivity {
                 final RelativeLayout relativeLayout = new RelativeLayout(container.getContext());
                 final EncryptedFile encryptedFile = encryptedFiles.get(mNum);
                 final PhotoView photoView = new PhotoView(container.getContext());
-                this.photoView = photoView;
                 relativeLayout.addView(photoView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                 try {
                     photoView.setImageBitmap(encryptedFile.getEncryptedThumbnail().getThumb(150));
@@ -200,13 +184,17 @@ public class FilePhotoFragment extends FragmentActivity {
             @Override
             public void onPause(){
                 super.onPause();
-                imageLoadJob.setObsolet(true);
+                if (imageLoadJob != null) {
+                    imageLoadJob.setObsolet(true);
+                }
             }
 
             @Override
             public void onDestroy(){
                 super.onDestroy();
-                imageLoadJob.setObsolet(true);
+                if (imageLoadJob != null) {
+                    imageLoadJob.setObsolet(true);
+                }
             }
 
         }

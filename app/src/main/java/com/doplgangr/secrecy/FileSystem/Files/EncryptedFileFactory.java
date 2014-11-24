@@ -44,16 +44,23 @@ public class EncryptedFileFactory {
 
     private final static EncryptedFileFactory INSTANCE = new EncryptedFileFactory();
     private final static String THUMBNAIL_PREFIX = "/.thumb_";
+    private static final String FILE_HEADER_PREFIX = "/.header_";
 
     public static EncryptedFileFactory getInstance() {
         return EncryptedFileFactory.INSTANCE;
     }
 
-    public EncryptedFile loadEncryptedFile(File encryptedFile, Crypter crypter)
+    public EncryptedFile loadEncryptedFile(File encryptedFile, Crypter crypter, boolean isEcbVault)
             throws FileNotFoundException {
 
         File thumbnail = new File(encryptedFile.getParent() +
                 THUMBNAIL_PREFIX + encryptedFile.getName());
+        File fileHeader = new File(encryptedFile.getParent() +
+                FILE_HEADER_PREFIX + encryptedFile.getName());
+        if (!isEcbVault && !fileHeader.exists()){
+            throw new FileNotFoundException("File header not found!");
+        }
+
         if (thumbnail.exists()) {
             EncryptedThumbnail encryptedThumbnail = new EncryptedThumbnail(
                     thumbnail, crypter);
@@ -80,7 +87,7 @@ public class EncryptedFileFactory {
 
         try {
             bufferedInputStream = new BufferedInputStream(
-                    new FileInputStream(unencryptedFile), Config.blockSize);
+                    new FileInputStream(unencryptedFile), Config.BLOCK_SIZE);
             out = crypter.getCipherOutputStream(unencryptedFile, outputFileName);
         } catch (FileNotFoundException e) {
             Util.log(this.getClass().getName() + ": File not found!");
@@ -92,7 +99,7 @@ public class EncryptedFileFactory {
 
         try {
             if (out != null) {
-                byte buffer[] = new byte[Config.bufferSize];
+                byte buffer[] = new byte[Config.BUFFER_SIZE];
                 int count;
                 while ((count = bufferedInputStream.read(buffer)) != -1) {
                     out.write(buffer, 0, count);

@@ -15,6 +15,16 @@
 
     </PreferenceCategory>
     <PreferenceCategory
+        android:key="performance"
+        android:title="@string/Settings__performance">
+        <ListPreference
+            android:key="image_size"
+            android:entries="@array/array_image_size_entries"
+            android:entryValues="@array/array_image_size_values"
+            android:title="@string/Settings_max_image_size"
+        />
+    </PreferenceCategory>
+    <PreferenceCategory
         android:key="vault"
         android:title="@string/Settings__vault_management">
 
@@ -35,6 +45,12 @@
             android:key="analytics"
             android:summary="@string/Settings__analytics_message"
             android:title="@string/Settings__analytics" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="credits_list"
+        android:title="@string/Settings__credits">
+
     </PreferenceCategory>
 
     <PreferenceCategory

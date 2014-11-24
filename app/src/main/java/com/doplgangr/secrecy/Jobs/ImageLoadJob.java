@@ -4,18 +4,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.ProgressBar;
 
+import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.Events.ImageLoadDoneEvent;
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
+import com.doplgangr.secrecy.FileSystem.Encryption.SecrecyCipherInputStream;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.Util;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
-
-import org.apache.commons.io.IOUtils;
-
-import java.util.Queue;
-
-import javax.crypto.CipherInputStream;
 
 import de.greenrobot.event.EventBus;
 import uk.co.senab.photoview.PhotoView;
@@ -27,13 +23,30 @@ public class ImageLoadJob extends Job {
     private final ProgressBar pBar;
     private final Integer mNum;
     private boolean isObsolet = false;
+    private BitmapFactory.Options options;
 
-    public ImageLoadJob(Integer mNum, EncryptedFile encryptedFile, PhotoView imageView, ProgressBar pBar) {
+    public ImageLoadJob(Integer mNum, EncryptedFile encryptedFile, PhotoView imageView,
+                        ProgressBar pBar) {
         super(new Params(PRIORITY));
         this.mNum = mNum;
         this.encryptedFile = encryptedFile;
         this.imageView = imageView;
         this.pBar = pBar;
+        options = new BitmapFactory.Options();
+    }
+
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options) {
+        int pixel = options.outHeight * options.outWidth;
+        int inSampleSize = 1;
+
+        Util.log("Image input size:" + options.outHeight, options.outWidth,
+                "(", ((double) pixel / 1000 / 1000), ") megapixel");
+        while ((pixel / inSampleSize) > Config.selectedImageSize) {
+            inSampleSize *= 2;
+        }
+        Util.log("Image scaled to:", ((double) pixel / 1000 / 1000 / inSampleSize), "megapixel");
+        return inSampleSize;
     }
 
     public void setObsolet(boolean isObsolet) {
@@ -47,10 +60,10 @@ public class ImageLoadJob extends Job {
 
     @Override
     public void onRun() throws Throwable {
-        if (isObsolet){
+        if (isObsolet) {
             return;
         }
-        CipherInputStream imageStream =
+        SecrecyCipherInputStream imageStream =
                 encryptedFile.readStream(new CryptStateListener() {
                     @Override
                     public void updateProgress(int progress) {
@@ -71,20 +84,48 @@ public class ImageLoadJob extends Job {
         //File specified is not invalid
         if (imageStream != null) {
             //Decode image size
-            byte[] bytes = IOUtils.toByteArray(imageStream);
             try {
-                Bitmap bm = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                bytes = null;
-                EventBus.getDefault().post(new ImageLoadDoneEvent(mNum, imageView, bm, pBar));
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeStream(imageStream, null, options);
+                options.inSampleSize = calculateInSampleSize(options);
+                options.inJustDecodeBounds = false;
+
+                imageStream =
+                        encryptedFile.readStream(new CryptStateListener() {
+                            @Override
+                            public void updateProgress(int progress) {
+                            }
+
+                            @Override
+                            public void setMax(int max) {
+                            }
+
+                            @Override
+                            public void onFailed(int statCode) {
+                            }
+
+                            @Override
+                            public void Finished() {
+                            }
+                        });
+
+                if (!isObsolet) {
+                    Bitmap bitmap = BitmapFactory.decodeStream(imageStream, null, options);
+                    EventBus.getDefault().post(new ImageLoadDoneEvent(mNum, imageView, bitmap, pBar));
+
+                } else {
+                    EventBus.getDefault().post(new ImageLoadDoneEvent(null, null, null, null));
+                }
             } catch (OutOfMemoryError e) {
-                EventBus.getDefault().post(new ImageLoadDoneEvent(mNum, null, null, null));
+                EventBus.getDefault().post(new ImageLoadDoneEvent(null, null, null, null));
             }
         }
     }
 
     @Override
     protected void onCancel() {
-
+        options.requestCancelDecode();
+        isObsolet = true;
     }
 
     @Override

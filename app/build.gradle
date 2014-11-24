@@ -14,14 +14,14 @@ apt {
 }
 android {
     compileSdkVersion 21
-    buildToolsVersion '21.0.0'
+    buildToolsVersion '21.0.2'
 
     defaultConfig {
         applicationId "com.doplgangr.secrecy"
         minSdkVersion 10
         targetSdkVersion 21
-        versionCode 41
-        versionName "alpha-4.1"
+        versionCode 53
+        versionName "0.5.3"
     }
     buildTypes {
         release {
@@ -29,6 +29,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             proguardFile 'proguard-rules.pro'
         }
+    }
+    lintOptions {
+        abortOnError false
     }
 }
 
@@ -40,8 +43,9 @@ dependencies {
     compile 'commons-io:commons-io:2.4'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.balysv.materialmenu:material-menu-abc:1.2.2'
-    compile 'com.android.support:appcompat-v7:21.0.0'
-    compile 'com.android.support:support-v4:21.0.0'
+    compile 'com.android.support:appcompat-v7:21.0.+'
+    compile 'com.android.support:recyclerview-v7:21.0.+'
+    compile 'com.android.support:support-v4:21.0.+'
     compile 'com.github.chrisbanes.photoview:library:1.2.3'
     compile 'com.path:android-priority-jobqueue:1.1.2'
     compile 'de.greenrobot:eventbus:2.2.0'
@@ -51,6 +55,7 @@ dependencies {
     compile project(':payme')
     compile 'com.crashlytics.android:crashlytics:1.+'
     compile 'com.google.protobuf:protobuf-java:2.6.0'
+    compile 'com.madgag.spongycastle:prov:1.51.0.0'
 }
 
 android {

@@ -159,6 +159,7 @@ public class MainActivity
         };
         mDrawerToggle.setDrawerIndicatorEnabled(true);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        loadSelectedImageSize(Prefs.maxImageSize().get());
         showHelpDeskTutorial();
     }
 
@@ -169,6 +170,22 @@ public class MainActivity
             mDrawerToggle.syncState();
     }
 
+    public static void loadSelectedImageSize(int imageSize){
+        switch (imageSize){
+            case 0:
+                Util.log("Setting image size to: " + Config.IMAGE_SIZE_SMALL);
+                Config.selectedImageSize = Config.IMAGE_SIZE_SMALL;
+                break;
+            case 1:
+                Util.log("Setting image size to: " + Config.IMAGE_SIZE_MEDIUM);
+                Config.selectedImageSize = Config.IMAGE_SIZE_MEDIUM;
+                break;
+            case 2:
+                Util.log("Setting image size to: " + Config.IMAGE_SIZE_LARGE);
+                Config.selectedImageSize = Config.IMAGE_SIZE_LARGE;
+                break;
+        }
+    }
 
     private void showHelpDeskTutorial() {
         if (Prefs.showHelpDeskTutorial().get())

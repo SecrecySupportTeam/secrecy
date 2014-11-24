@@ -15,6 +15,8 @@
     <string name="Error__no_file_selected">Nenhum arquivo foi selecionado.</string>
     <string name="Files__add_successful">Arquivo adicionado com sucesso</string>
     <string name="Files__add_successful_message">Gostaria de deletar o arquivo original?</string>
+    <string name="Files__adding">Adicionando arquivos</string>
+    <string name="Files__adding_finish">Termine de adicionar arquivos ao Secrecy.</string>
     <string name="Error__already_decrypting_delete">Não é possível excluir arquivos descriptografados</string>
     <string name="Files__delete">Excluir arquivos</string>
     <string name="Files__delete_message">Você tem certeza que quer deletar o(s) seguinte(s) arquivo(s)? %s</string>
@@ -39,6 +41,14 @@
     <string name="action__decrypt">Decriptar</string>
     <string name="action__delete">Excluir</string>
     <string name="action__add_file">Adicionar arquivo</string>
+    <string name="action__change_password">Alterar frase-passe do cofre</string>
+    <string name="action__backup">Fazer Backup deste Cofre</string>
     <string name="File__open">Abrir arquivo criptografado</string>
     <string name="File__open_message">Por favor digite a senha para abrir este arquivo</string>
+    <string name="Backup__title">Efetuando backup</string>
+    <string name="Backup__in_progress">Backup em andamento</string>
+    <string name="Backup__finish">Backup terminou. Seu arquivo de backup é %s.</string>
+    <string name="Restore__title">Restaurando</string>
+    <string name="Restore__in_progress">Restauração em andamento</string>
+    <string name="Restore__finish">Restauração terminada. %s foi restaurada.</string>
 </resources>

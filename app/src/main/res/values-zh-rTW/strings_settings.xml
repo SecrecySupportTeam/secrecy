@@ -2,19 +2,6 @@
 <resources>
     <string name="Settings__changed_alert">設定將在應用程式重啟後生效</string>
     <string name="Settings_libraries">所用的程式庫</string>
-  <string name="Settings__libraries_message">
-        AndroidAnnotations (Apache 2.0),
-        \n
-        android-support-v4-preferencefragment (Apache 2.0),
-        \n
-        aFileChooser (Apache 2.0),
-        \n
-        pay-me (Apache 2.0),
-        \n
-        photoView (Apache 2.0),
-        \n
-        NineoldAndroids (Apache 2.0)
-    </string>
     <string name="Settings__credits">鳴謝</string>
     <string name="Settings__translators">譯者</string>
     <string name="Settings__cannot_move_vault">未能移動私密匣</string>

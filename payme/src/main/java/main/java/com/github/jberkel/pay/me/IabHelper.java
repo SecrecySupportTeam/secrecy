@@ -171,8 +171,8 @@ public class IabHelper {
 
         if (mSetupDone) throw new IllegalStateException("IAB helper is already set up.");
         logDebug("Starting in-app billing setup.");
-
-        if (!mContext.getPackageManager().queryIntentServices(getExplicitIapIntent(), 0).isEmpty()) {
+        Intent explicitIntent = getExplicitIapIntent();
+        if (explicitIntent != null && !mContext.getPackageManager().queryIntentServices(explicitIntent, 0).isEmpty()) {
             // service available to handle that Intent
             mServiceConn = new BillingServiceConnection(listener);
             if (!mContext.bindService(getExplicitIapIntent(), mServiceConn, Context.BIND_AUTO_CREATE)) {

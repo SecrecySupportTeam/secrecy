@@ -32,6 +32,8 @@ import com.path.android.jobqueue.log.CustomLogger;
 
 import org.androidannotations.annotations.EApplication;
 
+import java.security.Security;
+
 import de.greenrobot.event.EventBus;
 
 @EApplication
@@ -39,6 +41,11 @@ public class CustomApp extends Application {
     public static Context context;
     public static String VERSIONNAME = "";
     public static JobManager jobManager;
+
+    static{
+        Security.insertProviderAt(
+                new org.spongycastle.jce.provider.BouncyCastleProvider(), 1);
+    }
 
     @Override
     public void onCreate() {
@@ -56,7 +63,7 @@ public class CustomApp extends Application {
 
         Configuration configuration = new Configuration.Builder(this)
                 .minConsumerCount(1)//always keep at least one consumer alive
-                .maxConsumerCount(2)//up to 2 consumers at a time
+                .maxConsumerCount(1)//up to 1 consumers at a time
                 .loadFactor(1)//1 jobs per consumer
                 .build();
 

@@ -25,7 +25,6 @@ import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 
 import org.apache.commons.io.FilenameUtils;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,7 +35,6 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
@@ -90,13 +88,13 @@ class AES_ECB_Crypter implements Crypter {
         File outputFile = new File(vaultPath + "/" + filename);
 
         BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
-                new FileOutputStream(outputFile), Config.blockSize);
+                new FileOutputStream(outputFile), Config.BLOCK_SIZE);
 
         return new CipherOutputStream(bufferedOutputStream, c);
     }
 
     @Override
-    public CipherInputStream getCipherInputStream(File encryptedFile) throws SecrecyCipherStreamException, FileNotFoundException {
+    public SecrecyCipherInputStream getCipherInputStream(File encryptedFile) throws SecrecyCipherStreamException, FileNotFoundException {
         Cipher c;
         try {
             c = Cipher.getInstance(mode);
@@ -112,10 +110,7 @@ class AES_ECB_Crypter implements Crypter {
             throw new SecrecyCipherStreamException("Invalid encryption key!");
         }
 
-        BufferedInputStream bufferedInputStream = new BufferedInputStream(
-                new FileInputStream(encryptedFile), Config.blockSize);
-
-        return new CipherInputStream(bufferedInputStream, c);
+        return new SecrecyCipherInputStream(new FileInputStream(encryptedFile), c);
     }
 
     @Override

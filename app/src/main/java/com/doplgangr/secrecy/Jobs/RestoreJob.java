@@ -9,6 +9,8 @@ import com.doplgangr.secrecy.Exceptions.SecrecyRestoreException;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -44,15 +46,19 @@ public class RestoreJob extends Job {
     @Override
     public void onRun() throws Throwable {
         FileInputStream fis = new FileInputStream(backupFile);
-        ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis, Config.blockSize));
-        byte[] buffer = new byte[Config.bufferSize];
+        ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis, Config.BLOCK_SIZE));
+        byte[] buffer = new byte[Config.BUFFER_SIZE];
 
         ZipEntry ze = zis.getNextEntry();
+        File tempFile = new File(ze.getName());
+        if (tempFile.getParentFile().exists())
+            FileUtils.cleanDirectory(tempFile.getParentFile());
+
         while (ze != null) {
             File fileToRestore = new File(ze.getName());
             EventBus.getDefault().post(new RestoringFileEvent(backupFile, fileToRestore));
             //Initialize folders
-            new File(fileToRestore.getParent()).mkdirs();
+            fileToRestore.getParentFile().mkdirs();
             if (fileToRestore.exists())
                 if (!fileToRestore.delete())
                     throw new SecrecyRestoreException("Existing File cannot be deleted.");
@@ -60,7 +66,7 @@ public class RestoreJob extends Job {
                 throw new SecrecyRestoreException("New File cannot be created at" +
                         fileToRestore.getAbsolutePath() + ". Is the restore path valid?");
 
-            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(fileToRestore), Config.blockSize);
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(fileToRestore), Config.BLOCK_SIZE);
             int len;
             while ((len = zis.read(buffer)) > 0) {
                 bos.write(buffer, 0, len);

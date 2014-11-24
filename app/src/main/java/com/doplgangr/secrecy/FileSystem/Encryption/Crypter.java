@@ -25,13 +25,12 @@ import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 
 public interface Crypter {
 
     public CipherOutputStream getCipherOutputStream(File file, String outputFileName) throws SecrecyCipherStreamException, FileNotFoundException;
-    public CipherInputStream getCipherInputStream(File encryptedFile) throws SecrecyCipherStreamException, FileNotFoundException;
+    public SecrecyCipherInputStream getCipherInputStream(File encryptedFile) throws SecrecyCipherStreamException, FileNotFoundException;
     public String getDecryptedFileName(File file) throws SecrecyCipherStreamException, FileNotFoundException;
     public void deleteFile(EncryptedFile file);
     public boolean changePassphrase(String oldPassphrase, String newPassphrase);

@@ -29,8 +29,10 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceGroup;
+import android.preference.PreferenceScreen;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.preference.PreferenceFragment;
 import android.support.v7.app.ActionBarActivity;
@@ -50,6 +52,7 @@ import com.doplgangr.secrecy.Premium.PremiumStateHelper;
 import com.doplgangr.secrecy.Premium.StealthMode;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.Views.MainActivity;
 import com.doplgangr.secrecy.Views.VaultsListFragment;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 import com.ipaulpro.afilechooser.utils.FileUtils;
@@ -77,6 +80,12 @@ public class SettingsFragment extends PreferenceFragment
     ActionBarActivity context = null;
     @StringRes(R.string.Settings__stealth_mode_message)
     String stealth_mode_message;
+    @StringArrayRes(R.array.Credits__names)
+    String[] creditsNames;
+    @StringArrayRes(R.array.Credits__description)
+    String[] creditsDescription;
+    @StringArrayRes(R.array.Credits__links)
+    String[] creditsLinks;
     @StringArrayRes(R.array.Contributor__names)
     String[] contributorNames;
     @StringArrayRes(R.array.Contributor__description)
@@ -113,6 +122,11 @@ public class SettingsFragment extends PreferenceFragment
 
     @AfterViews
     void onCreate() {
+        //Sanitize screen
+        PreferenceScreen preferenceScreen = getPreferenceScreen();
+        if (preferenceScreen != null)
+            preferenceScreen.removeAll();
+
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
         context = (ActionBarActivity) getActivity();
@@ -137,7 +151,20 @@ public class SettingsFragment extends PreferenceFragment
                 return true;
             }
         });
-
+        final ListPreference image_size = (ListPreference) findPreference("image_size");
+        image_size.setValueIndex(Prefs.maxImageSize().get());
+        image_size.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                int value = Integer.parseInt(o.toString());
+                Prefs.edit()
+                        .maxImageSize()
+                        .put(value)
+                        .apply();
+                MainActivity.loadSelectedImageSize(value);
+                return true;
+            }
+        });
         Preference vault_root = findPreference("vault_root");
         vault_root.setSummary(Storage.getRoot().getAbsolutePath());
         vault_root.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -158,6 +185,24 @@ public class SettingsFragment extends PreferenceFragment
                 return true;
             }
         });
+        PreferenceGroup creditsList = (PreferenceGroup) findPreference("credits_list");
+        for (int i = 0; i < creditsNames.length; i++) {
+            Preference newPreference = new Preference(getActivity());
+            newPreference.setTitle(creditsNames[i]);
+            newPreference.setSummary(creditsDescription[i]);
+            final int finali = i;
+            newPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Uri uri = Uri.parse(creditsLinks[finali]);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                    return true;
+                }
+            });
+            creditsList.addPreference(newPreference);
+        }
+
         PreferenceGroup translatorList = (PreferenceGroup) findPreference("translators_list");
         for (int i = 0; i < contributorNames.length; i++) {
             Preference newPreference = new Preference(getActivity());

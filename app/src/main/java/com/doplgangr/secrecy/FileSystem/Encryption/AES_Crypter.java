@@ -29,7 +29,6 @@ import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Util;
 import com.google.protobuf.ByteString;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,20 +37,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.SecretKeySpec;
 
 abstract class AES_Crypter implements Crypter {
 
@@ -62,7 +61,6 @@ abstract class AES_Crypter implements Crypter {
     private static final String FILE_HEADER_PREFIX = "/.header_";
     private static final int NONCE_LENGTH_BYTE = 16;
     private static final int AES_KEY_SIZE_BIT = 256;
-    private static final int AES_KEY_SIZE_BYTE = AES_KEY_SIZE_BIT / 8;
     private static final int SALT_SIZE_BYTE = 16;
     private static final int VAULT_HEADER_VERSION = 1;
     private static final int FILE_HEADER_VERSION = 1;
@@ -71,7 +69,7 @@ abstract class AES_Crypter implements Crypter {
     private final String vaultPath;
     private final String encryptionMode;
 
-    private SecretKeySpec vaultFileEncryptionKey;
+    private SecretKey vaultFileEncryptionKey;
     private VaultHeader vaultHeader;
 
     protected AES_Crypter(String vaultPath, String passphrase, String encryptionMode)
@@ -83,11 +81,13 @@ abstract class AES_Crypter implements Crypter {
         File headerFile = new File(this.vaultPath + VAULT_HEADER_FILENAME);
         if (!headerFile.exists()) {
             try {
+                KeyGenerator keyGenerator = KeyGenerator.getInstance(KEY_ALGORITHM);
+                keyGenerator.init(AES_KEY_SIZE_BIT);
+                Key encryptionKey = keyGenerator.generateKey();
+
                 byte[] vaultNonce = new byte[NONCE_LENGTH_BYTE];
-                byte[] aesKey = new byte[AES_KEY_SIZE_BYTE];
                 byte[] salt = new byte[SALT_SIZE_BYTE];
                 secureRandom.nextBytes(vaultNonce);
-                secureRandom.nextBytes(aesKey);
                 secureRandom.nextBytes(salt);
 
                 int pbkdf2Iterations = generatePBKDF2IterationCount(passphrase, salt);
@@ -97,7 +97,8 @@ abstract class AES_Crypter implements Crypter {
                         new PBEKeySpec(passphrase.toCharArray(), salt,
                                 pbkdf2Iterations, AES_KEY_SIZE_BIT));
 
-                writeVaultHeader(headerFile, vaultNonce, salt, pbkdf2Iterations, aesKey, keyFromPassphrase);
+                writeVaultHeader(headerFile, vaultNonce, salt, pbkdf2Iterations, encryptionKey,
+                        keyFromPassphrase);
             } catch (Exception e) {
                 Util.log("Cannot create vault header!");
                 e.printStackTrace();
@@ -118,18 +119,13 @@ abstract class AES_Crypter implements Crypter {
                     new PBEKeySpec(passphrase.toCharArray(), vaultHeader.getSalt().toByteArray(),
                             vaultHeader.getPbkdf2Iterations(), AES_KEY_SIZE_BIT));
             Cipher c = Cipher.getInstance(HEADER_ENCRYPTION_MODE);
-            c.init(Cipher.DECRYPT_MODE, keyFromPassphrase, new IvParameterSpec(
+            c.init(Cipher.UNWRAP_MODE, keyFromPassphrase, new IvParameterSpec(
                     vaultHeader.getVaultIV().toByteArray()));
 
-            byte[] decryptedKey = c.doFinal(vaultHeader.getEncryptedAesKey().toByteArray());
-            vaultFileEncryptionKey = new SecretKeySpec(decryptedKey, 0,
-                    AES_KEY_SIZE_BYTE, KEY_ALGORITHM);
-        } catch (BadPaddingException e) {
-            if (e.getMessage().equals("mac check in GCM failed")) {
-                throw new InvalidKeyException("Passphrase is wrong!");
-            } else {
-                e.printStackTrace();
-            }
+            vaultFileEncryptionKey = (SecretKey) c.unwrap(vaultHeader.getEncryptedAesKey().toByteArray(),
+                    KEY_ALGORITHM, Cipher.SECRET_KEY);
+        } catch (InvalidKeyException e) {
+            throw new InvalidKeyException("Passphrase is wrong!");
         } catch (Exception e) {
             Util.log("Cannot decrypt AES key");
             e.printStackTrace();
@@ -162,13 +158,13 @@ abstract class AES_Crypter implements Crypter {
     }
 
     private void writeVaultHeader(File headerFile, byte[] vaultNonce, byte[] salt,
-                                  int pbkdf2Iterations, byte[] aesKey,
+                                  int pbkdf2Iterations, Key aesKey,
                                   SecretKey keyFromPassphrase) throws Exception {
         Cipher c = Cipher.getInstance(HEADER_ENCRYPTION_MODE);
         FileOutputStream headerOutputStream = new FileOutputStream(headerFile);
 
-        c.init(Cipher.ENCRYPT_MODE, keyFromPassphrase, new IvParameterSpec(vaultNonce));
-        byte[] encryptedAesKey = c.doFinal(aesKey);
+        c.init(Cipher.WRAP_MODE, keyFromPassphrase, new IvParameterSpec(vaultNonce));
+        byte[] encryptedAesKey = c.wrap(aesKey);
 
         VaultHeader.Builder vaultHeaderBuilder = VaultHeader.newBuilder();
         vaultHeaderBuilder.setVersion(VAULT_HEADER_VERSION);
@@ -241,13 +237,13 @@ abstract class AES_Crypter implements Crypter {
         }
 
         BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
-                new FileOutputStream(outputFile), Config.blockSize);
+                new FileOutputStream(outputFile), Config.BLOCK_SIZE);
 
         return new CipherOutputStream(bufferedOutputStream, c);
     }
 
     @Override
-    public CipherInputStream getCipherInputStream(File encryptedFile)
+    public SecrecyCipherInputStream getCipherInputStream(File encryptedFile)
             throws SecrecyCipherStreamException, FileNotFoundException {
         Cipher c;
         try {
@@ -280,10 +276,7 @@ abstract class AES_Crypter implements Crypter {
             throw new SecrecyCipherStreamException("Invalid algorithm parameter!");
         }
 
-        BufferedInputStream bufferedInputStream = new BufferedInputStream(
-                new FileInputStream(encryptedFile), Config.blockSize);
-
-        return new CipherInputStream(bufferedInputStream, c);
+        return new SecrecyCipherInputStream(new FileInputStream(encryptedFile), c);
     }
 
     public String getDecryptedFileName(File file) throws SecrecyCipherStreamException,
@@ -342,9 +335,10 @@ abstract class AES_Crypter implements Crypter {
                         new PBEKeySpec(oldPassphrase.toCharArray(), vaultHeader.getSalt().toByteArray(),
                                 vaultHeader.getPbkdf2Iterations(), AES_KEY_SIZE_BIT));
                 Cipher c = Cipher.getInstance(HEADER_ENCRYPTION_MODE);
-                c.init(Cipher.DECRYPT_MODE, oldKeyFromPassphrase, new IvParameterSpec(
+                c.init(Cipher.UNWRAP_MODE, oldKeyFromPassphrase, new IvParameterSpec(
                         vaultHeader.getVaultIV().toByteArray()));
-                byte[] decryptedKey = c.doFinal(vaultHeader.getEncryptedAesKey().toByteArray());
+                Key decryptedKey = c.unwrap(vaultHeader.getEncryptedAesKey().toByteArray(),
+                        KEY_ALGORITHM, Cipher.SECRET_KEY);
 
                 // Create new vault nonce and salt
                 byte[] vaultNonce = new byte[NONCE_LENGTH_BYTE];
