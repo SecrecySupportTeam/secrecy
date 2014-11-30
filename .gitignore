@@ -49,3 +49,5 @@ local.properties
 *.sublime-*
 .nb-gradle
 log/
+*.iml
+build
