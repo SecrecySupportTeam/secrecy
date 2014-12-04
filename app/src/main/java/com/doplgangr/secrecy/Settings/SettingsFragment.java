@@ -252,6 +252,18 @@ public class SettingsFragment extends PreferenceFragment
                 return true;
             }
         });
+        final CheckBoxPreference sortMode = (CheckBoxPreference) findPreference("vault_sort");
+        sortMode.setChecked(Prefs.sorting().get());
+        sortMode.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                Prefs.edit()
+                        .sorting()
+                        .put((Boolean) o)
+                        .apply();
+                return true;
+            }
+        });
         final CheckBoxPreference stealth_mode = (CheckBoxPreference) findPreference("stealth_mode");
         stealth_mode.setChecked(Prefs.stealth().get());
         stealth_mode.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
