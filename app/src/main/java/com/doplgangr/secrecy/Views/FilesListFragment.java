@@ -60,6 +60,7 @@ import com.doplgangr.secrecy.Jobs.BackupJob;
 import com.doplgangr.secrecy.Jobs.InitializeVaultJob;
 import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
+import com.doplgangr.secrecy.Settings.Prefs_;
 import com.doplgangr.secrecy.Util;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 
@@ -110,6 +111,9 @@ public class FilesListFragment extends FileViewer {
     private int decryptCounter = 0;
     private boolean isGallery = false;
     private boolean attached = false;
+    @org.androidannotations.annotations.sharedpreferences.Pref
+    Prefs_ Pref;
+
     //Notifications
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
@@ -269,7 +273,7 @@ public class FilesListFragment extends FileViewer {
                     CustomApp.context.getString(R.string.Files__add_successful),
                     Toast.LENGTH_SHORT);
             addToList(event.encryptedFile);
-            mAdapter.sort();
+            if (Pref.sorting().get()) mAdapter.sort();
             int index = mAdapter.getItemId(event.encryptedFile);
             if (index != -1)
                 recyclerView.smoothScrollToPosition(index);
@@ -446,6 +450,7 @@ public class FilesListFragment extends FileViewer {
     void addToList(EncryptedFile encryptedFile) {
         listAdapter.add(encryptedFile);
         galleryAdapter.add(encryptedFile);
+        if (Pref.sorting().get()) listAdapter.sort();
         mAdapter.notifyDataSetChanged();
     }
 
@@ -481,6 +486,7 @@ public class FilesListFragment extends FileViewer {
             recyclerView.setLayoutManager(gridLayout);
         } else {
             mAdapter = listAdapter;
+            if (Pref.sorting().get()) mAdapter.sort();
             recyclerView.setLayoutManager(linearLayout);
         }
         recyclerView.setAdapter(mAdapter);

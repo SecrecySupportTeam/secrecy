@@ -36,6 +36,9 @@ public interface Prefs {
     @DefaultBoolean(false)
     boolean stealth();
 
+    @DefaultBoolean(false)
+    boolean sorting();
+
     @DefaultBoolean(true)
     boolean showVaultSwipeDeleteTutorial();
 
