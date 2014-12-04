@@ -34,6 +34,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.text.InputType;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -93,6 +94,9 @@ public class VaultsListFragment extends Fragment {
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
 
+    private static InputMethodManager imm = null;
+    private static View kbdView = null;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -150,6 +154,7 @@ public class VaultsListFragment extends Fragment {
             nothing.setVisibility(View.GONE);
             mLinearView.setVisibility(View.VISIBLE);
         }
+        imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
         showTutorial();
     }
 
@@ -357,6 +362,7 @@ public class VaultsListFragment extends Fragment {
         // View of lisitem
         // position of listitem in list
         switchView(mView, R.id.vault_decrypt_layout);
+
         mView.findViewById(R.id.open_ok)
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -364,6 +370,7 @@ public class VaultsListFragment extends Fragment {
                         String value = ((EditText) mView.findViewById(R.id.open_password))
                                 .getText().toString();
                         mOnVaultSelected.onVaultSelected(vault, value);
+                        imm.hideSoftInputFromWindow(kbdView.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
                     }
                 });
         mView.findViewById(R.id.open_cancel)
@@ -371,6 +378,7 @@ public class VaultsListFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         switchView(mView, R.id.vault_name_layout);
+                        imm.hideSoftInputFromWindow(kbdView.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
                     }
                 });
     }
@@ -392,9 +400,10 @@ public class VaultsListFragment extends Fragment {
     @UiThread
     void switchView(final View parentView, int showView) {
         EditText passwordView = (EditText) parentView.findViewById(R.id.open_password);
-        View renameView = parentView.findViewById(R.id.rename_name);
+        final View renameView = parentView.findViewById(R.id.rename_name);
         ViewAnimator viewAnimator = (ViewAnimator) parentView.findViewById(R.id.viewAnimator);
         viewAnimator.setInAnimation(context, R.anim.slide_down);
+
         int viewIndex = 0;
         switch (showView) {
             case R.id.vault_name_layout:
@@ -406,6 +415,19 @@ public class VaultsListFragment extends Fragment {
                     passwordView.requestFocus();
                     passwordView.setText("");                               //Reset password field everytime
                 }
+
+                // Only one vault selected at that time
+                passwordView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        if (!hasFocus) {
+                            ViewAnimator viewAnimator = (ViewAnimator) parentView.findViewById(R.id.viewAnimator);
+                            viewAnimator.setDisplayedChild(0);
+                        }
+                    }
+                });
+                kbdView = passwordView;
+                imm.showSoftInput(passwordView, InputMethodManager.SHOW_IMPLICIT);
                 break;
             case R.id.vault_delete_layout:
                 viewIndex = 2;
@@ -414,8 +436,22 @@ public class VaultsListFragment extends Fragment {
                 viewIndex = 3;
                 if (renameView != null)
                     renameView.requestFocus();
+
+                // Only one vault selected at that time
+                renameView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        if (!hasFocus) {
+                            ViewAnimator viewAnimator = (ViewAnimator) parentView.findViewById(R.id.viewAnimator);
+                            viewAnimator.setDisplayedChild(0);
+                        }
+                    }
+                });
+                kbdView = renameView;
+                imm.showSoftInput(renameView, InputMethodManager.SHOW_IMPLICIT);
                 break;
         }
+
         viewAnimator.setDisplayedChild(viewIndex);
     }
 
