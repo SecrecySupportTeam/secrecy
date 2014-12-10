@@ -142,7 +142,7 @@ public class VaultsListFragment extends Fragment {
             adapter.add(file.getName());
         }
         adapter.sort();
-        for (int i = 0; i < files.size(); i++){
+        for (int i = 0; i < files.size(); i++) {
             final View mView = adapter.getView(i, mLinearView); //inject vaults into list
             mLinearView.addView(mView, i);
             setClickListener(mView, i);
@@ -154,12 +154,12 @@ public class VaultsListFragment extends Fragment {
             nothing.setVisibility(View.GONE);
             mLinearView.setVisibility(View.VISIBLE);
         }
-        imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         showTutorial();
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
