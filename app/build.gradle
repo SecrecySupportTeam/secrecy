@@ -8,13 +8,12 @@ repositories {
 }
 apt {
     arguments {
-        androidManifestFile variant.processResources.manifestFile
         resourcePackageName "com.doplgangr.secrecy"
     }
 }
 android {
     compileSdkVersion 21
-    buildToolsVersion '21.0.2'
+    buildToolsVersion '21.1.2'
 
     defaultConfig {
         applicationId "com.doplgangr.secrecy"
@@ -25,9 +24,8 @@ android {
     }
     buildTypes {
         release {
-            runProguard true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            proguardFile 'proguard-rules.pro'
         }
     }
     lintOptions {
@@ -41,11 +39,10 @@ dependencies {
     compile 'org.androidannotations:androidannotations-api:3.0.1'
     // two lines
     compile 'commons-io:commons-io:2.4'
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.balysv.materialmenu:material-menu-abc:1.2.2'
-    compile 'com.android.support:appcompat-v7:21.0.+'
-    compile 'com.android.support:recyclerview-v7:21.0.+'
-    compile 'com.android.support:support-v4:21.0.+'
+    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.android.support:recyclerview-v7:21.0.3'
+    compile 'com.android.support:support-v4:21.0.3'
     compile 'com.github.chrisbanes.photoview:library:1.2.3'
     compile 'com.path:android-priority-jobqueue:1.1.2'
     compile 'de.greenrobot:eventbus:2.2.0'
