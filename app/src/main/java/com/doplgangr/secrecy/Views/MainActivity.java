@@ -36,7 +36,6 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
-import com.crashlytics.android.Crashlytics;
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.Encryption.VaultHolder;
@@ -88,9 +87,25 @@ public class MainActivity
     FragmentManager fragmentManager;
     private ActionBarDrawerToggle mDrawerToggle;
 
+    public static void loadSelectedImageSize(int imageSize){
+        switch (imageSize) {
+            case 0:
+                Util.log("Setting image size to: " + Config.IMAGE_SIZE_SMALL);
+                Config.selectedImageSize = Config.IMAGE_SIZE_SMALL;
+                break;
+            case 1:
+                Util.log("Setting image size to: " + Config.IMAGE_SIZE_MEDIUM);
+                Config.selectedImageSize = Config.IMAGE_SIZE_MEDIUM;
+                break;
+            case 2:
+                Util.log("Setting image size to: " + Config.IMAGE_SIZE_LARGE);
+                Config.selectedImageSize = Config.IMAGE_SIZE_LARGE;
+                break;
+        }
+    }
+
     @AfterViews
     public void onCreate() {
-        Crashlytics.start(this);
         Storage.deleteTemp();                                           //Start clean
         VaultHolder.getInstance().clear();
         fragmentManager = getSupportFragmentManager();
@@ -168,23 +183,6 @@ public class MainActivity
         super.onPostCreate(savedInstanceState);
         if (mDrawerToggle != null)
             mDrawerToggle.syncState();
-    }
-
-    public static void loadSelectedImageSize(int imageSize){
-        switch (imageSize){
-            case 0:
-                Util.log("Setting image size to: " + Config.IMAGE_SIZE_SMALL);
-                Config.selectedImageSize = Config.IMAGE_SIZE_SMALL;
-                break;
-            case 1:
-                Util.log("Setting image size to: " + Config.IMAGE_SIZE_MEDIUM);
-                Config.selectedImageSize = Config.IMAGE_SIZE_MEDIUM;
-                break;
-            case 2:
-                Util.log("Setting image size to: " + Config.IMAGE_SIZE_LARGE);
-                Config.selectedImageSize = Config.IMAGE_SIZE_LARGE;
-                break;
-        }
     }
 
     private void showHelpDeskTutorial() {
