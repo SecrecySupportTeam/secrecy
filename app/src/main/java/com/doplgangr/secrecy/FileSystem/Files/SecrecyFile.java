@@ -22,6 +22,7 @@ package com.doplgangr.secrecy.FileSystem.Files;
 import android.widget.ProgressBar;
 
 import com.doplgangr.secrecy.Config;
+import com.doplgangr.secrecy.Exceptions.SecrecyCipherStreamException;
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.Encryption.Crypter;
 import com.doplgangr.secrecy.FileSystem.Encryption.SecrecyCipherInputStream;
@@ -56,10 +57,6 @@ public abstract class SecrecyFile implements Serializable {
         int exp = (int) (Math.log(bytes) / Math.log(unit));
         char pre = ("KMGTPE").charAt(exp - 1);
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
-    }
-
-    public void setIsDecrypting(Boolean isDecrypting) {
-        this.isDecrypting = isDecrypting;
     }
 
     public ProgressBar getProgressBar() {
@@ -99,6 +96,10 @@ public abstract class SecrecyFile implements Serializable {
 
     public Boolean getIsDecrypting() {
         return isDecrypting;
+    }
+
+    public void setIsDecrypting(Boolean isDecrypting) {
+        this.isDecrypting = isDecrypting;
     }
 
     public File readFile(CryptStateListener listener) {
@@ -151,6 +152,11 @@ public abstract class SecrecyFile implements Serializable {
         if (outputFile != null)
             Storage.purgeFile(outputFile);
         return null;
+    }
+
+    public void rename(String newName) throws SecrecyCipherStreamException, FileNotFoundException {
+        crypter.renameFile(getFile(), newName);
+        decryptedFileName = newName;
     }
 
     public SecrecyCipherInputStream readStream(CryptStateListener listener) {
