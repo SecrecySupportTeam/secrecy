@@ -40,6 +40,7 @@
     <string name="Error__root_IOException_message">We cannot access the vault location you have set. Please try again later, or set another vault location.</string>
     <string name="File__decrypting">Decrypting…</string>
     <string name="action__decrypt">Decrypt</string>
+    <string name="action__rename">Rename</string>
     <string name="action__delete">Delete</string>
     <string name="action__add_file">Add file</string>
     <string name="action__change_password">Change vault password</string>
@@ -52,4 +53,5 @@
     <string name="Restore__title">Restoring</string>
     <string name="Restore__in_progress">Restore in Progress</string>
     <string name="Restore__finish">Restore Finished. %s has been restored.</string>
+    <string name="File__rename">New File Name</string>
 </resources>

@@ -10,6 +10,12 @@
         android:orderInCategory="1"
         app:showAsAction="ifRoom" />-->
     <item
+        android:id="@+id/action_rename"
+        android:icon="@drawable/ic_action_edit"
+        android:orderInCategory="1"
+        android:title="@string/action__rename"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/action_decrypt"
         android:icon="@drawable/ic_action_not_secure"
         android:orderInCategory="1"
