@@ -53,6 +53,7 @@ import com.doplgangr.secrecy.Events.AddingFileEvent;
 import com.doplgangr.secrecy.Events.BackUpDoneEvent;
 import com.doplgangr.secrecy.Events.DecryptingFileDoneEvent;
 import com.doplgangr.secrecy.Events.NewFileEvent;
+import com.doplgangr.secrecy.Exceptions.SecrecyCipherStreamException;
 import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.FileSystem.Storage;
@@ -76,6 +77,7 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.DrawableRes;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -104,6 +106,8 @@ public class FilesListFragment extends FileViewer {
     String vault;
     @FragmentArg(Config.password_extra)
     String password;
+    @org.androidannotations.annotations.sharedpreferences.Pref
+    Prefs_ Pref;
     private Vault secret;
     private FilesListAdapter mAdapter;
     private FilesListAdapter listAdapter;
@@ -111,9 +115,6 @@ public class FilesListFragment extends FileViewer {
     private int decryptCounter = 0;
     private boolean isGallery = false;
     private boolean attached = false;
-    @org.androidannotations.annotations.sharedpreferences.Pref
-    Prefs_ Pref;
-
     //Notifications
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
@@ -157,6 +158,10 @@ public class FilesListFragment extends FileViewer {
                     return true;
                 case R.id.action_delete:
                     deleteSelectedItems();
+                    mode.finish();
+                    return true;
+                case R.id.action_rename:
+                    renameSelectedItems();
                     mode.finish();
                     return true;
                 case R.id.action_select_all:
@@ -709,6 +714,40 @@ public class FilesListFragment extends FileViewer {
         }
     }
 
+    void renameSelectedItems() {
+
+        for (final Integer index : mAdapter.getSelected()) {
+            decryptCounter++;
+            if (mAdapter.hasIndex(index)) {
+                if (attached) {
+                    final EditText renameView = new EditText(context);
+                    renameView.setText(mAdapter.getItem(index).getDecryptedFileName());
+
+                    new AlertDialog.Builder(context)
+                            .setTitle(getString(R.string.File__rename))
+                            .setView(renameView)
+                            .setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    String newName = renameView.getText().toString();
+
+                                    try {
+                                        mAdapter.getItem(index).rename(newName);
+                                    } catch (SecrecyCipherStreamException e) {
+                                        e.printStackTrace();
+                                    } catch (FileNotFoundException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    mAdapter.notifyItemChanged(index);
+                                }
+                            })
+                            .setNegativeButton(R.string.CANCEL, Util.emptyClickListener)
+                            .show();
+                }
+            }
+        }
+    }
+
     void sendRawSelectedItems() {
         ArrayList<DecryptArgHolder> Args = new ArrayList<DecryptArgHolder>();
 
@@ -788,11 +827,20 @@ public class FilesListFragment extends FileViewer {
         mAdapter.select(position);
         mAdapter.notifyItemChanged(position);
 
-        if (mActionMode != null)
-            mActionMode.setTitle(
-                    String.format(getString(R.string.Files__number_selected),
-                            mAdapter.getSelected().size()));
-        if ((mAdapter.getSelected().size() == 0) && mActionMode != null)
+        if (mActionMode == null)
+            return;
+
+        mActionMode.setTitle(
+                String.format(getString(R.string.Files__number_selected),
+                        mAdapter.getSelected().size()));
+        MenuItem renameButton = mActionMode.getMenu().findItem(R.id.action_rename);
+
+        if (mAdapter.getSelected().size() == 1)
+            renameButton.setVisible(true);
+        else
+            renameButton.setVisible(false);
+
+        if (mAdapter.getSelected().size() == 0)
             mActionMode.finish();
     }
 

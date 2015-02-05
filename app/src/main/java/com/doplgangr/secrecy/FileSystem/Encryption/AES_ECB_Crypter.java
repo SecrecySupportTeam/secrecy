@@ -43,8 +43,8 @@ import javax.crypto.spec.SecretKeySpec;
 class AES_ECB_Crypter implements Crypter {
 
     private final String mode = "AES/ECB/PKCS5Padding";
-    private SecretKeySpec aesKey;
     private final String vaultPath;
+    private SecretKeySpec aesKey;
     private byte[] key;
 
     public AES_ECB_Crypter(String vaultPath, String password) throws InvalidKeyException{
@@ -139,5 +139,15 @@ class AES_ECB_Crypter implements Crypter {
     @Override
     public void deleteFile(EncryptedFile file) {
         file.delete();
+    }
+
+    @Override
+    public void renameFile(File file, String newName) throws SecrecyCipherStreamException, FileNotFoundException {
+
+        File parent = file.getParentFile();
+        newName = FilenameUtils.removeExtension(newName);
+        newName = Base64Coder.encodeString(newName);
+        newName += "." + FilenameUtils.getExtension(file.getName());
+        file.renameTo(new File(parent, newName));
     }
 }

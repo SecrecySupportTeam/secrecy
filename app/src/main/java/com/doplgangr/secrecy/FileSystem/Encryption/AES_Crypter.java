@@ -322,6 +322,59 @@ abstract class AES_Crypter implements Crypter {
     }
 
     @Override
+    public void renameFile(File file, String newName) throws SecrecyCipherStreamException, FileNotFoundException {
+        Cipher c;
+        try {
+            c = Cipher.getInstance(encryptionMode);
+        } catch (NoSuchAlgorithmException e) {
+            throw new SecrecyCipherStreamException("Encryption algorithm not found!");
+        } catch (NoSuchPaddingException e) {
+            throw new SecrecyCipherStreamException("Selected padding not found!");
+        }
+
+        File headerFile = new File(file.getParent() + FILE_HEADER_PREFIX + file.getName());
+        if (!headerFile.exists()) {
+            throw new FileNotFoundException("Header file not found!");
+        }
+
+        FileHeader fileHeader;
+        try {
+            fileHeader = FileHeader.parseFrom(new FileInputStream(headerFile));
+        } catch (IOException e) {
+            throw new SecrecyCipherStreamException("Cannot parse file header!");
+        }
+
+        try {
+            c.init(Cipher.ENCRYPT_MODE, vaultFileEncryptionKey,
+                    new IvParameterSpec(fileHeader.getFileNameIV().toByteArray()));
+        } catch (InvalidKeyException e) {
+            throw new SecrecyCipherStreamException("Invalid encryption key!");
+        } catch (InvalidAlgorithmParameterException e) {
+            throw new SecrecyCipherStreamException("Invalid algorithm parameter!");
+        }
+
+        byte[] encryptedFileName;
+        try {
+            encryptedFileName = c.doFinal(newName.getBytes());
+        } catch (IllegalBlockSizeException e) {
+            throw new SecrecyCipherStreamException("Illegal block size!");
+        } catch (BadPaddingException e) {
+            throw new SecrecyCipherStreamException("Bad padding");
+        }
+
+        FileHeader.Builder fileHeaderBuilder = fileHeader.toBuilder();
+        fileHeaderBuilder.setEncryptedFileName(ByteString.copyFrom(encryptedFileName));
+
+        FileOutputStream headerOutputStream = new FileOutputStream(headerFile);
+        try {
+            fileHeaderBuilder.build().writeTo(headerOutputStream);
+            headerOutputStream.close();
+        } catch (IOException e) {
+            throw new SecrecyCipherStreamException("IO exception while writing file header");
+        }
+    }
+
+    @Override
     public boolean changePassphrase(String oldPassphrase, String newPassphrase) {
         SecretKeyFactory secretKeyFactory;
 

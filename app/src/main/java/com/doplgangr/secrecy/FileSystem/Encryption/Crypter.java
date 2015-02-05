@@ -30,8 +30,14 @@ import javax.crypto.CipherOutputStream;
 public interface Crypter {
 
     public CipherOutputStream getCipherOutputStream(File file, String outputFileName) throws SecrecyCipherStreamException, FileNotFoundException;
+
     public SecrecyCipherInputStream getCipherInputStream(File encryptedFile) throws SecrecyCipherStreamException, FileNotFoundException;
+
     public String getDecryptedFileName(File file) throws SecrecyCipherStreamException, FileNotFoundException;
+
     public void deleteFile(EncryptedFile file);
+
+    public void renameFile(File file, String newName) throws SecrecyCipherStreamException, FileNotFoundException;
+
     public boolean changePassphrase(String oldPassphrase, String newPassphrase);
 }
