@@ -28,7 +28,6 @@ import com.doplgangr.secrecy.FileSystem.Encryption.VaultHolder;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
-import com.path.android.jobqueue.log.CustomLogger;
 
 import org.androidannotations.annotations.EApplication;
 
@@ -65,6 +64,7 @@ public class CustomApp extends Application {
                 .minConsumerCount(1)//always keep at least one consumer alive
                 .maxConsumerCount(1)//up to 1 consumers at a time
                 .loadFactor(1)//1 jobs per consumer
+                .networkUtil(new NetworkUtilImpl(this))
                 .build();
 
         jobManager = new JobManager(this, configuration);

@@ -32,8 +32,6 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,7 +106,6 @@ public class Util {
         for (Object object : objects)
             log += " " + object;
         Log.d("SecrecyLogs", log);
-        Crashlytics.log(log);
     }
 
     public static Map<String, java.io.File> getAllStorageLocations() {
@@ -216,7 +213,7 @@ public class Util {
 
     }
 
-    public static String getFileTypeFromExtension(String extension){
+    public static String getFileTypeFromExtension(String extension) {
         if (extension.length() > 0) {
             return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
         }
