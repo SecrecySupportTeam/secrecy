@@ -1,5 +1,7 @@
 secrecy
 =======
+https://travis-ci.org/SecrecySupportTeam/secrecy.svg
+
 Secrecy is where you can safely put your files without worrying that others will see it... They just can't.
 
 I am starting this project since I have tried a number of Apps for secure file storage, while not finding one that best suits my expectations:
