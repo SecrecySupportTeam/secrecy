@@ -1,6 +1,6 @@
 secrecy
 =======
-https://travis-ci.org/SecrecySupportTeam/secrecy.svg
+[![Build Status](https://travis-ci.org/SecrecySupportTeam/secrecy.svg)](https://travis-ci.org/SecrecySupportTeam/secrecy)
 
 Secrecy is where you can safely put your files without worrying that others will see it... They just can't.
 
