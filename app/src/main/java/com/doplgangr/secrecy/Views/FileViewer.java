@@ -73,8 +73,7 @@ public abstract class FileViewer extends Fragment {
         //File specified is not invalid
         if (tempFile != null) {
             if (tempFile.getParentFile().equals(Storage.getTempFolder())) {
-                File newFile = new File(Storage.getTempFolder(), tempFile.getName());
-                tempFile = newFile;
+                tempFile = new File(Storage.getTempFolder(), tempFile.getName());
             }
             Uri uri = OurFileProvider.getUriForFile(context, OurFileProvider.FILE_PROVIDER_AUTHORITY, tempFile);
             MimeTypeMap myMime = MimeTypeMap.getSingleton();

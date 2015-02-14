@@ -23,7 +23,7 @@ import java.util.ArrayList;
  */
 public class NavAdapter extends ArrayAdapter<NavItem> {
 
-    private Context mContext;
+    private final Context mContext;
     private ArrayList<NavItem> mNavigationItems = new ArrayList<NavItem>();
 
     public NavAdapter(Context context, int resource,

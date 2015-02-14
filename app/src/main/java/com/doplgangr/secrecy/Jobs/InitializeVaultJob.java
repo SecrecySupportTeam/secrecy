@@ -1,15 +1,13 @@
 package com.doplgangr.secrecy.Jobs;
 
-import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.FileSystem.Encryption.VaultHolder;
-import com.doplgangr.secrecy.Util;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
 import de.greenrobot.event.EventBus;
 
 public class InitializeVaultJob extends Job {
-    public static final int PRIORITY = 10;
+    private static final int PRIORITY = 10;
     private final String vault;
     private final String key;
 

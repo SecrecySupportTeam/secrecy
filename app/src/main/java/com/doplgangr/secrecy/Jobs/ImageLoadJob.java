@@ -6,7 +6,6 @@ import android.widget.ProgressBar;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.Events.ImageLoadDoneEvent;
-import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.Encryption.SecrecyCipherInputStream;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.Util;
@@ -23,7 +22,7 @@ public class ImageLoadJob extends Job {
     private final ProgressBar pBar;
     private final Integer mNum;
     private boolean isObsolet = false;
-    private BitmapFactory.Options options;
+    private final BitmapFactory.Options options;
 
     public ImageLoadJob(Integer mNum, EncryptedFile encryptedFile, PhotoView imageView,
                         ProgressBar pBar) {
@@ -35,7 +34,7 @@ public class ImageLoadJob extends Job {
         options = new BitmapFactory.Options();
     }
 
-    public static int calculateInSampleSize(
+    private static int calculateInSampleSize(
             BitmapFactory.Options options) {
         int pixel = options.outHeight * options.outWidth;
         int inSampleSize = 1;
@@ -63,24 +62,7 @@ public class ImageLoadJob extends Job {
         if (isObsolet) {
             return;
         }
-        SecrecyCipherInputStream imageStream =
-                encryptedFile.readStream(new CryptStateListener() {
-                    @Override
-                    public void updateProgress(int progress) {
-                    }
-
-                    @Override
-                    public void setMax(int max) {
-                    }
-
-                    @Override
-                    public void onFailed(int statCode) {
-                    }
-
-                    @Override
-                    public void Finished() {
-                    }
-                });
+        SecrecyCipherInputStream imageStream = encryptedFile.readStream();
         //File specified is not invalid
         if (imageStream != null) {
             //Decode image size
@@ -90,24 +72,7 @@ public class ImageLoadJob extends Job {
                 options.inSampleSize = calculateInSampleSize(options);
                 options.inJustDecodeBounds = false;
 
-                imageStream =
-                        encryptedFile.readStream(new CryptStateListener() {
-                            @Override
-                            public void updateProgress(int progress) {
-                            }
-
-                            @Override
-                            public void setMax(int max) {
-                            }
-
-                            @Override
-                            public void onFailed(int statCode) {
-                            }
-
-                            @Override
-                            public void Finished() {
-                            }
-                        });
+                imageStream = encryptedFile.readStream();
 
                 if (!isObsolet) {
                     Bitmap bitmap = BitmapFactory.decodeStream(imageStream, null, options);

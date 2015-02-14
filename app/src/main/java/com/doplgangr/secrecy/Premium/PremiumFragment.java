@@ -133,7 +133,6 @@ public class PremiumFragment extends Fragment {
     void onCreate() {
         context = (ActionBarActivity) getActivity();
         context.getSupportActionBar().setTitle(R.string.Page_header__donation);
-        loadData();
 
         /* base64EncodedPublicKey should be YOUR APPLICATION'S PUBLIC KEY
          * (that you got from the Google Play developer console). This is not your
@@ -181,7 +180,7 @@ public class PremiumFragment extends Fragment {
 
     // User clicked the "Upgrade to Premium" button.
     @Click(R.id.Premium__upgrade_button)
-    public void onUpgradeAppButtonClicked() {
+    void onUpgradeAppButtonClicked() {
         Util.log("Upgrade button clicked; launching purchase flow for upgrade.");
         setWaitScreen(true);
 
@@ -277,26 +276,5 @@ public class PremiumFragment extends Fragment {
         bld.setNeutralButton(R.string.OK, null);
         Util.log("Showing alert dialog: " + message);
         bld.create().show();
-    }
-
-    void saveData() {
-        /*
-         * WARNING: on a real application, we recommend you save data in a secure way to
-         * prevent tampering. For simplicity in this sample, we simply store the data using a
-         * SharedPreferences.
-
-        SharedPreferences.Editor spe = getPreferences(MODE_PRIVATE).edit();
-        spe.putInt("tank", mTank);
-        spe.commit();
-        Log.d(TAG, "Saved data: tank = " + String.valueOf(mTank));
-         */
-    }
-
-    void loadData() {
-        /*
-        SharedPreferences sp = getPreferences(MODE_PRIVATE);
-        mTank = sp.getInt("tank", 2);
-        Log.d(TAG, "Loaded data: tank = " + String.valueOf(mTank));
-        */
     }
 }

@@ -45,7 +45,6 @@ class AES_ECB_Crypter implements Crypter {
     private final String mode = "AES/ECB/PKCS5Padding";
     private final String vaultPath;
     private SecretKeySpec aesKey;
-    private byte[] key;
 
     public AES_ECB_Crypter(String vaultPath, String password) throws InvalidKeyException{
         this.vaultPath = vaultPath;
@@ -130,11 +129,6 @@ class AES_ECB_Crypter implements Crypter {
     public boolean changePassphrase(String oldPassphrase, String newPassphrase) {
         return false;
     }
-
-    public byte[] getKey() {
-        return key;
-    }
-
 
     @Override
     public void deleteFile(EncryptedFile file) {

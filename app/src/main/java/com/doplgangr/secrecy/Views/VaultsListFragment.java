@@ -86,10 +86,10 @@ public class VaultsListFragment extends Fragment {
     Drawable selector;
     @Pref
     Prefs_ Pref;
-    ActionBarActivity context;
+    private ActionBarActivity context;
     VaultsAdapter adapter;
-    OnVaultSelectedListener mOnVaultSelected;
-    OnFragmentFinishListener mFinishListener;
+    private OnVaultSelectedListener mOnVaultSelected;
+    private OnFragmentFinishListener mFinishListener;
     private boolean isPaused = false;
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
@@ -168,7 +168,7 @@ public class VaultsListFragment extends Fragment {
         oncreate();
     }
 
-    public void setClickListener(final View mView, final int i) {
+    void setClickListener(final View mView, final int i) {
 
         mView.setOnClickListener(new View.OnClickListener() {
             @Override

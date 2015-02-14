@@ -27,8 +27,8 @@ import de.greenrobot.event.EventBus;
 public class RestoreJob extends Job {
     private static final int PRIORITY = 10;   //High. Same as UI jobs
     private static final int RETRY_LIMIT = 5; //Shouldn't try too much.
-    private File backupFile; //Path of backupFile
-    private Context context;
+    private final File backupFile; //Path of backupFile
+    private final Context context;
 
     public RestoreJob(Context context, File backupFile) {
         super(new Params(PRIORITY)

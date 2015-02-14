@@ -21,7 +21,6 @@ package com.doplgangr.secrecy.FileSystem.Files;
 
 import android.graphics.Bitmap;
 
-import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.Encryption.Crypter;
 import com.doplgangr.secrecy.FileSystem.Encryption.SecrecyCipherInputStream;
 import com.doplgangr.secrecy.FileSystem.Storage;
@@ -31,38 +30,22 @@ import java.io.File;
 public class EncryptedThumbnail extends SecrecyFile {
 
     private Bitmap thumbBitmap = null;
-    private final boolean thumbnailCreated = false;
 
     EncryptedThumbnail(File file, Crypter crypter) {
         this.crypter = crypter;
         this.file = file;
     }
 
-    public boolean isThumbnailCreated() {
-        return thumbnailCreated;
-    }
-
     public Bitmap getThumb(int thumbnailSize) {
-        if ((!thumbnailCreated) && (thumbBitmap == null)) {
-            SecrecyCipherInputStream streamThumb = readStream(new CryptStateListener() {
-                @Override
-                public void updateProgress(int progress) {
-                }
-
-                @Override
-                public void setMax(int max) {
-                }
-
-                @Override
-                public void onFailed(int statCode) {
-                }
-
-                @Override
-                public void Finished() {
-                }
-            });
+        if ((thumbBitmap == null)) {
+            SecrecyCipherInputStream streamThumb = readStream();
             this.thumbBitmap = Storage.getThumbnailfromStream(streamThumb, thumbnailSize);
         }
         return thumbBitmap;
+    }
+
+    @Override
+    public void delete() {
+        Storage.purgeFile(file);
     }
 }

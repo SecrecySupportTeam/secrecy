@@ -37,13 +37,9 @@ import java.util.Date;
 public class EncryptedFile extends SecrecyFile {
 
     private final EncryptedThumbnail encryptedThumbnail;
-    private Boolean hasThumbnail = false;
 
     /**
      * Loads an existing encrypted file from the file system.
-     *
-     * @param file
-     * @param crypter
      */
     EncryptedFile(File file, Crypter crypter, EncryptedThumbnail encryptedThumbnail)
             throws FileNotFoundException {
@@ -60,17 +56,9 @@ public class EncryptedFile extends SecrecyFile {
             //Ignored
         }
 
-        if (encryptedThumbnail != null && encryptedThumbnail.isThumbnailCreated()) {
-            hasThumbnail = true;
-        }
-
         fileExtension = FilenameUtils.getExtension(decryptedFileName);
         this.fileSize = humanReadableByteCount(file.length());
         timestamp = new Date(file.lastModified());
-    }
-
-    public boolean hasThumbnail() {
-        return (hasThumbnail);
     }
 
     public EncryptedThumbnail getEncryptedThumbnail() throws SecrecyFileException {
@@ -82,8 +70,8 @@ public class EncryptedFile extends SecrecyFile {
 
     @Override
     public void delete() {
-        if (encryptedThumbnail.getFile() != null) {
-            Storage.purgeFile(encryptedThumbnail.getFile());
+        if (encryptedThumbnail != null) {
+            encryptedThumbnail.delete();
         }
         Storage.purgeFile(file);
     }

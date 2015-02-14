@@ -27,7 +27,6 @@ import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFileFactory;
 import com.doplgangr.secrecy.FileSystem.Storage;
-import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.Util;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
@@ -53,7 +52,7 @@ public class Vault implements Serializable {
     Vault(String name, String passphrase) {
         this.name = name;
         this.passphrase = passphrase;
-        path = Storage.getRoot().getAbsolutePath() + "/" + name;
+        path = Storage.getRoot().getAbsolutePath() + '/' + name;
 
         // Dont load Crypter if vault is ECB vault
         if (isEcbVault()){
@@ -71,7 +70,7 @@ public class Vault implements Serializable {
     Vault(String name, String passphrase, Boolean istemp) {
         this.passphrase = passphrase;
         this.name = name;
-        path = Storage.getRoot().getAbsolutePath() + "/" + name;
+        path = Storage.getRoot().getAbsolutePath() + '/' + name;
 
         // Dont load Crypter if vault is ECB vault
         if (isEcbVault()){
@@ -95,7 +94,7 @@ public class Vault implements Serializable {
     }
 
     public boolean updateFromECBVault(String passphrase) throws FileNotFoundException, InvalidKeyException, SecrecyFileException {
-        AES_ECB_Crypter ecb_crypter = new AES_ECB_Crypter(path, passphrase);
+        @SuppressWarnings("deprecation") AES_ECB_Crypter ecb_crypter = new AES_ECB_Crypter(path, passphrase);
         Crypter newCrypter = new AES_CTR_Crypter(path, passphrase);
 
         List<File> files = getFileList();
@@ -164,26 +163,10 @@ public class Vault implements Serializable {
         }
     }
 
-    public int getFileCount() {
-        return getFileList().size();
-    }
-
     public EncryptedFile addFile(final Context context, final Uri uri) throws SecrecyFileException{
         Util.log("Vault: adding file ", uri);
         return EncryptedFileFactory.getInstance().createNewEncryptedFile(
                 (new File(FileUtils.getPath(context, uri))), crypter, this);
-    }
-
-    public EncryptedFile getFileInstance(String name) {
-        File requestedFile = new File(path, name);
-        EncryptedFile encryptedFile = null;
-        try {
-           encryptedFile = EncryptedFileFactory.getInstance().loadEncryptedFile(requestedFile,
-                   crypter, false);
-        } catch (FileNotFoundException e){
-            Util.log("File not found: " + requestedFile.getAbsolutePath());
-        }
-        return encryptedFile;
     }
 
     public Boolean delete() {
@@ -227,24 +210,6 @@ public class Vault implements Serializable {
               return null;
         }
         return VaultHolder.getInstance().createAndRetrieveVault(name, passphrase);
-    }
-
-    public void startWatching(final Listeners.FileObserverEventListener mListener) {
-        final android.os.FileObserver observer = new android.os.FileObserver(path) { // set up a file observer to watch this directory on sd card
-            @Override
-            public void onEvent(int event, String filename) {
-                if (filename != null) {
-                    File file = new File(path, filename);
-                    if (fileFilter(file)) {
-                        if (event == android.os.FileObserver.CREATE || event == android.os.FileObserver.MOVED_TO)
-                            mListener.add(file);
-                        if (event == android.os.FileObserver.DELETE || event == android.os.FileObserver.MOVED_FROM)
-                            mListener.remove(file);
-                    }
-                }
-            }
-        };
-        observer.startWatching(); //START OBSERVING
     }
 
     public interface onFileFoundListener {

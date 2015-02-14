@@ -26,10 +26,10 @@ import android.widget.ProgressBar;
 import uk.co.senab.photoview.PhotoView;
 
 public class ImageLoadDoneEvent {
-    public Integer mNum;
-    public PhotoView imageView;
-    public Bitmap bitmap;
-    public ProgressBar progressBar;
+    public final Integer mNum;
+    public final PhotoView imageView;
+    public final Bitmap bitmap;
+    public final ProgressBar progressBar;
 
     public ImageLoadDoneEvent(Integer mNum, PhotoView imageView, Bitmap bitmap, ProgressBar progressBar) {
         this.mNum = mNum;

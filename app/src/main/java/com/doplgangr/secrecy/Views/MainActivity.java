@@ -66,7 +66,7 @@ public class MainActivity
         implements
         VaultsListFragment.OnVaultSelectedListener,
         VaultsListFragment.OnFragmentFinishListener {
-    final List<Class> mFragmentNameList = new ArrayList<Class>() {{
+    private final List<Class> mFragmentNameList = new ArrayList<Class>() {{
         add(VaultsListFragment_.class);
         add(SettingsFragment_.class);
         add(PremiumFragment_.class);
@@ -84,7 +84,7 @@ public class MainActivity
     DrawerLayout mDrawerLayout;
     @ViewById(R.id.toolbar)
     Toolbar mToolbar;
-    FragmentManager fragmentManager;
+    private FragmentManager fragmentManager;
     private ActionBarDrawerToggle mDrawerToggle;
 
     public static void loadSelectedImageSize(int imageSize){

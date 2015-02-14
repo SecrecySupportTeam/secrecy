@@ -17,10 +17,10 @@ import java.util.ArrayList;
  */
 public class NavListView extends ListView {
 
-    public static int mSelectedColour;
-    public NavAdapter mNavigationAdapter;
-    private Context mContext;
-    private ArrayList<NavItem> mNavigationItems = new ArrayList<NavItem>();
+    private static int mSelectedColour;
+    private NavAdapter mNavigationAdapter;
+    private final Context mContext;
+    private final ArrayList<NavItem> mNavigationItems = new ArrayList<NavItem>();
     private NavigationItemClickListener mCallbacks;
 
     public NavListView(Context _context) {

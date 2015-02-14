@@ -19,9 +19,9 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 
 public class DeleteFileJob extends Job {
-    public static final int PRIORITY = 2;   //Slightly higher than shredding files
-    Context context = CustomApp.context;
-    private File file;
+    private static final int PRIORITY = 2;   //Slightly higher than shredding files
+    private final Context context = CustomApp.context;
+    private final File file;
     private OutputStream os = null;
     private long size = 0;
     private Uri uri;
@@ -47,7 +47,7 @@ public class DeleteFileJob extends Job {
         if (file != null)
             size = file.length();
         Util.log("Delete ", file);
-        Boolean ignored = file.delete();
+        file.delete();
         FileUtils.forceDelete(file);
         if (uri != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
@@ -56,7 +56,7 @@ public class DeleteFileJob extends Job {
         }
         new SingleMediaScanner(context, file); //Rescan and remove from gallery
         Storage.shredFile(os, size, file);
-        ignored = file.delete();
+        file.delete();
         FileUtils.forceDelete(file);
     }
 
@@ -81,8 +81,8 @@ public class DeleteFileJob extends Job {
 
     public class SingleMediaScanner implements MediaScannerConnection.MediaScannerConnectionClient {
 
-        private MediaScannerConnection mMs;
-        private java.io.File mFile;
+        private final MediaScannerConnection mMs;
+        private final java.io.File mFile;
 
         public SingleMediaScanner(Context context, java.io.File f) {
             mFile = f;

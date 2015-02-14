@@ -50,11 +50,11 @@ import de.greenrobot.event.EventBus;
 
 public class FilesListAdapter extends RecyclerView.Adapter<FilesListAdapter.ViewHolder> {
 
-    private Context context;
+    private final Context context;
     private boolean isGallery;
-    private int layout;
+    private final int layout;
     // store (a reference to) the data
-    private List<EncryptedFile> data = new ArrayList<EncryptedFile>();
+    private final List<EncryptedFile> data = new ArrayList<EncryptedFile>();
     private final Set<Integer> selectedItems = new HashSet<Integer>();
     private OnItemClickListener onItemClickListener;
     private OnItemLongClickListener onLongClickListener;
@@ -144,7 +144,7 @@ public class FilesListAdapter extends RecyclerView.Adapter<FilesListAdapter.View
         }
     }
 
-    public boolean isSelected(int position){
+    boolean isSelected(int position){
         return selectedItems.contains(position);
     }
 
@@ -265,14 +265,14 @@ public class FilesListAdapter extends RecyclerView.Adapter<FilesListAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
-        public TextView name;
-        public TextView type;
-        public TextView size;
-        public TextView date;
-        public ImageView thumbnail;
-        public FrameLayout frame;
-        public ViewAnimator animator;
-        public ProgressBar progressBar;
+        public final TextView name;
+        public final TextView type;
+        public final TextView size;
+        public final TextView date;
+        public final ImageView thumbnail;
+        public final FrameLayout frame;
+        public final ViewAnimator animator;
+        public final ProgressBar progressBar;
         public int page;
 
         public ViewHolder(View itemView) {

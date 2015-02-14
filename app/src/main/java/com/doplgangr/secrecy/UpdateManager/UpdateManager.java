@@ -75,7 +75,7 @@ public class UpdateManager extends Fragment {
     AppVersion_ version;
     @Pref
     Prefs_ Prefs;
-    VaultsListFragment.OnFragmentFinishListener mFinishListener;
+    private VaultsListFragment.OnFragmentFinishListener mFinishListener;
     //Current version
     private Integer versionnow;
     private String versionnow_name;
@@ -217,7 +217,7 @@ public class UpdateManager extends Fragment {
                 } catch (IllegalArgumentException e) {
                     String encodedFileName = Base64Coder.encodeString(fileName);
                     fileName = realFile.getAbsolutePath().replace(fileName, encodedFileName);
-                    Boolean ignored = realFile.renameTo(new File(fileName));
+                    realFile.renameTo(new File(fileName));
                 }
             }
         }
@@ -426,7 +426,7 @@ public class UpdateManager extends Fragment {
     }
 
     @Click(R.id.continueButton)
-    public void Continue() {
+    void Continue() {
         // When user presses the continue button, alert if app is still in beta.
 
         //Define 100 as initial beta code

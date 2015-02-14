@@ -26,9 +26,9 @@ import android.widget.ImageView;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 
 public class ThumbLoadDoneEvent {
-    public EncryptedFile encryptedFile;
-    public ImageView imageView;
-    public Bitmap bitmap;
+    public final EncryptedFile encryptedFile;
+    public final ImageView imageView;
+    public final Bitmap bitmap;
 
     public ThumbLoadDoneEvent(EncryptedFile encryptedFile, ImageView imageView, Bitmap bitmap) {
         this.encryptedFile = encryptedFile;

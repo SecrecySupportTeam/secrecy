@@ -22,12 +22,12 @@ import de.greenrobot.event.EventBus;
 public class FilesActivity extends ActionBarActivity
         implements
         VaultsListFragment.OnFragmentFinishListener {
-    FragmentManager fragmentManager;
+    private FragmentManager fragmentManager;
     @Extra(Config.vault_extra)
     String vault;
     @Extra(Config.password_extra)
     String password;
-    Boolean isConfigChange;
+    private Boolean isConfigChange;
 
     @AfterViews
     void onCreate() {

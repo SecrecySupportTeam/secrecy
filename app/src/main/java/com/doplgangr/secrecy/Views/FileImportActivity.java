@@ -38,7 +38,7 @@ public class FileImportActivity extends ActionBarActivity
         VaultsListFragment.OnVaultSelectedListener,
         VaultsListFragment.OnFragmentFinishListener {
     private static final int NotificationID = 1011;
-    Vault secret;
+    private Vault secret;
     @ViewById(R.id.toolbar)
     Toolbar mToolbar;
     //Notifications
@@ -140,7 +140,7 @@ public class FileImportActivity extends ActionBarActivity
     }
 
     @UiThread
-    public void done() {
+    void done() {
         //Intent intent = new Intent(context, ListFileActivity_.class);
         //intent.putExtra(Config.vault_extra, secret.name);
         //intent.putExtra(Config.password_extra, password);

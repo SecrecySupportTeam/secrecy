@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +25,6 @@ import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.Jobs.ImageLoadJob;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
-import com.doplgangr.secrecy.Views.DummyViews.HackyViewPager;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -43,11 +43,11 @@ import uk.co.senab.photoview.PhotoView;
 @EActivity(R.layout.activity_view_pager)
 public class FilePhotoFragment extends FragmentActivity {
 
-    static Activity context;
+    private static Activity context;
     @Extra(Config.gallery_item_extra)
     Integer itemNo;
     @ViewById(R.id.view_pager)
-    HackyViewPager mViewPager;
+    ViewPager mViewPager;
 
     @AfterViews
     void onCreate() {
