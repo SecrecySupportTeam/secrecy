@@ -31,6 +31,8 @@ import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.FileSystem.Files.SecrecyFile;
+import com.doplgangr.secrecy.FileSystem.Storage;
+import com.doplgangr.secrecy.Jobs.AddFileJob;
 import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
