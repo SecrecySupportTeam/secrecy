@@ -1,3 +1,3 @@
-include ':app', ':payme'
+include ':app', ':payme:library'
 include ':aFileChooser'
 include ':Preferencefragment'
