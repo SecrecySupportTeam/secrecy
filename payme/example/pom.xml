@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.github.jberkel.pay.me</groupId>
+        <artifactId>parent</artifactId>
+        <version>0.0.5-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>example</artifactId>
+    <packaging>apk</packaging>
+    <name>pay-me example</name>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.simpligility.maven.plugins</groupId>
+                <artifactId>android-maven-plugin</artifactId>
+                <configuration>
+                    <androidManifestFile>AndroidManifest.xml</androidManifestFile>
+                    <resourceDirectory>res</resourceDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>library</artifactId>
+            <version>${project.version}</version>
+            <type>apklib</type>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>android</artifactId>
+        </dependency>
+    </dependencies>
+</project>
