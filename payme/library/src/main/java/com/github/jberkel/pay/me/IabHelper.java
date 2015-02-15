@@ -22,6 +22,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -170,11 +172,11 @@ public class IabHelper {
 
         if (mSetupDone) throw new IllegalStateException("IAB helper is already set up.");
         logDebug("Starting in-app billing setup.");
-
-        if (!mContext.getPackageManager().queryIntentServices(BIND_BILLING_SERVICE, 0).isEmpty()) {
+        Intent explicitIntent = getExplicitIapIntent();
+        if (explicitIntent != null && !mContext.getPackageManager().queryIntentServices(explicitIntent, 0).isEmpty()) {
             // service available to handle that Intent
             mServiceConn = new BillingServiceConnection(listener);
-            if (!mContext.bindService(BIND_BILLING_SERVICE, mServiceConn, Context.BIND_AUTO_CREATE)) {
+            if (!mContext.bindService(explicitIntent, mServiceConn, Context.BIND_AUTO_CREATE)) {
                 logWarn("Could not bind to service");
             }
         } else {
@@ -735,6 +737,25 @@ public class IabHelper {
     // for testing
     /* package */ IInAppBillingService getInAppBillingService(IBinder service) {
         return IInAppBillingService.Stub.asInterface(service);
+    }
+
+    private Intent getExplicitIapIntent() {
+        PackageManager pm = mContext.getPackageManager();
+        Intent implicitIntent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
+        List<ResolveInfo> resolveInfos = pm.queryIntentServices(implicitIntent, 0);
+
+        // Is somebody else trying to intercept our IAP call?
+        if (resolveInfos == null || resolveInfos.size() != 1) {
+            return null;
+        }
+
+        ResolveInfo serviceInfo = resolveInfos.get(0);
+        String packageName = serviceInfo.serviceInfo.packageName;
+        String className = serviceInfo.serviceInfo.name;
+        ComponentName component = new ComponentName(packageName, className);
+        Intent iapIntent = new Intent();
+        iapIntent.setComponent(component);
+        return iapIntent;
     }
 
     private class BillingServiceConnection implements ServiceConnection {
