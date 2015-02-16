@@ -28,7 +28,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
@@ -53,12 +52,17 @@ import com.doplgangr.secrecy.Events.AddingFileEvent;
 import com.doplgangr.secrecy.Events.BackUpDoneEvent;
 import com.doplgangr.secrecy.Events.DecryptingFileDoneEvent;
 import com.doplgangr.secrecy.Events.NewFileEvent;
+import com.doplgangr.secrecy.Events.OpenFileWithIntentEvent;
 import com.doplgangr.secrecy.Exceptions.SecrecyCipherStreamException;
 import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.FileSystem.Storage;
+import com.doplgangr.secrecy.Jobs.AddFileJob;
 import com.doplgangr.secrecy.Jobs.BackupJob;
+import com.doplgangr.secrecy.Jobs.DecryptFileJob;
 import com.doplgangr.secrecy.Jobs.InitializeVaultJob;
+import com.doplgangr.secrecy.Jobs.RestoreFileJob;
+import com.doplgangr.secrecy.Jobs.SendFileJob;
 import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.Prefs_;
@@ -92,6 +96,7 @@ public class FilesListFragment extends FileViewer {
     private static final int REQUEST_CODE = 6384; // onActivityResult request code
     private static final ArrayList<String> INCLUDE_EXTENSIONS_LIST = new ArrayList<String>();
     private static final int NotificationID = 1820;
+    public boolean attached = false;
     @ViewById(R.id.file_list_recycler_view)
     RecyclerView recyclerView;
     @ViewById(R.id.progressBar)
@@ -114,7 +119,6 @@ public class FilesListFragment extends FileViewer {
     private FilesListAdapter galleryAdapter;
     private int decryptCounter = 0;
     private boolean isGallery = false;
-    private boolean attached = false;
     //Notifications
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
@@ -460,26 +464,26 @@ public class FilesListFragment extends FileViewer {
     }
 
     @Background(id = Config.cancellable_task)
-    @Override
     void decrypt(EncryptedFile encryptedFile, Listeners.EmptyListener onFinish) {
-        super.decrypt(encryptedFile, onFinish);
+        CustomApp.jobManager.addJobInBackground(
+                new DecryptFileJob(context,
+                        encryptedFile,
+                        getCryptStateListener(encryptedFile, onFinish)));
+    }
+
+    public void onEventMainThread(OpenFileWithIntentEvent event) {
+        if (attached)
+            openWithIntent(event.originalIntent, event.alternativeIntent);
     }
 
     @Background(id = Config.cancellable_task)
     void decrypt_and_save(int index, final Listeners.EmptyListener onFinish) {
         EncryptedFile encryptedFile = mAdapter.getItem(index);
-        File tempFile = super.getFile(encryptedFile, onFinish);
-        File storedFile = new File(Environment.getExternalStorageDirectory(), encryptedFile.getDecryptedFileName());
-        if (tempFile == null) {
-            Util.alert(context,
-                    CustomApp.context.getString(R.string.Error__decrypting_file),
-                    CustomApp.context.getString(R.string.Error__decrypting_file_message),
-                    Util.emptyClickListener,
-                    null
-            );
-            return;
-        }
-        tempFile.renameTo(storedFile);
+        CustomApp.jobManager.addJobInBackground(
+                new RestoreFileJob(context,
+                        encryptedFile,
+                        getCryptStateListener(encryptedFile, onFinish)));
+
     }
 
     @OptionsItem(R.id.action_switch_interface)
@@ -660,7 +664,8 @@ public class FilesListFragment extends FileViewer {
             mBuilder.setProgress(0, 0, true);
             mNotifyManager.notify(NotificationID, mBuilder.build());
 
-            addFile(secret, data.getData());
+            CustomApp.jobManager.addJobInBackground(new AddFileJob(context, secret, data.getData()));
+
             super.onActivityResult(requestCode, resultCode, data);
         } else {
             Util.toast(context, getString(R.string.Error__no_file_selected), 4000);
@@ -766,13 +771,19 @@ public class FilesListFragment extends FileViewer {
                             switchView(mView, R.id.dataLayout);
                         }
                     };
-                    Args.add(new DecryptArgHolder(encryptedFile, pBar, onFinish));
+
+                    Args.add(new DecryptArgHolder(
+                            encryptedFile,
+                            pBar,
+                            getCryptStateListener(encryptedFile, onFinish)));
                 } else if (attached)
                     Util.toast(context, getString(R.string.Error__already_decrypting), Toast.LENGTH_SHORT);
             }
         }
         if (attached)
-            sendMultiple(Args);
+            CustomApp.jobManager.addJobInBackground(
+                    new SendFileJob(context,
+                            Args));
     }
 
     void selectAll() {
@@ -817,12 +828,6 @@ public class FilesListFragment extends FileViewer {
         );
     }
 
-    @Override
-    void afterDecrypt(Intent newIntent, Intent altIntent) {
-        if (attached)
-            super.afterDecrypt(newIntent, altIntent);       // check if fragment is attached.
-    }
-
     void select(int position) {
         mAdapter.select(position);
         mAdapter.notifyItemChanged(position);
@@ -842,25 +847,5 @@ public class FilesListFragment extends FileViewer {
 
         if (mAdapter.getSelected().size() == 0)
             mActionMode.finish();
-    }
-
-    class DecryptArgHolder {
-        public final EncryptedFile encryptedFile;
-        public final ProgressBar pBar;
-        public final Listeners.EmptyListener onFinish;
-
-        public DecryptArgHolder(EncryptedFile encryptedFile, ProgressBar pBar, Listeners.EmptyListener onFinish) {
-            this.encryptedFile = encryptedFile;
-            this.pBar = pBar;
-            this.onFinish = onFinish;
-        }
-    }
-
-    public class OnBackPressedUnhandledEvent {
-        public final Activity activity;
-
-        public OnBackPressedUnhandledEvent(Activity activity) {
-            this.activity = activity;
-        }
     }
 }

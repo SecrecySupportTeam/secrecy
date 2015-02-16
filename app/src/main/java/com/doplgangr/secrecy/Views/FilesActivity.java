@@ -22,11 +22,11 @@ import de.greenrobot.event.EventBus;
 public class FilesActivity extends ActionBarActivity
         implements
         VaultsListFragment.OnFragmentFinishListener {
-    private FragmentManager fragmentManager;
     @Extra(Config.vault_extra)
     String vault;
     @Extra(Config.password_extra)
     String password;
+    private FragmentManager fragmentManager;
     private Boolean isConfigChange;
 
     @AfterViews
@@ -118,16 +118,16 @@ public class FilesActivity extends ActionBarActivity
         static Boolean pause = true;
 
         // An activity is started, should not pause and kill this fragment.
-        static void startActivity() {
+        public static void startActivity() {
             pause = false;
         }
 
         // Fragment returns to top, allow it to be paused and killed.
-        static void finishActivity() {
+        public static void finishActivity() {
             pause = true;
         }
 
-        static Boolean shouldFinish() {
+        public static Boolean shouldFinish() {
             return pause;
         }
     }
