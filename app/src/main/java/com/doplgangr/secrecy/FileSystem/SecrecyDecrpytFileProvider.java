@@ -48,7 +48,7 @@ import java.util.Map;
 import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
 import static org.xmlpull.v1.XmlPullParser.START_TAG;
 
-public class OurFileProvider extends ContentProvider {
+public class SecrecyDecrpytFileProvider extends ContentProvider {
     public static final String
             FILE_PROVIDER_AUTHORITY = "com.doplgangr.secrecy.FileSystem.DecryptFileProvider";
 
@@ -78,50 +78,6 @@ public class OurFileProvider extends ContentProvider {
         return strategy.getUriForFile(file);
     }
 
-    /**
-     * @Override public ParcelFileDescriptor openFile(Uri uri, String mode)
-     * throws FileNotFoundException {
-     * ParcelFileDescriptor[] pipe=null;
-     * <p/>
-     * try {
-     * pipe=ParcelFileDescriptor.createPipe();
-     * new TransferThread(CustomApp.context.getContentResolver().openInputStream(uri),
-     * new ParcelFileDescriptor.AutoCloseOutputStream(pipe[1])).start();
-     * }
-     * catch (IOException e) {
-     * Log.e(getClass().getSimpleName(), "Exception opening pipe", e);
-     * throw new FileNotFoundException("Could not open pipe for: "
-     * + uri.toString());
-     * }
-     * return(pipe[0]);
-     * }
-     * static class TransferThread extends Thread {
-     * InputStream in;
-     * OutputStream out;
-     * <p/>
-     * TransferThread(InputStream in, OutputStream out) {
-     * this.in = in;
-     * this.out = out;
-     * }
-     * @Override public void run() {
-     * byte[] buf = new byte[8192];
-     * int len;
-     * <p/>
-     * try {
-     * while ((len = in.read(buf)) > 0) {
-     * out.write(buf, 0, len);
-     * }
-     * <p/>
-     * in.close();
-     * out.flush();
-     * out.close();
-     * } catch (IOException e) {
-     * Log.e(getClass().getSimpleName(),
-     * "Exception transferring file", e);
-     * }
-     * }
-     * }
-     */
     private static PathStrategy getPathStrategy(Context context, String authority) {
         PathStrategy strat;
         synchronized (sCache) {
