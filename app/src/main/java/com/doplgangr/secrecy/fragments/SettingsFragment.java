@@ -36,6 +36,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.support.v4.content.IntentCompat;
+import android.support.v4.provider.DocumentFile;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -65,6 +66,7 @@ import java.util.Map;
 public class SettingsFragment extends PreferenceFragment {
     private static final int REQUEST_CODE_SET_VAULT_ROOT = 6384;
     private static final int REQUEST_CODE_MOVE_VAULT = 2058;
+    private static final int REQUEST_CODE_DOCUMENT_TREE = 5687;
     private Context context;
     private VaultsListFragment.OnFragmentFinishListener mFinishListener;
 
@@ -420,6 +422,14 @@ public class SettingsFragment extends PreferenceFragment {
                     }
                 }
                 break;
+            case REQUEST_CODE_DOCUMENT_TREE:
+                if (resultCode == Activity.RESULT_OK) {
+                    Uri treeUri = data.getData();
+                    DocumentFile pickedDir = DocumentFile.fromTreeUri(context, treeUri);
+
+                    Storage.setRoot(FileUtils.getPath(context, pickedDir.getUri()));
+                }
+                break;
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -451,39 +461,43 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     void choosePath(final getFileListener listener) {
-        AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
-        builderSingle.setTitle(context.getString(R.string.Settings__select_storage_title));
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                context,
-                R.layout.select_dialog_singlechoice);
-        final Map<String, File> storages = Util.getAllStorageLocations();
-        for (String key : storages.keySet()) {
-            arrayAdapter.add(key);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+            startActivityForResult(intent, REQUEST_CODE_DOCUMENT_TREE);
         }
-        builderSingle.setNegativeButton(R.string.CANCEL,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
+         else {
+            AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
+            builderSingle.setTitle(context.getString(R.string.Settings__select_storage_title));
+            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                    context,
+                    R.layout.select_dialog_singlechoice);
+            final Map<String, File> storages = Util.getAllStorageLocations();
+            for (String key : storages.keySet()) {
+                arrayAdapter.add(key);
+            }
+            builderSingle.setNegativeButton(R.string.CANCEL,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
                     }
-                }
-        );
-
-        builderSingle.setAdapter(arrayAdapter,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String strName = arrayAdapter.getItem(which);
-                        File file = storages.get(strName);
-                        listener.get(file);
+            );
+            builderSingle.setAdapter(arrayAdapter,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String strName = arrayAdapter.getItem(which);
+                            File file = storages.get(strName);
+                            listener.get(file);
+                        }
                     }
-                }
-        );
-        builderSingle.show();
+            );
+            builderSingle.show();
+        }
     }
 
     public interface getFileListener {
         void get(File file);
     }
-
 }
