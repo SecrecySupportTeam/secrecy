@@ -35,7 +35,7 @@ import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.FileSystem.Files.SecrecyFile;
-import com.doplgangr.secrecy.FileSystem.OurFileProvider;
+import com.doplgangr.secrecy.FileSystem.SecrecyDecrpytFileProvider;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Jobs.AddFileJob;
 import com.doplgangr.secrecy.Listeners;
@@ -75,7 +75,7 @@ public abstract class FileViewer extends Fragment {
             if (tempFile.getParentFile().equals(Storage.getTempFolder())) {
                 tempFile = new File(Storage.getTempFolder(), tempFile.getName());
             }
-            Uri uri = OurFileProvider.getUriForFile(context, OurFileProvider.FILE_PROVIDER_AUTHORITY, tempFile);
+            Uri uri = SecrecyDecrpytFileProvider.getUriForFile(context, SecrecyDecrpytFileProvider.FILE_PROVIDER_AUTHORITY, tempFile);
             MimeTypeMap myMime = MimeTypeMap.getSingleton();
             Intent newIntent = new Intent(android.content.Intent.ACTION_VIEW);
             String mimeType = myMime.getMimeTypeFromExtension(encryptedFile.getType());
@@ -101,7 +101,7 @@ public abstract class FileViewer extends Fragment {
             if (tempFile != null) {
                 if (tempFile.getParentFile().equals(Storage.getTempFolder()))
                     tempFile = new java.io.File(Storage.getTempFolder(), tempFile.getName());
-                uris.add(OurFileProvider.getUriForFile(context, OurFileProvider.FILE_PROVIDER_AUTHORITY, tempFile));
+                uris.add(SecrecyDecrpytFileProvider.getUriForFile(context, SecrecyDecrpytFileProvider.FILE_PROVIDER_AUTHORITY, tempFile));
                 mimes.add(myMime.getMimeTypeFromExtension(arg.encryptedFile.getType()));
 
             }

@@ -19,7 +19,7 @@
         android:theme="@style/CustomMaterialTheme">
 
         <provider
-            android:name=".FileSystem.OurFileProvider"
+            android:name=".FileSystem.SecrecyDecrpytFileProvider"
             android:authorities="com.doplgangr.secrecy.FileSystem.DecryptFileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
