@@ -21,119 +21,31 @@ package com.doplgangr.secrecy.Views;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
-import android.net.Uri;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.webkit.MimeTypeMap;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
-import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.FileSystem.Files.SecrecyFile;
-import com.doplgangr.secrecy.FileSystem.OurFileProvider;
-import com.doplgangr.secrecy.FileSystem.Storage;
-import com.doplgangr.secrecy.Jobs.AddFileJob;
 import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.api.BackgroundExecutor;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @EFragment(R.layout.activity_file_viewer)
 public abstract class FileViewer extends Fragment {
 
     ActionBarActivity context;
 
-    @Background
-    void addFile(Vault secret, final Uri data) {
-        CustomApp.jobManager.addJobInBackground(new AddFileJob(context, secret, data));
-    }
-
-
-    @Background
-    void decrypt(EncryptedFile encryptedFile, final Listeners.EmptyListener onFinish) {
-        File tempFile = getFile(encryptedFile, onFinish);
-        //File specified is not invalid
-        if (tempFile != null) {
-            if (tempFile.getParentFile().equals(Storage.getTempFolder())) {
-                tempFile = new File(Storage.getTempFolder(), tempFile.getName());
-            }
-            Uri uri = OurFileProvider.getUriForFile(context, OurFileProvider.FILE_PROVIDER_AUTHORITY, tempFile);
-            MimeTypeMap myMime = MimeTypeMap.getSingleton();
-            Intent newIntent = new Intent(android.content.Intent.ACTION_VIEW);
-            String mimeType = myMime.getMimeTypeFromExtension(encryptedFile.getType());
-            newIntent.setDataAndType(uri, mimeType);
-            newIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            //altIntent: resort to using file provider when content provider does not work.
-            Intent altIntent = new Intent(android.content.Intent.ACTION_VIEW);
-            Uri rawuri = Uri.fromFile(tempFile);
-            altIntent.setDataAndType(rawuri, mimeType);
-            afterDecrypt(newIntent, altIntent);
-        }
-
-    }
-
-    @Background
-    void sendMultiple(ArrayList<FilesListFragment.DecryptArgHolder> args) {
-        ArrayList<Uri> uris = new ArrayList<Uri>();
-        Set<String> mimes = new HashSet<String>();
-        MimeTypeMap myMime = MimeTypeMap.getSingleton();
-        for (FilesListFragment.DecryptArgHolder arg : args) {
-            File tempFile = getFile(arg.encryptedFile, arg.onFinish);
-            //File specified is not invalid
-            if (tempFile != null) {
-                if (tempFile.getParentFile().equals(Storage.getTempFolder()))
-                    tempFile = new java.io.File(Storage.getTempFolder(), tempFile.getName());
-                uris.add(OurFileProvider.getUriForFile(context, OurFileProvider.FILE_PROVIDER_AUTHORITY, tempFile));
-                mimes.add(myMime.getMimeTypeFromExtension(arg.encryptedFile.getType()));
-
-            }
-        }
-        if (uris.size() == 0 || mimes.size() == 0)
-            return;
-        Intent newIntent;
-        if (uris.size() == 1) {
-            newIntent = new Intent(Intent.ACTION_SEND);
-            newIntent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
-        } else {
-            newIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-            newIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-        }
-        if (mimes.size() > 1)
-            newIntent.setType("text/plain");                        //Mixed filetypes
-        else
-            newIntent.setType(new ArrayList<String>(mimes).get(0));
-        newIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-        Intent chooserIntent = generateCustomChooserIntent(newIntent, uris);
-        try {
-            startActivity(Intent.createChooser(chooserIntent, CustomApp.context.getString(R.string.Dialog__send_file)));
-            FilesActivity.onPauseDecision.startActivity();
-        } catch (android.content.ActivityNotFoundException e) {
-            Util.toast(context, CustomApp.context.getString(R.string.Error__no_activity_view), Toast.LENGTH_LONG);
-            FilesActivity.onPauseDecision.finishActivity();
-        }
-    }
-
-    File getFile(final EncryptedFile encryptedFile, final Listeners.EmptyListener onfinish) {
-        CryptStateListener listener = new CryptStateListener() {
+    public CryptStateListener getCryptStateListener(final EncryptedFile encryptedFile, final Listeners.EmptyListener onfinish) {
+        return new CryptStateListener() {
             @Override
             public void updateProgress(int progress) {
                 updatePBar(encryptedFile, progress);
@@ -162,30 +74,9 @@ public abstract class FileViewer extends Fragment {
 
             @Override
             public void Finished() {
-
                 onfinish.run();
             }
         };
-        return encryptedFile.readFile(listener);
-    }
-
-    @UiThread
-    void afterDecrypt(Intent newIntent, Intent altIntent) {
-        try {
-            startActivity(newIntent);
-            FilesActivity.onPauseDecision.startActivity();
-        } catch (android.content.ActivityNotFoundException e) {
-            try {
-                startActivity(altIntent);
-                FilesActivity.onPauseDecision.startActivity();
-            } catch (android.content.ActivityNotFoundException e2) {
-                Util.toast(context, getString(R.string.Error__no_activity_view), Toast.LENGTH_LONG);
-                FilesActivity.onPauseDecision.finishActivity();
-            }
-        } catch (IllegalStateException e) {
-            //duh why you leave so early
-            FilesActivity.onPauseDecision.finishActivity();
-        }
     }
 
     @UiThread
@@ -210,7 +101,25 @@ public abstract class FileViewer extends Fragment {
             file.getProgressBar().setMax(max);
     }
 
-
+    void openWithIntent(Intent newIntent, Intent altIntent) {
+        try {
+            context.startActivity(newIntent);
+            FilesActivity.onPauseDecision.startActivity();
+        } catch (android.content.ActivityNotFoundException e) {
+            try {
+                context.startActivity(altIntent);
+                FilesActivity.onPauseDecision.startActivity();
+            } catch (android.content.ActivityNotFoundException e2) {
+                Util.toast(context,
+                        CustomApp.context.getString(R.string.Error__no_activity_view),
+                        Toast.LENGTH_LONG);
+                FilesActivity.onPauseDecision.finishActivity();
+            }
+        } catch (IllegalStateException e) {
+            //duh why you leave so early
+            FilesActivity.onPauseDecision.finishActivity();
+        }
+    }
 
     @Override
     public void onDestroy() {
@@ -218,55 +127,19 @@ public abstract class FileViewer extends Fragment {
         super.onDestroy();
     }
 
-    private Intent generateCustomChooserIntent(Intent prototype, ArrayList<Uri> uris) {
-        List<Intent> targetedShareIntents = new ArrayList<Intent>();
-        List<HashMap<String, String>> intentMetaInfo = new ArrayList<HashMap<String, String>>();
-        Intent chooserIntent;
-
-        Intent dummy = new Intent(prototype.getAction());
-        dummy.setType(prototype.getType());
-        List<ResolveInfo> resInfo = context.getPackageManager().queryIntentActivities(dummy, 0);
-
-        if (!resInfo.isEmpty()) {
-            for (ResolveInfo resolveInfo : resInfo) {
-                if (resolveInfo.activityInfo == null || resolveInfo.activityInfo.packageName.equalsIgnoreCase("com.doplgangr.secrecy"))
-                    continue;
-
-                HashMap<String, String> info = new HashMap<String, String>();
-                info.put("packageName", resolveInfo.activityInfo.packageName);
-                info.put("className", resolveInfo.activityInfo.name);
-                info.put("simpleName", String.valueOf(resolveInfo.activityInfo.loadLabel(context.getPackageManager())));
-                intentMetaInfo.add(info);
-                for (Uri uri : uris)
-                    context.grantUriPermission(resolveInfo.activityInfo.packageName, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            }
-
-            if (!intentMetaInfo.isEmpty()) {
-                // sorting for nice readability
-                Collections.sort(intentMetaInfo, new Comparator<HashMap<String, String>>() {
-                    @Override
-                    public int compare(HashMap<String, String> map, HashMap<String, String> map2) {
-                        return map.get("simpleName").compareTo(map2.get("simpleName"));
-                    }
-                });
-
-                // create the custom intent list
-                for (HashMap<String, String> metaInfo : intentMetaInfo) {
-                    Intent targetedShareIntent = (Intent) prototype.clone();
-                    targetedShareIntent.setPackage(metaInfo.get("packageName"));
-                    targetedShareIntent.setClassName(metaInfo.get("packageName"), metaInfo.get("className"));
-                    targetedShareIntents.add(targetedShareIntent);
-                }
-                chooserIntent = Intent.createChooser(targetedShareIntents.remove(targetedShareIntents.size() - 1), CustomApp.context.getString(R.string.Dialog__send_file));
-                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetedShareIntents.toArray(new Parcelable[targetedShareIntents.size()]));
-                return chooserIntent;
-            }
-        }
-
-        return new Intent(Intent.ACTION_SEND);  //Unable to do anything. Duh.
-    }
-
     void finish() {
         getActivity().finish();
+    }
+
+    public class DecryptArgHolder {
+        public final EncryptedFile encryptedFile;
+        public final ProgressBar pBar;
+        public final CryptStateListener onFinish;
+
+        public DecryptArgHolder(EncryptedFile encryptedFile, ProgressBar pBar, CryptStateListener onFinish) {
+            this.encryptedFile = encryptedFile;
+            this.pBar = pBar;
+            this.onFinish = onFinish;
+        }
     }
 }
