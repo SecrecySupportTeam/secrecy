@@ -9,7 +9,6 @@ import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import com.doplgangr.secrecy.CustomApp;
-import com.doplgangr.secrecy.FileSystem.OurFileProvider;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
@@ -54,7 +53,7 @@ public class SendFileJob extends Job {
             if (tempFile != null) {
                 if (tempFile.getParentFile().equals(Storage.getTempFolder()))
                     tempFile = new java.io.File(Storage.getTempFolder(), tempFile.getName());
-                uris.add(OurFileProvider.getUriForFile(context, OurFileProvider.FILE_PROVIDER_AUTHORITY, tempFile));
+                uris.add(Uri.fromFile(tempFile));
                 mimes.add(myMime.getMimeTypeFromExtension(arg.encryptedFile.getType()));
             }
         }

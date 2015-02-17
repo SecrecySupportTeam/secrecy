@@ -8,7 +8,6 @@ import android.webkit.MimeTypeMap;
 import com.doplgangr.secrecy.Events.OpenFileWithIntentEvent;
 import com.doplgangr.secrecy.FileSystem.CryptStateListener;
 import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
-import com.doplgangr.secrecy.FileSystem.OurFileProvider;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
@@ -43,7 +42,7 @@ public class DecryptFileJob extends Job {
             if (tempFile.getParentFile().equals(Storage.getTempFolder())) {
                 tempFile = new File(Storage.getTempFolder(), tempFile.getName());
             }
-            Uri uri = OurFileProvider.getUriForFile(context, OurFileProvider.FILE_PROVIDER_AUTHORITY, tempFile);
+            Uri uri = Uri.fromFile(tempFile);
             MimeTypeMap myMime = MimeTypeMap.getSingleton();
             Intent newIntent = new Intent(android.content.Intent.ACTION_VIEW);
             String mimeType = myMime.getMimeTypeFromExtension(encryptedFile.getType());
