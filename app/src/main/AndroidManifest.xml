@@ -18,16 +18,6 @@
         android:label="@string/App__name"
         android:theme="@style/CustomMaterialTheme">
 
-        <provider
-            android:name=".FileSystem.OurFileProvider"
-            android:authorities="com.doplgangr.secrecy.FileSystem.DecryptFileProvider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_path" />
-        </provider>
-
         <!-- aFileChooser -->
         <activity
             android:name="com.ipaulpro.afilechooser.FileChooserActivity"
