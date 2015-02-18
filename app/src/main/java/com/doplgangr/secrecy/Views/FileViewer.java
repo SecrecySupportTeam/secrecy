@@ -38,7 +38,6 @@ import com.doplgangr.secrecy.FileSystem.Files.SecrecyFile;
 import com.doplgangr.secrecy.FileSystem.OurFileProvider;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Jobs.AddFileJob;
-import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 
@@ -68,7 +67,7 @@ public abstract class FileViewer extends Fragment {
 
 
     @Background
-    void decrypt(EncryptedFile encryptedFile, final Listeners.EmptyListener onFinish) {
+    void decrypt(EncryptedFile encryptedFile, final Runnable onFinish) {
         File tempFile = getFile(encryptedFile, onFinish);
         //File specified is not invalid
         if (tempFile != null) {
@@ -132,7 +131,7 @@ public abstract class FileViewer extends Fragment {
         }
     }
 
-    File getFile(final EncryptedFile encryptedFile, final Listeners.EmptyListener onfinish) {
+    File getFile(final EncryptedFile encryptedFile, final Runnable onfinish) {
         CryptStateListener listener = new CryptStateListener() {
             @Override
             public void updateProgress(int progress) {
