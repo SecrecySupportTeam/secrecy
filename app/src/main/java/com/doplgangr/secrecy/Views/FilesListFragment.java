@@ -59,7 +59,6 @@ import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Jobs.BackupJob;
 import com.doplgangr.secrecy.Jobs.InitializeVaultJob;
-import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.Prefs_;
 import com.doplgangr.secrecy.Util;
@@ -418,7 +417,7 @@ public class FilesListFragment extends FileViewer {
                     EncryptedFile encryptedFile = mAdapter.getItem(position);
                     if (!encryptedFile.getIsDecrypting()) {
                         switchView(view, R.id.DecryptLayout);
-                        Listeners.EmptyListener onFinish = new Listeners.EmptyListener() {
+                        Runnable onFinish = new Runnable() {
                             @Override
                             public void run() {
                                 switchView(view, R.id.dataLayout);
@@ -461,12 +460,12 @@ public class FilesListFragment extends FileViewer {
 
     @Background(id = Config.cancellable_task)
     @Override
-    void decrypt(EncryptedFile encryptedFile, Listeners.EmptyListener onFinish) {
+    void decrypt(EncryptedFile encryptedFile, Runnable onFinish) {
         super.decrypt(encryptedFile, onFinish);
     }
 
     @Background(id = Config.cancellable_task)
-    void decrypt_and_save(int index, final Listeners.EmptyListener onFinish) {
+    void decrypt_and_save(int index, final Runnable onFinish) {
         EncryptedFile encryptedFile = mAdapter.getItem(index);
         File tempFile = super.getFile(encryptedFile, onFinish);
         File storedFile = new File(Environment.getExternalStorageDirectory(), encryptedFile.getDecryptedFileName());
@@ -703,7 +702,7 @@ public class FilesListFragment extends FileViewer {
                 if (attached) {
                     mAdapter.getItem(index).setIsDecrypting(true);
                     mAdapter.notifyItemChanged(index);
-                    decrypt_and_save(index, new Listeners.EmptyListener() {
+                    decrypt_and_save(index, new Runnable() {
                         @Override
                         public void run() {
                             EventBus.getDefault().post(new DecryptingFileDoneEvent(index));
@@ -760,7 +759,7 @@ public class FilesListFragment extends FileViewer {
                     ProgressBar pBar = mView != null ?
                             (ProgressBar) mView.findViewById(R.id.progressBar) :
                             null;
-                    Listeners.EmptyListener onFinish = new Listeners.EmptyListener() {
+                    Runnable onFinish = new Runnable() {
                         @Override
                         public void run() {
                             switchView(mView, R.id.dataLayout);
@@ -847,9 +846,9 @@ public class FilesListFragment extends FileViewer {
     class DecryptArgHolder {
         public final EncryptedFile encryptedFile;
         public final ProgressBar pBar;
-        public final Listeners.EmptyListener onFinish;
+        public final Runnable onFinish;
 
-        public DecryptArgHolder(EncryptedFile encryptedFile, ProgressBar pBar, Listeners.EmptyListener onFinish) {
+        public DecryptArgHolder(EncryptedFile encryptedFile, ProgressBar pBar, Runnable onFinish) {
             this.encryptedFile = encryptedFile;
             this.pBar = pBar;
             this.onFinish = onFinish;
