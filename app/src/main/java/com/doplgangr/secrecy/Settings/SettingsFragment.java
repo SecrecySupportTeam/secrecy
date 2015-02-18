@@ -22,20 +22,20 @@ package com.doplgangr.secrecy.Settings;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceGroup;
-import android.preference.PreferenceScreen;
+import android.preference.PreferenceManager;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.preference.PreferenceFragment;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,252 +45,100 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.doplgangr.secrecy.CustomApp_;
+import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Premium.PremiumFragment_;
 import com.doplgangr.secrecy.Premium.PremiumStateHelper;
 import com.doplgangr.secrecy.Premium.StealthMode;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
-import com.doplgangr.secrecy.Views.MainActivity;
 import com.doplgangr.secrecy.Views.VaultsListFragment;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 import com.ipaulpro.afilechooser.utils.FileUtils;
-
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.res.StringArrayRes;
-import org.androidannotations.annotations.res.StringRes;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
-@EFragment
-public class SettingsFragment extends PreferenceFragment
-        implements SharedPreferences.OnSharedPreferenceChangeListener {
-    static final String TAG = "PREFERENCEFRAGMENT";
-    private static final int REQUEST_CODE = 6384; // onActivityResult request code
-    private static final int REQUEST_CODE_2 = 2058; // onActivityResult request code
-    private static final ArrayList<String> INCLUDE_EXTENSIONS_LIST = new ArrayList<String>();
-    private ActionBarActivity context = null;
-    @StringRes(R.string.Settings__stealth_mode_message)
-    String stealth_mode_message;
-    @StringArrayRes(R.array.Credits__names)
-    String[] creditsNames;
-    @StringArrayRes(R.array.Credits__description)
-    String[] creditsDescription;
-    @StringArrayRes(R.array.Credits__links)
-    String[] creditsLinks;
-    @StringArrayRes(R.array.Contributor__names)
-    String[] contributorNames;
-    @StringArrayRes(R.array.Contributor__description)
-    String[] contributorDescription;
-    @StringArrayRes(R.array.Contributor__links)
-    String[] contributorLinks;
+public class SettingsFragment extends PreferenceFragment {
+    private static final int REQUEST_CODE_SET_VAULT_ROOT = 6384;
+    private static final int REQUEST_CODE_MOVE_VAULT = 2058;
+    private Context context;
+    private VaultsListFragment.OnFragmentFinishListener mFinishListener;
 
+    private static final ArrayList<String> INCLUDE_EXTENSIONS_LIST = new ArrayList<>();
     static {
         INCLUDE_EXTENSIONS_LIST.add(".");
     }
 
-    @StringRes(R.string.Settings__changed_alert)
-    String alert;
-    @StringRes(R.string.Settings__libraries_message)
-    String libraries;
-    @Pref
-    Prefs_ Prefs;
-    private VaultsListFragment.OnFragmentFinishListener mFinishListener;
+    private String stealth_mode_message;
+    private String[] creditsNames;
+    private String[] creditsDescription;
+    private String[] creditsLinks;
+    private String[] contributorNames;
+    private String[] contributorDescription;
+    private String[] contributorLinks;
+    private String libraries;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_settings, container, false);
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mFinishListener = (VaultsListFragment.OnFragmentFinishListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement Listener");
-        }
-    }
-
-    @AfterViews
-    void onCreate() {
-        //Sanitize screen
-        PreferenceScreen preferenceScreen = getPreferenceScreen();
-        if (preferenceScreen != null)
-            preferenceScreen.removeAll();
-
-        // Load the preferences from an XML resource
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
-        context = (ActionBarActivity) getActivity();
-        context.getSupportActionBar().setTitle(R.string.Page_header__settings);
-        update();
+        this.context = getActivity();
+
+        Resources res = getResources();
+        stealth_mode_message = getString(R.string.Settings__stealth_mode_message);
+        creditsNames = res.getStringArray(R.array.Credits__names);
+        creditsDescription = res.getStringArray(R.array.Credits__description);
+        creditsLinks = res.getStringArray(R.array.Credits__links);
+        contributorNames = res.getStringArray(R.array.Contributor__names);
+        contributorDescription = res.getStringArray(R.array.Contributor__description);
+        contributorLinks = res.getStringArray(R.array.Contributor__links);
+        libraries = getString(R.string.Settings__libraries_message);
+
+        preparePreferenceStealthMode();
+        preparePreferenceStealthModePassword();
+        preparePreferenceMaxImageSize();
+        preparePreferenceVaultRoot();
+        preparePreferenceVaultMove();
+        preparePreferenceCreditList();
+        preparePreferenceTranslatorsList();
+        preparePreferenceVersion();
+        preparePreferenceLegal();
     }
 
-    @UiThread
-    void update() {
-        Preference pref = findPreference("version");
-        pref.setSummary(CustomApp_.VERSIONNAME);
-        getPreferenceScreen().getSharedPreferences()
-                .registerOnSharedPreferenceChangeListener(this);
-        Preference dialogPreference = getPreferenceScreen().findPreference("legal");
-        dialogPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                Util.alert(context,
-                        null,
-                        libraries,
-                        Util.emptyClickListener,
-                        null);
-                return true;
-            }
-        });
-        final ListPreference image_size = (ListPreference) findPreference("image_size");
-        image_size.setValueIndex(Prefs.maxImageSize().get());
-        image_size.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object o) {
-                int value = Integer.parseInt(o.toString());
-                Prefs.edit()
-                        .maxImageSize()
-                        .put(value)
-                        .apply();
-                MainActivity.loadSelectedImageSize(value);
-                return true;
-            }
-        });
-        Preference vault_root = findPreference("vault_root");
-        vault_root.setSummary(Storage.getRoot().getAbsolutePath());
-        vault_root.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                choosePath(new getFileListener() {
-                    @Override
-                    public void get(File file) {
-                        Intent intent = new Intent(context, FileChooserActivity.class);
-                        intent.putStringArrayListExtra(
-                                FileChooserActivity.EXTRA_FILTER_INCLUDE_EXTENSIONS,
-                                INCLUDE_EXTENSIONS_LIST);
-                        intent.putExtra(FileChooserActivity.PATH, file.getAbsolutePath());
-                        intent.putExtra(FileChooserActivity.EXTRA_SELECT_FOLDER, true);
-                        startActivityForResult(intent, REQUEST_CODE);
-                    }
-                });
-                return true;
-            }
-        });
-        PreferenceGroup creditsList = (PreferenceGroup) findPreference("credits_list");
-        for (int i = 0; i < creditsNames.length; i++) {
-            Preference newPreference = new Preference(getActivity());
-            newPreference.setTitle(creditsNames[i]);
-            newPreference.setSummary(creditsDescription[i]);
-            final int finali = i;
-            newPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    Uri uri = Uri.parse(creditsLinks[finali]);
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    startActivity(intent);
-                    return true;
-                }
-            });
-            creditsList.addPreference(newPreference);
-        }
-
-        PreferenceGroup translatorList = (PreferenceGroup) findPreference("translators_list");
-        for (int i = 0; i < contributorNames.length; i++) {
-            Preference newPreference = new Preference(getActivity());
-            newPreference.setTitle(contributorNames[i]);
-            newPreference.setSummary(contributorDescription[i]);
-            final int finali = i;
-            newPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    Uri uri = Uri.parse(contributorLinks[finali]);
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    startActivity(intent);
-                    return true;
-                }
-            });
-            translatorList.addPreference(newPreference);
-        }
-        CheckBoxPreference analytics = (CheckBoxPreference) findPreference("analytics");
-        analytics.setChecked(Prefs.analytics().get());
-        analytics.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object o) {
-                Prefs.edit()
-                        .analytics()
-                        .put((Boolean) o)
-                        .apply();
-                return true;
-            }
-        });
-        Preference vault_move = findPreference("vault_move");
-        vault_move.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                choosePath(new getFileListener() {
-                    @Override
-                    public void get(File file) {
-                        Intent intent = new Intent(context, FileChooserActivity.class);
-
-                        intent.putStringArrayListExtra(
-                                FileChooserActivity.EXTRA_FILTER_INCLUDE_EXTENSIONS,
-                                INCLUDE_EXTENSIONS_LIST);
-                        intent.putExtra(FileChooserActivity.PATH, file.getAbsolutePath());
-                        intent.putExtra(FileChooserActivity.EXTRA_SELECT_FOLDER, true);
-                        startActivityForResult(intent, REQUEST_CODE_2);
-                    }
-                });
-                return true;
-            }
-        });
-        final CheckBoxPreference sortMode = (CheckBoxPreference) findPreference("vault_sort");
-        sortMode.setChecked(Prefs.sorting().get());
-        sortMode.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object o) {
-                Prefs.edit()
-                        .sorting()
-                        .put((Boolean) o)
-                        .apply();
-                return true;
-            }
-        });
+    private void preparePreferenceStealthMode(){
         final CheckBoxPreference stealth_mode = (CheckBoxPreference) findPreference("stealth_mode");
-        stealth_mode.setChecked(Prefs.stealth().get());
         stealth_mode.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
+                SharedPreferences.Editor editor =
+                        PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+
                 if (!(Boolean) o) {
                     StealthMode.showApp(context);
-                    Prefs.edit()
-                            .stealth()
-                            .put((Boolean) o)
-                            .stealthMode()
-                            .remove()
-                            .OpenPIN()
-                            .remove()
-                            .apply();
+
+                    editor.putBoolean("stealth_mode", (Boolean) o);
+                    editor.putString("stealth_mode_password", "");
+                    editor.apply();
                 } else {
-                    Prefs.edit()
-                            .stealth()
-                            .put((Boolean) o)
-                            .apply();
+                    editor.putBoolean("stealth_mode", (Boolean) o);
+                    editor.apply();
                 }
                 return true;
             }
         });
+    }
+
+    private void preparePreferenceStealthModePassword(){
         final Preference stealth_mode_password = findPreference("stealth_mode_password");
-        if (Prefs.OpenPIN().exists())
-            stealth_mode_password.setSummary("*# " + Prefs.OpenPIN().get());
+        String openPin = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString("stealth_mode_password", "");
+        if (!openPin.equals("")) {
+            stealth_mode_password.setSummary("*# " + openPin);
+        }
+
         PremiumStateHelper.PremiumListener mPremiumListener = new PremiumStateHelper.PremiumListener() {
             @Override
             public void isPremium() {
@@ -315,7 +163,10 @@ public class SettingsFragment extends PreferenceFragment
                                         String password = ((EditText) dialogView.
                                                 findViewById(R.id.stealth_keycode))
                                                 .getText().toString();
-                                        Prefs.OpenPIN().put(password);
+                                        SharedPreferences.Editor editor =
+                                                PreferenceManager.getDefaultSharedPreferences(context).edit();
+                                        editor.putString("stealth_mode_password", password);
+                                        editor.apply();
                                         confirm_stealth(password);
                                     }
                                 })
@@ -325,24 +176,138 @@ public class SettingsFragment extends PreferenceFragment
                     }
                 });
             }
-
-            @Override
-            public void notPremium() {
-                stealth_mode.setSummary(stealth_mode_message + context.getString(R.string.Settings__only_permium));
-                stealth_mode_password.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                    @Override
-                    public boolean onPreferenceClick(Preference preference) {
-                        mFinishListener.onNew(null, new PremiumFragment_());    //Switch fragment to donation
-                        return true;
-                    }
-                });
-            }
-        };
-        new PremiumStateHelper(context, mPremiumListener);
-
+                @Override
+                public void notPremium() {
+                    stealth_mode_password.setSummary(stealth_mode_message + " "
+                            + context.getString(R.string.Settings__only_permium));
+                    stealth_mode_password.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                        @Override
+                        public boolean onPreferenceClick(Preference preference) {
+                            mFinishListener.onNew(null, new PremiumFragment_()); //Switch fragment to donation
+                            return true;
+                        }
+                    });
+                }
+            };
+            new PremiumStateHelper(getActivity(), mPremiumListener);
     }
 
-    void confirm_stealth(String password) {
+    private void preparePreferenceMaxImageSize(){
+        Preference image_size = findPreference("image_size");
+        image_size.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                Util.loadSelectedImageSize((String) o);
+                return true;
+            }
+        });
+    }
+
+    private void preparePreferenceVaultRoot(){
+        Preference vault_root = findPreference("vault_root");
+        vault_root.setSummary(Storage.getRoot().getAbsolutePath());
+        vault_root.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                choosePath(new getFileListener() {
+                    @Override
+                    public void get(File file) {
+                        Intent intent = new Intent(context, FileChooserActivity.class);
+                        intent.putStringArrayListExtra(
+                                FileChooserActivity.EXTRA_FILTER_INCLUDE_EXTENSIONS,
+                                INCLUDE_EXTENSIONS_LIST);
+                        intent.putExtra(FileChooserActivity.PATH, file.getAbsolutePath());
+                        intent.putExtra(FileChooserActivity.EXTRA_SELECT_FOLDER, true);
+                        startActivityForResult(intent, REQUEST_CODE_SET_VAULT_ROOT);
+                    }
+                });
+                return true;
+            }
+        });
+    }
+
+    private void preparePreferenceVaultMove(){
+        Preference vault_move = findPreference("vault_move");
+        vault_move.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                choosePath(new getFileListener() {
+                    @Override
+                    public void get(File file) {
+                        Intent intent = new Intent(context, FileChooserActivity.class);
+                        intent.putStringArrayListExtra(
+                                FileChooserActivity.EXTRA_FILTER_INCLUDE_EXTENSIONS,
+                                INCLUDE_EXTENSIONS_LIST);
+                        intent.putExtra(FileChooserActivity.PATH, file.getAbsolutePath());
+                        intent.putExtra(FileChooserActivity.EXTRA_SELECT_FOLDER, true);
+                        startActivityForResult(intent, REQUEST_CODE_MOVE_VAULT);
+                    }
+                });
+                return true;
+            }
+        });
+    }
+
+    private void preparePreferenceCreditList(){
+        PreferenceGroup creditsList = (PreferenceGroup) findPreference("credits_list");
+        for (int i = 0; i < creditsNames.length; i++) {
+            Preference newPreference = new Preference(context);
+            newPreference.setTitle(creditsNames[i]);
+            newPreference.setSummary(creditsDescription[i]);
+            final int finali = i;
+            newPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Uri uri = Uri.parse(creditsLinks[finali]);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                    return true;
+                }
+            });
+            creditsList.addPreference(newPreference);
+        }
+    }
+
+    private void preparePreferenceTranslatorsList(){
+        PreferenceGroup translatorList = (PreferenceGroup) findPreference("translators_list");
+        for (int i = 0; i < contributorNames.length; i++) {
+            Preference newPreference = new Preference(context);
+            newPreference.setTitle(contributorNames[i]);
+            newPreference.setSummary(contributorDescription[i]);
+            final int finali = i;
+            newPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Uri uri = Uri.parse(contributorLinks[finali]);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                    return true;
+                }
+            });
+            translatorList.addPreference(newPreference);
+        }
+    }
+
+    private void preparePreferenceVersion(){
+        Preference version = findPreference("version");
+        version.setSummary(CustomApp.VERSIONNAME);
+    }
+
+    private void preparePreferenceLegal(){
+        Preference dialogPreference = getPreferenceScreen().findPreference("legal");
+        dialogPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                Util.alert(context,
+                        null,
+                        libraries,
+                        Util.emptyClickListener,
+                        null);
+                return true;
+            }
+        });
+    }
+
+    private void confirm_stealth(String password) {
         final View dialogView = View.inflate(context, R.layout.dialog_confirm_stealth, null);
         ((TextView) dialogView
                 .findViewById(R.id.stealth_keycode))
@@ -353,28 +318,40 @@ public class SettingsFragment extends PreferenceFragment
                 .setMessage(R.string.Settings__try_once_before_hide)
                 .setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        Prefs.stealthMode().put(-1);
+                        SharedPreferences.Editor editor
+                                = PreferenceManager.getDefaultSharedPreferences(context).edit();
+                        editor.putBoolean("showStealthModeTutorial", true);
+                        editor.apply();
                         Intent dial = new Intent();
                         dial.setAction("android.intent.action.DIAL");
                         dial.setData(Uri.parse("tel:"));
                         dial.setFlags(IntentCompat.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(dial);
-                        context.finish();
+                        getActivity().finish();
                     }
                 })
                 .show();
     }
 
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-
-        Util.toast(context, alert, Toast.LENGTH_LONG);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.activity_settings, container, false);
     }
 
     @Override
-    @Background
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mFinishListener = (VaultsListFragment.OnFragmentFinishListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement Listener");
+        }
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case REQUEST_CODE:
+            case REQUEST_CODE_SET_VAULT_ROOT:
                 // If the file selection was successful
                 if (resultCode == Activity.RESULT_OK) {
                     if (data != null) {
@@ -384,15 +361,15 @@ public class SettingsFragment extends PreferenceFragment
                             // Get the file path from the URI
                             final String path = FileUtils.getPath(context, uri);
                             Storage.setRoot(path);
+                            Preference vault_root = findPreference("vault_root");
+                            vault_root.setSummary(Storage.getRoot().getAbsolutePath());
                         } catch (Exception e) {
                             Log.e("FileSelectorTestActivity", "File select error", e);
                         }
                     }
                 }
-                update();
                 break;
-            case REQUEST_CODE_2:
-
+            case REQUEST_CODE_MOVE_VAULT:
                 if (resultCode == Activity.RESULT_OK) {
                     if (data != null) {
                         // Get the URI of the selected file
@@ -408,17 +385,20 @@ public class SettingsFragment extends PreferenceFragment
                                         null);
                                 break;
                             }
-                            Util.alert(context,
-                                    getString(R.string.Settings__move_vault),
+                            Util.alert(context,getString(R.string.Settings__move_vault),
                                     String.format(getString(R.string.move_message), Storage.getRoot().getAbsolutePath(), path),
                                     new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
                                             String[] children = new File(path).list();
                                             if (children.length == 0) {
-                                                final ProgressDialog progDailog = ProgressDialog.show(context, null,
+                                                final ProgressDialog progressDialog = ProgressDialog.show(context, null,
                                                         context.getString(R.string.Settings__moving_vault), true);
-                                                move(path, progDailog);
+                                                new Thread(new Runnable() {
+                                                    public void run() {
+                                                        moveStorageRoot(path, progressDialog);
+                                                    }
+                                                }).start();
                                             } else
                                                 Util.alert(context,
                                                         getString(R.string.Error__files_exist),
@@ -436,20 +416,19 @@ public class SettingsFragment extends PreferenceFragment
                     }
                 }
                 break;
-
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    @Background
-    void move(String path, ProgressDialog progressDialog) {
+    void moveStorageRoot(String path, ProgressDialog progressDialog) {
         File oldRoot = Storage.getRoot();
         try {
             org.apache.commons.io.FileUtils.copyDirectory(oldRoot, new File(path));
             Storage.setRoot(path);
-            Util.toast(context,
+            Preference vault_root = findPreference("vault_root");
+            vault_root.setSummary(Storage.getRoot().getAbsolutePath());
+            Util.toast(getActivity(),
                     String.format(getString(R.string.Settings__moved_vault), path), Toast.LENGTH_LONG);
-            update();
         } catch (Exception E) {
             Util.alert(context,
                     context.getString(R.string.Error__moving_vault),
@@ -467,7 +446,6 @@ public class SettingsFragment extends PreferenceFragment
         progressDialog.dismiss();
     }
 
-    @UiThread
     void choosePath(final getFileListener listener) {
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
         builderSingle.setTitle(context.getString(R.string.Settings__select_storage_title));
@@ -475,11 +453,11 @@ public class SettingsFragment extends PreferenceFragment
                 context,
                 R.layout.select_dialog_singlechoice);
         final Map<String, File> storages = Util.getAllStorageLocations();
-        for (String key : storages.keySet())
+        for (String key : storages.keySet()) {
             arrayAdapter.add(key);
+        }
         builderSingle.setNegativeButton(R.string.CANCEL,
                 new DialogInterface.OnClickListener() {
-
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -489,7 +467,6 @@ public class SettingsFragment extends PreferenceFragment
 
         builderSingle.setAdapter(arrayAdapter,
                 new DialogInterface.OnClickListener() {
-
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String strName = arrayAdapter.getItem(which);

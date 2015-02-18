@@ -22,9 +22,11 @@ package com.doplgangr.secrecy.UpdateManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.widget.Button;
 import android.widget.TextView;
@@ -32,7 +34,6 @@ import android.widget.TextView;
 import com.doplgangr.secrecy.FileSystem.Base64Coder;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.Settings.Prefs_;
 import com.doplgangr.secrecy.Util;
 import com.doplgangr.secrecy.Views.VaultsListFragment;
 import com.doplgangr.secrecy.Views.VaultsListFragment_;
@@ -73,8 +74,6 @@ public class UpdateManager extends Fragment {
     //Preference that stores last app version
     @Pref
     AppVersion_ version;
-    @Pref
-    Prefs_ Prefs;
     private VaultsListFragment.OnFragmentFinishListener mFinishListener;
     //Current version
     private Integer versionnow;
@@ -263,8 +262,15 @@ public class UpdateManager extends Fragment {
 
     @Background
     void version17to18() {
-        if (Prefs.OpenPIN().exists())           // version 18 adds option to enable/disable stealth.
-            Prefs.stealth().put(true);          // enable stealth if is set prior to 18.
+        // version 18 adds option to enable/disable stealth.
+        // enable stealth if is set prior to 18.
+        if (!PreferenceManager.getDefaultSharedPreferences(context)
+                .getString("stealth_mode_password", "").equals("")) {
+            SharedPreferences.Editor editor = PreferenceManager
+                    .getDefaultSharedPreferences(context).edit();
+            editor.putBoolean("stealth_mode", true);
+            editor.apply();
+        }
         version18to19();
     }
 

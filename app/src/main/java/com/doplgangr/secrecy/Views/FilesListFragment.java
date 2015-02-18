@@ -29,6 +29,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
@@ -60,7 +61,6 @@ import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Jobs.BackupJob;
 import com.doplgangr.secrecy.Jobs.InitializeVaultJob;
 import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.Settings.Prefs_;
 import com.doplgangr.secrecy.Util;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 
@@ -105,8 +105,6 @@ public class FilesListFragment extends FileViewer {
     String vault;
     @FragmentArg(Config.password_extra)
     String password;
-    @org.androidannotations.annotations.sharedpreferences.Pref
-    Prefs_ Pref;
     private Vault secret;
     private FilesListAdapter mAdapter;
     private FilesListAdapter listAdapter;
@@ -277,7 +275,9 @@ public class FilesListFragment extends FileViewer {
                     CustomApp.context.getString(R.string.Files__add_successful),
                     Toast.LENGTH_SHORT);
             addToList(event.encryptedFile);
-            if (Pref.sorting().get()) mAdapter.sort();
+            if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("vault_sort", false)) {
+                mAdapter.sort();
+            }
             int index = mAdapter.getItemId(event.encryptedFile);
             if (index != -1)
                 recyclerView.smoothScrollToPosition(index);
@@ -454,7 +454,9 @@ public class FilesListFragment extends FileViewer {
     void addToList(EncryptedFile encryptedFile) {
         listAdapter.add(encryptedFile);
         galleryAdapter.add(encryptedFile);
-        if (Pref.sorting().get()) listAdapter.sort();
+        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("vault_sort", false)){
+            listAdapter.sort();
+        }
         mAdapter.notifyDataSetChanged();
     }
 
@@ -490,7 +492,9 @@ public class FilesListFragment extends FileViewer {
             recyclerView.setLayoutManager(gridLayout);
         } else {
             mAdapter = listAdapter;
-            if (Pref.sorting().get()) mAdapter.sort();
+            if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("vault_sort", false)){
+                mAdapter.sort();
+            }
             recyclerView.setLayoutManager(linearLayout);
         }
         recyclerView.setAdapter(mAdapter);

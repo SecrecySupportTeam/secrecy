@@ -26,9 +26,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
@@ -49,8 +51,7 @@ import com.doplgangr.secrecy.FileSystem.Encryption.VaultHolder;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Jobs.RestoreJob;
 import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.Settings.Prefs_;
-import com.doplgangr.secrecy.Settings.SettingsFragment_;
+import com.doplgangr.secrecy.Settings.SettingsFragment;
 import com.doplgangr.secrecy.Util;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 import com.ipaulpro.afilechooser.utils.FileUtils;
@@ -63,7 +64,6 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.DrawableRes;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.io.File;
 import java.io.IOException;
@@ -84,8 +84,6 @@ public class VaultsListFragment extends Fragment {
     View nothing;
     @DrawableRes(R.drawable.file_selector)
     Drawable selector;
-    @Pref
-    Prefs_ Pref;
     private ActionBarActivity context;
     VaultsAdapter adapter;
     private OnVaultSelectedListener mOnVaultSelected;
@@ -129,7 +127,7 @@ public class VaultsListFragment extends Fragment {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            mFinishListener.onNew(null, new SettingsFragment_());
+                            mFinishListener.onNew(null, new SettingsFragment());
                         }
                     },
                     null
@@ -460,7 +458,9 @@ public class VaultsListFragment extends Fragment {
     }
 
     void showTutorial() {
-        if ((adapter.getCount() > 0) && (Pref.showVaultLongPressRenameTutorial().get())) {
+        if ((adapter.getCount() > 0
+                && PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean("showVaultLongClickTutorial", true))) {
             final View mView =
                     context.getLayoutInflater().inflate(R.layout.vault_item_tutorial, mLinearView, false);
             TextView mInstructions = (TextView) mView.findViewById(R.id.Tutorial__instruction);
@@ -471,14 +471,14 @@ public class VaultsListFragment extends Fragment {
                 @Override
                 public boolean onLongClick(View view) {
                     mLinearView.removeView(mView);
-                    Pref.edit()
-                            .showVaultLongPressRenameTutorial()
-                            .put(false)
-                            .apply();
+                    SharedPreferences.Editor editor
+                            = PreferenceManager.getDefaultSharedPreferences(context).edit();
+                    editor.putBoolean("showVaultLongClickTutorial", false);
+                    editor.apply();
+
                     return true;
                 }
             });
-            return;                 //Show only one tutorial at a time. Don't overload users!!
         }
     }
 
