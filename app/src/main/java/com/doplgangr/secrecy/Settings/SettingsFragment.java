@@ -36,6 +36,7 @@ import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.preference.PreferenceFragment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -335,6 +336,9 @@ public class SettingsFragment extends PreferenceFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ((ActionBarActivity) getActivity()).getSupportActionBar()
+                .setTitle(R.string.Page_header__settings);
+
         return inflater.inflate(R.layout.activity_settings, container, false);
     }
 
