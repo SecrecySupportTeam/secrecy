@@ -20,12 +20,16 @@
 package com.doplgangr.secrecy.Views;
 
 import android.app.AlertDialog;
+import android.app.SharedElementCallback;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.ListPreference;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -42,8 +46,7 @@ import com.doplgangr.secrecy.FileSystem.Encryption.VaultHolder;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Premium.PremiumFragment_;
 import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.Settings.Prefs_;
-import com.doplgangr.secrecy.Settings.SettingsFragment_;
+import com.doplgangr.secrecy.Settings.SettingsFragment;
 import com.doplgangr.secrecy.UpdateManager.AppVersion_;
 import com.doplgangr.secrecy.UpdateManager.UpdateManager_;
 import com.doplgangr.secrecy.Util;
@@ -68,14 +71,12 @@ public class MainActivity
         VaultsListFragment.OnFragmentFinishListener {
     private final List<Class> mFragmentNameList = new ArrayList<Class>() {{
         add(VaultsListFragment_.class);
-        add(SettingsFragment_.class);
+        add(SettingsFragment.class);
         add(PremiumFragment_.class);
     }};
     private final Context context = this;
     @Pref
     AppVersion_ version;
-    @Pref
-    Prefs_ Prefs;
     @ViewById(R.id.left_drawer_list)
     NavListView mNavigation;
     @ViewById(R.id.left_drawer)
@@ -87,32 +88,16 @@ public class MainActivity
     private FragmentManager fragmentManager;
     private ActionBarDrawerToggle mDrawerToggle;
 
-    public static void loadSelectedImageSize(int imageSize){
-        switch (imageSize) {
-            case 0:
-                Util.log("Setting image size to: " + Config.IMAGE_SIZE_SMALL);
-                Config.selectedImageSize = Config.IMAGE_SIZE_SMALL;
-                break;
-            case 1:
-                Util.log("Setting image size to: " + Config.IMAGE_SIZE_MEDIUM);
-                Config.selectedImageSize = Config.IMAGE_SIZE_MEDIUM;
-                break;
-            case 2:
-                Util.log("Setting image size to: " + Config.IMAGE_SIZE_LARGE);
-                Config.selectedImageSize = Config.IMAGE_SIZE_LARGE;
-                break;
-        }
-    }
-
     @AfterViews
     public void onCreate() {
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         Storage.deleteTemp();                                           //Start clean
         VaultHolder.getInstance().clear();
         fragmentManager = getSupportFragmentManager();
         switchFragment(0);
         setSupportActionBar(mToolbar);
-        if (Prefs.stealthMode().get() == -1) {
-            //if this is the first time, display a dialog to inform successful trial
+        if (PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean("showStealthModeTutorial", false)) {
             onFirstLaunch();
             return;
         }
@@ -174,7 +159,8 @@ public class MainActivity
         };
         mDrawerToggle.setDrawerIndicatorEnabled(true);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-        loadSelectedImageSize(Prefs.maxImageSize().get());
+        Util.loadSelectedImageSize(PreferenceManager.getDefaultSharedPreferences(context)
+                .getString("image_size", "1"));
         showHelpDeskTutorial();
     }
 
@@ -186,7 +172,8 @@ public class MainActivity
     }
 
     private void showHelpDeskTutorial() {
-        if (Prefs.showHelpDeskTutorial().get())
+        if (PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean("showHelpDeskTutorial", true)) {
             Util.alert(this,
                     getString(R.string.Dialog__help_centre_tutorial),
                     getString(R.string.Dialog__help_centre_tutorial_message),
@@ -194,20 +181,20 @@ public class MainActivity
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             support();
-                            Prefs.showHelpDeskTutorial()
-                                    .put(false);
                         }
                     },
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            //do nothing
-                            Prefs.showHelpDeskTutorial()
-                                    .put(false);
                         }
                     }
             );
 
+            SharedPreferences.Editor editor
+                    = PreferenceManager.getDefaultSharedPreferences(context).edit();
+            editor.putBoolean("showHelpDeskTutorial", false);
+            editor.apply();
+        }
     }
 
     void switchFragment(int page) {
@@ -216,7 +203,7 @@ public class MainActivity
                 addFragment(new VaultsListFragment_(), 0, 0);
                 break;
             case 1:
-                addFragment(new SettingsFragment_(), 0, 0);
+                addFragment(new SettingsFragment(), 0, 0);
                 break;
             case 2:
                 addFragment(new PremiumFragment_(), 0, 0);
@@ -229,7 +216,8 @@ public class MainActivity
 
     void onFirstLaunch() {
         final View dialogView = View.inflate(context, R.layout.dialog_finish_stealth, null);
-        String password = Prefs.OpenPIN().get();
+        String password = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString("stealth_mode_password", "");
         ((TextView) dialogView
                 .findViewById(R.id.stealth_keycode))
                 .append(password);
@@ -241,7 +229,10 @@ public class MainActivity
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Prefs.stealthMode().put(1);
+                                SharedPreferences.Editor editor
+                                        = PreferenceManager.getDefaultSharedPreferences(context).edit();
+                                editor.putBoolean("showStealthModeTutorial", false);
+                                editor.apply();
                                 onCreate();
                             }
                         }

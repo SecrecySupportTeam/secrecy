@@ -29,6 +29,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
@@ -59,9 +60,7 @@ import com.doplgangr.secrecy.FileSystem.Files.EncryptedFile;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Jobs.BackupJob;
 import com.doplgangr.secrecy.Jobs.InitializeVaultJob;
-import com.doplgangr.secrecy.Listeners;
 import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.Settings.Prefs_;
 import com.doplgangr.secrecy.Util;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 
@@ -106,8 +105,6 @@ public class FilesListFragment extends FileViewer {
     String vault;
     @FragmentArg(Config.password_extra)
     String password;
-    @org.androidannotations.annotations.sharedpreferences.Pref
-    Prefs_ Pref;
     private Vault secret;
     private FilesListAdapter mAdapter;
     private FilesListAdapter listAdapter;
@@ -278,7 +275,9 @@ public class FilesListFragment extends FileViewer {
                     CustomApp.context.getString(R.string.Files__add_successful),
                     Toast.LENGTH_SHORT);
             addToList(event.encryptedFile);
-            if (Pref.sorting().get()) mAdapter.sort();
+            if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("vault_sort", false)) {
+                mAdapter.sort();
+            }
             int index = mAdapter.getItemId(event.encryptedFile);
             if (index != -1)
                 recyclerView.smoothScrollToPosition(index);
@@ -418,7 +417,7 @@ public class FilesListFragment extends FileViewer {
                     EncryptedFile encryptedFile = mAdapter.getItem(position);
                     if (!encryptedFile.getIsDecrypting()) {
                         switchView(view, R.id.DecryptLayout);
-                        Listeners.EmptyListener onFinish = new Listeners.EmptyListener() {
+                        Runnable onFinish = new Runnable() {
                             @Override
                             public void run() {
                                 switchView(view, R.id.dataLayout);
@@ -455,18 +454,20 @@ public class FilesListFragment extends FileViewer {
     void addToList(EncryptedFile encryptedFile) {
         listAdapter.add(encryptedFile);
         galleryAdapter.add(encryptedFile);
-        if (Pref.sorting().get()) listAdapter.sort();
+        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("vault_sort", false)){
+            listAdapter.sort();
+        }
         mAdapter.notifyDataSetChanged();
     }
 
     @Background(id = Config.cancellable_task)
     @Override
-    void decrypt(EncryptedFile encryptedFile, Listeners.EmptyListener onFinish) {
+    void decrypt(EncryptedFile encryptedFile, Runnable onFinish) {
         super.decrypt(encryptedFile, onFinish);
     }
 
     @Background(id = Config.cancellable_task)
-    void decrypt_and_save(int index, final Listeners.EmptyListener onFinish) {
+    void decrypt_and_save(int index, final Runnable onFinish) {
         EncryptedFile encryptedFile = mAdapter.getItem(index);
         File tempFile = super.getFile(encryptedFile, onFinish);
         File storedFile = new File(Environment.getExternalStorageDirectory(), encryptedFile.getDecryptedFileName());
@@ -491,7 +492,9 @@ public class FilesListFragment extends FileViewer {
             recyclerView.setLayoutManager(gridLayout);
         } else {
             mAdapter = listAdapter;
-            if (Pref.sorting().get()) mAdapter.sort();
+            if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("vault_sort", false)){
+                mAdapter.sort();
+            }
             recyclerView.setLayoutManager(linearLayout);
         }
         recyclerView.setAdapter(mAdapter);
@@ -703,7 +706,7 @@ public class FilesListFragment extends FileViewer {
                 if (attached) {
                     mAdapter.getItem(index).setIsDecrypting(true);
                     mAdapter.notifyItemChanged(index);
-                    decrypt_and_save(index, new Listeners.EmptyListener() {
+                    decrypt_and_save(index, new Runnable() {
                         @Override
                         public void run() {
                             EventBus.getDefault().post(new DecryptingFileDoneEvent(index));
@@ -760,7 +763,7 @@ public class FilesListFragment extends FileViewer {
                     ProgressBar pBar = mView != null ?
                             (ProgressBar) mView.findViewById(R.id.progressBar) :
                             null;
-                    Listeners.EmptyListener onFinish = new Listeners.EmptyListener() {
+                    Runnable onFinish = new Runnable() {
                         @Override
                         public void run() {
                             switchView(mView, R.id.dataLayout);
@@ -847,9 +850,9 @@ public class FilesListFragment extends FileViewer {
     class DecryptArgHolder {
         public final EncryptedFile encryptedFile;
         public final ProgressBar pBar;
-        public final Listeners.EmptyListener onFinish;
+        public final Runnable onFinish;
 
-        public DecryptArgHolder(EncryptedFile encryptedFile, ProgressBar pBar, Listeners.EmptyListener onFinish) {
+        public DecryptArgHolder(EncryptedFile encryptedFile, ProgressBar pBar, Runnable onFinish) {
             this.encryptedFile = encryptedFile;
             this.pBar = pBar;
             this.onFinish = onFinish;
