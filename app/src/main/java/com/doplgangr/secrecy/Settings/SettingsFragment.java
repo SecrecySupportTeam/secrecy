@@ -364,7 +364,7 @@ public class SettingsFragment extends PreferenceFragment {
                             Preference vault_root = findPreference("vault_root");
                             vault_root.setSummary(Storage.getRoot().getAbsolutePath());
                         } catch (Exception e) {
-                            Log.e("FileSelectorTestActivity", "File select error", e);
+                            Log.e("SettingsFragment", "File select error", e);
                         }
                     }
                 }
@@ -411,7 +411,7 @@ public class SettingsFragment extends PreferenceFragment {
                                     Util.emptyClickListener
                             );
                         } catch (Exception e) {
-                            Log.e("FileSelectorTestActivity", "File select error", e);
+                            Log.e("SettingsFragment", "File select error", e);
                         }
                     }
                 }
