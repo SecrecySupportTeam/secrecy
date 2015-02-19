@@ -47,26 +47,16 @@ import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Premium.PremiumFragment_;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.SettingsFragment;
-import com.doplgangr.secrecy.UpdateManager.AppVersion_;
 import com.doplgangr.secrecy.UpdateManager.UpdateManager_;
 import com.doplgangr.secrecy.Util;
 import com.doplgangr.secrecy.Views.DummyViews.NavDrawer.DrawerLayout;
 import com.doplgangr.secrecy.Views.DummyViews.NavDrawer.NavItem;
 import com.doplgangr.secrecy.Views.DummyViews.NavDrawer.NavListView;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.sharedpreferences.Pref;
-
 import java.util.ArrayList;
 import java.util.List;
 
-@EActivity(R.layout.activity_main)
-public class MainActivity
-        extends ActionBarActivity
-        implements
+public class MainActivity extends ActionBarActivity implements
         VaultsListFragment.OnVaultSelectedListener,
         VaultsListFragment.OnFragmentFinishListener {
     private final List<Class> mFragmentNameList = new ArrayList<Class>() {{
@@ -75,22 +65,26 @@ public class MainActivity
         add(PremiumFragment_.class);
     }};
     private final Context context = this;
-    @Pref
-    AppVersion_ version;
-    @ViewById(R.id.left_drawer_list)
-    NavListView mNavigation;
-    @ViewById(R.id.left_drawer)
-    View mDrawer;
-    @ViewById(R.id.drawer_layout)
-    DrawerLayout mDrawerLayout;
-    @ViewById(R.id.toolbar)
-    Toolbar mToolbar;
+    private NavListView mNavigation;
+    private View mDrawer;
+    private DrawerLayout mDrawerLayout;
+    private Toolbar mToolbar;
     private FragmentManager fragmentManager;
     private ActionBarDrawerToggle mDrawerToggle;
 
-    @AfterViews
-    public void onCreate() {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
+        int versionNumber =  PreferenceManager.getDefaultSharedPreferences(context)
+                .getInt("appVersionNumber", 1);
+        mNavigation = (NavListView) findViewById(R.id.left_drawer_list);
+        mDrawer = findViewById(R.id.left_drawer);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+
         Storage.deleteTemp();                                           //Start clean
         VaultHolder.getInstance().clear();
         fragmentManager = getSupportFragmentManager();
@@ -109,7 +103,7 @@ public class MainActivity
             return;
         }
         if (pInfo != null) {
-            if (pInfo.versionCode != version.no().get())
+            if (pInfo.versionCode != versionNumber)
                 addFragment(new UpdateManager_(), R.anim.slide_in_right, R.anim.fadeout);
         }
         mNavigation.addNavigationItem(
@@ -233,31 +227,11 @@ public class MainActivity
                                         = PreferenceManager.getDefaultSharedPreferences(context).edit();
                                 editor.putBoolean("showStealthModeTutorial", false);
                                 editor.apply();
-                                onCreate();
                             }
                         }
                 )
                 .show();
     }
-
-    @OptionsItem(R.id.home)
-    void supporthomePressed() {
-        if (mDrawerLayout.isDrawerOpen(mDrawer)) {
-            mDrawerLayout.closeDrawer(mDrawer);
-        } else {
-            mDrawerLayout.openDrawer(mDrawer);
-        }
-    }
-
-    @OptionsItem(android.R.id.home)
-    void homePressed() {
-        if (mDrawerLayout.isDrawerOpen(mDrawer)) {
-            mDrawerLayout.closeDrawer(mDrawer);
-        } else {
-            mDrawerLayout.openDrawer(mDrawer);
-        }
-    }
-
 
     @Override
     public void onVaultSelected(String vault, String password) {

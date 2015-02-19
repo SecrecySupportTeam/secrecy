@@ -26,7 +26,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.IntentCompat;
 
 import com.doplgangr.secrecy.Premium.StealthMode;
-import com.doplgangr.secrecy.Views.MainActivity_;
+import com.doplgangr.secrecy.Views.MainActivity;
 
 import org.androidannotations.annotations.EReceiver;
 
@@ -39,7 +39,7 @@ public class OutgoingCallReceiver extends BroadcastReceiver {
         // Gets the intent, check if it matches our secret code
         if (Intent.ACTION_NEW_OUTGOING_CALL.equals(intent.getAction()) &&
                 intent.getExtras() != null) {
-            Intent launcher = new Intent(context, MainActivity_.class);
+            Intent launcher = new Intent(context, MainActivity.class);
             //These flags are added to make the new mainActivity in the home stack.
             //i.e. back button returns to home not dialer.
             launcher.addFlags(IntentCompat.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_TASK_ON_HOME);

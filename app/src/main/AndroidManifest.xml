@@ -34,7 +34,7 @@
             android:icon="@drawable/ic_launcher"
             android:label="@string/Dialog_header__pick_file" />
         <activity
-            android:name=".Views.MainActivity_"
+            android:name=".Views.MainActivity"
             android:clearTaskOnLaunch="true"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
@@ -99,10 +99,10 @@
         <activity
             android:name=".Views.FilesActivity_"
             android:label=""
-            android:parentActivityName=".Views.MainActivity_">
+            android:parentActivityName=".Views.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.doplgangr.secrecy.Views.MainActivity_" />
+                android:value="com.doplgangr.secrecy.Views.MainActivity" />
         </activity>
     </application>
 

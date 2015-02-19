@@ -22,7 +22,7 @@ package com.doplgangr.secrecy.Views.DummyViews;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 
-import com.doplgangr.secrecy.Views.MainActivity_;
+import com.doplgangr.secrecy.Views.MainActivity;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EActivity;
@@ -31,7 +31,7 @@ import org.androidannotations.annotations.EActivity;
 public class LauncherActivity extends ActionBarActivity {
     @AfterInject
     void launch() {
-        Intent launcher = new Intent(this, MainActivity_.class);
+        Intent launcher = new Intent(this, MainActivity.class);
         startActivity(launcher);
         finish();
     }
