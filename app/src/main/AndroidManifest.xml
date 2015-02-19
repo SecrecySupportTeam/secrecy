@@ -64,7 +64,7 @@
             android:name=".Settings.SettingsActivity_"
             android:label="" />
 
-        <receiver android:name=".OutgoingCallReceiver_">
+        <receiver android:name=".OutgoingCallReceiver">
             <intent-filter android:priority="9999">
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
             </intent-filter>

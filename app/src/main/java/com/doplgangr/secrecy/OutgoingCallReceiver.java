@@ -28,9 +28,6 @@ import android.support.v4.content.IntentCompat;
 import com.doplgangr.secrecy.Premium.StealthMode;
 import com.doplgangr.secrecy.Views.MainActivity;
 
-import org.androidannotations.annotations.EReceiver;
-
-@EReceiver
 public class OutgoingCallReceiver extends BroadcastReceiver {
 
     @Override
