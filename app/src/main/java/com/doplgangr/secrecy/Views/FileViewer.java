@@ -23,9 +23,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
@@ -41,11 +46,6 @@ import com.doplgangr.secrecy.Jobs.AddFileJob;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.api.BackgroundExecutor;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,80 +55,97 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@EFragment(R.layout.activity_file_viewer)
 public abstract class FileViewer extends Fragment {
 
     ActionBarActivity context;
 
-    @Background
-    void addFile(Vault secret, final Uri data) {
-        CustomApp.jobManager.addJobInBackground(new AddFileJob(context, secret, data));
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.activity_file_viewer, container, false);
     }
 
-
-    @Background
-    void decrypt(EncryptedFile encryptedFile, final Runnable onFinish) {
-        File tempFile = getFile(encryptedFile, onFinish);
-        //File specified is not invalid
-        if (tempFile != null) {
-            if (tempFile.getParentFile().equals(Storage.getTempFolder())) {
-                tempFile = new File(Storage.getTempFolder(), tempFile.getName());
+    void addFileInBackground(final Vault secret, final Uri data) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                CustomApp.jobManager.addJobInBackground(new AddFileJob(context, secret, data));
             }
-            Uri uri = OurFileProvider.getUriForFile(context, OurFileProvider.FILE_PROVIDER_AUTHORITY, tempFile);
-            MimeTypeMap myMime = MimeTypeMap.getSingleton();
-            Intent newIntent = new Intent(android.content.Intent.ACTION_VIEW);
-            String mimeType = myMime.getMimeTypeFromExtension(encryptedFile.getType());
-            newIntent.setDataAndType(uri, mimeType);
-            newIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            //altIntent: resort to using file provider when content provider does not work.
-            Intent altIntent = new Intent(android.content.Intent.ACTION_VIEW);
-            Uri rawuri = Uri.fromFile(tempFile);
-            altIntent.setDataAndType(rawuri, mimeType);
-            afterDecrypt(newIntent, altIntent);
-        }
-
+        }).start();
     }
 
-    @Background
-    void sendMultiple(ArrayList<FilesListFragment.DecryptArgHolder> args) {
-        ArrayList<Uri> uris = new ArrayList<Uri>();
-        Set<String> mimes = new HashSet<String>();
-        MimeTypeMap myMime = MimeTypeMap.getSingleton();
-        for (FilesListFragment.DecryptArgHolder arg : args) {
-            File tempFile = getFile(arg.encryptedFile, arg.onFinish);
-            //File specified is not invalid
-            if (tempFile != null) {
-                if (tempFile.getParentFile().equals(Storage.getTempFolder()))
-                    tempFile = new java.io.File(Storage.getTempFolder(), tempFile.getName());
-                uris.add(OurFileProvider.getUriForFile(context, OurFileProvider.FILE_PROVIDER_AUTHORITY, tempFile));
-                mimes.add(myMime.getMimeTypeFromExtension(arg.encryptedFile.getType()));
-
+    void decrypt(final EncryptedFile encryptedFile, final Runnable onFinish) {
+        new AsyncTask<EncryptedFile, Void, File>() {
+            @Override
+            protected File doInBackground(EncryptedFile... encryptedFiles) {
+                return getFile(encryptedFile, onFinish);
             }
-        }
-        if (uris.size() == 0 || mimes.size() == 0)
-            return;
-        Intent newIntent;
-        if (uris.size() == 1) {
-            newIntent = new Intent(Intent.ACTION_SEND);
-            newIntent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
-        } else {
-            newIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-            newIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-        }
-        if (mimes.size() > 1)
-            newIntent.setType("text/plain");                        //Mixed filetypes
-        else
-            newIntent.setType(new ArrayList<String>(mimes).get(0));
-        newIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-        Intent chooserIntent = generateCustomChooserIntent(newIntent, uris);
-        try {
-            startActivity(Intent.createChooser(chooserIntent, CustomApp.context.getString(R.string.Dialog__send_file)));
-            FilesActivity.onPauseDecision.startActivity();
-        } catch (android.content.ActivityNotFoundException e) {
-            Util.toast(context, CustomApp.context.getString(R.string.Error__no_activity_view), Toast.LENGTH_LONG);
-            FilesActivity.onPauseDecision.finishActivity();
-        }
+            @Override
+            protected void onPostExecute(File tempFile){
+                if (tempFile != null) {
+                    if (tempFile.getParentFile().equals(Storage.getTempFolder())) {
+                        tempFile = new File(Storage.getTempFolder(), tempFile.getName());
+                    }
+                    Uri uri = OurFileProvider.getUriForFile(context, OurFileProvider.FILE_PROVIDER_AUTHORITY, tempFile);
+                    MimeTypeMap myMime = MimeTypeMap.getSingleton();
+                    Intent newIntent = new Intent(android.content.Intent.ACTION_VIEW);
+                    String mimeType = myMime.getMimeTypeFromExtension(encryptedFile.getType());
+                    newIntent.setDataAndType(uri, mimeType);
+                    newIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    //altIntent: resort to using file provider when content provider does not work.
+                    Intent altIntent = new Intent(android.content.Intent.ACTION_VIEW);
+                    Uri rawuri = Uri.fromFile(tempFile);
+                    altIntent.setDataAndType(rawuri, mimeType);
+                    afterDecrypt(newIntent, altIntent);
+                }
+            }
+        }.execute(encryptedFile);
+    }
+
+    void sendMultiple(final ArrayList<FilesListFragment.DecryptArgHolder> args) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<Uri> uris = new ArrayList<Uri>();
+                Set<String> mimes = new HashSet<String>();
+                MimeTypeMap myMime = MimeTypeMap.getSingleton();
+                for (FilesListFragment.DecryptArgHolder arg : args) {
+                    File tempFile = getFile(arg.encryptedFile, arg.onFinish);
+                    //File specified is not invalid
+                    if (tempFile != null) {
+                        if (tempFile.getParentFile().equals(Storage.getTempFolder()))
+                            tempFile = new java.io.File(Storage.getTempFolder(), tempFile.getName());
+                        uris.add(OurFileProvider.getUriForFile(context, OurFileProvider.FILE_PROVIDER_AUTHORITY, tempFile));
+                        mimes.add(myMime.getMimeTypeFromExtension(arg.encryptedFile.getType()));
+
+                    }
+                }
+                if (uris.size() == 0 || mimes.size() == 0)
+                    return;
+                Intent newIntent;
+                if (uris.size() == 1) {
+                    newIntent = new Intent(Intent.ACTION_SEND);
+                    newIntent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
+                } else {
+                    newIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+                    newIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+                }
+                if (mimes.size() > 1)
+                    newIntent.setType("text/plain");                        //Mixed filetypes
+                else
+                    newIntent.setType(new ArrayList<String>(mimes).get(0));
+                newIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                Intent chooserIntent = generateCustomChooserIntent(newIntent, uris);
+                try {
+                    startActivity(Intent.createChooser(chooserIntent, CustomApp.context.getString(R.string.Dialog__send_file)));
+                    FilesActivity.onPauseDecision.startActivity();
+                } catch (android.content.ActivityNotFoundException e) {
+                    Util.toast(context, CustomApp.context.getString(R.string.Error__no_activity_view), Toast.LENGTH_LONG);
+                    FilesActivity.onPauseDecision.finishActivity();
+                }
+            }
+        }).start();
     }
 
     File getFile(final EncryptedFile encryptedFile, final Runnable onfinish) {
@@ -168,7 +185,6 @@ public abstract class FileViewer extends Fragment {
         return encryptedFile.readFile(listener);
     }
 
-    @UiThread
     void afterDecrypt(Intent newIntent, Intent altIntent) {
         try {
             startActivity(newIntent);
@@ -187,7 +203,6 @@ public abstract class FileViewer extends Fragment {
         }
     }
 
-    @UiThread
     void alert(String message) {
         DialogInterface.OnClickListener click = new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
@@ -197,24 +212,14 @@ public abstract class FileViewer extends Fragment {
         Util.alert(context, getString(R.string.Error__decrypt_file), message, click, null);
     }
 
-    @UiThread
     void updatePBar(SecrecyFile file, int progress) {
         if (file.getProgressBar() != null)
             file.getProgressBar().setProgress(progress);
     }
 
-    @UiThread
     void maxPBar(EncryptedFile file, int max) {
         if (file.getProgressBar() != null)
             file.getProgressBar().setMax(max);
-    }
-
-
-
-    @Override
-    public void onDestroy() {
-        BackgroundExecutor.cancelAll(Config.cancellable_task, true);
-        super.onDestroy();
     }
 
     private Intent generateCustomChooserIntent(Intent prototype, ArrayList<Uri> uris) {
