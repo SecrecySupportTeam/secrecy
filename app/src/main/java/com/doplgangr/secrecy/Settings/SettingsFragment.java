@@ -48,7 +48,7 @@ import android.widget.Toast;
 
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.Storage;
-import com.doplgangr.secrecy.Premium.PremiumFragment_;
+import com.doplgangr.secrecy.Premium.PremiumFragment;
 import com.doplgangr.secrecy.Premium.PremiumStateHelper;
 import com.doplgangr.secrecy.Premium.StealthMode;
 import com.doplgangr.secrecy.R;
@@ -184,7 +184,7 @@ public class SettingsFragment extends PreferenceFragment {
                     stealth_mode_password.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                         @Override
                         public boolean onPreferenceClick(Preference preference) {
-                            mFinishListener.onNew(null, new PremiumFragment_()); //Switch fragment to donation
+                            mFinishListener.onNew(null, new PremiumFragment()); //Switch fragment to donation
                             return true;
                         }
                     });

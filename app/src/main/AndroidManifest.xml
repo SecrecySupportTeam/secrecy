@@ -83,7 +83,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Premium.PremiumFragment_"
+            android:name=".Premium.PremiumFragment"
             android:label="" />
         <activity
             android:name=".Views.FilePhotoFragment_"

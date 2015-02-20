@@ -44,7 +44,7 @@ import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.Encryption.VaultHolder;
 import com.doplgangr.secrecy.FileSystem.Storage;
-import com.doplgangr.secrecy.Premium.PremiumFragment_;
+import com.doplgangr.secrecy.Premium.PremiumFragment;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Settings.SettingsFragment;
 import com.doplgangr.secrecy.UpdateManager.UpdateManager_;
@@ -62,7 +62,7 @@ public class MainActivity extends ActionBarActivity implements
     private final List<Class> mFragmentNameList = new ArrayList<Class>() {{
         add(VaultsListFragment_.class);
         add(SettingsFragment.class);
-        add(PremiumFragment_.class);
+        add(PremiumFragment.class);
     }};
     private final Context context = this;
     private NavListView mNavigation;
@@ -200,7 +200,7 @@ public class MainActivity extends ActionBarActivity implements
                 addFragment(new SettingsFragment(), 0, 0);
                 break;
             case 2:
-                addFragment(new PremiumFragment_(), 0, 0);
+                addFragment(new PremiumFragment(), 0, 0);
                 break;
             case 3:
                 support();

@@ -17,10 +17,14 @@ package com.doplgangr.secrecy.Premium;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
@@ -35,23 +39,15 @@ import com.github.jberkel.pay.me.model.Inventory;
 import com.github.jberkel.pay.me.model.ItemType;
 import com.github.jberkel.pay.me.model.Purchase;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
-
-@EFragment(R.layout.activity_premium)
 public class PremiumFragment extends Fragment {
     // Debug tag, for logging
     private static final String TAG = "PremiumActivity";
     private static final String SKU_PREMIUM = "donation.package.2";
     // (arbitrary) request code for the purchase flow
     private static final int RC_REQUEST = 19283;
-    @ViewById(R.id.Premium__upgrade_button)
-    Button mUpgradeButton;
+    private Button mUpgradeButton;
     // SKUs for our products: the premium upgrade (non-consumable) and gas (consumable)
-    @ViewById(R.id.Premium__progress_bar)
-    ProgressBar mProgressBar;
+    private ProgressBar mProgressBar;
     private ActionBarActivity context;
     //static final String SKU_PREMIUM = "android.test.purchased";
     // Does the user have the premium upgrade?
@@ -129,8 +125,36 @@ public class PremiumFragment extends Fragment {
         }
     };
 
-    @AfterViews
-    void onCreate() {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_premium, container, false);
+        mUpgradeButton = (Button) view.findViewById(R.id.Premium__upgrade_button);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.Premium__progress_bar);
+
+        mUpgradeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Util.log("Upgrade button clicked; launching purchase flow for upgrade.");
+                setWaitScreen(true);
+
+                /* TODO: for security, generate your payload here for verification. See the comments on
+                 *        verifyDeveloperPayload() for more info. Since this is a SAMPLE, we just use
+                 *        an empty string, but on a production app you should carefully generate this. */
+                String payload = "";
+
+                mHelper.launchPurchaseFlow(context, SKU_PREMIUM, ItemType.INAPP, RC_REQUEST,
+                        mPurchaseFinishedListener, payload);
+            }
+        });
+
+        return view;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         context = (ActionBarActivity) getActivity();
         context.getSupportActionBar().setTitle(R.string.Page_header__donation);
 
@@ -176,21 +200,6 @@ public class PremiumFragment extends Fragment {
                 mHelper.queryInventoryAsync(mGotInventoryListener);
             }
         });
-    }
-
-    // User clicked the "Upgrade to Premium" button.
-    @Click(R.id.Premium__upgrade_button)
-    void onUpgradeAppButtonClicked() {
-        Util.log("Upgrade button clicked; launching purchase flow for upgrade.");
-        setWaitScreen(true);
-
-        /* TODO: for security, generate your payload here for verification. See the comments on
-         *        verifyDeveloperPayload() for more info. Since this is a SAMPLE, we just use
-         *        an empty string, but on a production app you should carefully generate this. */
-        String payload = "";
-
-        mHelper.launchPurchaseFlow(context, SKU_PREMIUM, ItemType.INAPP, RC_REQUEST,
-                mPurchaseFinishedListener, payload);
     }
 
     @Override
