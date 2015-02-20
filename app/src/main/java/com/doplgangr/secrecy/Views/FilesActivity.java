@@ -11,30 +11,27 @@ import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.R;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.api.BackgroundExecutor;
-
 import de.greenrobot.event.EventBus;
 
-@EActivity(R.layout.activity_files)
 public class FilesActivity extends ActionBarActivity
         implements
         VaultsListFragment.OnFragmentFinishListener {
     private FragmentManager fragmentManager;
-    @Extra(Config.vault_extra)
-    String vault;
-    @Extra(Config.password_extra)
-    String password;
     private Boolean isConfigChange;
 
-    @AfterViews
-    void onCreate() {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_files);
+
+        Bundle extras = getIntent().getExtras();
+        String vault = extras.getString(Config.vault_extra);
+        String password = extras.getString(Config.password_extra);
+
         overridePendingTransition(R.anim.slide_in_right, R.anim.fadeout);
         fragmentManager = getSupportFragmentManager();
         if (fragmentManager.findFragmentByTag(FilesListFragment.class.getName()) == null) {
-            FilesListFragment_ fragment = new FilesListFragment_();
+            FilesListFragment fragment = new FilesListFragment();
             Bundle bundle = new Bundle();
             bundle.putString(Config.vault_extra, vault);
             bundle.putString(Config.password_extra, password);
@@ -53,8 +50,6 @@ public class FilesActivity extends ActionBarActivity
         super.onSaveInstanceState(outState);
         isConfigChange = true;
     }
-
-    // http://steveliles.github.io/porting_ischangingconfigurations_to_api_levels_below_11.html
 
     @Override
     public boolean isChangingConfigurations() {
@@ -99,12 +94,6 @@ public class FilesActivity extends ActionBarActivity
     public void onResume() {
         super.onResume();
         onPauseDecision.finishActivity();
-    }
-
-    @Override
-    public void finish() {
-        BackgroundExecutor.cancelAll(Config.cancellable_task, false);
-        super.finish();
     }
 
     @Override

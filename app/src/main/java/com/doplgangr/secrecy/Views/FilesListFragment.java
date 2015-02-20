@@ -27,20 +27,23 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -64,17 +67,6 @@ import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.OptionsMenuItem;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.res.DrawableRes;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -84,27 +76,15 @@ import java.util.HashSet;
 
 import de.greenrobot.event.EventBus;
 
-
-@EFragment(R.layout.list_file)
-@OptionsMenu(R.menu.filelist)
 public class FilesListFragment extends FileViewer {
-    private static final int REQUEST_CODE = 6384; // onActivityResult request code
-    private static final ArrayList<String> INCLUDE_EXTENSIONS_LIST = new ArrayList<String>();
+    private static final int REQUEST_CODE = 6384;
+    private static final ArrayList<String> INCLUDE_EXTENSIONS_LIST = new ArrayList<>();
     private static final int NotificationID = 1820;
-    @ViewById(R.id.file_list_recycler_view)
-    RecyclerView recyclerView;
-    @ViewById(R.id.progressBar)
-    ProgressBar addFilepBar;
-    @ViewById(R.id.tag)
-    TextView mTag;
-    @OptionsMenuItem(R.id.action_switch_interface)
-    MenuItem switchInterface;
-    @DrawableRes(R.drawable.file_selector)
-    Drawable selector;
-    @FragmentArg(Config.vault_extra)
-    String vault;
-    @FragmentArg(Config.password_extra)
-    String password;
+    private RecyclerView recyclerView;
+    private ProgressBar addFilepBar;
+    private TextView mTag;
+    private String vault;
+    private String password;
     private Vault secret;
     private FilesListAdapter mAdapter;
     private FilesListAdapter listAdapter;
@@ -121,8 +101,74 @@ public class FilesListFragment extends FileViewer {
     private RecyclerView.LayoutManager linearLayout;
     private RecyclerView.LayoutManager gridLayout;
 
-
     private ActionMode mActionMode;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.list_file, container, false);
+        addFilepBar = (ProgressBar) view.findViewById(R.id.progressBar);
+        recyclerView = (RecyclerView) view.findViewById(R.id.file_list_recycler_view);
+        mTag = (TextView) view.findViewById(R.id.tag);
+
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(linearLayout);
+        recyclerView.setAdapter(mAdapter);
+
+        ActionBar ab = ((ActionBarActivity) getActivity()).getSupportActionBar();
+        if (ab != null)
+            ab.setTitle(vault);
+
+        return view;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        Bundle extras = getActivity().getIntent().getExtras();
+
+        vault = extras.getString(Config.vault_extra);
+        password = extras.getString(Config.password_extra);
+
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+        setRetainInstance(true);
+
+        context = (ActionBarActivity) getActivity();
+        if (context == null) {
+            return;
+        }
+        context.getSupportActionBar().setTitle(vault);
+
+        linearLayout = new LinearLayoutManager(context);
+        gridLayout = new GridLayoutManager(context, 3);
+        listAdapter = new FilesListAdapter(context, false);
+        galleryAdapter = new FilesListAdapter(context, true);
+        mAdapter = listAdapter;
+
+        mInitializeDialog = new ProgressDialog(context);
+        mInitializeDialog.setIndeterminate(true);
+        mInitializeDialog.setMessage(context.getString(R.string.Vault__initializing));
+        mInitializeDialog.setCancelable(false);
+        mInitializeDialog.show();
+
+        CustomApp.jobManager.addJobInBackground(new InitializeVaultJob(vault, password));
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.filelist, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MenuItem item = menu.findItem(R.id.action_switch_interface);
+        item.setIcon(isGallery ? R.drawable.ic_list : R.drawable.ic_gallery);
+    }
+
     private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
 
         // Called when the action mode is created; startActionMode() was called
@@ -177,31 +223,29 @@ public class FilesListFragment extends FileViewer {
         }
     };
 
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        switchInterface.setIcon(isGallery ? R.drawable.ic_list : R.drawable.ic_gallery);
-    }
-
-    @UiThread
-    void switchView(View frame, int showView) {
-        if (frame == null)
-            return;
-        FilesListAdapter.ViewHolder holder = (FilesListAdapter.ViewHolder) frame.getTag();
-        ViewAnimator viewAnimator = holder.animator;
-        viewAnimator.setInAnimation(context, R.anim.slide_down);
-        int viewIndex = 0;
-        switch (showView) {
-            case R.id.dataLayout:
-                viewIndex = 0;
-                break;
-            case R.id.DecryptLayout:
-                viewIndex = 1;
-                break;
-        }
-        viewAnimator.setDisplayedChild(viewIndex);
-        viewAnimator.setInAnimation(null);
-        holder.page = viewIndex;
+    void switchView(final View frame, final int showView) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (frame == null)
+                    return;
+                FilesListAdapter.ViewHolder holder = (FilesListAdapter.ViewHolder) frame.getTag();
+                ViewAnimator viewAnimator = holder.animator;
+                viewAnimator.setInAnimation(context, R.anim.slide_down);
+                int viewIndex = 0;
+                switch (showView) {
+                    case R.id.dataLayout:
+                        viewIndex = 0;
+                        break;
+                    case R.id.DecryptLayout:
+                        viewIndex = 1;
+                        break;
+                }
+                viewAnimator.setDisplayedChild(viewIndex);
+                viewAnimator.setInAnimation(null);
+                holder.page = viewIndex;
+            }
+        });
     }
 
     @Override
@@ -225,46 +269,364 @@ public class FilesListFragment extends FileViewer {
         EventBus.getDefault().unregister(this);
     }
 
-    @AfterViews
-    public void onCreate() {
-        if (!EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().register(this);
-        setRetainInstance(true);
-
-        context = (ActionBarActivity) getActivity();
-        if (context == null)
-            return;
-        context.getSupportActionBar().setTitle(vault);
-
-        linearLayout = new LinearLayoutManager(context);
-        gridLayout = new GridLayoutManager(context, 3);
-        listAdapter = new FilesListAdapter(context, false);
-        galleryAdapter = new FilesListAdapter(context, true);
-        mAdapter = listAdapter;
-
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(linearLayout);
-        recyclerView.setAdapter(mAdapter);
-
-        mInitializeDialog = new ProgressDialog(context);
-        mInitializeDialog.setIndeterminate(true);
-        mInitializeDialog.setMessage(context.getString(R.string.Vault__initializing));
-        mInitializeDialog.setCancelable(false);
-        mInitializeDialog.show();
-
-        CustomApp.jobManager.addJobInBackground(new InitializeVaultJob(vault, password));
-    }
-
-    @Background(id = Config.cancellable_task)
     void addFiles() {
-        secret.iterateAllFiles(
-                new Vault.onFileFoundListener() {
-                    @Override
-                    public void dothis(EncryptedFile encryptedFile) {
-                        addToList(encryptedFile);
-                    }
-                });
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                secret.iterateAllFiles(
+                        new Vault.onFileFoundListener() {
+                            @Override
+                            public void dothis(EncryptedFile encryptedFile) {
+                                addToList(encryptedFile);
+                            }
+                        });
+            }
+        }).start();
     }
+
+    void updateVaultInBackground(final ProgressDialog progress) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (secret.updateFromECBVault(password)) {
+                        Util.alert(
+                                context,
+                                getString(R.string.Vault__vault_updated),
+                                getString(R.string.Vault__vault_updated_message),
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        finish();
+                                    }
+                                },
+                                null
+                        );
+                    } else {
+                        secret.ecbUpdateFailed();
+                        Util.alert(
+                                context,
+                                getString(R.string.Error__updating_vault),
+                                getString(R.string.Error__updating_vault_message),
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        finish();
+                                    }
+                                },
+                                null
+                        );
+                    }
+                } catch (Exception e) {
+                    secret.ecbUpdateFailed();
+                    Util.alert(
+                            context,
+                            getString(R.string.Error__updating_vault),
+                            getString(R.string.Error__updating_vault_message),
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    finish();
+                                }
+                            },
+                            null
+                    );
+                }
+                progress.dismiss();
+            }
+        }).start();
+    }
+
+    void setupViews() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                context.supportInvalidateOptionsMenu();
+
+                FilesListAdapter.OnItemClickListener onItemClickListener = new FilesListAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(final View view, int position) {
+                        if (mActionMode != null) {
+                            select(position);
+                            return;
+                        }
+                        if (isGallery) {
+                            Intent intent = new Intent(context, FilePhotoFragment.class);
+                            intent.putExtra(Config.gallery_item_extra, position);
+                            FilesActivity.onPauseDecision.startActivity();
+                            startActivity(intent);
+                        } else {
+                            EncryptedFile encryptedFile = mAdapter.getItem(position);
+                            if (!encryptedFile.getIsDecrypting()) {
+                                switchView(view, R.id.DecryptLayout);
+                                Runnable onFinish = new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        switchView(view, R.id.dataLayout);
+                                    }
+                                };
+                                decrypt(encryptedFile, onFinish);
+                            } else
+                                Util.toast(context, getString(R.string.Error__already_decrypting), Toast.LENGTH_SHORT);
+                        }
+                    }
+                };
+
+                FilesListAdapter.OnItemLongClickListener onItemLongClickListener = new FilesListAdapter.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(View view, int position) {
+                        if (mActionMode == null)
+                            mActionMode = context.startSupportActionMode(mActionModeCallback);
+                        // Start the CAB using the ActionMode.Callback defined above
+                        select(position);
+                        //switchView(view, R.id.file_actions_layout);
+                        //mListView.setOnClickListener(null);
+                        return true;
+                    }
+                };
+
+                listAdapter.setOnItemClickListener(onItemClickListener);
+                listAdapter.setOnLongClickListener(onItemLongClickListener);
+
+                galleryAdapter.setOnItemClickListener(onItemClickListener);
+                galleryAdapter.setOnLongClickListener(onItemLongClickListener);
+            }
+        });
+    }
+
+    void addToList(final EncryptedFile encryptedFile) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                listAdapter.add(encryptedFile);
+                galleryAdapter.add(encryptedFile);
+                if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("vault_sort", false)){
+                    listAdapter.sort();
+                }
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    void decrypt(final EncryptedFile encryptedFile, final Runnable onFinish) {
+        super.decrypt(encryptedFile, onFinish);
+    }
+
+    void decrypt_and_save(final int index, final Runnable onFinish) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                EncryptedFile encryptedFile = mAdapter.getItem(index);
+                File tempFile = getFile(encryptedFile, onFinish);
+                File storedFile = new File(Environment.getExternalStorageDirectory(), encryptedFile.getDecryptedFileName());
+                if (tempFile == null) {
+                    Util.alert(context,
+                            CustomApp.context.getString(R.string.Error__decrypting_file),
+                            CustomApp.context.getString(R.string.Error__decrypting_file_message),
+                            Util.emptyClickListener,
+                            null
+                    );
+                    return;
+                }
+                tempFile.renameTo(storedFile);
+            }
+        }).start();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_delete_vault:
+                deleteVault();
+                return true;
+            case R.id.action_change_passphrase:
+                changePassphrase();
+                return true;
+            case R.id.action_switch_interface:
+                switchInterface();
+                return true;
+            case R.id.action_backup:
+                backUp();
+                return true;
+            case R.id.action_add_file:
+                addFile();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+            }
+    }
+
+    void switchInterface() {
+        isGallery = !isGallery;
+        mTag.setText(isGallery ? R.string.Page_header__gallery : R.string.Page_header__files);
+        if (isGallery) {
+            mAdapter = galleryAdapter;
+            recyclerView.setLayoutManager(gridLayout);
+        } else {
+            mAdapter = listAdapter;
+            if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("vault_sort", false)){
+                mAdapter.sort();
+            }
+            recyclerView.setLayoutManager(linearLayout);
+        }
+        recyclerView.setAdapter(mAdapter);
+    }
+
+    void changePassphrase() {
+        final View dialogView = View.inflate(context, R.layout.change_passphrase, null);
+        new AlertDialog.Builder(context)
+                .setTitle(getString(R.string.Vault__change_password))
+                .setView(dialogView)
+                .setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String oldPassphrase = ((EditText) dialogView.findViewById(R.id.oldPassphrase)).getText().toString();
+                        String newPassphrase = ((EditText) dialogView.findViewById(R.id.newPassphrase)).getText().toString();
+                        String confirmNewPassphrase = ((EditText) dialogView.findViewById(R.id.confirmPassphrase)).getText().toString();
+
+                        ProgressDialog progressDialog = new ProgressDialog(context);
+                        progressDialog.setMessage(CustomApp.context.getString(R.string.Vault__changing_password));
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
+                        changePassphraseInBackground(oldPassphrase, newPassphrase, confirmNewPassphrase, progressDialog);
+                    }
+                })
+                .setNegativeButton(R.string.CANCEL, Util.emptyClickListener)
+                .show();
+    }
+
+    void deleteVault() {
+        final EditText passwordView = new EditText(context);
+        passwordView.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        passwordView.setHint(R.string.Vault__confirm_password_hint);
+        new AlertDialog.Builder(context)
+                .setTitle(getString(R.string.Vault__confirm_delete))
+                .setView(passwordView)
+                .setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String input = passwordView.getText().toString();
+                        if (password.equals(input)) {
+                            secret.delete();
+                            context.finish();
+                        } else {
+                            Util.alert(context,
+                                    CustomApp.context.getString(R.string.Error__delete_password_incorrect),
+                                    CustomApp.context.getString(R.string.Error__delete_password_incorrect_message),
+                                    Util.emptyClickListener,
+                                    null
+                            );
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.CANCEL, Util.emptyClickListener)
+                .show();
+    }
+
+    void addFile() {
+        // Use the GET_CONTENT intent from the utility class
+        Intent target = com.ipaulpro.afilechooser.utils.FileUtils.createGetContentIntent();
+        // Create the chooser Intent
+        Intent intent = Intent.createChooser(
+                target, getString(R.string.Dialog_header__pick_file));
+        try {
+            startActivityForResult(intent, REQUEST_CODE);
+            FilesActivity.onPauseDecision.startActivity();
+        } catch (ActivityNotFoundException e) {
+            intent = new Intent(context, FileChooserActivity.class);
+            intent.putStringArrayListExtra(
+                    FileChooserActivity.EXTRA_FILTER_INCLUDE_EXTENSIONS,
+                    INCLUDE_EXTENSIONS_LIST);
+            intent.putExtra(FileChooserActivity.EXTRA_SELECT_FOLDER, false);
+            startActivityForResult(intent, REQUEST_CODE);
+            FilesActivity.onPauseDecision.startActivity();
+        }
+    }
+
+    void backUp() {
+        mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        mBuilder = new NotificationCompat.Builder(context);
+        mBuilder.setContentTitle(CustomApp.context.getString(R.string.Backup__title))
+                .setContentText(CustomApp.context.getString(R.string.Backup__in_progress))
+                .setSmallIcon(R.drawable.ic_stat_alert)
+                .setOngoing(true);
+        mBuilder.setProgress(0, 0, true);
+        mNotifyManager.notify(NotificationID, mBuilder.build());
+        File backupFile = new File(Storage.getRoot(), secret.getName() + new Date().getTime() + ".zip");
+        try {
+            backupFile.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        CustomApp.jobManager.addJobInBackground(new BackupJob(context, new File(secret.getPath()), backupFile));
+    }
+
+    void changePassphraseInBackground(final String oldPassphrase, final String newPassphrase,
+                                      final String confirmNewPassphrase, final ProgressDialog progressDialog) {
+        new Thread(new Runnable() {
+            public void run() {
+                if (newPassphrase.length() == 0) {
+                    progressDialog.dismiss();
+                    Util.alert(context,
+                            CustomApp.context.getString(R.string.Error__change_password_failed),
+                            CustomApp.context.getString(R.string.Error__password_empty_message),
+                            Util.emptyClickListener,
+                            null
+                    );
+                    return;
+                }
+                if (!newPassphrase.equals(confirmNewPassphrase)) {
+                    progressDialog.dismiss();
+                    Util.alert(context,
+                            CustomApp.context.getString(R.string.Error__change_password_failed),
+                            CustomApp.context.getString(R.string.Error__password_no_match_message),
+                            Util.emptyClickListener,
+                            null
+                    );
+                    return;
+                }
+                if (!secret.changePassphrase(oldPassphrase, newPassphrase)) {
+                    progressDialog.dismiss();
+                    Util.alert(context,
+                            CustomApp.context.getString(R.string.Error__change_password_failed),
+                            CustomApp.context.getString(R.string.Error__change_password_failed_message),
+                            Util.emptyClickListener,
+                            null
+                    );
+                } else {
+                    Util.alert(context,
+                            CustomApp.context.getString(R.string.Vault__change_password_ok),
+                            CustomApp.context.getString(R.string.Vault__change_password_ok_message),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    context.finish();
+                                }
+                            }
+                    );
+                }
+                progressDialog.dismiss();
+            }
+        }).start();
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        FilesActivity.onPauseDecision.finishActivity();
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE && data.getData() != null) {
+            Util.log("intent received=", data.getData().toString(), data.getData().getLastPathSegment());
+
+            mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            mBuilder = new NotificationCompat.Builder(context);
+            mBuilder.setContentTitle(CustomApp.context.getString(R.string.Files__adding))
+                    .setSmallIcon(R.drawable.ic_stat_alert)
+                    .setOngoing(true);
+            mBuilder.setProgress(0, 0, true);
+            mNotifyManager.notify(NotificationID, mBuilder.build());
+
+            addFileInBackground(secret, data.getData());
+            super.onActivityResult(requestCode, resultCode, data);
+        } else {
+            Util.toast(context, getString(R.string.Error__no_file_selected), 4000);
+        }
+    }
+
 
     public void onEventMainThread(NewFileEvent event) {
         // Add new file to the list, sort it to its alphabetical position, and highlight
@@ -286,9 +648,7 @@ public class FilesListFragment extends FileViewer {
 
     public void onEventMainThread(Vault vault) {
         //The vault finishes initializing, is prepared to be populated.
-
         secret = vault;
-
         if (secret.isEcbVault()) {
             Util.alert(
                     context,
@@ -351,243 +711,6 @@ public class FilesListFragment extends FileViewer {
         setupViews();
     }
 
-    @Background
-    void updateVaultInBackground(ProgressDialog progress) {
-        try {
-            if (secret.updateFromECBVault(password)) {
-                Util.alert(
-                        context,
-                        getString(R.string.Vault__vault_updated),
-                        getString(R.string.Vault__vault_updated_message),
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                finish();
-                            }
-                        },
-                        null
-                );
-            } else {
-                secret.ecbUpdateFailed();
-                Util.alert(
-                        context,
-                        getString(R.string.Error__updating_vault),
-                        getString(R.string.Error__updating_vault_message),
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                finish();
-                            }
-                        },
-                        null
-                );
-            }
-        } catch (Exception e) {
-            secret.ecbUpdateFailed();
-            Util.alert(
-                    context,
-                    getString(R.string.Error__updating_vault),
-                    getString(R.string.Error__updating_vault_message),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            finish();
-                        }
-                    },
-                    null
-            );
-        }
-        progress.dismiss();
-    }
-
-    @UiThread
-    void setupViews() {
-        context.supportInvalidateOptionsMenu();
-
-        FilesListAdapter.OnItemClickListener onItemClickListener = new FilesListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(final View view, int position) {
-                if (mActionMode != null) {
-                    select(position);
-                    return;
-                }
-                if (isGallery) {
-                    Intent intent = new Intent(context, FilePhotoFragment_.class);
-                    intent.putExtra(Config.gallery_item_extra, position);
-                    FilesActivity.onPauseDecision.startActivity();
-                    startActivity(intent);
-                } else {
-                    EncryptedFile encryptedFile = mAdapter.getItem(position);
-                    if (!encryptedFile.getIsDecrypting()) {
-                        switchView(view, R.id.DecryptLayout);
-                        Runnable onFinish = new Runnable() {
-                            @Override
-                            public void run() {
-                                switchView(view, R.id.dataLayout);
-                            }
-                        };
-                        decrypt(encryptedFile, onFinish);
-                    } else
-                        Util.toast(context, getString(R.string.Error__already_decrypting), Toast.LENGTH_SHORT);
-                }
-            }
-        };
-
-        FilesListAdapter.OnItemLongClickListener onItemLongClickListener = new FilesListAdapter.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(View view, int position) {
-                if (mActionMode == null)
-                    mActionMode = context.startSupportActionMode(mActionModeCallback);
-                // Start the CAB using the ActionMode.Callback defined above
-                select(position);
-                //switchView(view, R.id.file_actions_layout);
-                //mListView.setOnClickListener(null);
-                return true;
-            }
-        };
-
-        listAdapter.setOnItemClickListener(onItemClickListener);
-        listAdapter.setOnLongClickListener(onItemLongClickListener);
-
-        galleryAdapter.setOnItemClickListener(onItemClickListener);
-        galleryAdapter.setOnLongClickListener(onItemLongClickListener);
-    }
-
-    @UiThread
-    void addToList(EncryptedFile encryptedFile) {
-        listAdapter.add(encryptedFile);
-        galleryAdapter.add(encryptedFile);
-        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("vault_sort", false)){
-            listAdapter.sort();
-        }
-        mAdapter.notifyDataSetChanged();
-    }
-
-    @Background(id = Config.cancellable_task)
-    @Override
-    void decrypt(EncryptedFile encryptedFile, Runnable onFinish) {
-        super.decrypt(encryptedFile, onFinish);
-    }
-
-    @Background(id = Config.cancellable_task)
-    void decrypt_and_save(int index, final Runnable onFinish) {
-        EncryptedFile encryptedFile = mAdapter.getItem(index);
-        File tempFile = super.getFile(encryptedFile, onFinish);
-        File storedFile = new File(Environment.getExternalStorageDirectory(), encryptedFile.getDecryptedFileName());
-        if (tempFile == null) {
-            Util.alert(context,
-                    CustomApp.context.getString(R.string.Error__decrypting_file),
-                    CustomApp.context.getString(R.string.Error__decrypting_file_message),
-                    Util.emptyClickListener,
-                    null
-            );
-            return;
-        }
-        tempFile.renameTo(storedFile);
-    }
-
-    @OptionsItem(R.id.action_switch_interface)
-    void switchInterface() {
-        isGallery = !isGallery;
-        mTag.setText(isGallery ? R.string.Page_header__gallery : R.string.Page_header__files);
-        if (isGallery) {
-            mAdapter = galleryAdapter;
-            recyclerView.setLayoutManager(gridLayout);
-        } else {
-            mAdapter = listAdapter;
-            if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("vault_sort", false)){
-                mAdapter.sort();
-            }
-            recyclerView.setLayoutManager(linearLayout);
-        }
-        recyclerView.setAdapter(mAdapter);
-    }
-
-    @OptionsItem(R.id.action_change_passphrase)
-    void changePassphrase() {
-        final View dialogView = View.inflate(context, R.layout.change_passphrase, null);
-        new AlertDialog.Builder(context)
-                .setTitle(getString(R.string.Vault__change_password))
-                .setView(dialogView)
-                .setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String oldPassphrase = ((EditText) dialogView.findViewById(R.id.oldPassphrase)).getText().toString();
-                        String newPassphrase = ((EditText) dialogView.findViewById(R.id.newPassphrase)).getText().toString();
-                        String confirmNewPassphrase = ((EditText) dialogView.findViewById(R.id.confirmPassphrase)).getText().toString();
-
-                        ProgressDialog progressDialog = new ProgressDialog(context);
-                        progressDialog.setMessage(CustomApp.context.getString(R.string.Vault__changing_password));
-                        progressDialog.setIndeterminate(true);
-                        progressDialog.setCancelable(false);
-                        progressDialog.show();
-                        changePassphraseInBackground(oldPassphrase, newPassphrase, confirmNewPassphrase, progressDialog);
-                    }
-                })
-                .setNegativeButton(R.string.CANCEL, Util.emptyClickListener)
-                .show();
-    }
-
-    @Background
-    void changePassphraseInBackground(String oldPassphrase, String newPassphrase, String confirmNewPassphrase, ProgressDialog progressDialog) {
-        if (newPassphrase.length() == 0) {
-            progressDialog.dismiss();
-            Util.alert(context,
-                    CustomApp.context.getString(R.string.Error__change_password_failed),
-                    CustomApp.context.getString(R.string.Error__password_empty_message),
-                    Util.emptyClickListener,
-                    null
-            );
-            return;
-        }
-        if (!newPassphrase.equals(confirmNewPassphrase)) {
-            progressDialog.dismiss();
-            Util.alert(context,
-                    CustomApp.context.getString(R.string.Error__change_password_failed),
-                    CustomApp.context.getString(R.string.Error__password_no_match_message),
-                    Util.emptyClickListener,
-                    null
-            );
-            return;
-        }
-        if (!secret.changePassphrase(oldPassphrase, newPassphrase)) {
-            progressDialog.dismiss();
-            Util.alert(context,
-                    CustomApp.context.getString(R.string.Error__change_password_failed),
-                    CustomApp.context.getString(R.string.Error__change_password_failed_message),
-                    Util.emptyClickListener,
-                    null
-            );
-        } else {
-            Util.alert(context,
-                    CustomApp.context.getString(R.string.Vault__change_password_ok),
-                    CustomApp.context.getString(R.string.Vault__change_password_ok_message),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            context.finish();
-                        }
-                    }
-            );
-        }
-        progressDialog.dismiss();
-    }
-
-    @OptionsItem(R.id.action_backup)
-    void backUp() {
-        mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mBuilder = new NotificationCompat.Builder(context);
-        mBuilder.setContentTitle(CustomApp.context.getString(R.string.Backup__title))
-                .setContentText(CustomApp.context.getString(R.string.Backup__in_progress))
-                .setSmallIcon(R.drawable.ic_stat_alert)
-                .setOngoing(true);
-        mBuilder.setProgress(0, 0, true);
-        mNotifyManager.notify(NotificationID, mBuilder.build());
-        File backupFile = new File(Storage.getRoot(), secret.getName() + new Date().getTime() + ".zip");
-        try {
-            backupFile.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        CustomApp.jobManager.addJobInBackground(new BackupJob(context, new File(secret.getPath()), backupFile));
-    }
-
     public void onEventMainThread(BackUpDoneEvent event) {
         if (!event.backupPath.getAbsolutePath().equals(secret.getPath()))
             return;
@@ -598,75 +721,6 @@ public class FilesListFragment extends FileViewer {
                             String.format(CustomApp.context.getString(R.string.Backup__finish), event.backupFile)))
                     .setOngoing(false);
             mNotifyManager.notify(NotificationID, mBuilder.build());
-        }
-    }
-
-    @OptionsItem(R.id.action_delete_vault)
-    void deleteVault() {
-        final EditText passwordView = new EditText(context);
-        passwordView.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        passwordView.setHint(R.string.Vault__confirm_password_hint);
-        new AlertDialog.Builder(context)
-                .setTitle(getString(R.string.Vault__confirm_delete))
-                .setView(passwordView)
-                .setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String input = passwordView.getText().toString();
-                        if (password.equals(input)) {
-                            secret.delete();
-                            context.finish();
-                        } else {
-                            Util.alert(context,
-                                    CustomApp.context.getString(R.string.Error__delete_password_incorrect),
-                                    CustomApp.context.getString(R.string.Error__delete_password_incorrect_message),
-                                    Util.emptyClickListener,
-                                    null
-                            );
-                        }
-                    }
-                })
-                .setNegativeButton(R.string.CANCEL, Util.emptyClickListener)
-                .show();
-    }
-
-    @OptionsItem(R.id.action_add_file)
-    void myMethod() {
-        // Use the GET_CONTENT intent from the utility class
-        Intent target = com.ipaulpro.afilechooser.utils.FileUtils.createGetContentIntent();
-        // Create the chooser Intent
-        Intent intent = Intent.createChooser(
-                target, getString(R.string.Dialog_header__pick_file));
-        try {
-            startActivityForResult(intent, REQUEST_CODE);
-            FilesActivity.onPauseDecision.startActivity();
-        } catch (ActivityNotFoundException e) {
-            intent = new Intent(context, FileChooserActivity.class);
-            intent.putStringArrayListExtra(
-                    FileChooserActivity.EXTRA_FILTER_INCLUDE_EXTENSIONS,
-                    INCLUDE_EXTENSIONS_LIST);
-            intent.putExtra(FileChooserActivity.EXTRA_SELECT_FOLDER, false);
-            startActivityForResult(intent, REQUEST_CODE);
-            FilesActivity.onPauseDecision.startActivity();
-        }
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        FilesActivity.onPauseDecision.finishActivity();
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE && data.getData() != null) {
-            Util.log("intent received=", data.getData().toString(), data.getData().getLastPathSegment());
-
-            mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            mBuilder = new NotificationCompat.Builder(context);
-            mBuilder.setContentTitle(CustomApp.context.getString(R.string.Files__adding))
-                    .setSmallIcon(R.drawable.ic_stat_alert)
-                    .setOngoing(true);
-            mBuilder.setProgress(0, 0, true);
-            mNotifyManager.notify(NotificationID, mBuilder.build());
-
-            addFile(secret, data.getData());
-            super.onActivityResult(requestCode, resultCode, data);
-        } else {
-            Util.toast(context, getString(R.string.Error__no_file_selected), 4000);
         }
     }
 
@@ -718,7 +772,6 @@ public class FilesListFragment extends FileViewer {
     }
 
     void renameSelectedItems() {
-
         for (final Integer index : mAdapter.getSelected()) {
             decryptCounter++;
             if (mAdapter.hasIndex(index)) {
@@ -786,7 +839,6 @@ public class FilesListFragment extends FileViewer {
     }
 
     void deleteSelectedItems() {
-
         // Hold a local copy of selected values, because action mode is left before
         // Util.alter runs and thus adapter.getSelected is cleared.
         final HashSet<Integer> selected = new HashSet<Integer>(mAdapter.getSelected());

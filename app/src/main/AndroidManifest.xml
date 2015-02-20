@@ -91,13 +91,13 @@
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
             android:label=""
-            android:parentActivityName=".Views.FilesActivity_">
+            android:parentActivityName="com.doplgangr.secrecy.Views.FilesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.doplgangr.secrecy.Views.FilesActivity_" />
+                android:value="com.doplgangr.secrecy.Views.FilesActivity" />
         </activity>
         <activity
-            android:name=".Views.FilesActivity_"
+            android:name="com.doplgangr.secrecy.Views.FilesActivity"
             android:label=""
             android:parentActivityName=".Views.MainActivity">
             <meta-data

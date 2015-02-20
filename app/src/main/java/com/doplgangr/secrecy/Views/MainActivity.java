@@ -235,7 +235,7 @@ public class MainActivity extends ActionBarActivity implements
 
     @Override
     public void onVaultSelected(String vault, String password) {
-        Intent intent = new Intent(this, FilesActivity_.class);
+        Intent intent = new Intent(this, FilesActivity.class);
         intent.putExtra(Config.vault_extra, vault);
         intent.putExtra(Config.password_extra, password);
         startActivity(intent);
