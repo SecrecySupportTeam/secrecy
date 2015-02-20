@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -25,36 +26,31 @@ import com.doplgangr.secrecy.FileSystem.Encryption.Vault;
 import com.doplgangr.secrecy.Jobs.ImageLoadJob;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
-
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.Fullscreen;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.WindowFeature;
-
 import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
 import uk.co.senab.photoview.PhotoView;
 
-@Fullscreen
-@WindowFeature(Window.FEATURE_NO_TITLE)
-@EActivity(R.layout.activity_view_pager)
 public class FilePhotoFragment extends FragmentActivity {
 
     private static Activity context;
-    @Extra(Config.gallery_item_extra)
-    Integer itemNo;
-    @ViewById(R.id.view_pager)
-    ViewPager mViewPager;
+    private ViewPager mViewPager;
 
-    @AfterViews
-    void onCreate() {
-        context = this;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(R.layout.activity_view_pager);
+
         if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
         final SamplePagerAdapter adapter = new SamplePagerAdapter(getSupportFragmentManager());
+
+        Bundle extras = getIntent().getExtras();
+
+        mViewPager = (ViewPager) findViewById(R.id.view_pager);
         mViewPager.setAdapter(adapter);
         Vault secret = VaultHolder.getInstance().retrieveVault();
         Vault.onFileFoundListener mListener = new Vault.onFileFoundListener() {
@@ -64,8 +60,12 @@ public class FilePhotoFragment extends FragmentActivity {
             }
         };
         secret.iterateAllFiles(mListener);
-        if ((itemNo != null) && (itemNo < (mViewPager.getAdapter().getCount()))) //check if requested item is in bound
+        context = this;
+
+        int itemNo = extras.getInt(Config.gallery_item_extra);
+        if (itemNo < (mViewPager.getAdapter().getCount())) { //check if requested item is in bound
             mViewPager.setCurrentItem(itemNo);
+        }
     }
 
     @Override

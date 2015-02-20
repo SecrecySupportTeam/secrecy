@@ -86,7 +86,7 @@
             android:name=".Premium.PremiumFragment"
             android:label="" />
         <activity
-            android:name=".Views.FilePhotoFragment_"
+            android:name="com.doplgangr.secrecy.Views.FilePhotoFragment"
             android:clearTaskOnLaunch="true"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
