@@ -25,9 +25,13 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -36,15 +40,7 @@ import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 import com.doplgangr.secrecy.Views.VaultsListFragment;
-import com.doplgangr.secrecy.Views.VaultsListFragment_;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
@@ -61,19 +57,15 @@ The changes are hardcoded in the respective "transition actions"
 e.g. from version 4 to version 5
 The manager shows what it is doing and allows user to proceed when update is finished.
  */
-@EFragment(R.layout.activity_update_manager)
 public class UpdateManager extends Fragment {
     //Console-like log view
-    @ViewById(R.id.log)
-    TextView log;
+    private TextView log;
 
     //Continue button
-    @ViewById(R.id.continueButton)
-    Button continueButton;
+    private Button continueButton;
 
     //Preference that stores last app version
-    @Pref
-    AppVersion_ version;
+    int version;
     private VaultsListFragment.OnFragmentFinishListener mFinishListener;
     //Current version
     private Integer versionnow;
@@ -98,24 +90,82 @@ public class UpdateManager extends Fragment {
         }
     }
 
-    @AfterViews
-    void onCreate() {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         context = getActivity();
         // Fills variables with appropriate version data
         getVersionInfo();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.activity_update_manager, container, false);
+
+        log = (TextView) view.findViewById(R.id.log);
+        continueButton = (Button) view.findViewById(R.id.continueButton);
+        continueButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // When user presses the continue button, alert if app is still in beta.
+
+                //Define 100 as initial beta code
+                if (versionnow < 100) {
+                    Util.alert(context,
+                            getString(R.string.Updater__alpha),
+                            getString(R.string.Updater__alpha_message),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    finish();
+                                }
+                            },
+                            null
+                    );
+                } //Define 200 as initial official release code
+                else if (versionnow < 200) {
+                    Util.alert(context,
+                            getString(R.string.Updater__beta),
+                            getString(R.string.Updater__beta_message),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    finish();
+                                }
+                            },
+                            null
+                    );
+                }
+                else {
+                    finish();
+                }
+            }
+        });
+
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated (Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+
+        version = PreferenceManager.getDefaultSharedPreferences(context).getInt("versionNumber", 1);
+        String versionName = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString("versionName", getString(R.string.Updater__alpha0_1));
 
         // If the version is not upgraded, skip the update manager
-        if (versionnow == version.no().get()) {
+        if (versionnow == version) {
             finish();
             return;
         }
 
         // Writes the previous/current version into the log view
-        appendlog(String.format(getString(R.string.Updater__previous_version), version.no().get(), version.name().get()));
+        appendlog(String.format(getString(R.string.Updater__previous_version), version, versionName));
         appendlog(String.format(getString(R.string.Updater__next_version), versionnow, versionnow_name));
 
         // Switches between different upgrades, based on last app version.
-        switch (version.no().get()) {
+        switch (version) {
             case 32:
                 version32to40();
             case 31:
@@ -192,7 +242,6 @@ public class UpdateManager extends Fragment {
         appendlog(getString(R.string.Updater__updating));
     }
 
-    @Background
     void version32to40() {
         Collection folders = FileUtils.listFilesAndDirs(Storage.getRoot(), FalseFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
         for (Object folderObject : folders) { //Search for dirs in root
@@ -223,44 +272,36 @@ public class UpdateManager extends Fragment {
         onFinishAllUpgrade();
     }
 
-    @Background
     void version31to32() {
         //Nahh
         version32to40();
     }
 
-    @Background
     void version30to31() {
         //Nahh
         version31to32();
     }
 
-    @Background
     void version21to30() {
         //Nahh
         version30to31();
     }
 
-    @Background
     void version20to21() {
         //Nahh
         version21to30();
     }
 
-
-    @Background
     void version19to20() {
         //Nahh
         version20to21();
     }
 
-    @Background
     void version18to19() {
         //Nahh
         version19to20();
     }
 
-    @Background
     void version17to18() {
         // version 18 adds option to enable/disable stealth.
         // enable stealth if is set prior to 18.
@@ -274,57 +315,46 @@ public class UpdateManager extends Fragment {
         version18to19();
     }
 
-    @Background
     void version16to17() {
         //Still nothing...
         version17to18();
     }
 
-    @Background
     void version15to16() {
         //Still nothing...
         version16to17();
     }
 
-    @Background
     void version14to15() {
         //Still nothing...
         version15to16();
     }
 
-    @Background
     void version13to14() {
         //Still nothing...
         version14to15();
     }
 
-    @Background
     void version12to13() {
         //Nothing to upgrade
         version13to14();
     }
 
-    @Background
     void version11to12() {
         //Nothing to upgrade
         version12to13();
     }
 
-
-    @Background
     void version10to11() {
         //Nothing to upgrade
         version11to12();
     }
 
-
-    @Background
     void version9to10() {
         //Nothing to upgrade
         version10to11();
     }
 
-    @Background
     void version8to9() {
         // Changes filebase path to new format.
         if (!Util.canWrite(Storage.getRoot())) {
@@ -338,13 +368,11 @@ public class UpdateManager extends Fragment {
         version9to10();
     }
 
-    @Background
     void version7to8() {
         //Nothing to upgrade
         version8to9();
     }
 
-    @Background
     void version6to7() {
         // Fix a bug in version 6 that corrupts the vault if user tries to move it elsewhere
 
@@ -377,25 +405,21 @@ public class UpdateManager extends Fragment {
         version7to8();
     }
 
-    @Background
     void version5to6() {
         //Nothing to upgrade
         version6to7();
     }
 
-    @Background
     void version3to5() {
         //Nothing to upgrade
         version5to6();
     }
 
-    @Background
     void version2to3() {
         //Nothing to upgrade
         version3to5();
     }
 
-    @Background
     void version1to2() {
         // remove the temp folder, we do not use it anymore.
         java.io.File root = Storage.getRoot();
@@ -410,59 +434,21 @@ public class UpdateManager extends Fragment {
         version2to3();
     }
 
-    @UiThread
     void onFinishAllUpgrade() {
         // When all updates are finished, notify user and enable the continue button
         appendlog(getString(R.string.Updater__update_finish));
         continueButton.setEnabled(true);
 
-        // Write the new version info into the preferences, for next upgrades.
-        version.edit()
-                .no()
-                .put(versionnow)
-                .name()
-                .put(versionnow_name)
-                .apply();
+        SharedPreferences.Editor editor =
+                PreferenceManager.getDefaultSharedPreferences(context).edit();
+        editor.putInt("versionNumber", versionnow);
+        editor.putString("versionName", versionnow_name);
+        editor.apply();
     }
 
-    @UiThread
     void appendlog(String message) {
         // Appends log info to log view
         log.append(message);
-    }
-
-    @Click(R.id.continueButton)
-    void Continue() {
-        // When user presses the continue button, alert if app is still in beta.
-
-        //Define 100 as initial beta code
-        if (versionnow < 100)
-            Util.alert(context,
-                    getString(R.string.Updater__alpha),
-                    getString(R.string.Updater__alpha_message),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            finish();
-                        }
-                    },
-                    null
-            );
-            //Define 200 as initial official release code
-        else if (versionnow < 200)
-            Util.alert(context,
-                    getString(R.string.Updater__beta),
-                    getString(R.string.Updater__beta_message),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            finish();
-                        }
-                    },
-                    null
-            );
-        else
-            finish();
     }
 
     void getVersionInfo() {
@@ -482,7 +468,6 @@ public class UpdateManager extends Fragment {
 
     void finish() {
         mFinishListener.onFinish(this);
-        mFinishListener.onNew(null, new VaultsListFragment_());
+        mFinishListener.onNew(null, new VaultsListFragment());
     }
-
 }
