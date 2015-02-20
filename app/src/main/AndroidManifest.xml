@@ -40,7 +40,7 @@
             android:finishOnTaskLaunch="true"
             android:label="" />
         <activity
-            android:name=".Views.FileImportActivity_"
+            android:name="com.doplgangr.secrecy.Views.FileImportActivity"
             android:label="@string/Dialog_header__import_files">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />

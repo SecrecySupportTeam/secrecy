@@ -22,49 +22,39 @@ import com.doplgangr.secrecy.Jobs.AddFileJob;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
 
-@EActivity(R.layout.activity_main)
 public class FileImportActivity extends ActionBarActivity
         implements
         VaultsListFragment.OnVaultSelectedListener,
         VaultsListFragment.OnFragmentFinishListener {
     private static final int NotificationID = 1011;
     private Vault secret;
-    @ViewById(R.id.toolbar)
-    Toolbar mToolbar;
+    private Toolbar mToolbar;
     //Notifications
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
 
-    @AfterViews
-    void afterViews() {
-        if (!EventBus.getDefault().isRegistered(this))
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
+        }
+
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+
         setSupportActionBar(mToolbar);
-        FileImportFragment_ fragment = new FileImportFragment_();
+        FileImportFragment fragment = new FileImportFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.drawer_layout, fragment, "mainactivitycontent")   //Replace the whole drawer layout
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .commit();
-    }
-
-    @Override
-    public void onFinish(Fragment fragment) {
-    }
-
-    @Override
-    public void onNew(Bundle bundle, Fragment fragment) {
-
     }
 
     @Override
@@ -92,29 +82,36 @@ public class FileImportActivity extends ActionBarActivity
         mBuilder.setProgress(0, 0, true);
         mNotifyManager.notify(NotificationID, mBuilder.build());
         if (Intent.ACTION_SEND.equals(action) && type != null)
-            handleSend(intent);
+            handleSendInBackground(intent);
         else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null)
-            handleSendMultiple(intent); // Handle multiple images being sent
+            handleSendMultipleInBackground(intent); // Handle multiple images being sent
     }
 
-    @Background
-    void handleSend(Intent intent) {
-        Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-        if (uri != null)
-            handleData(uri);
-        done();
+    void handleSendInBackground(final Intent intent) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                if (uri != null)
+                    handleData(uri);
+                done();
+            }
+        }).start();
     }
 
-    @Background
-    void handleSendMultiple(Intent intent) {
-        ArrayList<Uri> uris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-        for (Uri uri : uris)
-            if (uri != null)
-                handleData(uri);
-        done();
+    void handleSendMultipleInBackground(final Intent intent) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<Uri> uris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+                for (Uri uri : uris)
+                    if (uri != null)
+                        handleData(uri);
+                done();
+            }
+        }).start();
     }
 
-    @Background
     void handleData(final Uri data) {
         CustomApp.jobManager.addJobInBackground(new AddFileJob(this, secret, data));
     }
@@ -139,7 +136,6 @@ public class FileImportActivity extends ActionBarActivity
         }
     }
 
-    @UiThread
     void done() {
         //Intent intent = new Intent(context, ListFileActivity_.class);
         //intent.putExtra(Config.vault_extra, secret.name);
@@ -149,4 +145,11 @@ public class FileImportActivity extends ActionBarActivity
         finish();
     }
 
+    @Override
+    public void onFinish(Fragment fragment) {
+    }
+
+    @Override
+    public void onNew(Bundle bundle, Fragment fragment) {
+    }
 }

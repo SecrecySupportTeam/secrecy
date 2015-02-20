@@ -19,30 +19,30 @@
 
 package com.doplgangr.secrecy.Views;
 
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.doplgangr.secrecy.R;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
-
-@EFragment(R.layout.activity_list_vault)
 public class FileImportFragment extends VaultsListFragment {
-    @ViewById(R.id.progressBar)
-    ProgressBar addFilepBar;
+    private ProgressBar addFilepBar;
 
-    @AfterViews
-    void afterViews() {
-        super.oncreate();
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_list_vault, container, false);
+        addFilepBar = (ProgressBar) view.findViewById(R.id.progressBar);
+
         ActionBar ab = ((ActionBarActivity) getActivity()).getSupportActionBar();
         if (ab != null)
             ab.setTitle(R.string.Dialog_header__import_files);
-    }
 
+        return view;
+    }
 
     @Override
     public void setClickListener(final View mView, final int i) {
@@ -55,6 +55,4 @@ public class FileImportFragment extends VaultsListFragment {
             }
         });
     }
-
-
 }
