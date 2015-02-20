@@ -71,7 +71,7 @@
         </receiver>
 
         <activity
-            android:name=".Views.DummyViews.LauncherActivity_"
+            android:name="com.doplgangr.secrecy.Views.MainActivity"
             android:clearTaskOnLaunch="true"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
