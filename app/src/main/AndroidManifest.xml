@@ -12,7 +12,7 @@
         android:required="false" />
 
     <application
-        android:name=".CustomApp"
+        android:name="com.doplgangr.secrecy.CustomApp"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/App__name"
@@ -34,12 +34,6 @@
             android:icon="@drawable/ic_launcher"
             android:label="@string/Dialog_header__pick_file" />
         <activity
-            android:name=".Views.MainActivity"
-            android:clearTaskOnLaunch="true"
-            android:excludeFromRecents="true"
-            android:finishOnTaskLaunch="true"
-            android:label="" />
-        <activity
             android:name="com.doplgangr.secrecy.Views.FileImportActivity"
             android:label="@string/Dialog_header__import_files">
             <intent-filter>
@@ -58,7 +52,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Views.ChooseFolder"
+            android:name="com.doplgangr.secrecy.Views.ChooseFolder"
             android:label="@string/Page_header__choose_folder" />
         <activity
             android:name=".Settings.SettingsActivity_"
@@ -78,7 +72,6 @@
             android:label="@string/App__name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -99,7 +92,7 @@
         <activity
             android:name="com.doplgangr.secrecy.Views.FilesActivity"
             android:label=""
-            android:parentActivityName=".Views.MainActivity">
+            android:parentActivityName="com.doplgangr.secrecy.Views.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.doplgangr.secrecy.Views.MainActivity" />
