@@ -60,7 +60,7 @@ public class MainActivity extends ActionBarActivity implements
         VaultsListFragment.OnVaultSelectedListener,
         VaultsListFragment.OnFragmentFinishListener {
     private final List<Class> mFragmentNameList = new ArrayList<Class>() {{
-        add(VaultsListFragment_.class);
+        add(VaultsListFragment.class);
         add(SettingsFragment.class);
         add(PremiumFragment.class);
     }};
@@ -194,7 +194,7 @@ public class MainActivity extends ActionBarActivity implements
     void switchFragment(int page) {
         switch (page) {
             case 0:
-                addFragment(new VaultsListFragment_(), 0, 0);
+                addFragment(new VaultsListFragment(), 0, 0);
                 break;
             case 1:
                 addFragment(new SettingsFragment(), 0, 0);
@@ -253,7 +253,7 @@ public class MainActivity extends ActionBarActivity implements
         FragmentTransaction transaction = fragmentManager.beginTransaction()
                 .setCustomAnimations(transition1, transition2)
                 .replace(R.id.content_frame, fragment, tag);
-        if (fragment.getClass() != VaultsListFragment_.class)
+        if (fragment.getClass() != VaultsListFragment.class)
             transaction = transaction
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .addToBackStack(tag);

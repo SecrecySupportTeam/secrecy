@@ -27,7 +27,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -35,7 +34,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.text.InputType;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -56,39 +60,22 @@ import com.doplgangr.secrecy.Util;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.res.DrawableRes;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
 
-@EFragment(R.layout.activity_list_vault)
-@OptionsMenu(R.menu.list_vault)
 public class VaultsListFragment extends Fragment {
     //Vault restore module
     private static final int REQUESTCODE = 1203; //Arbitrary
-    @ViewById(R.id.list)
-    LinearLayout mLinearView;
-    @ViewById(R.id.scrollView)
-    ScrollView mScrollView;
-    @ViewById(R.id.nothing)
-    View nothing;
-    @DrawableRes(R.drawable.file_selector)
-    Drawable selector;
+    private LinearLayout mLinearView;
+    private ScrollView mScrollView;
+    private View nothing;
     private ActionBarActivity context;
     VaultsAdapter adapter;
     private OnVaultSelectedListener mOnVaultSelected;
     private OnFragmentFinishListener mFinishListener;
-    private boolean isPaused = false;
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
 
@@ -96,31 +83,21 @@ public class VaultsListFragment extends Fragment {
     private static View kbdView = null;
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mOnVaultSelected = (OnVaultSelectedListener) activity;
-            mFinishListener = (OnFragmentFinishListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement Listener");
-        }
-    }
-
-    @UiThread
-    @AfterViews
-    void oncreate() {
-        if (!EventBus.getDefault().isRegistered(this))
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
+        }
         context = (ActionBarActivity) getActivity();
-        if (context == null)
+        if (context == null) {
             return;
+        }
         VaultHolder.getInstance().clear();
-        if (mLinearView != null)
-            mLinearView.removeAllViews();
-        if (context.getSupportActionBar() != null)
+
+        if (context.getSupportActionBar() != null) {
             context.getSupportActionBar().setTitle(R.string.App__name);
-        java.io.File root = Storage.getRoot();
-        if (!Util.canWrite(root)) {
+        }
+        if (!Util.canWrite(Storage.getRoot())) {
             Util.alert(CustomApp.context,
                     CustomApp.context.getString(R.string.Error__root_IOException),
                     CustomApp.context.getString(R.string.Error__root_IOException_message),
@@ -134,8 +111,72 @@ public class VaultsListFragment extends Fragment {
             );
             return;
         }
+        imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.activity_list_vault, container, false);
+
+        mLinearView = (LinearLayout) view.findViewById(R.id.list);
+        mScrollView = (ScrollView) view.findViewById(R.id.scrollView);
+        nothing = view.findViewById(R.id.nothing);
+
+        loadVaultList();
+
+        showTutorial();
+        return view;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_add_vault:
+                add();
+                return true;
+            case R.id.action_restore:
+                restore();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.list_vault, menu);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mOnVaultSelected = (OnVaultSelectedListener) activity;
+            mFinishListener = (OnFragmentFinishListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement Listener");
+        }
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    private void refresh(){
+        VaultHolder.getInstance().clear();
+        loadVaultList();
+    }
+
+    private void loadVaultList(){
+        if (mLinearView != null) {
+            mLinearView.removeAllViews();
+        }
+
         adapter = new VaultsAdapter(context, null);
-        ArrayList<File> files = Storage.getDirectories(root);
+        ArrayList<File> files = Storage.getDirectories(Storage.getRoot());
         for (File file : files) {
             adapter.add(file.getName());
         }
@@ -152,22 +193,13 @@ public class VaultsListFragment extends Fragment {
             nothing.setVisibility(View.GONE);
             mLinearView.setVisibility(View.VISIBLE);
         }
-        imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        showTutorial();
-    }
-
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
     }
 
     public void onEventMainThread(FilesActivity.shouldRefresh ignored) {
-        oncreate();
+        refresh();
     }
 
     void setClickListener(final View mView, final int i) {
-
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -217,7 +249,6 @@ public class VaultsListFragment extends Fragment {
         });
     }
 
-    @OptionsItem(R.id.action_add_vault)
     void add() {
         final View dialogView = View.inflate(context, R.layout.new_credentials, null);
         final EditText password = new EditText(context);
@@ -252,44 +283,6 @@ public class VaultsListFragment extends Fragment {
         }).show();
     }
 
-    @Background
-    void createVaultInBackground(String name, String password, File directory, DialogInterface dialog, ProgressDialog progressDialog) {
-        VaultHolder.getInstance().createAndRetrieveVault(name, password);
-        try {
-            File file = new File(directory + "/.nomedia");
-            file.delete();
-            file.createNewFile();
-            oncreate();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        dialog.dismiss();
-        progressDialog.dismiss();
-    }
-
-    @UiThread
-    void passwordWrong() {
-        new AlertDialog.Builder(context)
-                .setTitle(getString(R.string.Error__wrong_password_confirmation))
-                .setMessage(getString(R.string.Error__wrong_password_confirmation_message))
-                .setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                    }
-                }).show();
-    }
-
-    @UiThread
-    void failedtocreate() {
-        new AlertDialog.Builder(context)
-                .setTitle(getString(R.string.Error__cannot_create_vault))
-                .setMessage(getString(R.string.Error__cannot_create_vault_message))
-                .setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                    }
-                }).show();
-    }
-
-    @OptionsItem(R.id.action_restore)
     void restore() {
         ArrayList<String> INCLUDE_EXTENSIONS_LIST = new ArrayList<String>();
         INCLUDE_EXTENSIONS_LIST.add(".zip");
@@ -303,43 +296,99 @@ public class VaultsListFragment extends Fragment {
         startActivityForResult(intent, REQUESTCODE);
     }
 
-    @Override
-    @UiThread
-    public void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        switch (requestCode) {
-            case REQUESTCODE:
-                // If the file selection was successful
-                if (resultCode == Activity.RESULT_OK) {
-                    if (data != null) {
-                        // Get the URI of the selected file
-                        Util.alert(
-                                context,
-                                null,
-                                CustomApp.context.getString(R.string.Restore__overwrite_alert),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        final Uri uri = data.getData();
-                                        final String path = FileUtils.getPath(context, uri);
-                                        mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-                                        mBuilder = new NotificationCompat.Builder(context);
-                                        mBuilder.setContentTitle(CustomApp.context.getString(R.string.Restore__title))
-                                                .setContentText(CustomApp.context.getString(R.string.Restore__in_progress))
-                                                .setSmallIcon(R.drawable.ic_stat_alert)
-                                                .setOngoing(true);
-                                        mBuilder.setProgress(0, 0, true);
-                                        mNotifyManager.notify(REQUESTCODE, mBuilder.build());
-                                        CustomApp.jobManager.addJobInBackground(new RestoreJob(context, new File(path)));
-
-                                    }
-                                },
-                                Util.emptyClickListener
-                        );
-                    }
+    void createVaultInBackground(final String name, final String password,
+                                 final File directory, final DialogInterface dialog,
+                                 final ProgressDialog progressDialog) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                VaultHolder.getInstance().createAndRetrieveVault(name, password);
+                try {
+                    File file = new File(directory + "/.nomedia");
+                    file.delete();
+                    file.createNewFile();
+                    refresh();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                break;
-        }
+                dialog.dismiss();
+                progressDialog.dismiss();
+            }
+        }).start();
+    }
+
+    void passwordWrong() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                new AlertDialog.Builder(context)
+                        .setTitle(getString(R.string.Error__wrong_password_confirmation))
+                        .setMessage(getString(R.string.Error__wrong_password_confirmation_message))
+                        .setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                            }
+                        }).show();
+            }
+        });
+    }
+
+    void failedtocreate() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                new AlertDialog.Builder(context)
+                        .setTitle(getString(R.string.Error__cannot_create_vault))
+                        .setMessage(getString(R.string.Error__cannot_create_vault_message))
+                        .setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                            }
+                        }).show();
+            }
+        });
+    }
+
+
+    @Override
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                switch (requestCode) {
+                    case REQUESTCODE:
+                        // If the file selection was successful
+                        if (resultCode == Activity.RESULT_OK) {
+                            if (data != null) {
+                                // Get the URI of the selected file
+                                Util.alert(
+                                        context,
+                                        null,
+                                        CustomApp.context.getString(R.string.Restore__overwrite_alert),
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                final Uri uri = data.getData();
+                                                final String path = FileUtils.getPath(context, uri);
+                                                mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                                                mBuilder = new NotificationCompat.Builder(context);
+                                                mBuilder.setContentTitle(CustomApp.context.getString(R.string.Restore__title))
+                                                        .setContentText(CustomApp.context.getString(R.string.Restore__in_progress))
+                                                        .setSmallIcon(R.drawable.ic_stat_alert)
+                                                        .setOngoing(true);
+                                                mBuilder.setProgress(0, 0, true);
+                                                mNotifyManager.notify(REQUESTCODE, mBuilder.build());
+                                                CustomApp.jobManager.addJobInBackground(new RestoreJob(context, new File(path)));
+
+                                            }
+                                        },
+                                        Util.emptyClickListener
+                                );
+                            }
+                        }
+                        break;
+                }
+            }
+        });
     }
 
     public void onEventMainThread(RestoreDoneEvent event) {
@@ -392,65 +441,69 @@ public class VaultsListFragment extends Fragment {
                     Util.emptyClickListener,
                     null
             );
-        oncreate();
+        refresh();
     }
 
-    @UiThread
-    void switchView(final View parentView, int showView) {
-        EditText passwordView = (EditText) parentView.findViewById(R.id.open_password);
-        final View renameView = parentView.findViewById(R.id.rename_name);
-        ViewAnimator viewAnimator = (ViewAnimator) parentView.findViewById(R.id.viewAnimator);
-        viewAnimator.setInAnimation(context, R.anim.slide_down);
+    void switchView(final View parentView, final int showView) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                EditText passwordView = (EditText) parentView.findViewById(R.id.open_password);
+                final View renameView = parentView.findViewById(R.id.rename_name);
+                ViewAnimator viewAnimator = (ViewAnimator) parentView.findViewById(R.id.viewAnimator);
+                viewAnimator.setInAnimation(context, R.anim.slide_down);
 
-        int viewIndex = 0;
-        switch (showView) {
-            case R.id.vault_name_layout:
-                viewIndex = 0;
-                break;
-            case R.id.vault_decrypt_layout:
-                viewIndex = 1;
-                if (passwordView != null) {
-                    passwordView.requestFocus();
-                    passwordView.setText("");                               //Reset password field everytime
+                int viewIndex = 0;
+                switch (showView) {
+                    case R.id.vault_name_layout:
+                        viewIndex = 0;
+                        break;
+                    case R.id.vault_decrypt_layout:
+                        viewIndex = 1;
+                        if (passwordView != null) {
+                            passwordView.requestFocus();
+                            passwordView.setText("");                               //Reset password field everytime
+                        }
+
+                        // Only one vault selected at that time
+                        passwordView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                            @Override
+                            public void onFocusChange(View v, boolean hasFocus) {
+                                if (!hasFocus) {
+                                    ViewAnimator viewAnimator = (ViewAnimator) parentView.findViewById(R.id.viewAnimator);
+                                    viewAnimator.setDisplayedChild(0);
+                                }
+                            }
+                        });
+                        kbdView = passwordView;
+                        imm.showSoftInput(passwordView, InputMethodManager.SHOW_IMPLICIT);
+                        break;
+                    case R.id.vault_delete_layout:
+                        viewIndex = 2;
+                        break;
+                    case R.id.vault_rename_layout:
+                        viewIndex = 3;
+                        if (renameView != null)
+                            renameView.requestFocus();
+
+                        // Only one vault selected at that time
+                        renameView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                            @Override
+                            public void onFocusChange(View v, boolean hasFocus) {
+                                if (!hasFocus) {
+                                    ViewAnimator viewAnimator = (ViewAnimator) parentView.findViewById(R.id.viewAnimator);
+                                    viewAnimator.setDisplayedChild(0);
+                                }
+                            }
+                        });
+                        kbdView = renameView;
+                        imm.showSoftInput(renameView, InputMethodManager.SHOW_IMPLICIT);
+                        break;
                 }
 
-                // Only one vault selected at that time
-                passwordView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                    @Override
-                    public void onFocusChange(View v, boolean hasFocus) {
-                        if (!hasFocus) {
-                            ViewAnimator viewAnimator = (ViewAnimator) parentView.findViewById(R.id.viewAnimator);
-                            viewAnimator.setDisplayedChild(0);
-                        }
-                    }
-                });
-                kbdView = passwordView;
-                imm.showSoftInput(passwordView, InputMethodManager.SHOW_IMPLICIT);
-                break;
-            case R.id.vault_delete_layout:
-                viewIndex = 2;
-                break;
-            case R.id.vault_rename_layout:
-                viewIndex = 3;
-                if (renameView != null)
-                    renameView.requestFocus();
-
-                // Only one vault selected at that time
-                renameView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                    @Override
-                    public void onFocusChange(View v, boolean hasFocus) {
-                        if (!hasFocus) {
-                            ViewAnimator viewAnimator = (ViewAnimator) parentView.findViewById(R.id.viewAnimator);
-                            viewAnimator.setDisplayedChild(0);
-                        }
-                    }
-                });
-                kbdView = renameView;
-                imm.showSoftInput(renameView, InputMethodManager.SHOW_IMPLICIT);
-                break;
-        }
-
-        viewAnimator.setDisplayedChild(viewIndex);
+                viewAnimator.setDisplayedChild(viewIndex);
+            }
+        });
     }
 
     void finish() {
