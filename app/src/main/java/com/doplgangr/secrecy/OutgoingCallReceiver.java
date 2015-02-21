@@ -42,7 +42,7 @@ public class OutgoingCallReceiver extends BroadcastReceiver {
             launcher.addFlags(IntentCompat.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_TASK_ON_HOME);
             String phoneNumber = intent.getExtras().getString(android.content.Intent.EXTRA_PHONE_NUMBER);
             String openPin = PreferenceManager.getDefaultSharedPreferences(context)
-                    .getString("stealth_mode_password", "");
+                    .getString(Config.STEALTH_MODE_PASSWORD, "");
             if (!openPin.equals("")) {
                 if (("*#" + openPin).equals(phoneNumber)) {
                     // Launch the main app!!

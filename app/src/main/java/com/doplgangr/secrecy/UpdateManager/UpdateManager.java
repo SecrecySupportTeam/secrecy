@@ -35,6 +35,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.FileSystem.Base64Coder;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.R;
@@ -150,9 +151,9 @@ public class UpdateManager extends Fragment {
     public void onActivityCreated (Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
 
-        version = PreferenceManager.getDefaultSharedPreferences(context).getInt("versionNumber", 1);
+        version = PreferenceManager.getDefaultSharedPreferences(context).getInt(Config.APP_VERSION_NUMBER, 1);
         String versionName = PreferenceManager.getDefaultSharedPreferences(context)
-                .getString("versionName", getString(R.string.Updater__alpha0_1));
+                .getString(Config.APP_VERSION_NAME, getString(R.string.Updater__alpha0_1));
 
         // If the version is not upgraded, skip the update manager
         if (versionnow == version) {
@@ -306,10 +307,10 @@ public class UpdateManager extends Fragment {
         // version 18 adds option to enable/disable stealth.
         // enable stealth if is set prior to 18.
         if (!PreferenceManager.getDefaultSharedPreferences(context)
-                .getString("stealth_mode_password", "").equals("")) {
+                .getString(Config.STEALTH_MODE_PASSWORD, "").equals("")) {
             SharedPreferences.Editor editor = PreferenceManager
                     .getDefaultSharedPreferences(context).edit();
-            editor.putBoolean("stealth_mode", true);
+            editor.putBoolean(Config.STEALTH_MODE, true);
             editor.apply();
         }
         version18to19();
@@ -441,8 +442,8 @@ public class UpdateManager extends Fragment {
 
         SharedPreferences.Editor editor =
                 PreferenceManager.getDefaultSharedPreferences(context).edit();
-        editor.putInt("versionNumber", versionnow);
-        editor.putString("versionName", versionnow_name);
+        editor.putInt(Config.APP_VERSION_NUMBER, versionnow);
+        editor.putString(Config.APP_VERSION_NAME, versionnow_name);
         editor.apply();
     }
 

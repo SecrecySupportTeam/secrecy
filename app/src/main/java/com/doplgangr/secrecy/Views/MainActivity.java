@@ -77,7 +77,7 @@ public class MainActivity extends ActionBarActivity implements
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         int versionNumber =  PreferenceManager.getDefaultSharedPreferences(context)
-                .getInt("appVersionNumber", 1);
+                .getInt(Config.APP_VERSION_NUMBER, 1);
         mNavigation = (NavListView) findViewById(R.id.left_drawer_list);
         mDrawer = findViewById(R.id.left_drawer);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -89,7 +89,7 @@ public class MainActivity extends ActionBarActivity implements
         switchFragment(0);
         setSupportActionBar(mToolbar);
         if (PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean("showStealthModeTutorial", false)) {
+                .getBoolean(Config.SHOW_STEALTH_MODE_TUTORIAL, false)) {
             onFirstLaunch();
             return;
         }
@@ -152,7 +152,7 @@ public class MainActivity extends ActionBarActivity implements
         mDrawerToggle.setDrawerIndicatorEnabled(true);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         Util.loadSelectedImageSize(PreferenceManager.getDefaultSharedPreferences(context)
-                .getString("image_size", "1"));
+                .getString(Config.IMAGE_SIZE, "1"));
         showHelpDeskTutorial();
     }
 
@@ -209,7 +209,7 @@ public class MainActivity extends ActionBarActivity implements
     void onFirstLaunch() {
         final View dialogView = View.inflate(context, R.layout.dialog_finish_stealth, null);
         String password = PreferenceManager.getDefaultSharedPreferences(context)
-                .getString("stealth_mode_password", "");
+                .getString(Config.STEALTH_MODE_PASSWORD, "");
         ((TextView) dialogView
                 .findViewById(R.id.stealth_keycode))
                 .append(password);
@@ -223,7 +223,7 @@ public class MainActivity extends ActionBarActivity implements
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 SharedPreferences.Editor editor
                                         = PreferenceManager.getDefaultSharedPreferences(context).edit();
-                                editor.putBoolean("showStealthModeTutorial", false);
+                                editor.putBoolean(Config.SHOW_STEALTH_MODE_TUTORIAL, false);
                                 editor.apply();
                             }
                         }

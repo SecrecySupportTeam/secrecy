@@ -46,6 +46,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.FileSystem.Storage;
 import com.doplgangr.secrecy.Premium.PremiumFragment;
@@ -110,7 +111,7 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     private void preparePreferenceStealthMode(){
-        final CheckBoxPreference stealth_mode = (CheckBoxPreference) findPreference("stealth_mode");
+        final CheckBoxPreference stealth_mode = (CheckBoxPreference) findPreference(Config.STEALTH_MODE);
         stealth_mode.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
@@ -120,11 +121,11 @@ public class SettingsFragment extends PreferenceFragment {
                 if (!(Boolean) o) {
                     StealthMode.showApp(context);
 
-                    editor.putBoolean("stealth_mode", (Boolean) o);
-                    editor.putString("stealth_mode_password", "");
+                    editor.putBoolean(Config.STEALTH_MODE, (Boolean) o);
+                    editor.putString(Config.STEALTH_MODE_PASSWORD, "");
                     editor.apply();
                 } else {
-                    editor.putBoolean("stealth_mode", (Boolean) o);
+                    editor.putBoolean(Config.STEALTH_MODE, (Boolean) o);
                     editor.apply();
                 }
                 return true;
@@ -133,9 +134,9 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     private void preparePreferenceStealthModePassword(){
-        final Preference stealth_mode_password = findPreference("stealth_mode_password");
+        final Preference stealth_mode_password = findPreference(Config.STEALTH_MODE_PASSWORD);
         String openPin = PreferenceManager.getDefaultSharedPreferences(context)
-                .getString("stealth_mode_password", "");
+                .getString(Config.STEALTH_MODE_PASSWORD, "");
         if (!openPin.equals("")) {
             stealth_mode_password.setSummary("*# " + openPin);
         }
@@ -166,7 +167,7 @@ public class SettingsFragment extends PreferenceFragment {
                                                 .getText().toString();
                                         SharedPreferences.Editor editor =
                                                 PreferenceManager.getDefaultSharedPreferences(context).edit();
-                                        editor.putString("stealth_mode_password", password);
+                                        editor.putString(Config.STEALTH_MODE_PASSWORD, password);
                                         editor.apply();
                                         confirm_stealth(password);
                                     }
@@ -194,7 +195,7 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     private void preparePreferenceMaxImageSize(){
-        Preference image_size = findPreference("image_size");
+        Preference image_size = findPreference(Config.IMAGE_SIZE);
         image_size.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
@@ -321,7 +322,7 @@ public class SettingsFragment extends PreferenceFragment {
                     public void onClick(DialogInterface dialog, int which) {
                         SharedPreferences.Editor editor
                                 = PreferenceManager.getDefaultSharedPreferences(context).edit();
-                        editor.putBoolean("showStealthModeTutorial", true);
+                        editor.putBoolean(Config.SHOW_STEALTH_MODE_TUTORIAL, true);
                         editor.apply();
                         Intent dial = new Intent();
                         dial.setAction("android.intent.action.DIAL");
@@ -365,7 +366,7 @@ public class SettingsFragment extends PreferenceFragment {
                             // Get the file path from the URI
                             final String path = FileUtils.getPath(context, uri);
                             Storage.setRoot(path);
-                            Preference vault_root = findPreference("vault_root");
+                            Preference vault_root = findPreference(Config.VAULT_ROOT);
                             vault_root.setSummary(Storage.getRoot().getAbsolutePath());
                         } catch (Exception e) {
                             Log.e("SettingsFragment", "File select error", e);
@@ -429,7 +430,7 @@ public class SettingsFragment extends PreferenceFragment {
         try {
             org.apache.commons.io.FileUtils.copyDirectory(oldRoot, new File(path));
             Storage.setRoot(path);
-            Preference vault_root = findPreference("vault_root");
+            Preference vault_root = findPreference(Config.VAULT_ROOT);
             vault_root.setSummary(Storage.getRoot().getAbsolutePath());
             Util.toast(getActivity(),
                     String.format(getString(R.string.Settings__moved_vault), path), Toast.LENGTH_LONG);
