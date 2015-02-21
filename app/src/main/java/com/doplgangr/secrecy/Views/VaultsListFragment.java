@@ -118,6 +118,8 @@ public class VaultsListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.activity_list_vault, container, false);
+        ((ActionBarActivity) getActivity()).getSupportActionBar()
+                .setTitle(R.string.Page_header__vaults);
 
         mLinearView = (LinearLayout) view.findViewById(R.id.list);
         mScrollView = (ScrollView) view.findViewById(R.id.scrollView);
