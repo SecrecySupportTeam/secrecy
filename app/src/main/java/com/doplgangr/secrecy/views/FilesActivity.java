@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.WindowManager;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.filesystem.Storage;
@@ -23,6 +24,9 @@ public class FilesActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_files);
+
+        // Don't keep a screenshot of this window for recent apps
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
 
         Bundle extras = getIntent().getExtras();
         String vault = extras.getString(Config.vault_extra);
