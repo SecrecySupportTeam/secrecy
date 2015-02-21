@@ -20,7 +20,7 @@
 
         <provider
             android:name=".filesystem.OurFileProvider"
-            android:authorities=".filesystem.DecryptFileProvider"
+            android:authorities="com.doplgangr.secrecy.filesystem.DecryptFileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -60,7 +60,6 @@
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
             </intent-filter>
         </receiver>
-
         <activity
             android:name=".views.MainActivity"
             android:clearTaskOnLaunch="true"
