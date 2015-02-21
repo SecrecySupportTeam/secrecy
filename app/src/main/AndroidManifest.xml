@@ -19,8 +19,8 @@
         android:theme="@style/CustomMaterialTheme">
 
         <provider
-            android:name=".FileSystem.OurFileProvider"
-            android:authorities="com.doplgangr.secrecy.FileSystem.DecryptFileProvider"
+            android:name=".filesystem.OurFileProvider"
+            android:authorities="com.doplgangr.secrecy.filesystem.DecryptFileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -34,7 +34,7 @@
             android:icon="@drawable/ic_launcher"
             android:label="@string/Dialog_header__pick_file" />
         <activity
-            android:name="com.doplgangr.secrecy.Views.FileImportActivity"
+            android:name="com.doplgangr.secrecy.views.FileImportActivity"
             android:label="@string/Dialog_header__import_files">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -52,10 +52,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.doplgangr.secrecy.Views.ChooseFolder"
+            android:name="com.doplgangr.secrecy.views.ChooseFolder"
             android:label="@string/Page_header__choose_folder" />
         <activity
-            android:name=".Settings.SettingsActivity_"
+            android:name=".settings.SettingsActivity_"
             android:label="" />
 
         <receiver android:name=".OutgoingCallReceiver">
@@ -65,7 +65,7 @@
         </receiver>
 
         <activity
-            android:name="com.doplgangr.secrecy.Views.MainActivity"
+            android:name="com.doplgangr.secrecy.views.MainActivity"
             android:clearTaskOnLaunch="true"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
@@ -76,26 +76,26 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Premium.PremiumFragment"
+            android:name=".premium.PremiumFragment"
             android:label="" />
         <activity
-            android:name="com.doplgangr.secrecy.Views.FilePhotoFragment"
+            android:name="com.doplgangr.secrecy.views.FilePhotoFragment"
             android:clearTaskOnLaunch="true"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
             android:label=""
-            android:parentActivityName="com.doplgangr.secrecy.Views.FilesActivity">
+            android:parentActivityName="com.doplgangr.secrecy.views.FilesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.doplgangr.secrecy.Views.FilesActivity" />
+                android:value="com.doplgangr.secrecy.views.FilesActivity" />
         </activity>
         <activity
-            android:name="com.doplgangr.secrecy.Views.FilesActivity"
+            android:name="com.doplgangr.secrecy.views.FilesActivity"
             android:label=""
-            android:parentActivityName="com.doplgangr.secrecy.Views.MainActivity">
+            android:parentActivityName="com.doplgangr.secrecy.views.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.doplgangr.secrecy.Views.MainActivity" />
+                android:value="com.doplgangr.secrecy.views.MainActivity" />
         </activity>
     </application>
 

@@ -25,8 +25,8 @@ import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.support.v4.content.IntentCompat;
 
-import com.doplgangr.secrecy.Premium.StealthMode;
-import com.doplgangr.secrecy.Views.MainActivity;
+import com.doplgangr.secrecy.premium.StealthMode;
+import com.doplgangr.secrecy.views.MainActivity;
 
 public class OutgoingCallReceiver extends BroadcastReceiver {
 
