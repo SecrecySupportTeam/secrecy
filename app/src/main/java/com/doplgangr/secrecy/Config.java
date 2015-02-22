@@ -47,6 +47,7 @@ public class Config {
     public static final String STEALTH_MODE = "stealth_mode";
     public static final String SHOW_STEALTH_MODE_TUTORIAL =  "showStealthModeTutorial";
     public static final String IMAGE_SIZE = "image_size";
+    public static final String IMAGE_SIZE_DEFAULT = "0";
     public static final String VAULT_ROOT = "vault_root";
     public static final String APP_VERSION_NUMBER = "appVersionNumber";
     public static final String APP_VERSION_NAME = "appVersionName";
