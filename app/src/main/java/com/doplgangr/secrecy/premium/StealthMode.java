@@ -4,7 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
 
-import com.doplgangr.secrecy.views.MainActivity;
+import com.doplgangr.secrecy.views.dummyviews.LauncherActivity;
 
 /**
  * Created by matthew on 8/28/14.
@@ -18,7 +18,7 @@ public class StealthMode {
 
         ComponentName componentToDisable =
                 new ComponentName(context.getPackageName(),
-                        MainActivity.class.getName());
+                        LauncherActivity.class.getName());
         if (context.getPackageManager() != null)
             context.getPackageManager()
                     .setComponentEnabledSetting(componentToDisable,
@@ -30,7 +30,7 @@ public class StealthMode {
 
         ComponentName componentToDisable =
                 new ComponentName(context.getPackageName(),
-                        MainActivity.class.getName());
+                        LauncherActivity.class.getName());
         if (context.getPackageManager() != null)
             context.getPackageManager()
                     .setComponentEnabledSetting(componentToDisable,

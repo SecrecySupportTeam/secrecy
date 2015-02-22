@@ -61,16 +61,23 @@
             </intent-filter>
         </receiver>
         <activity
-            android:name=".views.MainActivity"
+            android:name=".views.dummyviews.LauncherActivity"
             android:clearTaskOnLaunch="true"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
             android:label="@string/App__name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".views.MainActivity"
+            android:clearTaskOnLaunch="true"
+            android:excludeFromRecents="true"
+            android:finishOnTaskLaunch="true"
+            android:label="@string/App__name"></activity>
         <activity
             android:name=".views.FilePhotoFragment"
             android:clearTaskOnLaunch="true"
@@ -86,9 +93,6 @@
             android:name=".views.FilesActivity"
             android:label=""
             android:parentActivityName=".views.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".views.MainActivity" />
         </activity>
     </application>
 
