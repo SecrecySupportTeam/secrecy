@@ -3,7 +3,6 @@ apply plugin: 'android-apt'
 
 repositories {
     mavenCentral()
-    maven { url 'http://download.crashlytics.com/maven' }
 }
 apt {
     arguments {
@@ -34,10 +33,6 @@ android {
 }
 
 dependencies {
-    apt "org.androidannotations:androidannotations:3.1"
-    // add these
-    compile 'org.androidannotations:androidannotations-api:3.1'
-    // two lines
     compile 'commons-io:commons-io:2.4'
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:recyclerview-v7:21.0.3'

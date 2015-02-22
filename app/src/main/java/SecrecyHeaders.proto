@@ -1,4 +1,4 @@
-package com.doplgangr.secrecy.FileSystem.Files; 
+package com.doplgangr.secrecy.filesystem.files;
 
 message VaultHeader {
 	required int32 version = 1;

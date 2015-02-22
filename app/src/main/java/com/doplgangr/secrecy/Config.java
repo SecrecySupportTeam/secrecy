@@ -42,4 +42,12 @@ public class Config {
     public static final String root = "__ROOT__";
     public static final String support_website = "http://secrecy.uservoice.com";
 
+    // PreferenceManager strings
+    public static final String STEALTH_MODE_PASSWORD = "stealth_mode_password";
+    public static final String STEALTH_MODE = "stealth_mode";
+    public static final String SHOW_STEALTH_MODE_TUTORIAL =  "showStealthModeTutorial";
+    public static final String IMAGE_SIZE = "image_size";
+    public static final String VAULT_ROOT = "vault_root";
+    public static final String APP_VERSION_NUMBER = "appVersionNumber";
+    public static final String APP_VERSION_NAME = "appVersionName";
 }

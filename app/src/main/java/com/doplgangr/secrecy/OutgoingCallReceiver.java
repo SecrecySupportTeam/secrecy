@@ -22,19 +22,13 @@ package com.doplgangr.secrecy;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.preference.PreferenceManager;
 import android.support.v4.content.IntentCompat;
 
-import com.doplgangr.secrecy.Premium.StealthMode;
-import com.doplgangr.secrecy.Settings.Prefs_;
-import com.doplgangr.secrecy.Views.MainActivity_;
+import com.doplgangr.secrecy.premium.StealthMode;
+import com.doplgangr.secrecy.views.MainActivity;
 
-import org.androidannotations.annotations.EReceiver;
-import org.androidannotations.annotations.sharedpreferences.Pref;
-
-@EReceiver
 public class OutgoingCallReceiver extends BroadcastReceiver {
-    @Pref
-    Prefs_ Pref;
 
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -42,15 +36,19 @@ public class OutgoingCallReceiver extends BroadcastReceiver {
         // Gets the intent, check if it matches our secret code
         if (Intent.ACTION_NEW_OUTGOING_CALL.equals(intent.getAction()) &&
                 intent.getExtras() != null) {
-            Intent launcher = new Intent(context, MainActivity_.class);
+            Intent launcher = new Intent(context, MainActivity.class);
             //These flags are added to make the new mainActivity in the home stack.
             //i.e. back button returns to home not dialer.
             launcher.addFlags(IntentCompat.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_TASK_ON_HOME);
             String phoneNumber = intent.getExtras().getString(android.content.Intent.EXTRA_PHONE_NUMBER);
-            if (Pref.OpenPIN().exists())
-                if (("*#" + Pref.OpenPIN().get()).equals(phoneNumber))
+            String openPin = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getString(Config.STEALTH_MODE_PASSWORD, "");
+            if (!openPin.equals("")) {
+                if (("*#" + openPin).equals(phoneNumber)) {
                     // Launch the main app!!
                     launchActivity(context, launcher);
+                }
+            }
         }
     }
 

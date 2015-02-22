@@ -48,8 +48,6 @@
     </string-array>
 
     <string name="Settings__libraries_message">
-        AndroidAnnotations (Apache 2.0),
-        \n
         android-support-v4-preferencefragment (Apache 2.0),
         \n
         aFileChooser (Apache 2.0),

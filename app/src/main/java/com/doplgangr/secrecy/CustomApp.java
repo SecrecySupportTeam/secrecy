@@ -24,18 +24,16 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
-import com.doplgangr.secrecy.FileSystem.Encryption.VaultHolder;
-import com.doplgangr.secrecy.FileSystem.Storage;
+import com.doplgangr.secrecy.filesystem.encryption.VaultHolder;
+import com.doplgangr.secrecy.filesystem.Storage;
 import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
 
-import org.androidannotations.annotations.EApplication;
 
 import java.security.Security;
 
 import de.greenrobot.event.EventBus;
 
-@EApplication
 public class CustomApp extends Application {
     public static Context context;
     public static String VERSIONNAME = "";

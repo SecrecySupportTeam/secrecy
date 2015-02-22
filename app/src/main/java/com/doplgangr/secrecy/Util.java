@@ -219,4 +219,21 @@ public class Util {
         }
         return "application/octet-stream";
     }
+
+    public static void loadSelectedImageSize(String imageSize){
+        switch (imageSize) {
+            case "0":
+                Util.log("Setting image size to: " + Config.IMAGE_SIZE_SMALL);
+                Config.selectedImageSize = Config.IMAGE_SIZE_SMALL;
+                break;
+            case "1":
+                Util.log("Setting image size to: " + Config.IMAGE_SIZE_MEDIUM);
+                Config.selectedImageSize = Config.IMAGE_SIZE_MEDIUM;
+                break;
+            case "2":
+                Util.log("Setting image size to: " + Config.IMAGE_SIZE_LARGE);
+                Config.selectedImageSize = Config.IMAGE_SIZE_LARGE;
+                break;
+        }
+    }
 }

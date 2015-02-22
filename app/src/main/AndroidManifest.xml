@@ -12,15 +12,15 @@
         android:required="false" />
 
     <application
-        android:name=".CustomApp_"
+        android:name=".CustomApp"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/App__name"
         android:theme="@style/CustomMaterialTheme">
 
         <provider
-            android:name=".FileSystem.OurFileProvider"
-            android:authorities="com.doplgangr.secrecy.FileSystem.DecryptFileProvider"
+            android:name=".filesystem.OurFileProvider"
+            android:authorities="com.doplgangr.secrecy.filesystem.DecryptFileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -34,13 +34,7 @@
             android:icon="@drawable/ic_launcher"
             android:label="@string/Dialog_header__pick_file" />
         <activity
-            android:name=".Views.MainActivity_"
-            android:clearTaskOnLaunch="true"
-            android:excludeFromRecents="true"
-            android:finishOnTaskLaunch="true"
-            android:label="" />
-        <activity
-            android:name=".Views.FileImportActivity_"
+            android:name=".views.FileImportActivity"
             android:label="@string/Dialog_header__import_files">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -58,51 +52,43 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Views.ChooseFolder"
+            android:name=".views.ChooseFolder"
             android:label="@string/Page_header__choose_folder" />
-        <activity
-            android:name=".Settings.SettingsActivity_"
-            android:label="" />
 
-        <receiver android:name=".OutgoingCallReceiver_">
+        <receiver android:name=".OutgoingCallReceiver">
             <intent-filter android:priority="9999">
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
             </intent-filter>
         </receiver>
-
         <activity
-            android:name=".Views.DummyViews.LauncherActivity_"
+            android:name=".views.MainActivity"
             android:clearTaskOnLaunch="true"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
             android:label="@string/App__name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".Premium.PremiumFragment_"
-            android:label="" />
-        <activity
-            android:name=".Views.FilePhotoFragment_"
+            android:name=".views.FilePhotoFragment"
             android:clearTaskOnLaunch="true"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
             android:label=""
-            android:parentActivityName=".Views.FilesActivity_">
+            android:parentActivityName=".views.FilesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.doplgangr.secrecy.Views.FilesActivity_" />
+                android:value=".views.FilesActivity" />
         </activity>
         <activity
-            android:name=".Views.FilesActivity_"
+            android:name=".views.FilesActivity"
             android:label=""
-            android:parentActivityName=".Views.MainActivity_">
+            android:parentActivityName=".views.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.doplgangr.secrecy.Views.MainActivity_" />
+                android:value=".views.MainActivity" />
         </activity>
     </application>
 

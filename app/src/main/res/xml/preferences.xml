@@ -7,7 +7,8 @@
         <CheckBoxPreference
             android:key="stealth_mode"
             android:summary="@string/Settings__stealth_mode_message"
-            android:title="@string/Settings__stealth_mode" />
+            android:title="@string/Settings__stealth_mode"
+            android:defaultValue="false" />
         <Preference
             android:dependency="stealth_mode"
             android:key="stealth_mode_password"
@@ -21,6 +22,7 @@
             android:key="image_size"
             android:entries="@array/array_image_size_entries"
             android:entryValues="@array/array_image_size_values"
+            android:defaultValue="1"
             android:title="@string/Settings_max_image_size"
         />
     </PreferenceCategory>
@@ -38,16 +40,8 @@
         <CheckBoxPreference
             android:key="vault_sort"
             android:summary="@string/Settings_sort_vault_content_message"
-            android:title="@string/Settings_sort_vault_content" />
-    </PreferenceCategory>
-    <PreferenceCategory
-        android:key="misc"
-        android:title="@string/Settings__misc">
-
-        <CheckBoxPreference
-            android:key="analytics"
-            android:summary="@string/Settings__analytics_message"
-            android:title="@string/Settings__analytics" />
+            android:title="@string/Settings_sort_vault_content"
+            android:defaultValue="true" />
     </PreferenceCategory>
 
     <PreferenceCategory
