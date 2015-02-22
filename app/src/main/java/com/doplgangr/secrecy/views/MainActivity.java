@@ -40,13 +40,13 @@ import android.widget.TextView;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
-import com.doplgangr.secrecy.filesystem.encryption.VaultHolder;
-import com.doplgangr.secrecy.filesystem.Storage;
-import com.doplgangr.secrecy.premium.PremiumFragment;
 import com.doplgangr.secrecy.R;
+import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.filesystem.Storage;
+import com.doplgangr.secrecy.filesystem.encryption.VaultHolder;
+import com.doplgangr.secrecy.premium.PremiumFragment;
 import com.doplgangr.secrecy.settings.SettingsFragment;
 import com.doplgangr.secrecy.updatemanager.UpdateManager;
-import com.doplgangr.secrecy.Util;
 import com.doplgangr.secrecy.views.dummyviews.navdrawer.DrawerLayout;
 import com.doplgangr.secrecy.views.dummyviews.navdrawer.NavItem;
 import com.doplgangr.secrecy.views.dummyviews.navdrawer.NavListView;
@@ -91,7 +91,6 @@ public class MainActivity extends ActionBarActivity implements
         if (PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(Config.SHOW_STEALTH_MODE_TUTORIAL, false)) {
             onFirstLaunch();
-            return;
         }
         PackageInfo pInfo;
         try {
