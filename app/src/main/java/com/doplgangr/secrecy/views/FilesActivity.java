@@ -102,7 +102,6 @@ public class FilesActivity extends ActionBarActivity
 
     @Override
     public void onDestroy() {
-        Storage.deleteTemp(); //Cleanup every time
         EventBus.getDefault().post(new shouldRefresh());
         super.onDestroy();
     }

@@ -110,6 +110,7 @@ public class FilesListFragment extends FileViewer {
         recyclerView = (RecyclerView) view.findViewById(R.id.file_list_recycler_view);
         mTag = (TextView) view.findViewById(R.id.tag);
 
+        linearLayout = new LinearLayoutManager(context);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(linearLayout);
         recyclerView.setAdapter(mAdapter);
@@ -141,19 +142,20 @@ public class FilesListFragment extends FileViewer {
         }
         context.getSupportActionBar().setTitle(vault);
 
-        linearLayout = new LinearLayoutManager(context);
         gridLayout = new GridLayoutManager(context, 3);
         listAdapter = new FilesListAdapter(context, false);
         galleryAdapter = new FilesListAdapter(context, true);
         mAdapter = listAdapter;
 
-        mInitializeDialog = new ProgressDialog(context);
-        mInitializeDialog.setIndeterminate(true);
-        mInitializeDialog.setMessage(context.getString(R.string.Vault__initializing));
-        mInitializeDialog.setCancelable(false);
-        mInitializeDialog.show();
+        if (secret == null) {
+            mInitializeDialog = new ProgressDialog(context);
+            mInitializeDialog.setIndeterminate(true);
+            mInitializeDialog.setMessage(context.getString(R.string.Vault__initializing));
+            mInitializeDialog.setCancelable(false);
+            mInitializeDialog.show();
 
-        CustomApp.jobManager.addJobInBackground(new InitializeVaultJob(vault, password));
+            CustomApp.jobManager.addJobInBackground(new InitializeVaultJob(vault, password));
+        }
     }
 
     @Override
@@ -227,8 +229,9 @@ public class FilesListFragment extends FileViewer {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (frame == null)
+                if (frame == null) {
                     return;
+                }
                 FilesListAdapter.ViewHolder holder = (FilesListAdapter.ViewHolder) frame.getTag();
                 ViewAnimator viewAnimator = holder.animator;
                 viewAnimator.setInAnimation(context, R.anim.slide_down);
