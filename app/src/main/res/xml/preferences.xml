@@ -22,7 +22,7 @@
             android:key="image_size"
             android:entries="@array/array_image_size_entries"
             android:entryValues="@array/array_image_size_values"
-            android:defaultValue="1"
+            android:defaultValue="0"
             android:title="@string/Settings_max_image_size"
         />
     </PreferenceCategory>

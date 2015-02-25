@@ -151,7 +151,7 @@ public class MainActivity extends ActionBarActivity implements
         mDrawerToggle.setDrawerIndicatorEnabled(true);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         Util.loadSelectedImageSize(PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(Config.IMAGE_SIZE, "1"));
+                .getString(Config.IMAGE_SIZE, Config.IMAGE_SIZE_DEFAULT));
         showHelpDeskTutorial();
     }
 
