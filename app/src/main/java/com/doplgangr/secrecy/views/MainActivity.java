@@ -239,21 +239,34 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     void addFragment(final Fragment fragment, int transition1, int transition2) {
-        if (mFragmentNameList.contains(fragment.getClass()))
+        if (mFragmentNameList.contains(fragment.getClass())) {
             mNavigation.setSelectedItem(mFragmentNameList.indexOf(fragment.getClass()));
+        }
         String tag = fragment.getClass().getName();
         FragmentManager manager = getSupportFragmentManager();
-        if (manager.getBackStackEntryCount() > 1) {
-            FragmentManager.BackStackEntry first = manager.getBackStackEntryAt(1);
+        if (manager.getBackStackEntryCount() >= 1) {
+
+            String activeFragmentTag = getSupportFragmentManager()
+                    .getBackStackEntryAt(getSupportFragmentManager()
+                            .getBackStackEntryCount() - 1).getName();
+            Fragment activeFragment =  getSupportFragmentManager()
+                    .findFragmentByTag(activeFragmentTag);
+            // Don't switch fragment if already active
+            if (activeFragment.getClass().equals(fragment.getClass())){
+                return;
+            }
+            //clear all except lowest
+            FragmentManager.BackStackEntry first = manager.getBackStackEntryAt(0);
             manager.popBackStackImmediate(first.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }           //clear all except lowest
+        }
         FragmentTransaction transaction = fragmentManager.beginTransaction()
                 .setCustomAnimations(transition1, transition2)
                 .replace(R.id.content_frame, fragment, tag);
-        if (fragment.getClass() != VaultsListFragment.class)
+        if (fragment.getClass() != VaultsListFragment.class) {
             transaction = transaction
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .addToBackStack(tag);
+        }
         transaction.commit();
     }
 
