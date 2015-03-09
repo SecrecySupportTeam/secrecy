@@ -75,6 +75,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -118,8 +119,9 @@ public class FilesListFragment extends FileViewer {
         recyclerView.setAdapter(mAdapter);
 
         ActionBar ab = ((ActionBarActivity) getActivity()).getSupportActionBar();
-        if (ab != null)
+        if (ab != null) {
             ab.setTitle(vault);
+        }
 
         return view;
     }
@@ -847,6 +849,7 @@ public class FilesListFragment extends FileViewer {
         // Hold a local copy of selected values, because action mode is left before
         // Util.alter runs and thus adapter.getSelected is cleared.
         final HashSet<Integer> selected = new HashSet<Integer>(mAdapter.getSelected());
+        final List<Integer> deleted = new ArrayList<>();
 
         String FilesToDelete = "\n";
         for (final Integer index : selected)
@@ -863,10 +866,12 @@ public class FilesListFragment extends FileViewer {
                             if (mAdapter.hasIndex(index))
                                 if (!mAdapter.getItem(index).getIsDecrypting()) {
                                     secret.deleteFile(mAdapter.getItem(index));
-                                    mAdapter.remove(index);
+                                    deleted.add(index);
                                 } else if (attached)
                                     Util.toast(context, getString(R.string.Error__already_decrypting_delete), Toast.LENGTH_SHORT);
                         }
+                        // Don't modify adapter indices before finished.
+                        mAdapter.remove(deleted);
                     }
                 },
                 new DialogInterface.OnClickListener() {
