@@ -3,6 +3,7 @@ package com.doplgangr.secrecy.fragments;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -27,6 +28,8 @@ import com.doplgangr.secrecy.jobs.ImageLoadJob;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.utils.Util;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import de.greenrobot.event.EventBus;
 import uk.co.senab.photoview.PhotoView;
@@ -61,6 +64,9 @@ public class FilePhotoFragment extends FragmentActivity {
         };
         secret.iterateAllFiles(mListener);
         context = this;
+        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("vault_sort", false)) {
+            adapter.sort();
+        }
 
         int itemNo = extras.getInt(Config.gallery_item_extra);
         if (itemNo < (mViewPager.getAdapter().getCount())) { //check if requested item is in bound
@@ -122,6 +128,15 @@ public class FilePhotoFragment extends FragmentActivity {
                     return; //abort if not images.
             encryptedFiles.add(encryptedFile);
             notifyDataSetChanged();
+        }
+
+        public void sort(){
+            Collections.sort(encryptedFiles, new Comparator<EncryptedFile>() {
+                @Override
+                public int compare(EncryptedFile encryptedFile, EncryptedFile encryptedFile2) {
+                    return encryptedFile.getDecryptedFileName().compareTo(encryptedFile2.getDecryptedFileName());
+                }
+            });
         }
 
         @Override
