@@ -42,7 +42,7 @@ dependencies {
     compile 'de.greenrobot:eventbus:2.2.0'
     compile project(':aFileChooser')
     compile project(':Preferencefragment')
-    compile project(':payme:library')
+    compile project(':payme')
     compile 'com.google.protobuf:protobuf-java:2.6.0'
     compile 'com.madgag.spongycastle:prov:1.51.0.0'
 }

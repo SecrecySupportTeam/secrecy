@@ -1,9 +1,0 @@
-.idea
-*.iml
-target
-bin
-gen
-out
-local.properties
-build.xml
-gen-external-apklibs/
