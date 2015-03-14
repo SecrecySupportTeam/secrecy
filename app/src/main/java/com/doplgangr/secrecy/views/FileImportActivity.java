@@ -1,26 +1,26 @@
 package com.doplgangr.secrecy.views;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.doplgangr.secrecy.CustomApp;
+import com.doplgangr.secrecy.R;
+import com.doplgangr.secrecy.Util;
 import com.doplgangr.secrecy.events.AddingFileDoneEvent;
 import com.doplgangr.secrecy.events.AddingFileEvent;
 import com.doplgangr.secrecy.filesystem.encryption.Vault;
 import com.doplgangr.secrecy.filesystem.encryption.VaultHolder;
 import com.doplgangr.secrecy.jobs.AddFileJob;
-import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.Util;
 
 import java.util.ArrayList;
 
@@ -50,7 +50,7 @@ public class FileImportActivity extends ActionBarActivity
 
         setSupportActionBar(mToolbar);
         FileImportFragment fragment = new FileImportFragment();
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.drawer_layout, fragment, "mainactivitycontent")   //Replace the whole drawer layout
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)

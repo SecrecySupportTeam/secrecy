@@ -19,6 +19,7 @@
 
 package com.doplgangr.secrecy.views;
 
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
@@ -26,7 +27,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,15 +36,15 @@ import android.widget.Toast;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
+import com.doplgangr.secrecy.R;
+import com.doplgangr.secrecy.Util;
 import com.doplgangr.secrecy.filesystem.CryptStateListener;
+import com.doplgangr.secrecy.filesystem.OurFileProvider;
+import com.doplgangr.secrecy.filesystem.Storage;
 import com.doplgangr.secrecy.filesystem.encryption.Vault;
 import com.doplgangr.secrecy.filesystem.files.EncryptedFile;
 import com.doplgangr.secrecy.filesystem.files.SecrecyFile;
-import com.doplgangr.secrecy.filesystem.OurFileProvider;
-import com.doplgangr.secrecy.filesystem.Storage;
 import com.doplgangr.secrecy.jobs.AddFileJob;
-import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.Util;
 
 import java.io.File;
 import java.util.ArrayList;

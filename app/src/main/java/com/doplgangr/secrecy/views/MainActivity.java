@@ -20,6 +20,9 @@
 package com.doplgangr.secrecy.views;
 
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,9 +31,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -85,7 +85,7 @@ public class MainActivity extends ActionBarActivity implements
 
         Storage.deleteTemp();                                           //Start clean
         VaultHolder.getInstance().clear();
-        fragmentManager = getSupportFragmentManager();
+        fragmentManager = getFragmentManager();
         switchFragment(0);
         setSupportActionBar(mToolbar);
         if (PreferenceManager.getDefaultSharedPreferences(context)
@@ -243,21 +243,20 @@ public class MainActivity extends ActionBarActivity implements
             mNavigation.setSelectedItem(mFragmentNameList.indexOf(fragment.getClass()));
         }
         String tag = fragment.getClass().getName();
-        FragmentManager manager = getSupportFragmentManager();
-        if (manager.getBackStackEntryCount() >= 1) {
+        if (fragmentManager.getBackStackEntryCount() >= 1) {
 
-            String activeFragmentTag = getSupportFragmentManager()
-                    .getBackStackEntryAt(getSupportFragmentManager()
+            String activeFragmentTag = fragmentManager
+                    .getBackStackEntryAt(fragmentManager
                             .getBackStackEntryCount() - 1).getName();
-            Fragment activeFragment =  getSupportFragmentManager()
+            Fragment activeFragment =  fragmentManager
                     .findFragmentByTag(activeFragmentTag);
             // Don't switch fragment if already active
             if (activeFragment.getClass().equals(fragment.getClass())){
                 return;
             }
             //clear all except lowest
-            FragmentManager.BackStackEntry first = manager.getBackStackEntryAt(0);
-            manager.popBackStackImmediate(first.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            FragmentManager.BackStackEntry first = fragmentManager.getBackStackEntryAt(0);
+            fragmentManager.popBackStackImmediate(first.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
         FragmentTransaction transaction = fragmentManager.beginTransaction()
                 .setCustomAnimations(transition1, transition2)

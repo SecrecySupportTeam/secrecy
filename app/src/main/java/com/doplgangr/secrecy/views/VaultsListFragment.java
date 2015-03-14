@@ -21,6 +21,7 @@ package com.doplgangr.secrecy.views;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -30,7 +31,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.text.InputType;
@@ -48,15 +48,15 @@ import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.CustomApp;
+import com.doplgangr.secrecy.R;
+import com.doplgangr.secrecy.Util;
 import com.doplgangr.secrecy.events.RestoreDoneEvent;
 import com.doplgangr.secrecy.events.RestoringFileEvent;
+import com.doplgangr.secrecy.filesystem.Storage;
 import com.doplgangr.secrecy.filesystem.encryption.Vault;
 import com.doplgangr.secrecy.filesystem.encryption.VaultHolder;
-import com.doplgangr.secrecy.filesystem.Storage;
 import com.doplgangr.secrecy.jobs.RestoreJob;
-import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.settings.SettingsFragment;
-import com.doplgangr.secrecy.Util;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
