@@ -1,18 +1,16 @@
 repositories {
     mavenCentral()
-    maven { url 'https://raw.github.com/felipecsl/m2repository/master' }
+    jcenter()
 }
 
-android {
 
+android {
     compileSdkVersion 21
     buildToolsVersion '21.1.2'
 
     defaultConfig {
         minSdkVersion 10
         targetSdkVersion 21
-        versionCode 53
-        versionName "0.5.3"
     }
    
     lintOptions {
@@ -29,7 +27,3 @@ android {
         exclude 'META-INF/ASL2.0'
     }
 }
-
-
-
-
