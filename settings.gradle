@@ -1,3 +1,9 @@
-include ':app', ':payme:library'
-include ':aFileChooser'
-include ':Preferencefragment'
+/* Apps*/
+include ':app'
+
+/*Libraries*/
+include':libraries:payme'
+include ':libraries:aFileChooser'
+include ':libraries:Preferencefragment'
+
+/*Modules*/

@@ -11,18 +11,14 @@ buildscript {
 
 apply plugin: 'android-library'
 apply plugin: 'maven'
+apply from: '../../android_commons.gradle'
 
 dependencies {
     compile 'com.android.support:support-v4:21.0.3'
 }
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion '19.1.0'
-    defaultConfig {
-        minSdkVersion 10
-        targetSdkVersion 19
-    }
+
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'

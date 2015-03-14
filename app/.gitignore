@@ -1,0 +1,16 @@
+#Android Studio
+.idea
+*.iml
+*.ipr
+*.iws
+classes
+gen-external-apklibs
+
+#Gradle
+.gradle
+local.properties
+build
+
+#Crashlytics
+/src/main/res/values/com_crashlytics_export_strings.xml
+/src/main/assets/crashlytics-build.properties

@@ -1,38 +1,20 @@
 apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
+apply from: '../android_commons.gradle'
 
-repositories {
-    mavenCentral()
-}
 apt {
     arguments {
         androidManifestFile variant.outputs[0].processResources.manifestFile
         resourcePackageName "com.doplgangr.secrecy"
     }
 }
-android {
-    compileSdkVersion 21
-    buildToolsVersion '21.1.2'
-
-    defaultConfig {
-        applicationId "com.doplgangr.secrecy"
-        minSdkVersion 10
-        targetSdkVersion 21
-        versionCode 53
-        versionName "0.5.3"
-    }
-    buildTypes {
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-    lintOptions {
-        abortOnError false
-    }
-}
 
 dependencies {
+    compile project(':libraries:aFileChooser')
+    compile project(':libraries:Preferencefragment')
+    compile project(':libraries:payme')
+
+
     compile 'commons-io:commons-io:2.4'
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:recyclerview-v7:21.0.3'
@@ -40,16 +22,23 @@ dependencies {
     compile 'com.github.chrisbanes.photoview:library:1.2.3'
     compile 'com.path:android-priority-jobqueue:1.1.2'
     compile 'de.greenrobot:eventbus:2.2.0'
-    compile project(':aFileChooser')
-    compile project(':Preferencefragment')
-    compile project(':payme:library')
     compile 'com.google.protobuf:protobuf-java:2.6.0'
     compile 'com.madgag.spongycastle:prov:1.51.0.0'
 }
 
 android {
-    packagingOptions {
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
+    defaultConfig {
+        applicationId "com.doplgangr.secrecy"
+        versionCode 53
+        versionName "0.5.3"
     }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+
 }
