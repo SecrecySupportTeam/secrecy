@@ -28,8 +28,8 @@ dependencies {
 android {
     defaultConfig {
         applicationId "com.doplgangr.secrecy"
-        versionCode 53
-        versionName "0.5.3"
+        versionCode 60
+        versionName "0.6.0"
     }
 
     buildTypes {

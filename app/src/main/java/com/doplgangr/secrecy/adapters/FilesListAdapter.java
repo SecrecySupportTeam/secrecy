@@ -22,6 +22,7 @@ package com.doplgangr.secrecy.adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
+import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.events.ThumbLoadDoneEvent;
 import com.doplgangr.secrecy.exceptions.SecrecyFileException;
@@ -178,13 +180,25 @@ public class FilesListAdapter extends RecyclerView.Adapter<FilesListAdapter.View
     }
 
     public void sort() {
-        Collections.sort(data, new Comparator<EncryptedFile>() {
-            @Override
-            public int compare(EncryptedFile encryptedFile, EncryptedFile encryptedFile2) {
-                return encryptedFile.getDecryptedFileName().compareTo(encryptedFile2.getDecryptedFileName());
-            }
-        });
-        notifyDataSetChanged();
+        Comparator<EncryptedFile> comparator;
+
+        switch (PreferenceManager.getDefaultSharedPreferences(context).getString(
+                Config.VAULT_SORT, Config.VAULT_SORT_ALPHABETIC)) {
+
+            case Config.VAULT_SORT_ALPHABETIC:
+                comparator = Config.COMPARATOR_ENCRYPTEDFILE_ALPHABETIC;
+                break;
+            case Config.VAULT_SORT_FILETYPE:
+                comparator = Config.COMPARATOR_ENCRYPTEDFILE_FILETYPE;
+                break;
+            default:
+                comparator = null;
+        }
+
+        if (comparator != null) {
+            Collections.sort(data, comparator);
+            notifyDataSetChanged();
+        }
     }
 
     @Override

@@ -404,10 +404,8 @@ public class FilesListFragment extends FileViewer {
             public void run() {
                 listAdapter.add(encryptedFile);
                 galleryAdapter.add(encryptedFile);
-                if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("vault_sort", false)){
-                    listAdapter.sort();
-                    galleryAdapter.sort();
-                }
+                listAdapter.sort();
+                galleryAdapter.sort();
                 mAdapter.notifyDataSetChanged();
             }
         });
@@ -470,9 +468,7 @@ public class FilesListFragment extends FileViewer {
             recyclerView.setLayoutManager(gridLayout);
         } else {
             mAdapter = listAdapter;
-            if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("vault_sort", false)){
-                mAdapter.sort();
-            }
+            mAdapter.sort();
             recyclerView.setLayoutManager(linearLayout);
         }
         recyclerView.setAdapter(mAdapter);
@@ -645,9 +641,7 @@ public class FilesListFragment extends FileViewer {
                     CustomApp.context.getString(R.string.Files__add_successful),
                     Toast.LENGTH_SHORT);
             addToList(event.encryptedFile);
-            if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("vault_sort", false)) {
-                mAdapter.sort();
-            }
+            mAdapter.sort();
             int index = mAdapter.getItemId(event.encryptedFile);
             if (index != -1)
                 recyclerView.smoothScrollToPosition(index);

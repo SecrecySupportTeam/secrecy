@@ -64,9 +64,7 @@ public class FilePhotoFragment extends FragmentActivity {
         };
         secret.iterateAllFiles(mListener);
         context = this;
-        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("vault_sort", false)) {
-            adapter.sort();
-        }
+        adapter.sort();
 
         int itemNo = extras.getInt(Config.gallery_item_extra);
         if (itemNo < (mViewPager.getAdapter().getCount())) { //check if requested item is in bound
@@ -131,12 +129,24 @@ public class FilePhotoFragment extends FragmentActivity {
         }
 
         public void sort(){
-            Collections.sort(encryptedFiles, new Comparator<EncryptedFile>() {
-                @Override
-                public int compare(EncryptedFile encryptedFile, EncryptedFile encryptedFile2) {
-                    return encryptedFile.getDecryptedFileName().compareTo(encryptedFile2.getDecryptedFileName());
-                }
-            });
+            Comparator<EncryptedFile> comparator;
+
+            switch (PreferenceManager.getDefaultSharedPreferences(context).getString(
+                    Config.VAULT_SORT, Config.VAULT_SORT_ALPHABETIC)) {
+
+                case Config.VAULT_SORT_ALPHABETIC:
+                   comparator = Config.COMPARATOR_ENCRYPTEDFILE_ALPHABETIC;
+                    break;
+                case Config.VAULT_SORT_FILETYPE:
+                    comparator = Config.COMPARATOR_ENCRYPTEDFILE_FILETYPE;
+                    break;
+                default:
+                    comparator = null;
+            }
+
+            if (comparator != null) {
+                Collections.sort(encryptedFiles, comparator);
+            }
         }
 
         @Override

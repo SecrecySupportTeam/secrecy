@@ -5,4 +5,8 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+    <string-array name="array_vault_sort_values">
+        <item>ALPHABETIC</item>
+        <item>FILETYPE</item>
+    </string-array>
 </resources>

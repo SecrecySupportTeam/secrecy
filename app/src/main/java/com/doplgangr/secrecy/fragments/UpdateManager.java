@@ -167,8 +167,10 @@ public class UpdateManager extends Fragment {
 
         // Switches between different upgrades, based on last app version.
         switch (version) {
+            case 53:
+                version53to60();
             case 32:
-                version32to40();
+                version32to53();
             case 31:
                 version31to32();
                 break;
@@ -243,7 +245,16 @@ public class UpdateManager extends Fragment {
         appendlog(getString(R.string.Updater__updating));
     }
 
-    void version32to40() {
+    void version53to60(){
+        SharedPreferences.Editor editor =
+                PreferenceManager.getDefaultSharedPreferences(context).edit();
+        editor.remove(Config.VAULT_SORT);
+        editor.apply();
+        appendlog("Replacing preference \"" + Config.VAULT_SORT + "\"");
+        onFinishAllUpgrade();
+    }
+
+    void version32to53() {
         Collection folders = FileUtils.listFilesAndDirs(Storage.getRoot(), FalseFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
         for (Object folderObject : folders) { //Search for dirs in root
             File folder = (File) folderObject;
@@ -270,12 +281,12 @@ public class UpdateManager extends Fragment {
                 }
             }
         }
-        onFinishAllUpgrade();
+        version53to60();
     }
 
     void version31to32() {
         //Nahh
-        version32to40();
+        version32to53();
     }
 
     void version30to31() {
