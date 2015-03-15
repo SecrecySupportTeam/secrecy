@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy.views.dummyviews;
+package com.doplgangr.secrecy.views;
 
 import android.content.Intent;
 import android.os.Bundle;

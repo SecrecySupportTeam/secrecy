@@ -61,7 +61,7 @@
             </intent-filter>
         </receiver>
         <activity
-            android:name=".views.dummyviews.LauncherActivity"
+            android:name=".views.LauncherActivity"
             android:clearTaskOnLaunch="true"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"

@@ -49,7 +49,7 @@
                 android:background="@drawable/circle"
                 android:gravity="center">
 
-                <com.doplgangr.secrecy.views.dummyviews.CircularImageView
+                <com.doplgangr.secrecy.views.CircularImageView
                     android:id="@+id/thumbNail"
                     android:layout_width="@dimen/list_item_avatar_size"
                     android:layout_height="@dimen/list_item_avatar_size"

@@ -4,7 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
 
-import com.doplgangr.secrecy.views.dummyviews.LauncherActivity;
+import com.doplgangr.secrecy.views.LauncherActivity;
 
 /**
  * Created by matthew on 8/28/14.

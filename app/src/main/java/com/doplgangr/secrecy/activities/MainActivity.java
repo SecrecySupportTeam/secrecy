@@ -48,9 +48,9 @@ import com.doplgangr.secrecy.premium.PremiumFragment;
 import com.doplgangr.secrecy.settings.SettingsFragment;
 import com.doplgangr.secrecy.updatemanager.UpdateManager;
 import com.doplgangr.secrecy.adapters.VaultsListFragment;
-import com.doplgangr.secrecy.views.dummyviews.navdrawer.DrawerLayout;
-import com.doplgangr.secrecy.views.dummyviews.navdrawer.NavItem;
-import com.doplgangr.secrecy.views.dummyviews.navdrawer.NavListView;
+import com.doplgangr.secrecy.views.navdrawer.DrawerLayout;
+import com.doplgangr.secrecy.views.navdrawer.NavItem;
+import com.doplgangr.secrecy.views.navdrawer.NavListView;
 
 import java.util.ArrayList;
 import java.util.List;
