@@ -1,18 +1,21 @@
 package com.doplgangr.secrecy.views;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.WindowManager;
 
 import com.doplgangr.secrecy.Config;
-import com.doplgangr.secrecy.filesystem.Storage;
 import com.doplgangr.secrecy.R;
 
 import de.greenrobot.event.EventBus;
+
+//import android.support.v4.app.Fragment;
+//import android.support.v4.app.FragmentManager;
+//import android.support.v4.app.FragmentTransaction;
 
 public class FilesActivity extends ActionBarActivity
         implements
@@ -33,7 +36,7 @@ public class FilesActivity extends ActionBarActivity
         String password = extras.getString(Config.password_extra);
 
         overridePendingTransition(R.anim.slide_in_right, R.anim.fadeout);
-        fragmentManager = getSupportFragmentManager();
+        fragmentManager = getFragmentManager();
         if (fragmentManager.findFragmentByTag(FilesListFragment.class.getName()) == null) {
             FilesListFragment fragment = new FilesListFragment();
             Bundle bundle = new Bundle();

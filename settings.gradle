@@ -4,6 +4,5 @@ include ':app'
 /*Libraries*/
 include':libraries:payme'
 include ':libraries:aFileChooser'
-include ':libraries:Preferencefragment'
 
 /*Modules*/
