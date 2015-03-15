@@ -1,4 +1,4 @@
-package com.doplgangr.secrecy.views;
+package com.doplgangr.secrecy.fragments;
 
 import android.app.Activity;
 import android.content.DialogInterface;

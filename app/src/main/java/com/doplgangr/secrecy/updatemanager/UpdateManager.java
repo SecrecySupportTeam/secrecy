@@ -40,7 +40,7 @@ import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
 import com.doplgangr.secrecy.filesystem.Base64Coder;
 import com.doplgangr.secrecy.filesystem.Storage;
-import com.doplgangr.secrecy.views.VaultsListFragment;
+import com.doplgangr.secrecy.adapters.VaultsListFragment;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;

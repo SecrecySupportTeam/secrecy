@@ -1,4 +1,4 @@
-package com.doplgangr.secrecy;
+package com.doplgangr.secrecy.utils;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

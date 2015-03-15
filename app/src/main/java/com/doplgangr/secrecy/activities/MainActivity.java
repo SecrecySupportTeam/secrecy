@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy.views;
+package com.doplgangr.secrecy.activities;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -47,6 +47,7 @@ import com.doplgangr.secrecy.filesystem.encryption.VaultHolder;
 import com.doplgangr.secrecy.premium.PremiumFragment;
 import com.doplgangr.secrecy.settings.SettingsFragment;
 import com.doplgangr.secrecy.updatemanager.UpdateManager;
+import com.doplgangr.secrecy.adapters.VaultsListFragment;
 import com.doplgangr.secrecy.views.dummyviews.navdrawer.DrawerLayout;
 import com.doplgangr.secrecy.views.dummyviews.navdrawer.NavItem;
 import com.doplgangr.secrecy.views.dummyviews.navdrawer.NavListView;

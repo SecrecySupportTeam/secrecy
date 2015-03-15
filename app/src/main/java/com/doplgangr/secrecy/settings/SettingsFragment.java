@@ -54,7 +54,7 @@ import com.doplgangr.secrecy.filesystem.Storage;
 import com.doplgangr.secrecy.premium.PremiumFragment;
 import com.doplgangr.secrecy.premium.PremiumStateHelper;
 import com.doplgangr.secrecy.premium.StealthMode;
-import com.doplgangr.secrecy.views.VaultsListFragment;
+import com.doplgangr.secrecy.adapters.VaultsListFragment;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 

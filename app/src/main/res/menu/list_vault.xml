@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.doplgangr.secrecy.views.VaultsListFragment">
+    tools:context="com.doplgangr.secrecy.adapters.VaultsListFragment">
 
     <item
         android:id="@+id/action_add_vault"

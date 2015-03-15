@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy.views;
+package com.doplgangr.secrecy.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;

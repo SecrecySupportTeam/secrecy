@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy.views;
+package com.doplgangr.secrecy.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -52,6 +52,7 @@ import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
+import com.doplgangr.secrecy.activities.FilesActivity;
 import com.doplgangr.secrecy.events.AddingFileDoneEvent;
 import com.doplgangr.secrecy.events.AddingFileEvent;
 import com.doplgangr.secrecy.events.BackUpDoneEvent;
@@ -65,6 +66,7 @@ import com.doplgangr.secrecy.jobs.BackupJob;
 import com.doplgangr.secrecy.jobs.InitializeVaultJob;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.adapters.FilesListAdapter;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 
 import java.io.File;

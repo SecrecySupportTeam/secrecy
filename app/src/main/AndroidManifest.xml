@@ -34,7 +34,7 @@
             android:icon="@drawable/ic_launcher"
             android:label="@string/Dialog_header__pick_file" />
         <activity
-            android:name=".views.FileImportActivity"
+            android:name=".activities.FileImportActivity"
             android:label="@string/Dialog_header__import_files">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -52,7 +52,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".views.ChooseFolder"
+            android:name=".activities.ChooseFolder"
             android:label="@string/Page_header__choose_folder" />
 
         <receiver android:name=".OutgoingCallReceiver">
@@ -73,26 +73,26 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".views.MainActivity"
+            android:name=".activities.MainActivity"
             android:clearTaskOnLaunch="true"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
             android:label="@string/App__name"></activity>
         <activity
-            android:name=".views.FilePhotoFragment"
+            android:name=".fragments.FilePhotoFragment"
             android:clearTaskOnLaunch="true"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
             android:label=""
-            android:parentActivityName=".views.FilesActivity">
+            android:parentActivityName=".activities.FilesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".views.FilesActivity" />
+                android:value=".activities.FilesActivity" />
         </activity>
         <activity
-            android:name=".views.FilesActivity"
+            android:name=".activities.FilesActivity"
             android:label=""
-            android:parentActivityName=".views.MainActivity">
+            android:parentActivityName=".activities.MainActivity">
         </activity>
     </application>
 

@@ -1,4 +1,4 @@
-package com.doplgangr.secrecy.views;
+package com.doplgangr.secrecy.activities;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -10,6 +10,8 @@ import android.view.WindowManager;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.R;
+import com.doplgangr.secrecy.fragments.FilesListFragment;
+import com.doplgangr.secrecy.adapters.VaultsListFragment;
 
 import de.greenrobot.event.EventBus;
 
@@ -113,16 +115,16 @@ public class FilesActivity extends ActionBarActivity
         static Boolean pause = true;
 
         // An activity is started, should not pause and kill this fragment.
-        static void startActivity() {
+        public static void startActivity() {
             pause = false;
         }
 
         // Fragment returns to top, allow it to be paused and killed.
-        static void finishActivity() {
+        public static void finishActivity() {
             pause = true;
         }
 
-        static Boolean shouldFinish() {
+        public static Boolean shouldFinish() {
             return pause;
         }
     }
