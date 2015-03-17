@@ -187,6 +187,7 @@ public class FilePhotoFragment extends FragmentActivity {
                 if (imageLoadJob != null) {
                     imageLoadJob.setObsolet(true);
                 }
+                getActivity().finish();
             }
 
             @Override
