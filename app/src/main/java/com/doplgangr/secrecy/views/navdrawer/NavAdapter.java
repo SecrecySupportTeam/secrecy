@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
 
 import java.util.ArrayList;
 

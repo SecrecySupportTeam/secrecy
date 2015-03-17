@@ -65,7 +65,7 @@ import com.doplgangr.secrecy.filesystem.Storage;
 import com.doplgangr.secrecy.jobs.BackupJob;
 import com.doplgangr.secrecy.jobs.InitializeVaultJob;
 import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
 import com.doplgangr.secrecy.adapters.FilesListAdapter;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 

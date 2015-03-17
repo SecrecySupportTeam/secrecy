@@ -49,7 +49,7 @@ import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
 import com.doplgangr.secrecy.activities.FilesActivity;
 import com.doplgangr.secrecy.events.RestoreDoneEvent;
 import com.doplgangr.secrecy.events.RestoringFileEvent;
@@ -57,7 +57,7 @@ import com.doplgangr.secrecy.filesystem.Storage;
 import com.doplgangr.secrecy.filesystem.encryption.Vault;
 import com.doplgangr.secrecy.filesystem.encryption.VaultHolder;
 import com.doplgangr.secrecy.jobs.RestoreJob;
-import com.doplgangr.secrecy.settings.SettingsFragment;
+import com.doplgangr.secrecy.fragments.SettingsFragment;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 

@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
 import com.doplgangr.secrecy.events.AddingFileDoneEvent;
 import com.doplgangr.secrecy.events.AddingFileEvent;
 import com.doplgangr.secrecy.filesystem.encryption.Vault;

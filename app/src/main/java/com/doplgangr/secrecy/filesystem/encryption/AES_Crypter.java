@@ -26,7 +26,7 @@ import com.doplgangr.secrecy.filesystem.files.EncryptedFile;
 import com.doplgangr.secrecy.filesystem.files.SecrecyHeaders.FileHeader;
 import com.doplgangr.secrecy.filesystem.files.SecrecyHeaders.VaultHeader;
 import com.doplgangr.secrecy.filesystem.Storage;
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
 import com.google.protobuf.ByteString;
 
 import java.io.BufferedOutputStream;

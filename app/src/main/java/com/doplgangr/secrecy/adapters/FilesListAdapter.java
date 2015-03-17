@@ -37,7 +37,7 @@ import com.doplgangr.secrecy.events.ThumbLoadDoneEvent;
 import com.doplgangr.secrecy.exceptions.SecrecyFileException;
 import com.doplgangr.secrecy.filesystem.files.EncryptedFile;
 import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
 
 import java.util.ArrayList;
 import java.util.Collections;

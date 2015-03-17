@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.doplgangr.secrecy.premium;
+package com.doplgangr.secrecy.fragments;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -28,7 +28,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 
 import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
 import com.github.jberkel.pay.me.IabHelper;
 import com.github.jberkel.pay.me.IabResult;
 import com.github.jberkel.pay.me.listener.OnIabPurchaseFinishedListener;

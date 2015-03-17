@@ -8,7 +8,7 @@ import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.events.ImageLoadDoneEvent;
 import com.doplgangr.secrecy.filesystem.encryption.SecrecyCipherInputStream;
 import com.doplgangr.secrecy.filesystem.files.EncryptedFile;
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 

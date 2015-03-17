@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy.updatemanager;
+package com.doplgangr.secrecy.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -37,7 +37,7 @@ import android.widget.TextView;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
 import com.doplgangr.secrecy.filesystem.Base64Coder;
 import com.doplgangr.secrecy.filesystem.Storage;
 import com.doplgangr.secrecy.adapters.VaultsListFragment;

@@ -27,7 +27,7 @@ import com.doplgangr.secrecy.filesystem.CryptStateListener;
 import com.doplgangr.secrecy.filesystem.encryption.Crypter;
 import com.doplgangr.secrecy.filesystem.encryption.SecrecyCipherInputStream;
 import com.doplgangr.secrecy.filesystem.Storage;
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
 
 import java.io.BufferedOutputStream;
 import java.io.File;

@@ -31,7 +31,7 @@ import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.filesystem.encryption.SecrecyCipherInputStream;
 import com.doplgangr.secrecy.jobs.DeleteFileJob;
 import com.doplgangr.secrecy.jobs.ShredFileJob;
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;

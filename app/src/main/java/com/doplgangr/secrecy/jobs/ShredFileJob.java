@@ -1,6 +1,6 @@
 package com.doplgangr.secrecy.jobs;
 
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
