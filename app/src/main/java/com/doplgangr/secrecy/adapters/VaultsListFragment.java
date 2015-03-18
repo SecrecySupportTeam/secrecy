@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy.views;
+package com.doplgangr.secrecy.adapters;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -49,14 +49,15 @@ import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
+import com.doplgangr.secrecy.activities.FilesActivity;
 import com.doplgangr.secrecy.events.RestoreDoneEvent;
 import com.doplgangr.secrecy.events.RestoringFileEvent;
 import com.doplgangr.secrecy.filesystem.Storage;
 import com.doplgangr.secrecy.filesystem.encryption.Vault;
 import com.doplgangr.secrecy.filesystem.encryption.VaultHolder;
 import com.doplgangr.secrecy.jobs.RestoreJob;
-import com.doplgangr.secrecy.settings.SettingsFragment;
+import com.doplgangr.secrecy.fragments.SettingsFragment;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
@@ -73,7 +74,7 @@ public class VaultsListFragment extends Fragment {
     private ScrollView mScrollView;
     private View nothing;
     private ActionBarActivity context;
-    VaultsAdapter adapter;
+    private VaultsAdapter adapter;
     private OnVaultSelectedListener mOnVaultSelected;
     private OnFragmentFinishListener mFinishListener;
     private NotificationManager mNotifyManager;
@@ -167,6 +168,10 @@ public class VaultsListFragment extends Fragment {
         EventBus.getDefault().unregister(this);
     }
 
+    public VaultsAdapter getAdapter() {
+        return adapter;
+    }
+
     private void refresh(){
         VaultHolder.getInstance().clear();
         loadVaultList();
@@ -201,7 +206,7 @@ public class VaultsListFragment extends Fragment {
         refresh();
     }
 
-    void setClickListener(final View mView, final int i) {
+    public void setClickListener(final View mView, final int i) {
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -406,7 +411,7 @@ public class VaultsListFragment extends Fragment {
         mNotifyManager.notify(REQUESTCODE, mBuilder.build());
     }
 
-    void open(final String vault, final View mView, final int i) {
+    public void open(final String vault, final View mView, final int i) {
         // vault name
         // View of lisitem
         // position of listitem in list

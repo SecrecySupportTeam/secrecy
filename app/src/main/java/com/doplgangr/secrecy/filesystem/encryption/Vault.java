@@ -27,7 +27,7 @@ import com.doplgangr.secrecy.filesystem.CryptStateListener;
 import com.doplgangr.secrecy.filesystem.files.EncryptedFile;
 import com.doplgangr.secrecy.filesystem.files.EncryptedFileFactory;
 import com.doplgangr.secrecy.filesystem.Storage;
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import java.io.File;

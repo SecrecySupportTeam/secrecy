@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy.views;
+package com.doplgangr.secrecy.fragments;
 
 import android.app.Fragment;
 import android.content.DialogInterface;
@@ -37,7 +37,8 @@ import android.widget.Toast;
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
+import com.doplgangr.secrecy.activities.FilesActivity;
 import com.doplgangr.secrecy.filesystem.CryptStateListener;
 import com.doplgangr.secrecy.filesystem.OurFileProvider;
 import com.doplgangr.secrecy.filesystem.Storage;

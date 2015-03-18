@@ -1,4 +1,4 @@
-package com.doplgangr.secrecy.views.dummyviews.navdrawer;
+package com.doplgangr.secrecy.views.navdrawer;
 
 /**
  * Created by matthew on 9/18/14.

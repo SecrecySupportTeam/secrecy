@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy;
+package com.doplgangr.secrecy.utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -31,6 +31,10 @@ import android.os.Looper;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
+
+import com.doplgangr.secrecy.Config;
+import com.doplgangr.secrecy.CustomApp;
+import com.doplgangr.secrecy.R;
 
 import java.io.File;
 import java.util.ArrayList;

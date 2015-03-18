@@ -36,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.doplgangr.secrecy.views.dummyviews.SquareImageView
+            <com.doplgangr.secrecy.views.SquareImageView
                 android:id="@+id/thumbNail"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

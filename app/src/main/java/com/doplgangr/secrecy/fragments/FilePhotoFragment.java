@@ -1,4 +1,4 @@
-package com.doplgangr.secrecy.views;
+package com.doplgangr.secrecy.fragments;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -25,7 +25,7 @@ import com.doplgangr.secrecy.filesystem.files.EncryptedFile;
 import com.doplgangr.secrecy.filesystem.encryption.Vault;
 import com.doplgangr.secrecy.jobs.ImageLoadJob;
 import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
 import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;

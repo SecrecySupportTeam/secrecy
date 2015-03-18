@@ -1,4 +1,4 @@
-package com.doplgangr.secrecy.views.dummyviews;
+package com.doplgangr.secrecy.views;
 
 import android.content.Context;
 import android.util.AttributeSet;

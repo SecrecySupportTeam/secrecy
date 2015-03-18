@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy.views;
+package com.doplgangr.secrecy.activities;
 
 import android.content.Intent;
 import android.os.Bundle;

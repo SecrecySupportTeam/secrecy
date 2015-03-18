@@ -1,4 +1,4 @@
-package com.doplgangr.secrecy.views;
+package com.doplgangr.secrecy.activities;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -15,12 +15,14 @@ import android.widget.Toast;
 
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
 import com.doplgangr.secrecy.events.AddingFileDoneEvent;
 import com.doplgangr.secrecy.events.AddingFileEvent;
 import com.doplgangr.secrecy.filesystem.encryption.Vault;
 import com.doplgangr.secrecy.filesystem.encryption.VaultHolder;
 import com.doplgangr.secrecy.jobs.AddFileJob;
+import com.doplgangr.secrecy.fragments.FileImportFragment;
+import com.doplgangr.secrecy.adapters.VaultsListFragment;
 
 import java.util.ArrayList;
 

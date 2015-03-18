@@ -22,7 +22,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/activity_bg"
-    tools:context="com.doplgangr.secrecy.updatemanager.UpdateManager">
+    tools:context="com.doplgangr.secrecy.fragments.UpdateManager">
 
     <RelativeLayout
         android:layout_width="fill_parent"

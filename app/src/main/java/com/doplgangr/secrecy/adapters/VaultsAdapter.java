@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy.views;
+package com.doplgangr.secrecy.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -31,7 +31,7 @@ import com.doplgangr.secrecy.R;
 import java.util.ArrayList;
 import java.util.Collections;
 
-class VaultsAdapter extends BaseAdapter {
+public class VaultsAdapter extends BaseAdapter {
     // store the context (as an inflated layout)
     private final LayoutInflater inflater;
     // store the resource (typically file_item.xml)

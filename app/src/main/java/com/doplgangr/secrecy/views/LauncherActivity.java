@@ -1,5 +1,3 @@
-package com.doplgangr.secrecy;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -19,27 +17,21 @@ package com.doplgangr.secrecy;
  * under the License.
  */
 
-import android.content.Context;
+package com.doplgangr.secrecy.views;
 
-import com.path.android.jobqueue.network.NetworkEventProvider;
-import com.path.android.jobqueue.network.NetworkUtil;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 
-/**
- * Modified implementation for network Utility to NOT observe network events.
- * <p/>
- * Created so that the app does not require the use of network status permission.
- */
-public class NetworkUtilImpl implements NetworkUtil, NetworkEventProvider {
-    public NetworkUtilImpl(Context context) {
-    }
+import com.doplgangr.secrecy.activities.MainActivity;
+
+public class LauncherActivity extends ActionBarActivity {
 
     @Override
-    public boolean isConnected(Context context) {
-        return false;   //Do not bother the network status since we always do offline work.
-    }
-
-    @Override
-    public void setListener(Listener listener) {
-        //OK. nothing to do.
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Intent launcher = new Intent(this, MainActivity.class);
+        startActivity(launcher);
+        finish();
     }
 }

@@ -1,4 +1,4 @@
-package com.doplgangr.secrecy.views.dummyviews.navdrawer;
+package com.doplgangr.secrecy.views.navdrawer;
 
 import android.content.Context;
 import android.graphics.ColorFilter;
@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
 
 import java.util.ArrayList;
 

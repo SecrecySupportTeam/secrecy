@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy.views;
+package com.doplgangr.secrecy.fragments;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.doplgangr.secrecy.R;
+import com.doplgangr.secrecy.adapters.VaultsListFragment;
 
 public class FileImportFragment extends VaultsListFragment {
     private ProgressBar addFilepBar;
@@ -49,7 +50,7 @@ public class FileImportFragment extends VaultsListFragment {
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                open(adapter.getItem(i), mView, i);
+                open(getAdapter().getItem(i), mView, i);
 
                 addFilepBar.setVisibility(View.VISIBLE);
             }

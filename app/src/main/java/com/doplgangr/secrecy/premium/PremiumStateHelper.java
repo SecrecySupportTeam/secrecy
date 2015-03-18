@@ -2,7 +2,7 @@ package com.doplgangr.secrecy.premium;
 
 import android.app.Activity;
 
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
 import com.github.jberkel.pay.me.IabHelper;
 import com.github.jberkel.pay.me.IabResult;
 import com.github.jberkel.pay.me.listener.OnIabSetupFinishedListener;

@@ -29,7 +29,7 @@ import com.doplgangr.secrecy.exceptions.SecrecyFileException;
 import com.doplgangr.secrecy.filesystem.encryption.Crypter;
 import com.doplgangr.secrecy.filesystem.encryption.Vault;
 import com.doplgangr.secrecy.filesystem.Storage;
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
 
 import java.io.BufferedInputStream;
 import java.io.File;

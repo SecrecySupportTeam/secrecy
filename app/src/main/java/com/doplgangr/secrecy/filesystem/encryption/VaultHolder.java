@@ -19,7 +19,7 @@
 
 package com.doplgangr.secrecy.filesystem.encryption;
 
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
 
 public class VaultHolder {
 

@@ -4,7 +4,7 @@ import android.os.ParcelFileDescriptor;
 import android.os.SystemClock;
 
 import com.doplgangr.secrecy.filesystem.Storage;
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 

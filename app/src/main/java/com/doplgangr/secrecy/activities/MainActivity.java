@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.doplgangr.secrecy.views;
+package com.doplgangr.secrecy.activities;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -41,15 +41,16 @@ import android.widget.TextView;
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.Util;
+import com.doplgangr.secrecy.utils.Util;
 import com.doplgangr.secrecy.filesystem.Storage;
 import com.doplgangr.secrecy.filesystem.encryption.VaultHolder;
-import com.doplgangr.secrecy.premium.PremiumFragment;
-import com.doplgangr.secrecy.settings.SettingsFragment;
-import com.doplgangr.secrecy.updatemanager.UpdateManager;
-import com.doplgangr.secrecy.views.dummyviews.navdrawer.DrawerLayout;
-import com.doplgangr.secrecy.views.dummyviews.navdrawer.NavItem;
-import com.doplgangr.secrecy.views.dummyviews.navdrawer.NavListView;
+import com.doplgangr.secrecy.fragments.PremiumFragment;
+import com.doplgangr.secrecy.fragments.SettingsFragment;
+import com.doplgangr.secrecy.fragments.UpdateManager;
+import com.doplgangr.secrecy.adapters.VaultsListFragment;
+import com.doplgangr.secrecy.views.navdrawer.DrawerLayout;
+import com.doplgangr.secrecy.views.navdrawer.NavItem;
+import com.doplgangr.secrecy.views.navdrawer.NavListView;
 
 import java.util.ArrayList;
 import java.util.List;

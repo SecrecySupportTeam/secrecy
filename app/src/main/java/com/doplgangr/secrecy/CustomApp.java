@@ -26,6 +26,7 @@ import android.content.pm.PackageManager;
 
 import com.doplgangr.secrecy.filesystem.encryption.VaultHolder;
 import com.doplgangr.secrecy.filesystem.Storage;
+import com.doplgangr.secrecy.utils.NetworkUtilImpl;
 import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
 
