@@ -35,7 +35,7 @@ public class FileImportFragment extends VaultsListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_list_vault, container, false);
+        View view = super.onCreateView(inflater, container, savedInstanceState);
         addFilepBar = (ProgressBar) view.findViewById(R.id.progressBar);
 
         ActionBar ab = ((ActionBarActivity) getActivity()).getSupportActionBar();
