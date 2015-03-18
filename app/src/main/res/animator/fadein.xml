@@ -1,0 +1,7 @@
+<objectAnimator  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="@android:integer/config_mediumAnimTime"
+    android:valueFrom="0.0"
+    android:interpolator="@android:anim/accelerate_interpolator"
+    android:valueTo="1.0"
+    android:propertyName="alpha"
+    android:zAdjustment="bottom" />
