@@ -404,6 +404,7 @@ public class FilesListFragment extends FileViewer {
                 galleryAdapter.add(encryptedFile);
                 if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("vault_sort", false)){
                     listAdapter.sort();
+                    galleryAdapter.sort();
                 }
                 mAdapter.notifyDataSetChanged();
             }
