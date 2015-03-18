@@ -73,6 +73,12 @@ public class FilePhotoFragment extends FragmentActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
+    }
+
+    @Override
     public void onDestroy(){
         super.onDestroy();
         EventBus.getDefault().unregister(this);
@@ -212,7 +218,6 @@ public class FilePhotoFragment extends FragmentActivity {
                 if (imageLoadJob != null) {
                     imageLoadJob.setObsolet(true);
                 }
-                getActivity().finish();
             }
 
             @Override
