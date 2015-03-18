@@ -29,6 +29,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
@@ -86,6 +87,7 @@ public class VaultsListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
@@ -148,6 +150,7 @@ public class VaultsListFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.list_vault, menu);
     }
 
@@ -306,22 +309,27 @@ public class VaultsListFragment extends Fragment {
     void createVaultInBackground(final String name, final String password,
                                  final File directory, final DialogInterface dialog,
                                  final ProgressDialog progressDialog) {
-        new Thread(new Runnable() {
+        new AsyncTask<Void, Void, Void>(){
             @Override
-            public void run() {
+            protected Void doInBackground(Void... voids) {
                 VaultHolder.getInstance().createAndRetrieveVault(name, password);
                 try {
                     File file = new File(directory + "/.nomedia");
                     file.delete();
                     file.createNewFile();
-                    refresh();
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                return null;
+            }
+            @Override
+            protected void onPostExecute(Void v) {
+                refresh();
                 dialog.dismiss();
                 progressDialog.dismiss();
             }
-        }).start();
+        }.execute();
     }
 
     void passwordWrong() {
