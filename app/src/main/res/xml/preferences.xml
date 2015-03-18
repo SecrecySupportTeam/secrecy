@@ -37,11 +37,12 @@
             android:key="vault_move"
             android:summary="@string/Settings__move_all_vaults_message"
             android:title="@string/Settings__move_all_vaults" />
-        <CheckBoxPreference
+        <ListPreference
             android:key="vault_sort"
-            android:summary="@string/Settings_sort_vault_content_message"
-            android:title="@string/Settings_sort_vault_content"
-            android:defaultValue="true" />
+            android:entries="@array/array_vault_sort_entries"
+            android:entryValues="@array/array_vault_sort_values"
+            android:defaultValue="ALPHABETIC"
+            android:title="@string/Settings_sort_vault_content" />
     </PreferenceCategory>
 
     <PreferenceCategory

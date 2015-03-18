@@ -19,6 +19,10 @@
 
 package com.doplgangr.secrecy;
 
+import com.doplgangr.secrecy.filesystem.files.EncryptedFile;
+
+import java.util.Comparator;
+
 public class Config {
     public static final int BLOCK_SIZE = 4096;
     public static final int BUFFER_SIZE = BLOCK_SIZE * 10;
@@ -49,6 +53,28 @@ public class Config {
     public static final String IMAGE_SIZE = "image_size";
     public static final String IMAGE_SIZE_DEFAULT = "0";
     public static final String VAULT_ROOT = "vault_root";
+    public static final String VAULT_SORT = "vault_sort";
+    public static final String VAULT_SORT_ALPHABETIC = "ALPHABETIC";
+    public static final String VAULT_SORT_FILETYPE = "FILETYPE";
     public static final String APP_VERSION_NUMBER = "appVersionNumber";
     public static final String APP_VERSION_NAME = "appVersionName";
+
+    public static final Comparator<EncryptedFile> COMPARATOR_ENCRYPTEDFILE_ALPHABETIC = new Comparator<EncryptedFile>() {
+        @Override
+        public int compare(EncryptedFile encryptedFile, EncryptedFile encryptedFile2) {
+            return encryptedFile.getDecryptedFileName().compareToIgnoreCase(encryptedFile2.getDecryptedFileName());
+        }
+    };
+
+    public static final Comparator<EncryptedFile> COMPARATOR_ENCRYPTEDFILE_FILETYPE = new Comparator<EncryptedFile>() {
+        // Orders same files with the same type in alphabetic order
+        @Override
+        public int compare(EncryptedFile encryptedFile, EncryptedFile encryptedFile2) {
+            int compare = encryptedFile.getFileExtension().compareToIgnoreCase(encryptedFile2.getFileExtension());
+            if (compare == 0) {
+                return encryptedFile.getDecryptedFileName().compareToIgnoreCase(encryptedFile2.getDecryptedFileName());
+            }
+            return compare;
+        }
+    };
 }

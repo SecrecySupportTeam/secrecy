@@ -72,7 +72,6 @@ En faisant un don, vous pourrez profiter des nombreuses fonctions plus avancées
     <string name="Settings_max_image_size">Taille d\'image maximale</string>
     <string name="Settings__performance">Performance</string>
     <string name="Settings_sort_vault_content">Les fichiers de la vue Liste sont triés par ordre alphabétique</string>
-    <string name="Settings_sort_vault_content_message">Trier mes Coffres-forts en vue Liste</string>
     <string-array name="array_image_size_entries">
         <item>Petite</item>
         <item>Moyenne</item>
