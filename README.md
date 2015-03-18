@@ -15,6 +15,7 @@ I am aiming to produce an all-rounded one that maximizes security but still ensu
 Getting started
 =============
 Please look at the README under each folder, starting with /app
+or check us out on [GitHub Pages](http://secrecysupportteam.github.io/)
 
 Support Forum
 =============
