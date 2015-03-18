@@ -96,12 +96,18 @@ public class FilesListAdapter extends RecyclerView.Adapter<FilesListAdapter.View
         notifyItemInserted(data.size() - 1);
     }
 
-    /**
-     * Add data to data set.
-     */
     public void remove(int position) {
         data.remove(position);
         notifyItemRemoved(position);
+    }
+
+    public void remove(List<Integer> selected) {
+        // Remove items in reverse order to keep indices in order
+        Collections.sort(selected, Collections.reverseOrder());
+        for (Integer i : selected) {
+            data.remove((int) i);
+            notifyItemRemoved(i);
+        }
     }
 
     /**
