@@ -238,7 +238,6 @@ public class FilesListFragment extends FileViewer {
                 }
                 FilesListAdapter.ViewHolder holder = (FilesListAdapter.ViewHolder) frame.getTag();
                 ViewAnimator viewAnimator = holder.animator;
-                viewAnimator.setInAnimation(context, R.animator.slide_down);
                 int viewIndex = 0;
                 switch (showView) {
                     case R.id.dataLayout:

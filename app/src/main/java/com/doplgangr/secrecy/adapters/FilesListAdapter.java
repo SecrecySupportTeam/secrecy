@@ -243,7 +243,6 @@ public class FilesListAdapter extends RecyclerView.Adapter<FilesListAdapter.View
 
             int viewIndex;
             if (data.get(position).getIsDecrypting()){
-                viewHolder.animator.setInAnimation(context, R.animator.slide_down);
                 viewIndex = 1;
             } else {
                 viewHolder.animator.setInAnimation(null);
