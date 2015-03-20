@@ -102,7 +102,7 @@ public class MainActivity extends ActionBarActivity implements
         }
         if (pInfo != null) {
             if (pInfo.versionCode != versionNumber)
-                addFragment(new UpdateManager(), R.anim.slide_in_right, R.anim.fadeout);
+                addFragment(new UpdateManager(), android.R.animator.fade_in, android.R.animator.fade_out);
         }
         mNavigation.addNavigationItem(
                 CustomApp.context.getString(R.string.Page_header__vaults),
@@ -284,7 +284,7 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public void onNew(Bundle bundle, Fragment fragment) {
         fragment.setArguments(bundle);
-        addFragment(fragment, R.anim.slide_in_right, R.anim.fadeout);
+        addFragment(fragment, android.R.animator.fade_in, android.R.animator.fade_out);
     }
 
     @Override

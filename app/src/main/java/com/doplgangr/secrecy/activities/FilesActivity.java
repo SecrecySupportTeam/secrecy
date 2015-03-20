@@ -37,7 +37,6 @@ public class FilesActivity extends ActionBarActivity
         String vault = extras.getString(Config.vault_extra);
         String password = extras.getString(Config.password_extra);
 
-        overridePendingTransition(R.anim.slide_in_right, R.anim.fadeout);
         fragmentManager = getFragmentManager();
         if (fragmentManager.findFragmentByTag(FilesListFragment.class.getName()) == null) {
             FilesListFragment fragment = new FilesListFragment();
@@ -91,7 +90,6 @@ public class FilesActivity extends ActionBarActivity
 
     @Override
     public void onPause() {
-        overridePendingTransition(R.anim.fadein, R.anim.slide_out_right);
         super.onPause();
         if (isChangingConfigurations())
             onPauseDecision.startActivity();

@@ -466,7 +466,6 @@ public class VaultsListFragment extends Fragment {
                 EditText passwordView = (EditText) parentView.findViewById(R.id.open_password);
                 final View renameView = parentView.findViewById(R.id.rename_name);
                 ViewAnimator viewAnimator = (ViewAnimator) parentView.findViewById(R.id.viewAnimator);
-                viewAnimator.setInAnimation(context, R.anim.slide_down);
 
                 int viewIndex = 0;
                 switch (showView) {
