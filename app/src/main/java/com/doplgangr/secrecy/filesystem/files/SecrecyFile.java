@@ -24,9 +24,9 @@ import android.widget.ProgressBar;
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.exceptions.SecrecyCipherStreamException;
 import com.doplgangr.secrecy.filesystem.CryptStateListener;
+import com.doplgangr.secrecy.filesystem.Storage;
 import com.doplgangr.secrecy.filesystem.encryption.Crypter;
 import com.doplgangr.secrecy.filesystem.encryption.SecrecyCipherInputStream;
-import com.doplgangr.secrecy.filesystem.Storage;
 import com.doplgangr.secrecy.utils.Util;
 
 import java.io.BufferedOutputStream;
@@ -86,6 +86,11 @@ public abstract class SecrecyFile implements Serializable {
     public File getFile() {
         return file;
     }
+
+    public Date getDate() {
+        return timestamp;
+    }
+
 
     public String getTimestamp() {
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");

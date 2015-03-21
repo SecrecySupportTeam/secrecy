@@ -19,14 +19,15 @@ import android.widget.RelativeLayout;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
+import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.events.ImageLoadDoneEvent;
 import com.doplgangr.secrecy.exceptions.SecrecyFileException;
+import com.doplgangr.secrecy.filesystem.encryption.Vault;
 import com.doplgangr.secrecy.filesystem.encryption.VaultHolder;
 import com.doplgangr.secrecy.filesystem.files.EncryptedFile;
-import com.doplgangr.secrecy.filesystem.encryption.Vault;
 import com.doplgangr.secrecy.jobs.ImageLoadJob;
-import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.utils.Util;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -139,6 +140,9 @@ public class FilePhotoFragment extends FragmentActivity {
                     break;
                 case Config.VAULT_SORT_FILETYPE:
                     comparator = Config.COMPARATOR_ENCRYPTEDFILE_FILETYPE;
+                    break;
+                case Config.VAULT_SORT_LASTMODIFIED:
+                    comparator = Config.COMPARATOR_ENCRYPTEDFILE_LASTMODIFIED;
                     break;
                 default:
                     comparator = null;

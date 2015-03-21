@@ -35,10 +35,10 @@ import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
+import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.events.ThumbLoadDoneEvent;
 import com.doplgangr.secrecy.exceptions.SecrecyFileException;
 import com.doplgangr.secrecy.filesystem.files.EncryptedFile;
-import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.utils.Util;
 
 import java.util.ArrayList;
@@ -53,11 +53,11 @@ import de.greenrobot.event.EventBus;
 public class FilesListAdapter extends RecyclerView.Adapter<FilesListAdapter.ViewHolder> {
 
     private final Context context;
-    private boolean isGallery;
     private final int layout;
     // store (a reference to) the data
     private final List<EncryptedFile> data = new ArrayList<EncryptedFile>();
     private final Set<Integer> selectedItems = new HashSet<Integer>();
+    private boolean isGallery;
     private OnItemClickListener onItemClickListener;
     private OnItemLongClickListener onLongClickListener;
 
@@ -191,6 +191,9 @@ public class FilesListAdapter extends RecyclerView.Adapter<FilesListAdapter.View
             case Config.VAULT_SORT_FILETYPE:
                 comparator = Config.COMPARATOR_ENCRYPTEDFILE_FILETYPE;
                 break;
+            case Config.VAULT_SORT_LASTMODIFIED:
+                comparator = Config.COMPARATOR_ENCRYPTEDFILE_LASTMODIFIED;
+                break;
             default:
                 comparator = null;
         }
@@ -282,6 +285,14 @@ public class FilesListAdapter extends RecyclerView.Adapter<FilesListAdapter.View
         new BindImageTask().execute(encryptedFile);
     }
 
+    public interface OnItemClickListener {
+        public void onItemClick(View view, int position);
+    }
+
+    public interface OnItemLongClickListener {
+        public boolean onItemLongClick(View view, int position);
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         public final TextView name;
@@ -318,19 +329,12 @@ public class FilesListAdapter extends RecyclerView.Adapter<FilesListAdapter.View
 
         @Override
         public boolean onLongClick(View view) {
-            if (onLongClickListener != null){
+            if (onLongClickListener != null) {
                 onLongClickListener.onItemLongClick(view, getPosition());
                 return true;
             }
             return false;
         }
-    }
-
-    public interface OnItemClickListener {
-        public void onItemClick(View view , int position);
-    }
-    public interface OnItemLongClickListener {
-        public boolean onItemLongClick(View view , int position);
     }
 
 }
