@@ -79,7 +79,7 @@
             android:finishOnTaskLaunch="true"
             android:label="@string/App__name"></activity>
         <activity
-            android:name=".fragments.FilePhotoFragment"
+            android:name=".activities.FilePhotoActivity"
             android:clearTaskOnLaunch="true"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
