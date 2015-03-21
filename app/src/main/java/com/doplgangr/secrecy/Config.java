@@ -32,7 +32,6 @@ public class Config {
     public static final int IMAGE_SIZE_SMALL = 4 * 1000 * 1000; // Resulting image size: 2 > X > 4
     public static final int IMAGE_SIZE_MEDIUM = 6 * 1000 * 1000; // Resulting image size: 3 > X > 6
     public static final int IMAGE_SIZE_LARGE = 10 * 1000 * 1000; // Resulting image size: 5 > X > 10
-    public static int selectedImageSize = 0;
     public static final String file_extra = "FILE";
     public static final String vault_extra = "VAULT";
     public static final String password_extra = "PASS";
@@ -45,7 +44,6 @@ public class Config {
     public static final String settingsStore = "__SETTINGS__";
     public static final String root = "__ROOT__";
     public static final String support_website = "http://secrecy.uservoice.com";
-
     // PreferenceManager strings
     public static final String STEALTH_MODE_PASSWORD = "stealth_mode_password";
     public static final String STEALTH_MODE = "stealth_mode";
@@ -56,16 +54,15 @@ public class Config {
     public static final String VAULT_SORT = "vault_sort";
     public static final String VAULT_SORT_ALPHABETIC = "ALPHABETIC";
     public static final String VAULT_SORT_FILETYPE = "FILETYPE";
+    public static final String VAULT_SORT_LASTMODIFIED = "LASTMODIFIED";
     public static final String APP_VERSION_NUMBER = "appVersionNumber";
     public static final String APP_VERSION_NAME = "appVersionName";
-
     public static final Comparator<EncryptedFile> COMPARATOR_ENCRYPTEDFILE_ALPHABETIC = new Comparator<EncryptedFile>() {
         @Override
         public int compare(EncryptedFile encryptedFile, EncryptedFile encryptedFile2) {
             return encryptedFile.getDecryptedFileName().compareToIgnoreCase(encryptedFile2.getDecryptedFileName());
         }
     };
-
     public static final Comparator<EncryptedFile> COMPARATOR_ENCRYPTEDFILE_FILETYPE = new Comparator<EncryptedFile>() {
         // Orders same files with the same type in alphabetic order
         @Override
@@ -77,4 +74,13 @@ public class Config {
             return compare;
         }
     };
+    public static final Comparator<EncryptedFile> COMPARATOR_ENCRYPTEDFILE_LASTMODIFIED = new Comparator<EncryptedFile>() {
+        // Reverse order - Last modified.
+        // Rarely two files have identical timestamp. OK to have to alternative sorting method.
+        @Override
+        public int compare(EncryptedFile encryptedFile, EncryptedFile encryptedFile2) {
+            return encryptedFile2.getDate().compareTo(encryptedFile.getDate());
+        }
+    };
+    public static int selectedImageSize = 0;
 }
