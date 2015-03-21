@@ -19,14 +19,15 @@ import android.widget.RelativeLayout;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
+import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.events.ImageLoadDoneEvent;
 import com.doplgangr.secrecy.exceptions.SecrecyFileException;
+import com.doplgangr.secrecy.filesystem.encryption.Vault;
 import com.doplgangr.secrecy.filesystem.encryption.VaultHolder;
 import com.doplgangr.secrecy.filesystem.files.EncryptedFile;
-import com.doplgangr.secrecy.filesystem.encryption.Vault;
 import com.doplgangr.secrecy.jobs.ImageLoadJob;
-import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.utils.Util;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -36,8 +37,9 @@ import uk.co.senab.photoview.PhotoView;
 
 public class FilePhotoFragment extends FragmentActivity {
 
-    private static Activity context;
+    private static Activity mContext;
     private ViewPager mViewPager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,48 +48,46 @@ public class FilePhotoFragment extends FragmentActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_view_pager);
+        mContext = this;
 
-        if (!EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().register(this);
         final SamplePagerAdapter adapter = new SamplePagerAdapter(getSupportFragmentManager());
-
-        Bundle extras = getIntent().getExtras();
 
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
         mViewPager.setAdapter(adapter);
         Vault secret = VaultHolder.getInstance().retrieveVault();
-        Vault.onFileFoundListener mListener = new Vault.onFileFoundListener() {
+        secret.iterateAllFiles(new Vault.onFileFoundListener() {
             @Override
             public void dothis(EncryptedFile file) {
                 adapter.add(file);
             }
-        };
-        secret.iterateAllFiles(mListener);
-        context = this;
+        });
+
         adapter.sort();
 
-        int itemNo = extras.getInt(Config.gallery_item_extra);
+        int itemNo = getIntent().getExtras().getInt(Config.gallery_item_extra);
         if (itemNo < (mViewPager.getAdapter().getCount())) { //check if requested item is in bound
             mViewPager.setCurrentItem(itemNo);
         }
+
+        EventBus.getDefault().register(this);
     }
 
     @Override
-    public void onDestroy(){
-        super.onDestroy();
+    protected void onDestroy() {
         EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     public void onEventMainThread(ImageLoadDoneEvent event) {
         Util.log("Recieving imageview and bm");
         if (event.bitmap == null) {
-            Util.alert(context,
-                    context.getString(R.string.Error__out_of_memory),
-                    context.getString(R.string.Error__out_of_memory_message),
+            Util.alert(mContext,
+                    mContext.getString(R.string.Error__out_of_memory),
+                    mContext.getString(R.string.Error__out_of_memory_message),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            context.finish();
+                            mContext.finish();
                         }
                     },
                     null);
@@ -96,13 +96,13 @@ public class FilePhotoFragment extends FragmentActivity {
         try {
             event.imageView.setImageBitmap(event.bitmap);
         } catch (OutOfMemoryError e) {
-            Util.alert(context,
-                    context.getString(R.string.Error__out_of_memory),
-                    context.getString(R.string.Error__out_of_memory_message),
+            Util.alert(mContext,
+                    mContext.getString(R.string.Error__out_of_memory),
+                    mContext.getString(R.string.Error__out_of_memory_message),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            context.finish();
+                            mContext.finish();
                         }
                     },
                     null);
@@ -128,14 +128,14 @@ public class FilePhotoFragment extends FragmentActivity {
             notifyDataSetChanged();
         }
 
-        public void sort(){
+        public void sort() {
             Comparator<EncryptedFile> comparator;
 
-            switch (PreferenceManager.getDefaultSharedPreferences(context).getString(
+            switch (PreferenceManager.getDefaultSharedPreferences(mContext).getString(
                     Config.VAULT_SORT, Config.VAULT_SORT_ALPHABETIC)) {
 
                 case Config.VAULT_SORT_ALPHABETIC:
-                   comparator = Config.COMPARATOR_ENCRYPTEDFILE_ALPHABETIC;
+                    comparator = Config.COMPARATOR_ENCRYPTEDFILE_ALPHABETIC;
                     break;
                 case Config.VAULT_SORT_FILETYPE:
                     comparator = Config.COMPARATOR_ENCRYPTEDFILE_FILETYPE;
@@ -210,7 +210,7 @@ public class FilePhotoFragment extends FragmentActivity {
             }
 
             @Override
-            public void onPause(){
+            public void onPause() {
                 super.onPause();
                 if (imageLoadJob != null) {
                     imageLoadJob.setObsolet(true);
@@ -218,7 +218,7 @@ public class FilePhotoFragment extends FragmentActivity {
             }
 
             @Override
-            public void onDestroy(){
+            public void onDestroy() {
                 super.onDestroy();
                 if (imageLoadJob != null) {
                     imageLoadJob.setObsolet(true);
