@@ -64,6 +64,11 @@ public class MainActivity extends ActionBarActivity implements
         add(PremiumFragment.class);
     }};
     private final Context context = this;
+    private final static String INSTANCE_STATE_FRAGMENT = "FRAGMENT";
+    private final static int NUM_VAULT_FRAGMENT = 0;
+    private final static int NUM_SETTINGS_FRAGMENT = 1;
+    private final static int NUM_PREMIUM_FRAGMENT = 2;
+    private final static int NUM_SUPPORT_FRAGMENT = 3;
     private NavListView mNavigation;
     private View mDrawer;
     private DrawerLayout mDrawerLayout;
@@ -157,6 +162,17 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt(INSTANCE_STATE_FRAGMENT, getCurrentFragment());
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        switchFragment(savedInstanceState.getInt(INSTANCE_STATE_FRAGMENT));
+    }
+
+    @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         if (mDrawerToggle != null)
@@ -191,19 +207,38 @@ public class MainActivity extends ActionBarActivity implements
 
     void switchFragment(int page) {
         switch (page) {
-            case 0:
+            case NUM_VAULT_FRAGMENT:
                 addFragment(new VaultsListFragment(), 0, 0);
                 break;
-            case 1:
+            case NUM_SETTINGS_FRAGMENT:
                 addFragment(new SettingsFragment(), 0, 0);
                 break;
-            case 2:
+            case NUM_PREMIUM_FRAGMENT:
                 addFragment(new PremiumFragment(), 0, 0);
                 break;
-            case 3:
+            case NUM_SUPPORT_FRAGMENT:
                 support();
                 break;
         }
+    }
+
+    private int getCurrentFragment() {
+        if (fragmentManager.getBackStackEntryCount() >= 1) {
+            String activeFragmentTag = fragmentManager
+                    .getBackStackEntryAt(fragmentManager
+                            .getBackStackEntryCount() - 1).getName();
+            Fragment activeFragment =  fragmentManager
+                    .findFragmentByTag(activeFragmentTag);
+
+            // VaultListFragment shouldn't occur when count > 1
+            if (activeFragment instanceof SettingsFragment) {
+                return NUM_SETTINGS_FRAGMENT;
+            }
+            if (activeFragment instanceof PremiumFragment) {
+                return NUM_PREMIUM_FRAGMENT;
+            }
+        }
+        return 0;
     }
 
     void onFirstLaunch() {
