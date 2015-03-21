@@ -29,7 +29,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -52,6 +51,7 @@ import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
+import com.doplgangr.secrecy.activities.FilePhotoActivity;
 import com.doplgangr.secrecy.activities.FilesActivity;
 import com.doplgangr.secrecy.events.AddingFileDoneEvent;
 import com.doplgangr.secrecy.events.AddingFileEvent;
@@ -354,7 +354,7 @@ public class FilesListFragment extends FileViewer {
                             return;
                         }
                         if (isGallery) {
-                            Intent intent = new Intent(context, FilePhotoFragment.class);
+                            Intent intent = new Intent(context, FilePhotoActivity.class);
                             intent.putExtra(Config.gallery_item_extra, position);
                             FilesActivity.onPauseDecision.startActivity();
                             startActivity(intent);
