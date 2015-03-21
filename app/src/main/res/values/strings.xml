@@ -83,5 +83,6 @@
     <string-array name="array_vault_sort_entries">
         <item>Alphabet</item>
         <item>Alphabet, group by type</item>
+        <item>Last Modified Date</item>
     </string-array>
 </resources>

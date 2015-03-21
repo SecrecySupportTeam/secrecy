@@ -87,6 +87,10 @@ public abstract class SecrecyFile implements Serializable {
         return file;
     }
 
+    public Date getDate() {
+        return timestamp;
+    }
+
     public String getTimestamp() {
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
         if (timestamp == null)
