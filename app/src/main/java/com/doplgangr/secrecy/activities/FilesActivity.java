@@ -3,6 +3,7 @@ package com.doplgangr.secrecy.activities;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,8 +11,11 @@ import android.view.WindowManager;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.R;
-import com.doplgangr.secrecy.fragments.FilesListFragment;
 import com.doplgangr.secrecy.adapters.VaultsListFragment;
+import com.doplgangr.secrecy.events.ScreenOffEvent;
+import com.doplgangr.secrecy.fragments.FilesListFragment;
+import com.doplgangr.secrecy.services.ScreenStateService;
+import com.doplgangr.secrecy.utils.Util;
 
 import de.greenrobot.event.EventBus;
 
@@ -24,6 +28,7 @@ public class FilesActivity extends ActionBarActivity
         VaultsListFragment.OnFragmentFinishListener {
     private FragmentManager fragmentManager;
     private Boolean isConfigChange;
+    private Intent mScreenStateServiceIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +56,15 @@ public class FilesActivity extends ActionBarActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+
+        // start service that monitors screen state
+        mScreenStateServiceIntent = new Intent(this, ScreenStateService.class);
+        this.startService(mScreenStateServiceIntent);
     }
 
     @Override
@@ -80,6 +94,11 @@ public class FilesActivity extends ActionBarActivity
         switchFragment(fragment);
     }
 
+    public void onEventMainThread(ScreenOffEvent event) {
+        Util.log("FilesActivity : Recieving screen of event");
+        finish();
+    }
+
     void switchFragment(final Fragment fragment) {
         String tag = fragment.getClass().getName();
         fragmentManager.beginTransaction()
@@ -105,6 +124,8 @@ public class FilesActivity extends ActionBarActivity
 
     @Override
     public void onDestroy() {
+        stopService(mScreenStateServiceIntent);
+        EventBus.getDefault().unregister(this);
         EventBus.getDefault().post(new shouldRefresh());
         super.onDestroy();
     }
