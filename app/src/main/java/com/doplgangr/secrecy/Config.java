@@ -56,6 +56,7 @@ public class Config {
     public static final String VAULT_SORT = "vault_sort";
     public static final String VAULT_SORT_ALPHABETIC = "ALPHABETIC";
     public static final String VAULT_SORT_FILETYPE = "FILETYPE";
+    public static final String VAULT_SORT_LASTMODIFIED = "LASTMODIFIED";
     public static final String APP_VERSION_NUMBER = "appVersionNumber";
     public static final String APP_VERSION_NAME = "appVersionName";
 
@@ -75,6 +76,15 @@ public class Config {
                 return encryptedFile.getDecryptedFileName().compareToIgnoreCase(encryptedFile2.getDecryptedFileName());
             }
             return compare;
+        }
+    };
+
+    public static final Comparator<EncryptedFile> COMPARATOR_ENCRYPTEDFILE_LASTMODIFIED= new Comparator<EncryptedFile>() {
+        // Reverse order - Last modified.
+        // Rarely two files have identical timestamp. OK to have to alternative sorting method.
+        @Override
+        public int compare(EncryptedFile encryptedFile, EncryptedFile encryptedFile2) {
+            return encryptedFile2.getDate().compareTo(encryptedFile.getDate());
         }
     };
 }

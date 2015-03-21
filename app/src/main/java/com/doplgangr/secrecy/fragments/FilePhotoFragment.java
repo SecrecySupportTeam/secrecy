@@ -140,6 +140,9 @@ public class FilePhotoFragment extends FragmentActivity {
                 case Config.VAULT_SORT_FILETYPE:
                     comparator = Config.COMPARATOR_ENCRYPTEDFILE_FILETYPE;
                     break;
+                case Config.VAULT_SORT_LASTMODIFIED:
+                    comparator = Config.COMPARATOR_ENCRYPTEDFILE_LASTMODIFIED;
+                    break;
                 default:
                     comparator = null;
             }
