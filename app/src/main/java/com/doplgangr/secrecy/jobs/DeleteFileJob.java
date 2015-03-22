@@ -65,9 +65,6 @@ public class DeleteFileJob extends Job {
 
             //2. File deleted once. Rescan and remove it from gallery
             new SingleMediaScanner(context, file);
-
-            //3. Desperately delete again, just to be sure if shred file job failed.
-            FileUtils.forceDelete(file);
         }
         if (uri != null){
             //4. Delete under content resolver
@@ -75,6 +72,9 @@ public class DeleteFileJob extends Job {
                 DocumentsContract.deleteDocument(context.getContentResolver(), uri); //For kitkat users
             context.getContentResolver().delete(uri, null, null);
         }
+        //3. Desperately delete again, just to be sure if shred file job failed.
+        if (file != null)
+            FileUtils.deleteQuietly(file);
     }
 
     @Override

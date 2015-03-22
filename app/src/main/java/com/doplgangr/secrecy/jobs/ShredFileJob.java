@@ -38,7 +38,7 @@ public class ShredFileJob extends Job {
         } finally {
             os.close();
         }
-        FileUtils.forceDelete(file);
+        FileUtils.deleteQuietly(file);
     }
 
     @Override
