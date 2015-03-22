@@ -29,8 +29,8 @@ public class ShredFileJob extends Job {
 
     @Override
     public void onRun() throws Throwable {
-        Util.log("Shreddd");
-        // Double check
+        Util.log("Shredding, filesize",size);
+
         OutputStream os = new BufferedOutputStream(fileOs);
         try {
             for (int i = 0; i < size; i++)
@@ -38,31 +38,24 @@ public class ShredFileJob extends Job {
         } finally {
             os.close();
         }
-        Boolean ignored = file.delete();
         FileUtils.forceDelete(file);
     }
 
     @Override
     protected void onCancel() {
-        //Rarhhh go die.
-        Boolean ignoredBoolean = file.delete();
-        try {
-            FileUtils.forceDelete(file);
-        } catch (Exception ignored) { // If it never gets to the end...
-            ignored.printStackTrace();
-        }
+        // Final try, in case it is problem associated with output stream.
+        FileUtils.deleteQuietly(file);
     }
 
     @Override
     protected boolean shouldReRunOnThrowable(Throwable throwable) {
-        Util.log("Shredding retry");
         throwable.printStackTrace();
         return true;
     }
 
     @Override
     protected int getRetryLimit() {
-        return 10;  //This is quite reasonable. Isn't it?
+        return 10;
     }
 
 }

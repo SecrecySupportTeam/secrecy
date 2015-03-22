@@ -20,20 +20,23 @@ import java.io.OutputStream;
 
 public class DeleteFileJob extends Job {
     private static final int PRIORITY = 2;   //Slightly higher than shredding files
-    private final Context context = CustomApp.context;
-    private final File file;
-    private OutputStream os = null;
-    private long size = 0;
+    private Context context = CustomApp.context;
+    private File file;
     private Uri uri;
+    private long size = 0;
 
     public DeleteFileJob(File file) {
         super(new Params(PRIORITY)
                 .groupBy(file.getAbsolutePath()));   //group according to file name
         this.file = file;
+        this.uri = null;
     }
 
-    public void addURI(Uri uri) {
+    public DeleteFileJob(Uri uri) {
+        super(new Params(PRIORITY)
+                .groupBy(uri.getPath()));   //group according to file name
         this.uri = uri;
+        this.file = null;
     }
 
     @Override
@@ -43,28 +46,42 @@ public class DeleteFileJob extends Job {
 
     @Override
     public void onRun() throws Throwable {
-        os = new FileOutputStream(file);
-        if (file != null)
-            size = file.length();
-        Util.log("Delete ", file);
-        file.delete();
-        FileUtils.forceDelete(file);
-        if (uri != null) {
+        if (file == null) {
+            // Retrieve real file from URI
+            try {
+                file = com.ipaulpro.afilechooser.utils.FileUtils.getFile(context, uri);
+            } catch (Exception ignored) {
+                // Never mind if this failed.
+            }
+        }
+        if (file != null) {
+            //1. Retrieve the file's OS and wipe its content.
+            OutputStream os = new FileOutputStream(file);
+            if (file != null)
+                size = file.length();
+            Util.log("Delete ", file);
+            ShredFileJob job = new ShredFileJob(os, size, file);
+            CustomApp.jobManager.addJob(job);   //Don't create yet another bg thread.
+
+            //2. File deleted once. Rescan and remove it from gallery
+            new SingleMediaScanner(context, file);
+
+            //3. Desperately delete again, just to be sure if shred file job failed.
+            FileUtils.forceDelete(file);
+        }
+        if (uri != null){
+            //4. Delete under content resolver
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
                 DocumentsContract.deleteDocument(context.getContentResolver(), uri); //For kitkat users
-            context.getContentResolver().delete(uri, null, null); //Try to delete under content resolver
+            context.getContentResolver().delete(uri, null, null);
         }
-        new SingleMediaScanner(context, file); //Rescan and remove from gallery
-        Storage.shredFile(os, size, file);
-        file.delete();
-        FileUtils.forceDelete(file);
     }
 
     @Override
     protected void onCancel() {
-        //Rarhhh go die.
+        // Final retry.
+        FileUtils.deleteQuietly(file);
         new SingleMediaScanner(context, file); //Rescan and remove from gallery
-        Storage.shredFile(os, size, file);
     }
 
     @Override
@@ -79,6 +96,7 @@ public class DeleteFileJob extends Job {
         return 10;  //This is quite reasonable. Isn't it?
     }
 
+    // Media scanner class that detects file deletion.
     public class SingleMediaScanner implements MediaScannerConnection.MediaScannerConnectionClient {
 
         private final MediaScannerConnection mMs;
