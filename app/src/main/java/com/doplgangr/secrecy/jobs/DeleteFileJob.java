@@ -87,7 +87,7 @@ public class DeleteFileJob extends Job {
     @Override
     protected boolean shouldReRunOnThrowable(Throwable throwable) {
         //ignore everything and rerun
-        throwable.printStackTrace();
+        Util.log(throwable.getMessage());
         return true;
     }
 

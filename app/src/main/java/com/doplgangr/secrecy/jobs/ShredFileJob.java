@@ -49,7 +49,7 @@ public class ShredFileJob extends Job {
 
     @Override
     protected boolean shouldReRunOnThrowable(Throwable throwable) {
-        throwable.printStackTrace();
+        Util.log(throwable.getMessage());
         return true;
     }
 
