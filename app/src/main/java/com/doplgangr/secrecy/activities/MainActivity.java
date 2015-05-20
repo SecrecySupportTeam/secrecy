@@ -120,7 +120,7 @@ public class MainActivity extends ActionBarActivity implements
                 false);
         mNavigation.addNavigationItem(
                 CustomApp.context.getString(R.string.action__about),
-                R.drawable.ic_list,
+                R.drawable.ic_about,
                 false);
         mNavigation.addNavigationItem(
                 CustomApp.context.getString(R.string.action__support),
