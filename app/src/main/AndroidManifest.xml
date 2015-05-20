@@ -52,7 +52,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.ChooseFolder"
+            android:name=".activities.FileChooserActivity"
             android:label="@string/Page_header__choose_folder" />
 
         <receiver android:name=".OutgoingCallReceiver">
