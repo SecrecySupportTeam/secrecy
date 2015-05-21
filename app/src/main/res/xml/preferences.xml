@@ -45,29 +45,4 @@
             android:title="@string/Settings_sort_vault_content" />
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:key="credits_list"
-        android:title="@string/Settings__credits">
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:key="translators_list"
-        android:title="@string/Settings__translators">
-
-    </PreferenceCategory>
-    <PreferenceCategory
-        android:key="about"
-        android:title="@string/Settings__about">
-
-        <Preference
-            android:key="version"
-            android:title="@string/Settings__version" />
-        <Preference
-            android:key="legal"
-            android:title="@string/Settings_libraries" />
-
-    </PreferenceCategory>
-
-
 </PreferenceScreen>

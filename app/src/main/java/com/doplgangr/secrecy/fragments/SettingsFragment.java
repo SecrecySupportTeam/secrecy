@@ -33,7 +33,6 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.support.v4.content.IntentCompat;
 import android.support.v7.app.ActionBarActivity;
@@ -47,7 +46,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.doplgangr.secrecy.Config;
-import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.utils.Util;
 import com.doplgangr.secrecy.filesystem.Storage;
@@ -74,13 +72,6 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     private String stealth_mode_message;
-    private String[] creditsNames;
-    private String[] creditsDescription;
-    private String[] creditsLinks;
-    private String[] contributorNames;
-    private String[] contributorDescription;
-    private String[] contributorLinks;
-    private String libraries;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -90,23 +81,12 @@ public class SettingsFragment extends PreferenceFragment {
 
         Resources res = getResources();
         stealth_mode_message = getString(R.string.Settings__stealth_mode_message);
-        creditsNames = res.getStringArray(R.array.Credits__names);
-        creditsDescription = res.getStringArray(R.array.Credits__description);
-        creditsLinks = res.getStringArray(R.array.Credits__links);
-        contributorNames = res.getStringArray(R.array.Contributor__names);
-        contributorDescription = res.getStringArray(R.array.Contributor__description);
-        contributorLinks = res.getStringArray(R.array.Contributor__links);
-        libraries = getString(R.string.Settings__libraries_message);
 
         preparePreferenceStealthMode();
         preparePreferenceStealthModePassword();
         preparePreferenceMaxImageSize();
         preparePreferenceVaultRoot();
         preparePreferenceVaultMove();
-        preparePreferenceCreditList();
-        preparePreferenceTranslatorsList();
-        preparePreferenceVersion();
-        preparePreferenceLegal();
     }
 
     private void preparePreferenceStealthMode(){
@@ -244,65 +224,6 @@ public class SettingsFragment extends PreferenceFragment {
                         startActivityForResult(intent, REQUEST_CODE_MOVE_VAULT);
                     }
                 });
-                return true;
-            }
-        });
-    }
-
-    private void preparePreferenceCreditList(){
-        PreferenceGroup creditsList = (PreferenceGroup) findPreference("credits_list");
-        for (int i = 0; i < creditsNames.length; i++) {
-            Preference newPreference = new Preference(context);
-            newPreference.setTitle(creditsNames[i]);
-            newPreference.setSummary(creditsDescription[i]);
-            final int finali = i;
-            newPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    Uri uri = Uri.parse(creditsLinks[finali]);
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    startActivity(intent);
-                    return true;
-                }
-            });
-            creditsList.addPreference(newPreference);
-        }
-    }
-
-    private void preparePreferenceTranslatorsList(){
-        PreferenceGroup translatorList = (PreferenceGroup) findPreference("translators_list");
-        for (int i = 0; i < contributorNames.length; i++) {
-            Preference newPreference = new Preference(context);
-            newPreference.setTitle(contributorNames[i]);
-            newPreference.setSummary(contributorDescription[i]);
-            final int finali = i;
-            newPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    Uri uri = Uri.parse(contributorLinks[finali]);
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    startActivity(intent);
-                    return true;
-                }
-            });
-            translatorList.addPreference(newPreference);
-        }
-    }
-
-    private void preparePreferenceVersion(){
-        Preference version = findPreference("version");
-        version.setSummary(CustomApp.VERSIONNAME);
-    }
-
-    private void preparePreferenceLegal(){
-        Preference dialogPreference = getPreferenceScreen().findPreference("legal");
-        dialogPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                Util.alert(context,
-                        null,
-                        libraries,
-                        Util.emptyClickListener,
-                        null);
                 return true;
             }
         });

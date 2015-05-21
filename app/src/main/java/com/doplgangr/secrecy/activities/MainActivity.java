@@ -41,6 +41,7 @@ import android.widget.TextView;
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.R;
+import com.doplgangr.secrecy.fragments.AboutFragment;
 import com.doplgangr.secrecy.utils.Util;
 import com.doplgangr.secrecy.filesystem.Storage;
 import com.doplgangr.secrecy.filesystem.encryption.VaultHolder;
@@ -62,6 +63,7 @@ public class MainActivity extends ActionBarActivity implements
         add(VaultsListFragment.class);
         add(SettingsFragment.class);
         add(PremiumFragment.class);
+        add(AboutFragment.class);
     }};
     private final Context context = this;
     private NavListView mNavigation;
@@ -108,7 +110,6 @@ public class MainActivity extends ActionBarActivity implements
                 CustomApp.context.getString(R.string.Page_header__vaults),
                 R.drawable.ic_vault,
                 false);
-
         mNavigation.addNavigationItem(
                 CustomApp.context.getString(R.string.Page_header__settings),
                 R.drawable.ic_setting,
@@ -116,6 +117,10 @@ public class MainActivity extends ActionBarActivity implements
         mNavigation.addNavigationItem(
                 CustomApp.context.getString(R.string.action__donate),
                 R.drawable.ic_love,
+                false);
+        mNavigation.addNavigationItem(
+                CustomApp.context.getString(R.string.action__about),
+                R.drawable.ic_about,
                 false);
         mNavigation.addNavigationItem(
                 CustomApp.context.getString(R.string.action__support),
@@ -201,6 +206,9 @@ public class MainActivity extends ActionBarActivity implements
                 addFragment(new PremiumFragment(), 0, 0);
                 break;
             case 3:
+                addFragment(new AboutFragment(), 0, 0);
+                break;
+            case 4:
                 support();
                 break;
         }

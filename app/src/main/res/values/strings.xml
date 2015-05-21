@@ -4,6 +4,7 @@
     <string name="action__restore_vault">Restore backup</string>
     <string name="action__donate">Donate</string>
     <string name="action__support">Help Desk</string>
+    <string name="action__about">About</string>
     <string name="action__switch_interface">Switch Interface</string>
     <string name="App__name">Secrecy</string>
     <string name="CANCEL">Cancel</string>
@@ -29,6 +30,7 @@
     <string name="Page_header__gallery">Gallery</string>
     <string name="Page_header__settings">Settings</string>
     <string name="Page_header__vaults">Vaults</string>
+    <string name="Page_header__about">About</string>
     <string name="Stealth__no_telephony_message">Tablets without phone function is not supported at the time. Please stay tuned!</string>
     <string name="Stealth__no_telephony">Opps… Hi tablets</string>
     <string name="Tutorial__long_click_to_rename">Long click to rename vaults. Try me!</string>
