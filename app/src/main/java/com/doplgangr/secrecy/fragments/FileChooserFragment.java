@@ -1,10 +1,11 @@
 package com.doplgangr.secrecy.fragments;
 
 import android.app.Activity;
+import android.support.v7.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.Environment;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
@@ -21,16 +22,10 @@ import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.adapters.FileChooserAdapter;
 import com.doplgangr.secrecy.utils.Util;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.FalseFileFilter;
-import org.apache.commons.io.filefilter.TrueFileFilter;
-
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -150,12 +145,29 @@ public class FileChooserFragment extends Fragment implements AbsListView.OnItemC
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    // TODO: Add option to create new folder
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_ok:
                 mListener.onFileSelected(rootFile,true);
+                return true;
+            case R.id.action_add_folder:
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),R.style.AppCompatAlertDialog);
+                View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_single_edit_text,null);
+                final EditText editText = (EditText) view.findViewById(R.id.editText1);
+                editText.setHint(R.string.Chooser__new_folder_name_hint);
+                builder.setTitle(R.string.Chooser__add_folder);
+                builder.setView(view);
+                builder.setCancelable(true);
+                builder.setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        File subDirectory = new File(rootFile,editText.getText().toString());
+                        if (subDirectory.mkdir())
+                            mListener.onFileSelected(subDirectory,false);
+                    }
+                });
+                builder.create().show();
                 return true;
         }
         return super.onOptionsItemSelected(item);

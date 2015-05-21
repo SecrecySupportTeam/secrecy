@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generic layout for populating a Dialog with a single EditText
+        Instead of specifying a hint text here, better populate it in
+        dynamic code.-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/dialog_padding">
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/material_text_field_height"
+        android:id="@+id/editText1"
+        android:inputType="text"/>
+</LinearLayout>
