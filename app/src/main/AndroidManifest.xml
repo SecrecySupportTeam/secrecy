@@ -28,9 +28,9 @@
                 android:resource="@xml/file_path" />
         </provider>
 
-        <!-- aFileChooser -->
+        <!-- Internal File Chooser -->
         <activity
-            android:name="com.ipaulpro.afilechooser.FileChooserActivity"
+            android:name=".activities.FileChooserActivity"
             android:icon="@drawable/ic_launcher"
             android:label="@string/Dialog_header__pick_file" />
         <activity
@@ -51,9 +51,6 @@
                 <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activities.FileChooserActivity"
-            android:label="@string/Page_header__choose_folder" />
 
         <receiver android:name=".OutgoingCallReceiver">
             <intent-filter android:priority="9999">
