@@ -50,6 +50,7 @@ import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.R;
+import com.doplgangr.secrecy.activities.FileChooserActivity;
 import com.doplgangr.secrecy.utils.Util;
 import com.doplgangr.secrecy.activities.FilesActivity;
 import com.doplgangr.secrecy.events.RestoreDoneEvent;
@@ -59,12 +60,14 @@ import com.doplgangr.secrecy.filesystem.encryption.Vault;
 import com.doplgangr.secrecy.filesystem.encryption.VaultHolder;
 import com.doplgangr.secrecy.jobs.RestoreJob;
 import com.doplgangr.secrecy.fragments.SettingsFragment;
-import com.ipaulpro.afilechooser.FileChooserActivity;
 import com.ipaulpro.afilechooser.utils.FileUtils;
+
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.zip.ZipFile;
 
 import de.greenrobot.event.EventBus;
 
@@ -294,15 +297,12 @@ public class VaultsListFragment extends Fragment {
     }
 
     void restore() {
-        ArrayList<String> INCLUDE_EXTENSIONS_LIST = new ArrayList<String>();
-        INCLUDE_EXTENSIONS_LIST.add(".zip");
-
+        ArrayList<String> fileExtensions = new ArrayList<>();
+        fileExtensions.add("zip");
         Intent intent = new Intent(context, FileChooserActivity.class);
+        intent.putExtra(FileChooserActivity.ROOT_FOLDER, Storage.getRoot().getAbsolutePath());
+        intent.putExtra(FileChooserActivity.FILE_EXTENSIONS, fileExtensions);
 
-        intent.putStringArrayListExtra(
-                FileChooserActivity.EXTRA_FILTER_INCLUDE_EXTENSIONS,
-                INCLUDE_EXTENSIONS_LIST);
-        intent.putExtra(FileChooserActivity.PATH, Storage.getRoot().getAbsolutePath());
         startActivityForResult(intent, REQUESTCODE);
     }
 
@@ -382,8 +382,7 @@ public class VaultsListFragment extends Fragment {
                                         new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                final Uri uri = data.getData();
-                                                final String path = FileUtils.getPath(context, uri);
+                                                final File file = (File) data.getSerializableExtra(FileChooserActivity.FILE_SELECTED);
                                                 mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                                                 mBuilder = new NotificationCompat.Builder(context);
                                                 mBuilder.setContentTitle(CustomApp.context.getString(R.string.Restore__title))
@@ -392,7 +391,7 @@ public class VaultsListFragment extends Fragment {
                                                         .setOngoing(true);
                                                 mBuilder.setProgress(0, 0, true);
                                                 mNotifyManager.notify(REQUESTCODE, mBuilder.build());
-                                                CustomApp.jobManager.addJobInBackground(new RestoreJob(context, new File(path)));
+                                                CustomApp.jobManager.addJobInBackground(new RestoreJob(context, file));
 
                                             }
                                         },

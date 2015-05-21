@@ -19,8 +19,12 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.doplgangr.secrecy.R;
+import com.doplgangr.secrecy.activities.FileChooserActivity;
 import com.doplgangr.secrecy.adapters.FileChooserAdapter;
 import com.doplgangr.secrecy.utils.Util;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -72,7 +76,20 @@ public class FileChooserFragment extends Fragment implements AbsListView.OnItemC
      */
     private File rootFile;
 
-    public static FileChooserFragment newInstance(File root, Boolean foldersOnly) {
+    /**
+     *  If only folders should be displayed. Additional menu icon "OK"
+     *  Will be displayed to allow confirming. Additional add folder icon
+     *  will also be added.
+     */
+    private Boolean foldersOnly;
+
+
+    /**
+     * The extensions that will be displayed.
+     */
+    private ArrayList<String> fileExtensions;
+
+    public static FileChooserFragment newInstance(File root, Boolean foldersOnly, ArrayList<String> fileExtensions) {
         FileChooserFragment fragment = new FileChooserFragment();
         Bundle args = new Bundle();
 
@@ -87,6 +104,8 @@ public class FileChooserFragment extends Fragment implements AbsListView.OnItemC
             args.putBoolean(FOLDERS_ONLY, foldersOnly);
         else
             args.putBoolean(FOLDERS_ONLY, false);
+
+        args.putStringArrayList(FileChooserActivity.FILE_EXTENSIONS, fileExtensions);
         fragment.setArguments(args);
         return fragment;
     }
@@ -102,13 +121,14 @@ public class FileChooserFragment extends Fragment implements AbsListView.OnItemC
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final Boolean foldersOnly;
         if (getArguments() != null) {
             rootFile = new File(getArguments().getString(ROOT));
             foldersOnly = getArguments().getBoolean(FOLDERS_ONLY, false);
+            fileExtensions = getArguments().getStringArrayList(FileChooserActivity.FILE_EXTENSIONS);
         }else{
             rootFile = Environment.getExternalStorageDirectory();
             foldersOnly = false;
+            fileExtensions = null;
         }
 
         // If a parent exists, add the parent to the list of children so that users can traverse up.
@@ -120,14 +140,23 @@ public class FileChooserFragment extends Fragment implements AbsListView.OnItemC
         File[] filesListed = rootFile.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File current, String name) {
-                return !foldersOnly || new File(current, name).isDirectory();
+                File file = new File(current, name);
+                if (foldersOnly)
+                    return file.isDirectory();
+                if (fileExtensions!=null && file.isFile())
+                    return fileExtensions.contains(FilenameUtils.getExtension(name));
+                return true;
             }
         });
 
-        // Sort files by name
+        // Sort files by name, folder has priority
         Arrays.sort(filesListed, new Comparator<File>() {
             @Override
             public int compare(File file1, File file2) {
+                if (file1.isDirectory() && !file2.isDirectory())
+                    return -1;
+                if (!file1.isDirectory() && file2.isDirectory())
+                    return 1;
                 return file1.getName().compareTo(file2.getName());
             }
         });
@@ -141,7 +170,8 @@ public class FileChooserFragment extends Fragment implements AbsListView.OnItemC
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.file_chooser,menu);
+        if (foldersOnly)
+            inflater.inflate(R.menu.file_chooser,menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -215,6 +245,8 @@ public class FileChooserFragment extends Fragment implements AbsListView.OnItemC
             // fragment is attached to one) that an item has been selected.
             if (Util.canReadDir(ITEMS.get(position)))
                 mListener.onFileSelected(ITEMS.get(position),false);
+            else
+                mListener.onFileSelected(ITEMS.get(position),true);
         }
     }
 

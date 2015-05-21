@@ -29,12 +29,18 @@ import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.fragments.FileChooserFragment;
 
 import java.io.File;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 
 public class FileChooserActivity extends ActionBarActivity implements FileChooserFragment.OnFileChosen{
     public static final String FOLDERS_ONLY = "FOLDERS_ONLY"; // folders only extra
     public static final String FILE_SELECTED = "FILE_SELECTED"; // selected file extra
     public static final String ROOT_FOLDER = "ROOT_FOLDER"; // root folder extra
+    public static final String FILE_EXTENSIONS = "FILE_EXTENSIONS"; // file extensions to show
+    private File root = null;
+    private Boolean foldersOnly = false;
+    private ArrayList<String> fileExtensions = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,15 +49,14 @@ public class FileChooserActivity extends ActionBarActivity implements FileChoose
         if (mToolbar!=null)
             setSupportActionBar(mToolbar);
         Intent intent = getIntent();
-        File root = null;
-        Boolean foldersOnly = false;
         if (intent!=null) {
             String root_folder = intent.getStringExtra(ROOT_FOLDER);
             if (root_folder!=null)
                 root=new File(root_folder);
             foldersOnly = intent.getBooleanExtra(FOLDERS_ONLY, false);
+            fileExtensions = intent.getStringArrayListExtra(FILE_EXTENSIONS);
         }
-        FileChooserFragment fragment = FileChooserFragment.newInstance(root, foldersOnly);
+        FileChooserFragment fragment = FileChooserFragment.newInstance(root, foldersOnly, fileExtensions);
         getFragmentManager().beginTransaction()
                 .replace(R.id.content_frame, fragment)
                 .setTransition(android.support.v4.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
@@ -66,7 +71,7 @@ public class FileChooserActivity extends ActionBarActivity implements FileChoose
             setResult(RESULT_OK, returnIntent);
             finish();
         }else {
-            FileChooserFragment fragment = FileChooserFragment.newInstance(path, true);
+            FileChooserFragment fragment = FileChooserFragment.newInstance(path, foldersOnly, fileExtensions);
             getFragmentManager().beginTransaction()
                     .replace(R.id.content_frame, fragment)
                     .setTransition(android.support.v4.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN)

@@ -41,6 +41,8 @@ public class FileChooserAdapter extends ArrayAdapter<File> {
         TextView textView =(TextView) view.findViewById(R.id.text1);
         ImageView iconView =(ImageView) view.findViewById(R.id.icon1);
         Boolean isParent = rootFile.getParentFile()!=null && rootFile.getParentFile().getAbsolutePath().equals(item.getAbsolutePath());
+        Boolean isFile = item.isFile();
+        Boolean isReadableDir = Util.canReadDir(item);
 
         // TODO: create a more intuitive way to let user know this is "up"
         // If the rootFile has a parent, display as "up"
@@ -50,8 +52,12 @@ public class FileChooserAdapter extends ArrayAdapter<File> {
             textView.setText(item.getName());
         }
 
-        textView.setEnabled(Util.canReadDir(item));
-        iconView.setImageResource(R.drawable.ic_action_folder);
+        textView.setEnabled(isFile || isReadableDir);
+        if (isFile)
+            iconView.setImageResource(R.drawable.ic_file);
+        if (isReadableDir)
+            iconView.setImageResource(R.drawable.ic_action_folder);
+
         // Highlights the directory if it is the path to the current vault root
         if (isSubDirectory(item, Storage.getRoot()) && !isParent) {
             textView.setTextColor(context.getResources().getColor(R.color.accent));
