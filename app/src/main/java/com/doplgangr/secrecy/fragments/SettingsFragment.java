@@ -40,27 +40,24 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.R;
+import com.doplgangr.secrecy.activities.FileChooserActivity;
 import com.doplgangr.secrecy.utils.Util;
 import com.doplgangr.secrecy.filesystem.Storage;
 import com.doplgangr.secrecy.premium.PremiumStateHelper;
 import com.doplgangr.secrecy.premium.StealthMode;
 import com.doplgangr.secrecy.adapters.VaultsListFragment;
-import com.ipaulpro.afilechooser.FileChooserActivity;
-import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map;
 
-public class SettingsFragment extends PreferenceFragment {
+public class SettingsFragment extends PreferenceFragment{
     private static final int REQUEST_CODE_SET_VAULT_ROOT = 6384;
     private static final int REQUEST_CODE_MOVE_VAULT = 2058;
     private Context context;
@@ -190,18 +187,7 @@ public class SettingsFragment extends PreferenceFragment {
         vault_root.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                choosePath(new getFileListener() {
-                    @Override
-                    public void get(File file) {
-                        Intent intent = new Intent(context, FileChooserActivity.class);
-                        intent.putStringArrayListExtra(
-                                FileChooserActivity.EXTRA_FILTER_INCLUDE_EXTENSIONS,
-                                INCLUDE_EXTENSIONS_LIST);
-                        intent.putExtra(FileChooserActivity.PATH, file.getAbsolutePath());
-                        intent.putExtra(FileChooserActivity.EXTRA_SELECT_FOLDER, true);
-                        startActivityForResult(intent, REQUEST_CODE_SET_VAULT_ROOT);
-                    }
-                });
+                choosePath();
                 return true;
             }
         });
@@ -212,18 +198,7 @@ public class SettingsFragment extends PreferenceFragment {
         vault_move.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                choosePath(new getFileListener() {
-                    @Override
-                    public void get(File file) {
-                        Intent intent = new Intent(context, FileChooserActivity.class);
-                        intent.putStringArrayListExtra(
-                                FileChooserActivity.EXTRA_FILTER_INCLUDE_EXTENSIONS,
-                                INCLUDE_EXTENSIONS_LIST);
-                        intent.putExtra(FileChooserActivity.PATH, file.getAbsolutePath());
-                        intent.putExtra(FileChooserActivity.EXTRA_SELECT_FOLDER, true);
-                        startActivityForResult(intent, REQUEST_CODE_MOVE_VAULT);
-                    }
-                });
+                movePath();
                 return true;
             }
         });
@@ -280,12 +255,10 @@ public class SettingsFragment extends PreferenceFragment {
                 // If the file selection was successful
                 if (resultCode == Activity.RESULT_OK) {
                     if (data != null) {
-                        // Get the URI of the selected file
-                        final Uri uri = data.getData();
+                        // Get the selected file
+                        final File file = (File) data.getSerializableExtra(FileChooserActivity.FILE_SELECTED);
                         try {
-                            // Get the file path from the URI
-                            final String path = FileUtils.getPath(context, uri);
-                            Storage.setRoot(path);
+                            Storage.setRoot(file.getAbsolutePath());
                             Preference vault_root = findPreference(Config.VAULT_ROOT);
                             vault_root.setSummary(Storage.getRoot().getAbsolutePath());
                         } catch (Exception e) {
@@ -297,11 +270,10 @@ public class SettingsFragment extends PreferenceFragment {
             case REQUEST_CODE_MOVE_VAULT:
                 if (resultCode == Activity.RESULT_OK) {
                     if (data != null) {
-                        // Get the URI of the selected file
-                        final Uri uri = data.getData();
+                        // Get the selected file
+                        final File file = (File) data.getSerializableExtra(FileChooserActivity.FILE_SELECTED);
                         try {
-                            // Get the file path from the URI
-                            final String path = FileUtils.getPath(context, uri);
+                            final String path = file.getAbsolutePath();
                             if (path.contains(Storage.getRoot().getAbsolutePath())) {
                                 Util.alert(context,
                                         getString(R.string.Settings__cannot_move_vault),
@@ -371,40 +343,17 @@ public class SettingsFragment extends PreferenceFragment {
         progressDialog.dismiss();
     }
 
-    void choosePath(final getFileListener listener) {
-        AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
-        builderSingle.setTitle(context.getString(R.string.Settings__select_storage_title));
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                context,
-                R.layout.select_dialog_singlechoice);
-        final Map<String, File> storages = Util.getAllStorageLocations();
-        for (String key : storages.keySet()) {
-            arrayAdapter.add(key);
-        }
-        builderSingle.setNegativeButton(R.string.CANCEL,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }
-        );
-
-        builderSingle.setAdapter(arrayAdapter,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String strName = arrayAdapter.getItem(which);
-                        File file = storages.get(strName);
-                        listener.get(file);
-                    }
-                }
-        );
-        builderSingle.show();
+    void choosePath() {
+        Intent intent = new Intent(getActivity(), FileChooserActivity.class);
+        intent.putExtra(FileChooserActivity.FOLDERS_ONLY, true);
+        startActivityForResult(intent, REQUEST_CODE_SET_VAULT_ROOT);
     }
 
-    public interface getFileListener {
-        void get(File file);
+    void movePath() {
+        Intent intent = new Intent(getActivity(), FileChooserActivity.class);
+        intent.putExtra(FileChooserActivity.FOLDERS_ONLY, true);
+        startActivityForResult(intent, REQUEST_CODE_MOVE_VAULT);
     }
+
 
 }

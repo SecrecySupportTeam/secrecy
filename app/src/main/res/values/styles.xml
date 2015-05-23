@@ -11,6 +11,8 @@
         <item name="metaButtonBarButtonStyle">@style/ButtonBarButton</item>
     </style>
 
+    <style name="AppCompatAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert"/>
+
     <style name="ButtonBar">
         <item name="android:paddingLeft">2dp</item>
         <item name="android:paddingTop">5dp</item>

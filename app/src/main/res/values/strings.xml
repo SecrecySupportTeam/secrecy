@@ -77,6 +77,7 @@
     <string name="Settings_max_image_size">Maximal image size</string>
     <string name="Settings__performance">Performance</string>
     <string name="Settings_sort_vault_content">Sort files by</string>
+    <string name="Chooser__new_folder_name_hint">New Folder Name</string>
     <string-array name="array_image_size_entries">
         <item>Small</item>
         <item>Medium</item>

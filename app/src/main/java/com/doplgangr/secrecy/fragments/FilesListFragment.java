@@ -27,6 +27,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
@@ -51,6 +52,7 @@ import android.widget.ViewAnimator;
 
 import com.doplgangr.secrecy.Config;
 import com.doplgangr.secrecy.CustomApp;
+import com.doplgangr.secrecy.activities.FileChooserActivity;
 import com.doplgangr.secrecy.activities.FilePhotoActivity;
 import com.doplgangr.secrecy.activities.FilesActivity;
 import com.doplgangr.secrecy.events.AddingFileDoneEvent;
@@ -67,7 +69,6 @@ import com.doplgangr.secrecy.jobs.InitializeVaultJob;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.utils.Util;
 import com.doplgangr.secrecy.adapters.FilesListAdapter;
-import com.ipaulpro.afilechooser.FileChooserActivity;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -534,10 +535,6 @@ public class FilesListFragment extends FileViewer {
             FilesActivity.onPauseDecision.startActivity();
         } catch (ActivityNotFoundException e) {
             intent = new Intent(context, FileChooserActivity.class);
-            intent.putStringArrayListExtra(
-                    FileChooserActivity.EXTRA_FILTER_INCLUDE_EXTENSIONS,
-                    INCLUDE_EXTENSIONS_LIST);
-            intent.putExtra(FileChooserActivity.EXTRA_SELECT_FOLDER, false);
             startActivityForResult(intent, REQUEST_CODE);
             FilesActivity.onPauseDecision.startActivity();
         }
@@ -622,7 +619,10 @@ public class FilesListFragment extends FileViewer {
                     .setOngoing(true);
             mBuilder.setProgress(0, 0, true);
             mNotifyManager.notify(NotificationID, mBuilder.build());
-
+            //if the result is from our internal file chooser
+            Object fileFromChooser = data.getSerializableExtra(com.doplgangr.secrecy.activities.FileChooserActivity.FILE_SELECTED);
+            if (fileFromChooser !=null)
+                addFileInBackground(secret, Uri.fromFile((File) fileFromChooser));
             addFileInBackground(secret, data.getData());
             super.onActivityResult(requestCode, resultCode, data);
         } else {

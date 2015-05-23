@@ -20,6 +20,8 @@
     <color name="accent">@color/quantum_deeporange_A200</color>
     <color name="accent_light">@color/quantum_deeporange_A100</color>
     <color name="accent_dark">@color/quantum_deeporange_A400</color>
+    <color name="button">@color/button_material_light</color>
 
+    <color name="text_primary">@color/primary_text_default_material_light</color>
     <color name="text_secondary">#727272</color>
 </resources>

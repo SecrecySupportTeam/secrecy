@@ -209,6 +209,25 @@ public class Util {
 
     }
 
+    /** Checks whether a directory is truly readable. Since File.canRead()
+     * only checks for file security, it is necessary to try doing a File.listFiles()
+     * to test for real directory access.
+     * @param root Directory root to be checked against
+     * @return True if directory can be read, False if any exception occurs
+     * e.g. the folder is not readable, devices not mounted etc.
+     */
+    public static Boolean canReadDir(java.io.File root) {
+        if (root == null)
+            return false;
+        if (!root.exists())
+            return false;
+        try {
+            return root.canRead() && root.listFiles()!=null;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public static void openURI(String uri) {
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(uri));

@@ -54,4 +54,5 @@
     <string name="Restore__in_progress">Restore in Progress</string>
     <string name="Restore__finish">Restore Finished. %s has been restored.</string>
     <string name="File__rename">New File Name</string>
+    <string name="Chooser__add_folder">Add Folder</string>
 </resources>
