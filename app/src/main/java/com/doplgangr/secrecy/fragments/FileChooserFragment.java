@@ -6,24 +6,20 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.Environment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ListAdapter;
-import android.widget.TextView;
 
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.activities.FileChooserActivity;
 import com.doplgangr.secrecy.adapters.FileChooserAdapter;
-import com.doplgangr.secrecy.utils.Util;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -36,14 +32,8 @@ import java.util.List;
 
 /**
  * A fragment to display a file chooser interface
- * <p/>
- * Large screen devices (such as tablets) are supported by replacing the ListView
- * with a GridView.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnFileChosen}
- * interface to catch navigation and file choosing actions
  */
-public class FileChooserFragment extends Fragment implements AbsListView.OnItemClickListener {
+public class FileChooserFragment extends Fragment {
 
     /**
      * Fragment parameter ROOT
@@ -63,13 +53,13 @@ public class FileChooserFragment extends Fragment implements AbsListView.OnItemC
     /**
      * The fragment's ListView/GridView.
      */
-    private AbsListView mListView;
+    private RecyclerView mRecyclerView;
 
     /**
      * The Adapter which will be used to populate the ListView/GridView with
      * Views.
      */
-    private ListAdapter mAdapter;
+    private FileChooserAdapter mAdapter;
 
     /**
      * The location of directory where views are displaying.
@@ -163,7 +153,7 @@ public class FileChooserFragment extends Fragment implements AbsListView.OnItemC
 
         Collections.addAll(ITEMS,filesListed);
 
-        mAdapter = new FileChooserAdapter(getActivity(), ITEMS, rootFile);
+        mAdapter = new FileChooserAdapter(getActivity(), ITEMS, rootFile, mListener);
 
         setHasOptionsMenu(true);
     }
@@ -207,13 +197,17 @@ public class FileChooserFragment extends Fragment implements AbsListView.OnItemC
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_filechooser, container, false);
-        mListView = (AbsListView) view.findViewById(android.R.id.list);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.file_chooser_recyclerView);
+
+        mRecyclerView.setLayoutManager
+                (new LinearLayoutManager(
+                        container.getContext(),
+                        LinearLayoutManager.VERTICAL,
+                        false));
+        mRecyclerView.setHasFixedSize(true);
 
         // Set the adapter
-        mListView.setAdapter(mAdapter);
-
-        // Set OnItemClickListener so we can be notified on item clicks
-        mListView.setOnItemClickListener(this);
+        mRecyclerView.setAdapter(mAdapter);
 
         // Set the toolbar to have location name
         getActivity().setTitle(rootFile.getAbsolutePath());
@@ -236,31 +230,6 @@ public class FileChooserFragment extends Fragment implements AbsListView.OnItemC
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (null != mListener) {
-            // Notify the active callbacks interface (the activity, if the
-            // fragment is attached to one) that an item has been selected.
-            if (Util.canReadDir(ITEMS.get(position)))
-                mListener.onFileSelected(ITEMS.get(position),false);
-            else
-                mListener.onFileSelected(ITEMS.get(position),true);
-        }
-    }
-
-    /**
-     * The default content for this Fragment has a TextView that is shown when
-     * the list is empty. If you would like to change the text, call this method
-     * to supply the text it should use.
-     */
-    public void setEmptyText(CharSequence emptyText) {
-        View emptyView = mListView.getEmptyView();
-
-        if (emptyView instanceof TextView) {
-            ((TextView) emptyView).setText(emptyText);
-        }
     }
 
     /**
