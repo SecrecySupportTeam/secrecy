@@ -112,14 +112,14 @@ public class Util {
         Log.d("SecrecyLogs", log);
     }
 
-    public static Map<String, java.io.File> getAllStorageLocations() {
-        Map<String, java.io.File> map = new TreeMap<String, File>();
+    public static Map<String, File> getAllStorageLocations() {
+        Map<String, File> map = new TreeMap<String, File>();
 
         List<String> mMounts = new ArrayList<String>(99);
         //List<String> mVold = new ArrayList<String>(99);
         mMounts.add(Environment.getExternalStorageDirectory().getAbsolutePath());
         try {
-            java.io.File mountFile = new java.io.File("/proc/mounts");
+            File mountFile = new File("/proc/mounts");
             if (mountFile.exists()) {
                 Scanner scanner = new Scanner(mountFile);
                 while (scanner.hasNext()) {
@@ -133,48 +133,19 @@ public class Util {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        /**
-         try {
-         java.io.File voldFile = new java.io.File("/system/etc/vold.fstab");
-         if (voldFile.exists()) {
-         Scanner scanner = new Scanner(voldFile);
-         while (scanner.hasNext()) {
-         String line = scanner.nextLine();
-         //if (line.startsWith("dev_mount")) {
-         String[] lineElements = line.split(" ");
-         String element = lineElements[2];
-
-         if (element.contains(":"))
-         element = element.substring(0, element.indexOf(":"));
-         mVold.add(element);
-         }
-         }
-         } catch (Exception e) {
-         e.printStackTrace();
-         }
-         **/
-
-        /*
-        for (int i = 0; i < mMounts.size(); i++) {
-            String mount = mMounts.get(i);
-            if (!mVold.contains(mount))
-                mMounts.remove(i--);
-        }
-        mVold.clear();
-        */
 
         List<String> mountHash = new ArrayList<String>(99);
 
         for (String mount : mMounts) {
-            java.io.File root = new java.io.File(mount);
+            File root = new File(mount);
             Util.log(mount, "is checked");
             Util.log(mount, root.exists(), root.isDirectory(), canWrite(root));
             if (canWrite(root)) {
                 Util.log(mount, "is writable");
-                java.io.File[] list = root.listFiles();
+                File[] list = root.listFiles();
                 String hash = "[";
                 if (list != null)
-                    for (java.io.File f : list)
+                    for (File f : list)
                         hash += f.getName().hashCode() + ":" + f.length() + ", ";
                 hash += "]";
                 if (!mountHash.contains(hash)) {
@@ -192,21 +163,17 @@ public class Util {
         return map;
     }
 
-    public static Boolean canWrite(java.io.File root) {
-        if (root == null)
+    public static Boolean canWrite(File root) {
+        if (root == null || !root.exists() || !root.isDirectory()) {
             return false;
-        if (!root.exists())
-            return false;
-        if (!root.isDirectory())
-            return false;
+        }
         try {
-            java.io.File file = File.createTempFile("TEMP", null, root);
+            File file = File.createTempFile("TEMP", null, root);
             return file.delete();
         } catch (Exception e) {
             //Failed to create files
             return false;
         }
-
     }
 
     public static void openURI(String uri) {
