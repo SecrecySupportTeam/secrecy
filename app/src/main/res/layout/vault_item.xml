@@ -97,7 +97,9 @@
                 android:layout_toLeftOf="@+id/open_ok"
                 android:layout_toStartOf="@+id/open_ok"
                 android:hint="@string/Vault__password"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:singleLine="true"
+                android:imeOptions="actionDone"/>
 
             <ImageButton
                 android:id="@+id/open_ok"
