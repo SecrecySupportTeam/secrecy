@@ -35,20 +35,16 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.text.InputType;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View.OnLongClickListener;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
@@ -429,11 +425,16 @@ public class VaultsListFragment extends Fragment {
         // position of listitem in list
         switchView(mView, R.id.vault_decrypt_layout);
 
-        PasswordListener passwordListener = new PasswordListener(mView, vault);
-
-        ((EditText) mView.findViewById(R.id.open_password))
-                .setOnEditorActionListener(passwordListener);
-        mView.findViewById(R.id.open_ok).setOnClickListener(passwordListener);
+        mView.findViewById(R.id.open_ok)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String value = ((EditText) mView.findViewById(R.id.open_password))
+                                .getText().toString();
+                        mOnVaultSelected.onVaultSelected(vault, value);
+                        imm.hideSoftInputFromWindow(kbdView.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+                    }
+                });
         mView.findViewById(R.id.open_cancel)
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -560,38 +561,5 @@ public class VaultsListFragment extends Fragment {
 
     public interface onPanic {
         void onPanic();
-    }
-
-    private class PasswordListener implements
-            TextView.OnEditorActionListener, View.OnClickListener {
-
-        private final View mView;
-        private final String vault;
-
-        private PasswordListener(final View mView, final String vault) {
-            this.mView = mView;
-            this.vault = vault;
-        }
-
-        @Override
-        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                sendPassword();
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public void onClick(View v) {
-            sendPassword();
-        }
-
-        private void sendPassword() {
-            String value = ((EditText) mView.findViewById(R.id.open_password))
-                .getText().toString();
-            mOnVaultSelected.onVaultSelected(vault, value);
-            imm.hideSoftInputFromWindow(kbdView.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
-        }
     }
 }
