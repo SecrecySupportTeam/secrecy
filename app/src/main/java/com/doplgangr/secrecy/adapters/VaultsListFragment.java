@@ -591,7 +591,7 @@ public class VaultsListFragment extends Fragment {
         }
 
         @Override
-        public boolean onEditorAction(TextView w, int actionId, KeyEvent event) {
+        public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 launchAction();
                 hideKeyboard();
