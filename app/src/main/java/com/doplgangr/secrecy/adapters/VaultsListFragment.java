@@ -224,40 +224,53 @@ public class VaultsListFragment extends Fragment {
             @Override
             public boolean onLongClick(View view) {
                 switchView(mView, R.id.vault_rename_layout);
-                ((EditText) mView.findViewById(R.id.rename_name)).setText(adapter.getItem(i));
-                mView.findViewById(R.id.rename_ok)
-                        .setOnClickListener(new View.OnClickListener() {
+
+                final EditText nameField = (EditText) mView.findViewById(R.id.rename_name);
+                nameField.setText(adapter.getItem(i));
+                    // Places current vault name in the field for editing.
+
+                final InputListener inputListener = new InputListener(imm, kbdView) {
+                    // Listener for changing the name of the vault.
+                    @Override
+                    void launchAction() {
+                        final String newName = nameField.getText().toString();
+                        switchView(mView, R.id.vault_decrypt_layout);
+
+                        final EditText passwordField = (EditText)
+                                mView.findViewById(R.id.open_password);
+                        final PasswordListener passwordListener = new PasswordListener(imm, kbdView,
+                                adapter.getItem(i), mOnVaultSelected, passwordField) {
+                            // This needs to be nested so the new name can be accessed. Takes
+                            // password from the displayed password field and sends it to the actual
+                            // verification logic.
                             @Override
-                            public void onClick(View ignored) {
-                                final String newName = ((EditText) mView.findViewById(R.id.rename_name))
-                                        .getText().toString();
+                            void launchAction() {
+                                String password = passwordField.getText().toString();
+                                rename(i, newName, password);
                                 switchView(mView, R.id.vault_decrypt_layout);
-                                mView.findViewById(R.id.open_ok)
-                                        .setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View ignored) {
-                                                String password = ((EditText) mView.findViewById(R.id.open_password))
-                                                        .getText().toString();
-                                                rename(i, newName, password);
-                                                switchView(mView, R.id.vault_decrypt_layout);
-                                            }
-                                        });
-                                mView.findViewById(R.id.open_cancel)
-                                        .setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View ignored) {
-                                                switchView(mView, R.id.vault_name_layout);
-                                            }
-                                        });
                             }
-                        });
-                mView.findViewById(R.id.rename_cancel)
-                        .setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                switchView(mView, R.id.vault_name_layout);
-                            }
-                        });
+                        };
+
+                        passwordField.setOnEditorActionListener(passwordListener);
+                        mView.findViewById(R.id.open_ok).setOnClickListener(passwordListener);
+                    }
+                };
+
+                mView.findViewById(R.id.rename_ok).setOnClickListener(inputListener);
+                nameField.setOnEditorActionListener(inputListener);
+                    // These two apply to the listener for the name, not the password.
+
+                View.OnClickListener cancelListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View ignored) {
+                        inputListener.hideKeyboard();
+                        switchView(mView, R.id.vault_name_layout);
+                    }
+                };
+
+                mView.findViewById(R.id.open_cancel).setOnClickListener(cancelListener);
+                mView.findViewById(R.id.rename_cancel).setOnClickListener(cancelListener);
+
                 return true;
             }
         });
@@ -429,17 +442,20 @@ public class VaultsListFragment extends Fragment {
         // position of listitem in list
         switchView(mView, R.id.vault_decrypt_layout);
 
-        PasswordListener passwordListener = new PasswordListener(mView, vault);
+        EditText passwordField = (EditText)
+                mView.findViewById(R.id.open_password);
 
-        ((EditText) mView.findViewById(R.id.open_password))
-                .setOnEditorActionListener(passwordListener);
+        final PasswordListener passwordListener = new PasswordListener(
+                imm, kbdView, vault, mOnVaultSelected, passwordField);
+
+        passwordField.setOnEditorActionListener(passwordListener);
         mView.findViewById(R.id.open_ok).setOnClickListener(passwordListener);
         mView.findViewById(R.id.open_cancel)
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         switchView(mView, R.id.vault_name_layout);
-                        imm.hideSoftInputFromWindow(kbdView.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+                        passwordListener.hideKeyboard();
                     }
                 });
     }
@@ -562,21 +578,26 @@ public class VaultsListFragment extends Fragment {
         void onPanic();
     }
 
-    private class PasswordListener implements
-            TextView.OnEditorActionListener, View.OnClickListener {
+    /**
+     * Does an action when the "done" key is pressed or a View is
+     * clicked.
+     */
+    private abstract class InputListener
+            implements TextView.OnEditorActionListener, View.OnClickListener {
 
-        private final View mView;
-        private final String vault;
+        private final InputMethodManager imm;
+        private final View kbdView;
 
-        private PasswordListener(final View mView, final String vault) {
-            this.mView = mView;
-            this.vault = vault;
+        InputListener(final InputMethodManager imm, final View kbdView) {
+            this.imm = imm;
+            this.kbdView = kbdView;
         }
 
         @Override
-        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                sendPassword();
+                launchAction();
+                hideKeyboard();
                 return true;
             }
             return false;
@@ -584,14 +605,47 @@ public class VaultsListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
+            launchAction();
+            hideKeyboard();
+        }
+
+        public void hideKeyboard() {
+            imm.hideSoftInputFromWindow(kbdView.getWindowToken(),
+                    InputMethodManager.HIDE_IMPLICIT_ONLY);
+        }
+
+        abstract void launchAction();
+    }
+
+    /**
+     * Sends a password to try to unlock a vault.
+     */
+    private class PasswordListener extends InputListener {
+
+        private final String vault;
+        private final OnVaultSelectedListener vaultListener;
+        private final EditText passwordField;
+
+        private PasswordListener(
+                final InputMethodManager imm, final View kbdView,
+                final String vault,
+                final OnVaultSelectedListener vaultListener,
+                final EditText passwordField) {
+
+            super(imm, kbdView);
+            this.vault = vault;
+            this.vaultListener = vaultListener;
+            this.passwordField = passwordField;
+        }
+
+        @Override
+        void launchAction() {
             sendPassword();
         }
 
         private void sendPassword() {
-            String value = ((EditText) mView.findViewById(R.id.open_password))
-                .getText().toString();
-            mOnVaultSelected.onVaultSelected(vault, value);
-            imm.hideSoftInputFromWindow(kbdView.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+            String password = passwordField.getText().toString();
+            vaultListener.onVaultSelected(vault, password);
         }
     }
 }
