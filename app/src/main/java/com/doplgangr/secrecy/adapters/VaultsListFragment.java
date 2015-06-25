@@ -229,7 +229,7 @@ public class VaultsListFragment extends Fragment {
                 nameField.setText(adapter.getItem(i));
                     // Places current vault name in the field for editing.
 
-                InputListener inputListener = new InputListener(imm, kbdView) {
+                final InputListener inputListener = new InputListener(imm, kbdView) {
                     // Listener for changing the name of the vault.
                     @Override
                     void launchAction() {
@@ -240,9 +240,9 @@ public class VaultsListFragment extends Fragment {
                                 mView.findViewById(R.id.open_password);
                         final PasswordListener passwordListener = new PasswordListener(imm, kbdView,
                                 adapter.getItem(i), mOnVaultSelected, passwordField) {
-                            // This is nested, but technically separated from the exterior
-                            // InputListener. Takes password from the displayed password field and
-                            // sends it to the actual verification logic.
+                            // This needs to be nested so the new name can be accessed. Takes
+                            // password from the displayed password field and sends it to the actual
+                            // verification logic.
                             @Override
                             void launchAction() {
                                 String password = passwordField.getText().toString();
@@ -253,20 +253,23 @@ public class VaultsListFragment extends Fragment {
 
                         passwordField.setOnEditorActionListener(passwordListener);
                         mView.findViewById(R.id.open_ok).setOnClickListener(passwordListener);
-                        mView.findViewById(R.id.open_cancel).setOnClickListener(
-                                new View.OnClickListener() {
-                            @Override
-                            public void onClick(View ignored) {
-                                passwordListener.hideKeyboard();
-                                switchView(mView, R.id.vault_name_layout);
-                            }
-                        });
                     }
                 };
 
                 mView.findViewById(R.id.rename_ok).setOnClickListener(inputListener);
                 nameField.setOnEditorActionListener(inputListener);
                     // These two apply to the listener for the name, not the password.
+
+                View.OnClickListener cancelListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View ignored) {
+                        inputListener.hideKeyboard();
+                        switchView(mView, R.id.vault_name_layout);
+                    }
+                };
+
+                mView.findViewById(R.id.open_cancel).setOnClickListener(cancelListener);
+                mView.findViewById(R.id.rename_cancel).setOnClickListener(cancelListener);
 
                 return true;
             }
