@@ -19,7 +19,11 @@ import com.doplgangr.secrecy.filesystem.encryption.Vault;
 import com.doplgangr.secrecy.R;
 import com.doplgangr.secrecy.utils.Util;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+
 import de.greenrobot.event.EventBus;
+import pl.droidsonroids.gif.GifDrawable;
 
 public class FilePhotoActivity extends FragmentActivity {
 
@@ -50,7 +54,8 @@ public class FilePhotoActivity extends FragmentActivity {
                 adapter.add(file);
             }
         };
-        secret.iterateAllFiles(mListener);
+        if (secret != null)
+            secret.iterateAllFiles(mListener);
         adapter.sort();
 
         int itemNo = extras.getInt(Config.gallery_item_extra);
@@ -81,7 +86,18 @@ public class FilePhotoActivity extends FragmentActivity {
             return;
         }
         try {
-            event.imageView.setImageBitmap(event.bitmap);
+            if (event.encryptedFile.getFileExtension().equals("gif")) {
+                try {
+                    BufferedInputStream bis = new BufferedInputStream(event.encryptedFile.readStream());
+                    GifDrawable gif = new GifDrawable(bis);
+                    event.imageView.setImageDrawable(gif);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+             }
+            else {
+                event.imageView.setImageBitmap(event.bitmap);
+            }
         } catch (OutOfMemoryError e) {
             Util.alert(context,
                     context.getString(R.string.Error__out_of_memory),

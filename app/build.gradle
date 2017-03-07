@@ -23,6 +23,7 @@ dependencies {
     compile 'de.greenrobot:eventbus:2.2.0'
     compile 'com.google.protobuf:protobuf-java:2.6.0'
     compile 'com.madgag.spongycastle:prov:1.51.0.0'
+    compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.+'
 }
 
 android {
