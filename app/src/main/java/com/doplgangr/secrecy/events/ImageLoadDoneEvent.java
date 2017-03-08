@@ -23,6 +23,10 @@ package com.doplgangr.secrecy.events;
 import android.graphics.Bitmap;
 import android.widget.ProgressBar;
 
+import com.doplgangr.secrecy.filesystem.files.EncryptedFile;
+
+import java.io.InputStream;
+
 import uk.co.senab.photoview.PhotoView;
 
 public class ImageLoadDoneEvent {
@@ -30,11 +34,14 @@ public class ImageLoadDoneEvent {
     public final PhotoView imageView;
     public final Bitmap bitmap;
     public final ProgressBar progressBar;
+    public final EncryptedFile encryptedFile;
 
-    public ImageLoadDoneEvent(Integer mNum, PhotoView imageView, Bitmap bitmap, ProgressBar progressBar) {
+    public ImageLoadDoneEvent(Integer mNum, PhotoView imageView, Bitmap bitmap,
+                              ProgressBar progressBar, EncryptedFile encryptedFile) {
         this.mNum = mNum;
         this.imageView = imageView;
         this.bitmap = bitmap;
         this.progressBar = progressBar;
+        this.encryptedFile = encryptedFile;
     }
 }

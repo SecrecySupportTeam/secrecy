@@ -76,13 +76,13 @@ public class ImageLoadJob extends Job {
 
                 if (!isObsolet) {
                     Bitmap bitmap = BitmapFactory.decodeStream(imageStream, null, options);
-                    EventBus.getDefault().post(new ImageLoadDoneEvent(mNum, imageView, bitmap, pBar));
+                    EventBus.getDefault().post(new ImageLoadDoneEvent(mNum, imageView, bitmap, pBar, encryptedFile));
 
                 } else {
-                    EventBus.getDefault().post(new ImageLoadDoneEvent(null, null, null, null));
+                    EventBus.getDefault().post(new ImageLoadDoneEvent(null, null, null, null, null));
                 }
             } catch (OutOfMemoryError e) {
-                EventBus.getDefault().post(new ImageLoadDoneEvent(null, null, null, null));
+                EventBus.getDefault().post(new ImageLoadDoneEvent(null, null, null, null, null));
             }
         }
     }
