@@ -95,6 +95,11 @@
             android:label=""
             android:parentActivityName=".activities.MainActivity">
         </activity>
+        <service
+            android:name=".services.ScreenStateService"
+            android:enabled="true"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>
