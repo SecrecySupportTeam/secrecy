@@ -3,6 +3,7 @@ package com.doplgangr.secrecy.jobs;
 import android.content.Context;
 import android.net.Uri;
 
+import com.doplgangr.secrecy.CustomApp;
 import com.doplgangr.secrecy.events.AddingFileDoneEvent;
 import com.doplgangr.secrecy.events.AddingFileEvent;
 import com.doplgangr.secrecy.events.NewFileEvent;
@@ -47,8 +48,7 @@ public class AddFileJob extends Job {
         EventBus.getDefault().post(new NewFileEvent(returnedEncryptedFile));
 
         EventBus.getDefault().post(new AddingFileDoneEvent(vault));
-        File actualFile = new File(getPath(context, uri));
-        Storage.purgeFile(actualFile, uri); //Try to delete original file.
+        CustomApp.jobManager.addJob(new DeleteFileJob(uri));   //Don't create yet another bg thread.
     }
 
     @Override

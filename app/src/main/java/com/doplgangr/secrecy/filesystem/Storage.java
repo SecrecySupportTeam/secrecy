@@ -19,6 +19,7 @@
 
 package com.doplgangr.secrecy.filesystem;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -60,16 +61,11 @@ public class Storage {
     }
 
     public static void purgeFile(File file) {
-        if (file == null){
-            return;
-        }
-        purgeFile(file, null);
+        CustomApp.jobManager.addJobInBackground(new DeleteFileJob(file)); // deletion in background
     }
 
-    public static void purgeFile(File file, Uri uri) {        //Starts a job to do the real
-        DeleteFileJob job = new DeleteFileJob(file);
-        job.addURI(uri);
-        CustomApp.jobManager.addJobInBackground(job); // deletion in background
+    public static void purgeFile(Uri uri) {        //Starts a job to do the real
+        CustomApp.jobManager.addJobInBackground(new DeleteFileJob(uri)); // deletion in background
     }
 
     public static void shredFile(OutputStream fileOS, long size, File file) {
@@ -134,7 +130,7 @@ public class Storage {
                 DeleteRecursive(externalCacheDir);                      //Just to be sure
     }
 
-       public static Bitmap getThumbnailfromStream(SecrecyCipherInputStream streamThumb, int size) {
+    public static Bitmap getThumbnailfromStream(SecrecyCipherInputStream streamThumb, int size) {
         if (streamThumb != null) {
             try {
                 byte[] bytes = IOUtils.toByteArray(streamThumb);
